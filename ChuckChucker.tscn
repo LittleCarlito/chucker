@@ -1,0 +1,49 @@
+[gd_scene load_steps=8 format=3 uid="uid://cdkknjflehfgx"]
+
+[ext_resource type="Script" path="res://chuck_chucker.gd" id="1_wihn6"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h7ubf"]
+albedo_color = Color(0.41528, 0.3828, 0.87, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_qdtv4"]
+material = SubResource("StandardMaterial3D_h7ubf")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i8jtk"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_b4rvj"]
+material = SubResource("StandardMaterial3D_i8jtk")
+radius = 0.318
+height = 1.091
+radial_segments = 66
+rings = 13
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_e7yjo"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3pknt"]
+
+[node name="ChuckChucker" type="CharacterBody3D"]
+transform = Transform3D(0.999997, 0.00223599, -0.000878929, -0.00223614, 0.999997, -0.000169186, 0.000878546, 0.000171164, 1, 0, 0, 0)
+script = ExtResource("1_wihn6")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_qdtv4")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -1.45519e-11, -6.1771e-09, -0.141316)
+mesh = SubResource("CapsuleMesh_b4rvj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_e7yjo")
+
+[node name="CameraController" type="Node3D" parent="."]
+top_level = true
+
+[node name="CameraTarget" type="Node3D" parent="CameraController"]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.86867, 4.35812)
+
+[node name="ChuckCamera" type="Camera3D" parent="CameraController/CameraTarget"]
+
+[node name="FrontDetect" type="ShapeCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -1)
+shape = SubResource("BoxShape3D_3pknt")

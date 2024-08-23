@@ -1,0 +1,44 @@
+[gd_scene load_steps=6 format=3 uid="uid://c3a3ygsd2ack"]
+
+[ext_resource type="Script" path="res://chuck_tee.gd" id="1_1arck"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_521vg"]
+albedo_color = Color(0.101961, 0.270588, 0.0745098, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ohtbd"]
+material = SubResource("StandardMaterial3D_521vg")
+size = Vector3(10, 0.2, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_i0mha"]
+size = Vector3(10, 0.2, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_n4t14"]
+size = Vector3(10, 10, 10)
+
+[node name="ChuckTee" type="StaticBody3D"]
+script = ExtResource("1_1arck")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+mesh = SubResource("BoxMesh_ohtbd")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+shape = SubResource("BoxShape3D_i0mha")
+
+[node name="TeeBoxArea" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TeeBoxArea"]
+transform = Transform3D(1, 0.000827476, 0.000366273, -0.000826948, 0.999999, -0.00141029, -0.000367462, 0.00140998, 0.999999, 0, 4.8, 0)
+shape = SubResource("BoxShape3D_n4t14")
+
+[node name="CameraController" type="Node3D" parent="."]
+transform = Transform3D(1, 0.000518124, -0.000638299, -0.000516965, 0.999998, 0.00179287, 0.000639237, -0.00179253, 0.999998, 0, 0, 0)
+
+[node name="CameraTarget" type="Node3D" parent="CameraController"]
+transform = Transform3D(1, -0.000249734, -0.000344578, 0.000388565, 0.866026, 0.5, 0.000173546, -0.5, 0.866025, -4.65661e-10, 3, 5)
+
+[node name="TeeboxCamera" type="Camera3D" parent="CameraController/CameraTarget"]
+
+[connection signal="body_entered" from="TeeBoxArea" to="." method="_on_tee_box_area_body_entered"]
+[connection signal="body_exited" from="TeeBoxArea" to="." method="_on_tee_box_area_body_exited"]
