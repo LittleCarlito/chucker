@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://cdkknjflehfgx"]
+[gd_scene load_steps=11 format=3 uid="uid://cdkknjflehfgx"]
 
 [ext_resource type="Script" path="res://chuck_chucker.gd" id="1_wihn6"]
+[ext_resource type="PackedScene" uid="uid://blwwfxseykyuy" path="res://ChuckDisk.tscn" id="2_nic6w"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h7ubf"]
 albedo_color = Color(0.41528, 0.3828, 0.87, 1)
@@ -21,9 +22,21 @@ rings = 13
 [sub_resource type="BoxShape3D" id="BoxShape3D_e7yjo"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3pknt"]
+size = Vector3(1.2, 1.2, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b3abq"]
+shading_mode = 0
+albedo_color = Color(0, 1, 0, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7a8c1"]
+material = SubResource("StandardMaterial3D_b3abq")
+top_radius = 0.01
+bottom_radius = 0.01
+height = 20.0
 
 [node name="ChuckChucker" type="CharacterBody3D"]
 transform = Transform3D(0.999997, 0.00223599, -0.000878929, -0.00223614, 0.999997, -0.000169186, 0.000878546, 0.000171164, 1, 0, 0, 0)
+collision_mask = 2
 script = ExtResource("1_wihn6")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
@@ -36,6 +49,11 @@ mesh = SubResource("CapsuleMesh_b4rvj")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_e7yjo")
 
+[node name="FrontDetect" type="ShapeCast3D" parent="."]
+transform = Transform3D(1, 2.00089e-10, 5.82077e-11, -4.46221e-11, 1, 0, -5.82077e-11, 1.45519e-11, 1, -5.82077e-11, 1, -1)
+shape = SubResource("BoxShape3D_3pknt")
+collision_mask = 7
+
 [node name="CameraController" type="Node3D" parent="."]
 top_level = true
 
@@ -44,6 +62,27 @@ transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 
 
 [node name="ChuckCamera" type="Camera3D" parent="CameraController/CameraTarget"]
 
-[node name="FrontDetect" type="ShapeCast3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -1)
-shape = SubResource("BoxShape3D_3pknt")
+[node name="PinJoint3D" type="PinJoint3D" parent="."]
+node_a = NodePath("..")
+node_b = NodePath("DiskController/DiskContainer/ChuckDisk")
+params/bias = 0.99
+
+[node name="DiskController" type="Node3D" parent="PinJoint3D"]
+transform = Transform3D(1, 2.00089e-10, 5.82077e-11, -4.46221e-11, 1, 0, -5.82077e-11, 1.45519e-11, 1, 4.50115e-10, 0.744641, 0)
+
+[node name="DiskLauncher" type="Node3D" parent="PinJoint3D/DiskController"]
+transform = Transform3D(1, 2.00089e-10, 5.82077e-11, -4.46505e-11, 1, -1.45519e-11, -5.82077e-11, 1.45519e-11, 1, -2.80119e-11, 1.42789e-11, -0.481241)
+
+[node name="DiskContainer" type="Node3D" parent="PinJoint3D/DiskController"]
+
+[node name="ChuckDisk" parent="PinJoint3D/DiskController/DiskContainer" instance=ExtResource("2_nic6w")]
+transform = Transform3D(1, 1.13145e-09, 2.32831e-10, -4.46931e-11, 1, -2.91038e-11, -2.91038e-10, 7.27596e-11, 1, 0, 0, 0)
+visible = false
+axis_lock_linear_y = true
+
+[node name="AimLine" type="MeshInstance3D" parent="PinJoint3D/DiskController/DiskContainer"]
+transform = Transform3D(1, -1.16415e-10, 6.27367e-10, -4.46647e-11, -4.36848e-08, 1, -1.74623e-10, -1, -4.36703e-08, 1.64536e-09, -2.98023e-07, -10)
+visible = false
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_7a8c1")
+skeleton = NodePath("../..")
