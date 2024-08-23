@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://c3a3ygsd2ack"]
 
-[ext_resource type="Script" path="res://chuck_tee.gd" id="1_1arck"]
+[ext_resource type="Script" path="res://assets/chuck_tee.gd" id="1_srenv"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_521vg"]
 albedo_color = Color(0.101961, 0.270588, 0.0745098, 1)
@@ -16,9 +16,9 @@ size = Vector3(10, 0.2, 10)
 size = Vector3(10, 10, 10)
 
 [node name="ChuckTee" type="StaticBody3D"]
-collision_layer = 2
-collision_mask = 7
-script = ExtResource("1_1arck")
+collision_layer = 16
+collision_mask = 5
+script = ExtResource("1_srenv")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
