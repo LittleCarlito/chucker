@@ -5,6 +5,7 @@ var aimLine: MeshInstance3D
 var diskLauncher: Node3D
 var cameraController: Node3D
 var frontDetection: ShapeCast3D
+var powerDetector: PowerDetector
 
 @export var thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.SCENE)
 
@@ -14,6 +15,7 @@ func _ready() -> void:
 	diskLauncher = $DiskController/DiskLauncher
 	cameraController = $CameraController
 	frontDetection = $FrontDetect
+	powerDetector = PowerDetector.new()
 
 func _physics_process(delta: float) -> void:
 	# Handle jump logic
@@ -21,21 +23,27 @@ func _physics_process(delta: float) -> void:
 	# Camera controls
 	_handle_camera_controls()
 	# Check for player action
-	_handle_action()
+	_handle_action(delta)
 	# Check for player interaction
 	_handle_interact()
 	# Check for character movement
 	_handle_movement()
 
 ## Actions when disk is thrown
-func _handle_action() -> void:
-	if Input.is_action_just_pressed(USER_INPUT.ACTION.PRIMARY) and playerDisk.visible:
-		playerDisk.visible = false
-		aimLine.visible = false
-		var newDisk = thrownDisk.instantiate()
-		get_node(ASSET_MANAGEMENT.DISK.SPAWN).add_child(newDisk)
-		newDisk.global_transform = diskLauncher.global_transform
-		newDisk.linear_velocity = -newDisk.global_transform.basis.z * GLOBAL_SETTINGS.DISK.LAUNCH_SPEED
+func _handle_action(delta: float) -> void:
+	if playerDisk.visible:
+		if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
+			powerDetector.isHeld(delta)
+		if Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
+			var heldTime: float = powerDetector.getTime()
+			print("Primary was held for " + str(heldTime))
+			powerDetector.reset()
+			playerDisk.visible = false
+			aimLine.visible = false
+			var newDisk = thrownDisk.instantiate()
+			get_node(ASSET_MANAGEMENT.DISK.SPAWN).add_child(newDisk)
+			newDisk.global_transform = diskLauncher.global_transform
+			newDisk.linear_velocity = -newDisk.global_transform.basis.z * GLOBAL_SETTINGS.DISK.LAUNCH_SPEED
 
 ## Actions to be performed when MOVE_JUMP is pressed
 func _handle_jump(delta: float) -> void:
