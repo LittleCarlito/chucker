@@ -7,6 +7,7 @@ var diskLauncher: Node3D
 var cameraController: Node3D
 var frontDetection: ShapeCast3D
 var stopwatch: StopWatch
+var drawTool: Draw3D
 
 @export var thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.SCENE)
 
@@ -18,6 +19,7 @@ func _ready() -> void:
 	cameraController = $CameraController
 	frontDetection = $FrontDetect
 	stopwatch = StopWatch.new()
+	drawTool = Draw3D.new()
 
 func _physics_process(delta: float) -> void:
 	# Handle jump logic
@@ -41,10 +43,9 @@ func _handle_action(delta: float) -> void:
 			print("Primary was held for " + str(heldTime))
 			stopwatch.reset()
 			var multiplier = min(heldTime, GLOBAL_SETTINGS.DISK.MAX_HOLD)
-			playerDisk.visible = false
-			aimLine.visible = false
+			toggle_equiped(false)
 			var newDisk = thrownDisk.instantiate()
-			get_node(ASSET_MANAGEMENT.DISK.SPAWN).add_child(newDisk)
+			get_tree().get_root().add_child(newDisk)
 			newDisk.global_transform = diskLauncher.global_transform
 			newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)
 			diskContainer.rotation.x = 0
@@ -66,10 +67,11 @@ func _handle_camera_controls() -> void:
 	if Input.is_action_pressed(USER_INPUT.ROTATE.RIGHT):
 		cameraController.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 		rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
-	if Input.is_action_just_pressed(USER_INPUT.ROTATE.UP):
-		diskContainer.rotate_x(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
-	if Input.is_action_just_pressed(USER_INPUT.ROTATE.DOWN):
-		diskContainer.rotate_x(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+	if playerDisk.visible:
+		if Input.is_action_just_pressed(USER_INPUT.ROTATE.UP):
+			diskContainer.rotate_x(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+		if Input.is_action_just_pressed(USER_INPUT.ROTATE.DOWN):
+			diskContainer.rotate_x(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 
 ## Handle player pressing interact button
 func _handle_interact() -> void:
@@ -78,8 +80,7 @@ func _handle_interact() -> void:
 		for n in collidingCount:
 			var collidingObject = frontDetection.get_collider(0)
 			if collidingObject != null and collidingObject.name == ASSET_MANAGEMENT.DISK.NAME:
-				playerDisk.visible = true
-				aimLine.visible = true
+				toggle_equiped(true)
 				collidingObject.queue_free()
 
 ## Detects and executes movements
@@ -98,3 +99,8 @@ func _handle_movement() -> void:
 	move_and_slide()
 	# Keep camera up
 	cameraController.position = lerp(cameraController.position, position, GLOBAL_SETTINGS.CAMERA.PAN_SPEED)
+
+## Toggles the visibility logic when character has item equiped
+func toggle_equiped(value: bool) -> void:
+	playerDisk.visible = value
+	aimLine.visible = value

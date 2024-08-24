@@ -79,6 +79,7 @@ transform = Transform3D(1, 6.65779e-10, 1.74623e-10, -4.46647e-11, 1, -1.45519e-
 [node name="AimLine" type="MeshInstance3D" parent="DiskController/DiskContainer"]
 transform = Transform3D(1, -1.16415e-10, 6.27367e-10, -4.46647e-11, -4.36848e-08, 1, -1.74623e-10, -1, -4.36703e-08, 1.64536e-09, -2.98023e-07, -10)
 visible = false
+transparency = 0.33
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_7a8c1")
 skeleton = NodePath("../..")
@@ -86,3 +87,5 @@ skeleton = NodePath("../..")
 [node name="PlayerDisk" type="MeshInstance3D" parent="DiskController/DiskContainer"]
 visible = false
 mesh = SubResource("CylinderMesh_jb4eq")
+
+[node name="CSGMesh3D" type="CSGMesh3D" parent="DiskController/DiskContainer"]
