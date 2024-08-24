@@ -37,6 +37,7 @@ func _physics_process(delta: float) -> void:
 func _handle_action(delta: float) -> void:
 	if playerDisk.visible:
 		if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
+			drawTool.point(drawTool.getRandomPoint(-20, 20))
 			stopwatch.isHeld(delta)
 		if Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
 			var heldTime: float = stopwatch.getTime()
@@ -49,6 +50,7 @@ func _handle_action(delta: float) -> void:
 			newDisk.global_transform = diskLauncher.global_transform
 			newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)
 			diskContainer.rotation.x = 0
+			drawTool.line(drawTool.getRandomPoint(-20, 20), drawTool.getRandomPoint(-20, 20))
 
 ## Actions to be performed when MOVE_JUMP is pressed
 func _handle_jump(delta: float) -> void:

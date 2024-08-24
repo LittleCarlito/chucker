@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://dokcluhafc3y1"]
+[gd_scene load_steps=9 format=3 uid="uid://dokcluhafc3y1"]
 
 [ext_resource type="PackedScene" uid="uid://c3a3ygsd2ack" path="res://assets/ChuckTee.tscn" id="1_toa5e"]
 [ext_resource type="PackedScene" uid="uid://cdkknjflehfgx" path="res://assets/ChuckChucker.tscn" id="2_bl408"]
 [ext_resource type="PackedScene" uid="uid://bpn27qpg2rm8c" path="res://assets/ChuckHole.tscn" id="3_myjxc"]
 [ext_resource type="PackedScene" uid="uid://blwwfxseykyuy" path="res://assets/ChuckDisk.tscn" id="4_m4tn0"]
 [ext_resource type="Environment" uid="uid://bm00mgoeg2ojv" path="res://resources/environment_default.tres" id="5_t0qir"]
+[ext_resource type="PackedScene" uid="uid://dlrxnm7tutgr" path="res://utils/draw_util.tscn" id="6_4hju6"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_vba8s"]
 size = Vector3(50, 3, 200)
@@ -37,6 +38,7 @@ mesh = SubResource("BoxMesh_vba8s")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TempFloor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.505, 0)
+visible = false
 shape = SubResource("BoxShape3D_o6chi")
 
 [node name="ChuckDisk" parent="." instance=ExtResource("4_m4tn0")]
@@ -46,3 +48,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.48635, -2.45964)
 environment = ExtResource("5_t0qir")
 
 [node name="DiskSpawn" type="Node3D" parent="."]
+visible = false
+
+[node name="DrawUtil" parent="." instance=ExtResource("6_4hju6")]
+visible = false
