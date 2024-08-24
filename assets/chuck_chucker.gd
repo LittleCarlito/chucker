@@ -5,7 +5,7 @@ var aimLine: MeshInstance3D
 var diskLauncher: Node3D
 var cameraController: Node3D
 var frontDetection: ShapeCast3D
-var powerDetector: PowerDetector
+var stopwatch: StopWatch
 
 @export var thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.SCENE)
 
@@ -15,7 +15,7 @@ func _ready() -> void:
 	diskLauncher = $DiskController/DiskLauncher
 	cameraController = $CameraController
 	frontDetection = $FrontDetect
-	powerDetector = PowerDetector.new()
+	stopwatch = StopWatch.new()
 
 func _physics_process(delta: float) -> void:
 	# Handle jump logic
@@ -33,11 +33,11 @@ func _physics_process(delta: float) -> void:
 func _handle_action(delta: float) -> void:
 	if playerDisk.visible:
 		if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
-			powerDetector.isHeld(delta)
+			stopwatch.isHeld(delta)
 		if Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
-			var heldTime: float = powerDetector.getTime()
+			var heldTime: float = stopwatch.getTime()
 			print("Primary was held for " + str(heldTime))
-			powerDetector.reset()
+			stopwatch.reset()
 			playerDisk.visible = false
 			aimLine.visible = false
 			var newDisk = thrownDisk.instantiate()

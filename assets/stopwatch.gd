@@ -1,6 +1,6 @@
 extends Node3D
 
-class_name PowerDetector
+class_name StopWatch
 
 var heldTime: float
 
