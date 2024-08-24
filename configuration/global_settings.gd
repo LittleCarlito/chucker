@@ -9,7 +9,8 @@ const PLAYER = {
 
 const DISK = {
 	"LAUNCH_SPEED": 10,
-	"EMPOWER_FACTOR": 1.2
+	"EMPOWER_FACTOR": 20,
+	"MAX_HOLD": 3
 }
 
 const CAMERA = {

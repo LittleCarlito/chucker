@@ -38,12 +38,13 @@ func _handle_action(delta: float) -> void:
 			var heldTime: float = stopwatch.getTime()
 			print("Primary was held for " + str(heldTime))
 			stopwatch.reset()
+			var multiplier = min(heldTime, GLOBAL_SETTINGS.DISK.MAX_HOLD)
 			playerDisk.visible = false
 			aimLine.visible = false
 			var newDisk = thrownDisk.instantiate()
 			get_node(ASSET_MANAGEMENT.DISK.SPAWN).add_child(newDisk)
 			newDisk.global_transform = diskLauncher.global_transform
-			newDisk.linear_velocity = -newDisk.global_transform.basis.z * GLOBAL_SETTINGS.DISK.LAUNCH_SPEED
+			newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)
 
 ## Actions to be performed when MOVE_JUMP is pressed
 func _handle_jump(delta: float) -> void:
