@@ -1,5 +1,6 @@
 extends CharacterBody3D
 
+var diskContainer: Node3D
 var playerDisk: MeshInstance3D
 var aimLine: MeshInstance3D
 var diskLauncher: Node3D
@@ -10,9 +11,10 @@ var stopwatch: StopWatch
 @export var thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.SCENE)
 
 func _ready() -> void: 
+	diskContainer = $DiskController/DiskContainer
 	playerDisk = $DiskController/DiskContainer/PlayerDisk
 	aimLine = $DiskController/DiskContainer/AimLine
-	diskLauncher = $DiskController/DiskLauncher
+	diskLauncher = $DiskController/DiskContainer/DiskLauncher
 	cameraController = $CameraController
 	frontDetection = $FrontDetect
 	stopwatch = StopWatch.new()
@@ -21,7 +23,7 @@ func _physics_process(delta: float) -> void:
 	# Handle jump logic
 	_handle_jump(delta)
 	# Camera controls
-	_handle_camera_controls()
+	_handle_camera_controls()	
 	# Check for player action
 	_handle_action(delta)
 	# Check for player interaction
@@ -45,18 +47,18 @@ func _handle_action(delta: float) -> void:
 			get_node(ASSET_MANAGEMENT.DISK.SPAWN).add_child(newDisk)
 			newDisk.global_transform = diskLauncher.global_transform
 			newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)
+			diskContainer.rotation.x = 0
 
 ## Actions to be performed when MOVE_JUMP is pressed
 func _handle_jump(delta: float) -> void:
-		# Add the gravity
+	# Add the gravity
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 	# Handle jump
 	if Input.is_action_just_pressed(USER_INPUT.MOVE.JUMP) and is_on_floor():
 		velocity.y = GLOBAL_SETTINGS.PLAYER.JUMP_FORCE
 
-## Actions to be performed when ROTATE_CAMERA_LEFT 
-## or ROTATE_CAMERA_RIGHT are pressed
+## Handles camera/aiming related actions
 func _handle_camera_controls() -> void:
 	if Input.is_action_pressed(USER_INPUT.ROTATE.LEFT):
 		cameraController.rotate_y(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
@@ -64,6 +66,10 @@ func _handle_camera_controls() -> void:
 	if Input.is_action_pressed(USER_INPUT.ROTATE.RIGHT):
 		cameraController.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 		rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+	if Input.is_action_just_pressed(USER_INPUT.ROTATE.UP):
+		diskContainer.rotate_x(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+	if Input.is_action_just_pressed(USER_INPUT.ROTATE.DOWN):
+		diskContainer.rotate_x(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 
 ## Handle player pressing interact button
 func _handle_interact() -> void:
