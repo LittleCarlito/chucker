@@ -1,6 +1,3 @@
-[gd_scene load_steps=2 format=3 uid="uid://dlrxnm7tutgr"]
-
-[ext_resource type="Script" path="res://utils/draw_util.gd" id="1_1vn8v"]
+[gd_scene format=3 uid="uid://b7j7xxwht6ehv"]
 
 [node name="DrawUtil" type="Node3D"]
-script = ExtResource("1_1vn8v")

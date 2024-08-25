@@ -14,6 +14,10 @@ config/name="Chuck"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://resources/icon.svg"
 
+[autoload]
+
+DrawUtil="*res://utils/draw_util.gd"
+
 [input]
 
 rotate_left={
