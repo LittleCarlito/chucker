@@ -35,8 +35,13 @@ func _physics_process(delta: float) -> void:
 func _handle_action(delta: float) -> void:
 	if playerDisk.visible:
 		if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
-			DrawUtil.point(DrawUtil.getRandomPoint(-20, 20))
 			stopwatch.isHeld(delta)
+			# TODO Have this set start point based off DiskContainer location; Have it determine end location by getting timeHeld and applying a multiplier to make it meaningful (visible for now)
+			var containerLocation: Vector3 = diskContainer.global_position
+			var heldTime: float = stopwatch.getTime()
+			var endPosition: Vector3 = Vector3(containerLocation.x, containerLocation.y, containerLocation.z)
+			#DrawUtil.line(containerLocation, DrawUtil.getRandomPoint(-20, 20))
+			DrawUtil.curve(DrawUtil.getRandomPoint(-20, 20), DrawUtil.getRandomPoint(-20, 20), DrawUtil.getRandomPoint(-20, 20), DrawUtil.getRandomPoint(-20, 20))
 		if Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
 			var heldTime: float = stopwatch.getTime()
 			print("Primary was held for " + str(heldTime))
@@ -48,7 +53,6 @@ func _handle_action(delta: float) -> void:
 			newDisk.global_transform = diskLauncher.global_transform
 			newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)
 			diskContainer.rotation.x = 0
-			DrawUtil.line(DrawUtil.getRandomPoint(-20, 20), DrawUtil.getRandomPoint(-20, 20))
 
 ## Actions to be performed when MOVE_JUMP is pressed
 func _handle_jump(delta: float) -> void:
