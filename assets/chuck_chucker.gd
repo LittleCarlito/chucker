@@ -3,6 +3,7 @@ class_name ChuckChucker
 
 @export var thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.SCENE)
 
+@onready var diskController: Node3D = $DiskController
 @onready var diskContainer: Node3D = $DiskController/DiskContainer
 @onready var playerDisk: MeshInstance3D = $DiskController/DiskContainer/PlayerDisk
 @onready var diskLauncher: Node3D = $DiskController/DiskContainer/DiskLauncher
@@ -26,7 +27,7 @@ func _physics_process(delta: float) -> void:
 
 ## Actions when disk is thrown
 func _handle_player_action(delta: float) -> void:
-	if playerDisk.visible:
+	#if playerDisk.visible:
 		if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
 			self._power_up_launch(delta)
 		if Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
@@ -86,12 +87,28 @@ func _handle_movement() -> void:
 func _power_up_launch(delta: float) -> void:
 	stopwatch.isHeld(delta)
 	var heldTime: float = stopwatch.getTime()
+	# Handle aiming node
 	aimingNode.position = self.global_position
+	# TODO Need to get this to be the bottom of chuck and not stuck at y = 0 (when falling doesn't fall with chuck)
 	aimingNode.position.y = 0
 	aimingNode.basis = self.global_basis
-	var translateVector: Vector3 = Vector3(0, 0, -(heldTime * 10))
-	aimingNode.translate(translateVector)
+	var aimingTranslate: Vector3 = Vector3(0, 0, -(heldTime * 10))
+	aimingNode.translate(aimingTranslate)
 	DrawUtil.point(aimingNode.position)
+	# Handle aiming control node
+	aimingControl.position = aimingNode.position
+	aimingControl.position.y += 7
+	aimingControl.basis = aimingNode.basis
+	var aimControlTranslate: Vector3 = Vector3(0, 0, -((heldTime * 10)) + 2)
+	aimingControl.translate(aimControlTranslate)
+	DrawUtil.point(aimingControl.position, .05, Color.ORANGE_RED)
+	# Handle launch control node
+	launchControl.position = self.global_position
+	launchControl.position.y = aimingControl.position.y
+	launchControl.basis = diskLauncher.global_basis
+	var launchControlTranslate: Vector3 = Vector3(0, 0, -(heldTime * 3) - 4)
+	launchControl.translate(launchControlTranslate)
+	DrawUtil.point(launchControl.position, .05, Color.DEEP_PINK)
 
 ## Launch disk and reset objects
 func _launch_disk() -> void:
