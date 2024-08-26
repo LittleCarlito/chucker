@@ -22,7 +22,6 @@ shadow_enabled = true
 
 [node name="ChuckChucker" parent="." instance=ExtResource("2_bl408")]
 transform = Transform3D(0.999997, 0.00223599, -0.000878929, -0.00223614, 0.999997, -0.000169186, 0.000878546, 0.000171164, 1, 0, 0.972875, 0)
-thrownDisk = ExtResource("4_m4tn0")
 
 [node name="ChuckHole" parent="." instance=ExtResource("3_myjxc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -80)

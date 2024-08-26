@@ -1,23 +1,21 @@
 extends CharacterBody3D
-
-var diskContainer: Node3D
-var playerDisk: MeshInstance3D
-var aimLine: MeshInstance3D
-var diskLauncher: Node3D
-var cameraController: Node3D
-var frontDetection: ShapeCast3D
-var stopwatch: StopWatch
+class_name ChuckChucker
 
 @export var thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.SCENE)
 
+@onready var diskContainer: Node3D = $DiskController/DiskContainer
+@onready var playerDisk: MeshInstance3D = $DiskController/DiskContainer/PlayerDisk
+@onready var aimLine: MeshInstance3D = $DiskController/DiskContainer/AimLine
+@onready var diskLauncher: Node3D = $DiskController/DiskContainer/DiskLauncher
+@onready var cameraController: Node3D = $CameraController
+@onready var frontDetection: ShapeCast3D = $FrontDetect
+@onready var stopwatch: StopWatch = StopWatch.new()
+
+# TODO Add comments to handle methods that are missing them
+# TODO See about adding self. to internal property and method references
+
 func _ready() -> void: 
-	diskContainer = $DiskController/DiskContainer
-	playerDisk = $DiskController/DiskContainer/PlayerDisk
-	aimLine = $DiskController/DiskContainer/AimLine
-	diskLauncher = $DiskController/DiskContainer/DiskLauncher
-	cameraController = $CameraController
-	frontDetection = $FrontDetect
-	stopwatch = StopWatch.new()
+	pass
 
 func _physics_process(delta: float) -> void:
 	# Handle jump logic
@@ -36,12 +34,24 @@ func _handle_action(delta: float) -> void:
 	if playerDisk.visible:
 		if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
 			stopwatch.isHeld(delta)
-			# TODO Have this set start point based off DiskContainer location; Have it determine end location by getting timeHeld and applying a multiplier to make it meaningful (visible for now)
-			var containerLocation: Vector3 = diskContainer.global_position
 			var heldTime: float = stopwatch.getTime()
-			var endPosition: Vector3 = Vector3(containerLocation.x, containerLocation.y, containerLocation.z)
-			#DrawUtil.line(containerLocation, DrawUtil.getRandomPoint(-20, 20))
-			DrawUtil.curve(DrawUtil.getRandomPoint(-20, 20), DrawUtil.getRandomPoint(-20, 20), DrawUtil.getRandomPoint(-20, 20), DrawUtil.getRandomPoint(-20, 20))
+			
+			## TODO Use DrawUtil.curve to create bezier curve to end point; Have held time extend end point and control points
+			## TODO Need to do the math to determine which way its facing and then calculate all this shit
+			#var start: Vector3 = diskContainer.position
+			#var startControl: Vector3 = Vector3(start.x, (start.y + (start.y * .2)), (start.z - (start.z * .6)))
+			#var end: Vector3 = Vector3(start.x, start.y, -20)
+			#var endControl: Vector3 = Vector3(end.x, (end.y + (end.y * .5)), (end.z + (end.z * .3)))
+			#DrawUtil.curve(start, startControl, endControl, end)
+			
+			# TODO Use DrawUtil.curve to create bezier curve to end point; Have held time extend end point and control points
+			# TODO Need to do the math to determine which way its facing and then calculate all this shit
+			var start: Vector3 = diskContainer.position
+			var startControl: Vector3 = Vector3(start.x, start.y + 3, start.z - 4)
+			var end: Vector3 = Vector3(start.x, start.y, -20)
+			var endControl: Vector3 = Vector3(end.x, startControl.y, -17)
+			DrawUtil.curve(start, startControl, endControl, end)
+			
 		if Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
 			var heldTime: float = stopwatch.getTime()
 			print("Primary was held for " + str(heldTime))

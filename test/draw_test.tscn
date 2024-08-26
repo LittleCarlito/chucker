@@ -1,0 +1,51 @@
+[gd_scene load_steps=6 format=3 uid="uid://dptinp4xcn0m1"]
+
+[ext_resource type="Environment" uid="uid://bm00mgoeg2ojv" path="res://resources/environment_default.tres" id="1_3jkws"]
+[ext_resource type="Script" path="res://test/draw_test.gd" id="1_44ubk"]
+[ext_resource type="PackedScene" uid="uid://c57r0vbr87t4o" path="res://utils/DebugCamera.tscn" id="3_5ogtf"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_44t2b"]
+albedo_color = Color(0, 1, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_wt1pk"]
+material = SubResource("StandardMaterial3D_44t2b")
+
+[node name="DrawTest" type="Node3D"]
+script = ExtResource("1_44ubk")
+
+[node name="DebugCamera" parent="." instance=ExtResource("3_5ogtf")]
+transform = Transform3D(0.106352, -0.0184194, 0.994158, -0.0294661, 0.999331, 0.0216675, -0.993892, -0.0315984, 0.105738, 33.8938, 7.3818, -1.6657)
+
+[node name="Start" type="Node3D" parent="."]
+metadata/_edit_group_ = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Start"]
+mesh = SubResource("SphereMesh_wt1pk")
+
+[node name="StartControl" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, -1)
+metadata/_edit_group_ = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StartControl"]
+mesh = SubResource("SphereMesh_wt1pk")
+
+[node name="EndControl" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, -20)
+metadata/_edit_group_ = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="EndControl"]
+mesh = SubResource("SphereMesh_wt1pk")
+
+[node name="End" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -25)
+metadata/_edit_group_ = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="End"]
+mesh = SubResource("SphereMesh_wt1pk")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.37333, 23.6725, -8.02139)
+omni_range = 200.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("1_3jkws")
