@@ -5,7 +5,6 @@ class_name ChuckChucker
 
 @onready var diskContainer: Node3D = $DiskController/DiskContainer
 @onready var playerDisk: MeshInstance3D = $DiskController/DiskContainer/PlayerDisk
-@onready var aimLine: MeshInstance3D = $DiskController/DiskContainer/AimLine
 @onready var diskLauncher: Node3D = $DiskController/DiskContainer/DiskLauncher
 @onready var cameraController: Node3D = $CameraController
 @onready var frontDetection: ShapeCast3D = $FrontDetect
@@ -37,9 +36,8 @@ func _handle_action(delta: float) -> void:
 		if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
 			stopwatch.isHeld(delta)
 			var heldTime: float = stopwatch.getTime()
-			# TODO Instead of having aiming node in here spawn it in scene so it stays on floor and have it just track x and z positions
-			aimingNode.position.x = diskLauncher.global_position.x
-			aimingNode.position.z = diskLauncher.global_position.z
+			aimingNode.position = self.global_position
+			aimingNode.position.y = 0
 			aimingNode.basis = diskLauncher.global_basis
 			var translateVector: Vector3 = Vector3(0, 0, -(heldTime * 10))
 			aimingNode.translate(translateVector)
@@ -107,4 +105,3 @@ func _handle_movement() -> void:
 ## Toggles the visibility logic when character has item equiped
 func toggle_equiped(value: bool) -> void:
 	playerDisk.visible = value
-	aimLine.visible = value
