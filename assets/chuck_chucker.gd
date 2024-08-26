@@ -9,13 +9,15 @@ class_name ChuckChucker
 @onready var diskLauncher: Node3D = $DiskController/DiskContainer/DiskLauncher
 @onready var cameraController: Node3D = $CameraController
 @onready var frontDetection: ShapeCast3D = $FrontDetect
-@onready var stopwatch: StopWatch = StopWatch.new()
+var stopwatch: StopWatch = StopWatch.new()
+var aimingNode: Node3D = Node3D.new()
+
 
 # TODO Add comments to handle methods that are missing them
 # TODO See about adding self. to internal property and method references
 
 func _ready() -> void: 
-	pass
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _physics_process(delta: float) -> void:
 	# Handle jump logic
@@ -35,28 +37,16 @@ func _handle_action(delta: float) -> void:
 		if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
 			stopwatch.isHeld(delta)
 			var heldTime: float = stopwatch.getTime()
-			
-			## TODO Use DrawUtil.curve to create bezier curve to end point; Have held time extend end point and control points
-			## TODO Need to do the math to determine which way its facing and then calculate all this shit
-			#var start: Vector3 = diskContainer.position
-			#var startControl: Vector3 = Vector3(start.x, (start.y + (start.y * .2)), (start.z - (start.z * .6)))
-			#var end: Vector3 = Vector3(start.x, start.y, -20)
-			#var endControl: Vector3 = Vector3(end.x, (end.y + (end.y * .5)), (end.z + (end.z * .3)))
-			#DrawUtil.curve(start, startControl, endControl, end)
-			
-			# TODO Use DrawUtil.curve to create bezier curve to end point; Have held time extend end point and control points
-			# TODO Need to do the math to determine which way its facing and then calculate all this shit
-			var start: Vector3 = diskContainer.position
-			var startControl: Vector3 = Vector3(start.x, start.y + 3, start.z - 4)
-			var end: Vector3 = Vector3(start.x, start.y, -20)
-			var endControl: Vector3 = Vector3(end.x, startControl.y, -17)
-			DrawUtil.curve(start, startControl, endControl, end)
-			
+			# TODO Instead of having aiming node in here spawn it in scene so it stays on floor and have it just track x and z positions
+			aimingNode.position.x = diskLauncher.global_position.x
+			aimingNode.position.z = diskLauncher.global_position.z
+			aimingNode.basis = diskLauncher.global_basis
+			var translateVector: Vector3 = Vector3(0, 0, -(heldTime * 10))
+			aimingNode.translate(translateVector)
+			DrawUtil.point(aimingNode.position)
 		if Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
-			var heldTime: float = stopwatch.getTime()
-			print("Primary was held for " + str(heldTime))
+			var multiplier = min(stopwatch.getTime(), GLOBAL_SETTINGS.DISK.MAX_HOLD)
 			stopwatch.reset()
-			var multiplier = min(heldTime, GLOBAL_SETTINGS.DISK.MAX_HOLD)
 			toggle_equiped(false)
 			var newDisk = thrownDisk.instantiate()
 			get_tree().get_root().add_child(newDisk)

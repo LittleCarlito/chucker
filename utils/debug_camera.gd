@@ -7,6 +7,9 @@ var main_cam : Camera3D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	# TODO Not sure why it defaults to this over ChuckCamera (probably because this is in the scene and chucks is in chuck)
+	#			BUT The reason "-" defaults back to tee box (toggle cameras below) is because that is main_cam so that makes sense
+	#			Could hard code it to go to chucks cam after leaving debug but that seems bad and gross
 	main_cam = get_viewport().get_camera_3d()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
