@@ -10,7 +10,6 @@ class_name ChuckChucker
 @onready var cameraController: Node3D = $CameraController
 @onready var frontDetection: ShapeCast3D = $FrontDetect
 var stopwatch: StopWatch = StopWatch.new()
-# TODO Draw bezier curve between launch container and aiming node using control nodes
 var aimingNode: Node3D = Node3D.new()
 var aimingControl: Node3D = Node3D.new()
 var launchControl: Node3D = Node3D.new()
@@ -83,13 +82,16 @@ func _handle_movement() -> void:
 	# Keep camera up
 	cameraController.position = lerp(cameraController.position, position, GLOBAL_SETTINGS.CAMERA.PAN_SPEED)
 
+# TODO Refactor this kind of functionality into the object and out of the character
 ## Power up launch and create aim line
 func _power_up_launch(delta: float) -> void:
 	stopwatch.isHeld(delta)
 	var heldTime: float = stopwatch.getTime()
+	# TODO Need aiming nodes to follow chuck if he falls (they stay on current plane)
+	# TODO Height of control nodes needs to be shorter to start with (beginning curve is huge)
+	# TODO AimControl point should start closer on z access and get further as you charge
 	# Handle aiming node
 	aimingNode.position = self.global_position
-	# TODO Need to get this to be the bottom of chuck and not stuck at y = 0 (when falling doesn't fall with chuck)
 	aimingNode.position.y = 0
 	aimingNode.basis = self.global_basis
 	var aimingTranslate: Vector3 = Vector3(0, 0, -(heldTime * 10))
@@ -97,18 +99,22 @@ func _power_up_launch(delta: float) -> void:
 	DrawUtil.point(aimingNode.position)
 	# Handle aiming control node
 	aimingControl.position = aimingNode.position
-	aimingControl.position.y += 7
+	aimingControl.position.y += 1 + (.6 * heldTime)
 	aimingControl.basis = aimingNode.basis
-	var aimControlTranslate: Vector3 = Vector3(0, 0, -((heldTime * 10)) + 2)
+	var zDistance: float = diskContainer.position.z - aimingNode.position.z
+	var aimControlTranslate: Vector3 = Vector3(0, 0, (zDistance/2))
 	aimingControl.translate(aimControlTranslate)
 	DrawUtil.point(aimingControl.position, .05, Color.ORANGE_RED)
 	# Handle launch control node
 	launchControl.position = self.global_position
-	launchControl.position.y = aimingControl.position.y
-	launchControl.basis = diskLauncher.global_basis
-	var launchControlTranslate: Vector3 = Vector3(0, 0, -(heldTime * 3) - 4)
+	launchControl.position.y = min(aimingControl.position.y, 2)
+	launchControl.basis = diskContainer.global_basis
+	var launchControlTranslate: Vector3 = Vector3(0, 0, -(zDistance/2))
 	launchControl.translate(launchControlTranslate)
 	DrawUtil.point(launchControl.position, .05, Color.DEEP_PINK)
+	print("zDistance " + str(zDistance))
+	# Draw curve
+	DrawUtil.curve(diskLauncher.global_position, launchControl.position, aimingControl.position, aimingNode.position)
 
 ## Launch disk and reset objects
 func _launch_disk() -> void:
