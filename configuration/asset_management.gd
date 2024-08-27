@@ -2,10 +2,6 @@ extends Node
 
 class_name ASSET_MANAGEMENT 
 
-const FIRST_HOLE = {
-	"DRAW_UTIL": "TODO ADD THIS"
-}
-
 const DISK = {
 	"SCENE": "res://assets/ChuckDisk.tscn",
 	"NAME": "ChuckDisk",

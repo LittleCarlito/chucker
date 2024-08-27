@@ -1,6 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://cdkknjflehfgx"]
+[gd_scene load_steps=9 format=3 uid="uid://cdkknjflehfgx"]
 
 [ext_resource type="Script" path="res://assets/chuck_chucker.gd" id="1_hnkcf"]
+[ext_resource type="PackedScene" uid="uid://cfb8nwjdbjdsi" path="res://assets/PlayerDisk.tscn" id="2_jse6k"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h7ubf"]
 albedo_color = Color(0.41528, 0.3828, 0.87, 1)
@@ -22,13 +23,6 @@ rings = 13
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3pknt"]
 size = Vector3(1.2, 1.2, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y830f"]
-albedo_color = Color(0.93, 0.3441, 0.3441, 1)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_jb4eq"]
-material = SubResource("StandardMaterial3D_y830f")
-height = 0.1
 
 [node name="ChuckChucker" type="CharacterBody3D"]
 transform = Transform3D(0.999997, 0.00223599, -0.000878929, -0.00223614, 0.999997, -0.000169186, 0.000878546, 0.000171164, 1, 0, 0, 0)
@@ -64,10 +58,7 @@ transform = Transform3D(1, 4.32934e-10, 1.16415e-10, -4.46363e-11, 1, 0, -1.1641
 [node name="DiskContainer" type="Node3D" parent="DiskController"]
 
 [node name="DiskLauncher" type="Node3D" parent="DiskController/DiskContainer"]
-transform = Transform3D(1, 6.65779e-10, 1.74623e-10, -4.46647e-11, 1, -1.45519e-11, -1.74623e-10, 4.36557e-11, 1, -3.33721e-10, 1.19209e-07, -0.481241)
+transform = Transform3D(1, 6.65779e-10, 1.74623e-10, -4.46647e-11, 1, -1.45519e-11, -1.74623e-10, 4.36557e-11, 1, 0, 0, 0)
 
-[node name="PlayerDisk" type="MeshInstance3D" parent="DiskController/DiskContainer"]
+[node name="PlayerDisk" parent="DiskController/DiskContainer/DiskLauncher" instance=ExtResource("2_jse6k")]
 visible = false
-mesh = SubResource("CylinderMesh_jb4eq")
-
-[node name="CSGMesh3D" type="CSGMesh3D" parent="DiskController/DiskContainer"]
