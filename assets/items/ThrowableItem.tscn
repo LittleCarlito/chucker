@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dvpdxw77i6m4u"]
+
+[ext_resource type="Script" path="res://assets/items/throwable_item.gd" id="1_pvhsn"]
+
+[node name="MeshInstance3D" type="MeshInstance3D"]
+script = ExtResource("1_pvhsn")

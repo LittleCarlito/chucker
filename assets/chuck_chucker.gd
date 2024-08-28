@@ -5,7 +5,7 @@ class_name ChuckChucker
 
 @onready var diskController: Node3D = $DiskController
 @onready var diskContainer: Node3D = $DiskController/DiskContainer
-@onready var playerDisk: PlayerDisk = $DiskController/DiskContainer/DiskLauncher/PlayerDisk
+@onready var playerDisk: ThrowableItem = $DiskController/DiskContainer/DiskLauncher/PlayerDisk
 @onready var diskLauncher: Node3D = $DiskController/DiskContainer/DiskLauncher
 @onready var cameraController: Node3D = $CameraController
 @onready var frontDetection: ShapeCast3D = $FrontDetect
@@ -28,9 +28,9 @@ func _physics_process(delta: float) -> void:
 func _handle_player_action(delta: float) -> void:
 	#if playerDisk.visible:
 		if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
-			playerDisk.power_up_launch(delta)
+			playerDisk.hold_action(delta)
 		if Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
-			playerDisk.launch_disk()
+			playerDisk.release_action()
 
 ## Actions to be performed when MOVE_JUMP is pressed
 func _handle_jump(delta: float) -> void:

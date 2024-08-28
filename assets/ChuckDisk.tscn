@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://blwwfxseykyuy"]
 
 [ext_resource type="Script" path="res://assets/chuck_disk.gd" id="1_gtghv"]
-[ext_resource type="PackedScene" uid="uid://cfb8nwjdbjdsi" path="res://assets/PlayerDisk.tscn" id="2_wfe24"]
+[ext_resource type="PackedScene" uid="uid://cfb8nwjdbjdsi" path="res://assets/items/PlayerDisk.tscn" id="2_wfe24"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_ubnpb"]
 height = 0.1

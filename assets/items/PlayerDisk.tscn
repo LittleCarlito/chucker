@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://cfb8nwjdbjdsi"]
+
+[ext_resource type="CylinderMesh" uid="uid://bwc6i6by0861c" path="res://assets/ChuckChucker.tres" id="1_dnal6"]
+[ext_resource type="Script" path="res://assets/items/player_disk.gd" id="2_y13dw"]
+
+[node name="PlayerDisk" type="MeshInstance3D"]
+mesh = ExtResource("1_dnal6")
+script = ExtResource("2_y13dw")

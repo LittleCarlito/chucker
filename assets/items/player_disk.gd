@@ -1,5 +1,4 @@
-extends MeshInstance3D
-class_name PlayerDisk
+extends ThrowableItem
 
 @export var thrownDisk: PackedScene = load(ASSET_MANAGEMENT.DISK.SCENE)
 
@@ -13,19 +12,15 @@ func _ready() -> void:
 	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 ## Power up launch and create aim line
-func power_up_launch(delta: float) -> void:
+func hold_action(delta: float) -> void:
 	stopwatch.isHeld(delta)
 	var heldTime: float = stopwatch.getTime()
-	# TODO Need aiming nodes to follow chuck if he falls (they stay on current plane)
-	# TODO Height of control nodes needs to be shorter to start with (beginning curve is huge)
-	# TODO AimControl point should start closer on z access and get further as you charge
 	# Handle aiming node
 	aimNode.position = self.global_position
-	aimNode.position.y = 0
 	aimNode.basis = self.global_basis
 	var aimTranslate: Vector3 = Vector3(0, 0, -(heldTime * 10))
 	aimNode.translate(aimTranslate)
@@ -34,7 +29,6 @@ func power_up_launch(delta: float) -> void:
 	aimControl.position = aimNode.position
 	aimControl.position.y += 1 + (.6 * heldTime)
 	aimControl.basis = aimNode.basis
-	# TODO Refactor to make this realtive to the disk instead of chuck stuff
 	var zDistance: float = self.position.z - aimNode.position.z
 	var aimControlTranslate: Vector3 = Vector3(0, 0, (zDistance/2))
 	aimControl.translate(aimControlTranslate)
@@ -51,10 +45,9 @@ func power_up_launch(delta: float) -> void:
 	DrawUtil.curve(self.global_position, launchControl.position, aimControl.position, aimNode.position)
 
 ## Launch disk and reset objects
-func launch_disk() -> void:
+func release_action() -> void:
 	var multiplier = min(stopwatch.getTime(), GLOBAL_SETTINGS.DISK.MAX_HOLD)
 	stopwatch.reset()
-	var willWork = thrownDisk.can_instantiate();
 	var newDisk = thrownDisk.instantiate()
 	get_tree().get_root().add_child(newDisk)
 	newDisk.global_transform = self.global_transform
