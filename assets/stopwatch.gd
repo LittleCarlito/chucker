@@ -13,8 +13,9 @@ func _process(_delta: float) -> void:
 	pass
 
 ## Sets isHeld timer to true to begin accumulating time
-func isHeld(delta: float) -> void:
+func isHeld(delta: float) -> float:
 	heldTime += delta
+	return heldTime
 
 ## Returns how long isHeld was enabled
 func getTime() -> float:

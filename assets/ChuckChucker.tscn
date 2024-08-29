@@ -25,7 +25,7 @@ rings = 13
 size = Vector3(1.2, 1.2, 1)
 
 [node name="ChuckChucker" type="CharacterBody3D"]
-transform = Transform3D(0.999997, 0.00223599, -0.000878929, -0.00223614, 0.999997, -0.000169186, 0.000878546, 0.000171164, 1, 0, 0, 0)
+transform = Transform3D(0.999997, 0.00223599, -0.000878929, -0.00223614, 0.999997, -0.000169186, 0.000878546, 0.000171164, 1, 0.001, 0.5, 0)
 collision_mask = 2
 script = ExtResource("1_hnkcf")
 

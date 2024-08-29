@@ -17,6 +17,9 @@ config/icon="res://resources/icon.svg"
 [autoload]
 
 DrawUtil="*res://utils/draw_util.gd"
+MeasureUtil="*res://utils/measure_util.gd"
+ProjectGlobal="*res://utils/project_global.gd"
+Logger="*res://utils/logger.gd"
 
 [input]
 

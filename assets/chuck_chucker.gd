@@ -16,8 +16,10 @@ var launchControl: Node3D = Node3D.new()
 
 func _ready() -> void: 
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	ProjectGlobal.Player.FootLevel = diskController.position.y
 
 func _physics_process(delta: float) -> void:
+	ProjectGlobal.Player.FootLevel = self.global_position.y
 	self._handle_jump(delta)
 	self._handle_camera_controls()
 	self._handle_player_action(delta)
