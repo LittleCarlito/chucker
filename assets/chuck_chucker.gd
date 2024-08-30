@@ -16,10 +16,8 @@ var launchControl: Node3D = Node3D.new()
 
 func _ready() -> void: 
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	ProjectGlobal.Player.FootLevel = diskController.position.y
 
 func _physics_process(delta: float) -> void:
-	ProjectGlobal.Player.FootLevel = self.global_position.y
 	self._handle_jump(delta)
 	self._handle_camera_controls()
 	self._handle_player_action(delta)
@@ -53,9 +51,9 @@ func _handle_camera_controls() -> void:
 		rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 	if playerDisk.visible:
 		if Input.is_action_just_pressed(USER_INPUT.ROTATE.UP):
-			diskContainer.rotate_x(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+			diskController.rotate_x(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 		if Input.is_action_just_pressed(USER_INPUT.ROTATE.DOWN):
-			diskContainer.rotate_x(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+			diskController.rotate_x(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 
 ## Handle player pressing interact button
 func _handle_player_interact() -> void:

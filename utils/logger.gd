@@ -31,3 +31,8 @@ func error(log: String, params: Array) -> void:
 func _print(log: String, params: Array) -> void:
 	var logString: String = log % params
 	print(logString)
+
+# TODO Need ability to identify callers and format logs to make it clear who says what
+# TODO Need to set project settings to output to a file
+# TODO Need to have this util manage that file output and keep it tidy
+#		Including creating new files and cleaning up old
