@@ -25,14 +25,14 @@ rings = 13
 size = Vector3(1.2, 1.2, 1)
 
 [node name="ChuckChucker" type="CharacterBody3D"]
-transform = Transform3D(0.999997, 0.00223599, -0.000878929, -0.00223614, 0.999997, -0.000169186, 0.000878546, 0.000171164, 1, 0.001, 0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 collision_mask = 2
 script = ExtResource("1_hnkcf")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="ChuckMesh" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_qdtv4")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ChuckMesh"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -1.45519e-11, -6.1771e-09, -0.141316)
 mesh = SubResource("CapsuleMesh_b4rvj")
 
@@ -55,10 +55,7 @@ transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 
 [node name="DiskController" type="Node3D" parent="."]
 transform = Transform3D(1, 4.32934e-10, 1.16415e-10, -4.46363e-11, 1, 0, -1.16415e-10, 2.91038e-11, 1, 4.50122e-10, 0.744641, 0)
 
-[node name="DiskContainer" type="Node3D" parent="DiskController"]
-
-[node name="DiskLauncher" type="Node3D" parent="DiskController/DiskContainer"]
-transform = Transform3D(1, 6.65779e-10, 1.74623e-10, -4.46647e-11, 1, -1.45519e-11, -1.74623e-10, 4.36557e-11, 1, 0, 0, 0)
-
-[node name="PlayerDisk" parent="DiskController/DiskContainer/DiskLauncher" instance=ExtResource("2_jse6k")]
+[node name="PlayerDisk" parent="DiskController" instance=ExtResource("2_jse6k")]
+transform = Transform3D(1, 8.98623e-10, 2.32831e-10, -4.46789e-11, 1, -1.45519e-11, -2.32831e-10, 5.82077e-11, 1, 0, 0, 0)
 visible = false
+skeleton = NodePath("")

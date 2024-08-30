@@ -1,21 +1,23 @@
+## TODO Make an interface like you did for ThrowableItem but make it a PlayableCharacter
 extends CharacterBody3D
 class_name ChuckChucker
 
 @export var thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.SCENE)
 
 @onready var diskController: Node3D = $DiskController
-@onready var diskContainer: Node3D = $DiskController/DiskContainer
-@onready var playerDisk: ThrowableItem = $DiskController/DiskContainer/DiskLauncher/PlayerDisk
-@onready var diskLauncher: Node3D = $DiskController/DiskContainer/DiskLauncher
+@onready var playerDisk: ThrowableItem = $DiskController/PlayerDisk
 @onready var cameraController: Node3D = $CameraController
 @onready var frontDetection: ShapeCast3D = $FrontDetect
+@onready var chuckMesh: MeshInstance3D = $ChuckMesh
 var stopwatch: StopWatch = StopWatch.new()
 var aimingNode: Node3D = Node3D.new()
 var aimingControl: Node3D = Node3D.new()
 var launchControl: Node3D = Node3D.new()
+var height: float
 
 func _ready() -> void: 
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	height = chuckMesh.get_aabb().size.y
 
 func _physics_process(delta: float) -> void:
 	self._handle_jump(delta)
@@ -85,3 +87,7 @@ func _handle_movement() -> void:
 ## Toggles the visibility logic when character has item equiped
 func toggle_equiped(value: bool) -> void:
 	playerDisk.visible = value
+
+## Returns the height of Chuck
+func get_height() -> float:
+	return height

@@ -1,7 +1,7 @@
 extends Node
 class_name APP
 
-const EXCLUDE_BODIES = ["ChuckChucker"]
+const CHARACTER_BODIES = ["ChuckChucker"]
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

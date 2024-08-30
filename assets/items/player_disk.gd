@@ -47,11 +47,14 @@ func hold_action(delta: float) -> void:
 	var isParentGrounded: bool = NodeUtil.is_parent_grounded(self)
 	if(isParentGrounded):
 		# TODO Redo how chuck is holding the disk so that this is grounded or this * 2 is grounded
-		verticalTranslate = -NodeUtil.get_parent_heights(0, self)
+		var parentHeights: float = NodeUtil.get_parent_heights(0, self)
+		verticalTranslate = -parentHeights
 	else:
 		# TODO Here is where you left off; Figure out how to offset jumping now that you know your airborne
 		# TODO I think the key is just getting the node containing this one directly and setting all measurements/positions on that to try and hold them steady (fewer involved variables)
 		pass
+	var heightLogString: String = "Vertical height translate is \"%s\""
+	Logger.debug(heightLogString, [verticalTranslate])
 	var aimTranslate: Vector3 = Vector3(0, verticalTranslate, -(GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier))
 	aimNode.translate(aimTranslate)
 	DrawUtil.point(aimNode.position)
@@ -66,7 +69,7 @@ func hold_action(delta: float) -> void:
 	# Draw curve
 	DrawUtil.curve(self.global_position, launchControl.position, aimControl.position, aimNode.position)
 	var formatString: String = "zDistance: \"%s\", heldTime: \"%s\""
-	Logger.debug(formatString, [str(zDistance), str(heldTime)])
+	#Logger.debug(formatString, [str(zDistance), str(heldTime)])
 
 ## Launch disk and reset objects
 func release_action() -> void:
