@@ -36,3 +36,4 @@ func _print(printLog: String, params: Array) -> void:
 # TODO Need to set project settings to output to a file
 # TODO Need to have this util manage that file output and keep it tidy
 #		Including creating new files and cleaning up old
+# TODO Figure out how to handle exceptions and crash during certain ones

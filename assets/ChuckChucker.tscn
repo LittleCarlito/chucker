@@ -25,7 +25,6 @@ rings = 13
 size = Vector3(1.2, 1.2, 1)
 
 [node name="ChuckChucker" type="CharacterBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 collision_mask = 2
 script = ExtResource("1_hnkcf")
 
@@ -56,6 +55,5 @@ transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.50122e-10, 0.744641, 0)
 
 [node name="PlayerDisk" parent="DiskController" instance=ExtResource("2_jse6k")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 visible = false
 skeleton = NodePath("")

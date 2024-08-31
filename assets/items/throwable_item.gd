@@ -1,4 +1,4 @@
-extends MeshInstance3D
+extends EquipableItem
 class_name ThrowableItem
 
 # Called when the node enters the scene tree for the first time.
