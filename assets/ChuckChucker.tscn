@@ -53,9 +53,9 @@ transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 
 [node name="ChuckCamera" type="Camera3D" parent="CameraController/CameraTarget"]
 
 [node name="DiskController" type="Node3D" parent="."]
-transform = Transform3D(1, 4.32934e-10, 1.16415e-10, -4.46363e-11, 1, 0, -1.16415e-10, 2.91038e-11, 1, 4.50122e-10, 0.744641, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.50122e-10, 0.744641, 0)
 
 [node name="PlayerDisk" parent="DiskController" instance=ExtResource("2_jse6k")]
-transform = Transform3D(1, 8.98623e-10, 2.32831e-10, -4.46789e-11, 1, -1.45519e-11, -2.32831e-10, 5.82077e-11, 1, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 visible = false
 skeleton = NodePath("")

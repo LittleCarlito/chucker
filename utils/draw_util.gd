@@ -37,6 +37,8 @@ func line(pos1: Vector3, pos2: Vector3, color: Color = Color.AQUA, persistTime: 
 
 ## Draws a bezier curve between origin and destination
 func curve(start: Vector3, startControl: Vector3, endControl: Vector3, end: Vector3, pointCount: int = 20, color: Color = Color.RED, persistTime: float = 1) -> void:
+	# TODO Is there a way to extend this beyond the destination?
+	#		If so make extension an optional parameter
 	var curvePath: Array = []
 	for n in pointCount + 1:
 		curvePath.append(start.bezier_interpolate(startControl, endControl, end, (n * (1.0/float(pointCount)))))

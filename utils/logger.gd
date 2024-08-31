@@ -12,24 +12,24 @@ var LOG_LEVEL: LEVEL = LEVEL.INFO
 func set_log_level(level: LEVEL) -> void:
 	self.LOG_LEVEL = level
 
-func debug(log: String, params: Array) -> void:
+func debug(debugLog: String, params: Array) -> void:
 	if LOG_LEVEL <= LEVEL.DEBUG:
-		_print(log, params)
+		_print(debugLog, params)
 
-func info(log: String, params: Array) -> void:
+func info(infoLog: String, params: Array) -> void:
 	if LOG_LEVEL <= LEVEL.INFO:
-		_print(log, params)
+		_print(infoLog, params)
 
-func warn(log: String, params: Array) -> void:
+func warn(warnLog: String, params: Array) -> void:
 	if LOG_LEVEL <= LEVEL.WARN:
-		_print(log, params)
+		_print(warnLog, params)
 
-func error(log: String, params: Array) -> void:
+func error(errorLog: String, params: Array) -> void:
 	if LOG_LEVEL <= LEVEL.ERROR:
-		_print(log, params)
+		_print(errorLog, params)
 
-func _print(log: String, params: Array) -> void:
-	var logString: String = log % params
+func _print(printLog: String, params: Array) -> void:
+	var logString: String = printLog % params
 	print(logString)
 
 # TODO Need ability to identify callers and format logs to make it clear who says what
