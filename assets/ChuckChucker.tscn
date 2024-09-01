@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://cdkknjflehfgx"]
 
 [ext_resource type="Script" path="res://assets/chuck_chucker.gd" id="1_hnkcf"]
-[ext_resource type="PackedScene" uid="uid://cfb8nwjdbjdsi" path="res://assets/items/PlayerDisk.tscn" id="2_jse6k"]
+[ext_resource type="PackedScene" uid="uid://cfb8nwjdbjdsi" path="res://assets/items/PlayerDisk.tscn" id="2_ooco1"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h7ubf"]
 albedo_color = Color(0.41528, 0.3828, 0.87, 1)
@@ -54,6 +54,4 @@ transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 
 [node name="DiskController" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.50122e-10, 0.744641, 0)
 
-[node name="PlayerDisk" parent="DiskController" instance=ExtResource("2_jse6k")]
-visible = false
-skeleton = NodePath("")
+[node name="PlayerDisk" parent="DiskController" instance=ExtResource("2_ooco1")]

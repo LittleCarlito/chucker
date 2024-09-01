@@ -1,8 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://bjbxh0c23iyi4"]
-
-[ext_resource type="CylinderMesh" uid="uid://bwc6i6by0861c" path="res://assets/ChuckChucker.tres" id="1_j5qla"]
-[ext_resource type="Script" path="res://assets/items/tracer_disk.gd" id="2_gudau"]
-
-[node name="TracerDisk" type="MeshInstance3D"]
-mesh = ExtResource("1_j5qla")
-script = ExtResource("2_gudau")

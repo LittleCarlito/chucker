@@ -2,8 +2,6 @@
 extends CharacterBody3D
 class_name ChuckChucker
 
-@export var thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.SCENE)
-
 @onready var diskController: Node3D = $DiskController
 @onready var playerDisk: ThrowableItem = $DiskController/PlayerDisk
 @onready var cameraController: Node3D = $CameraController
