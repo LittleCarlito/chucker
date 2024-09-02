@@ -26,6 +26,7 @@ func hold_action(delta: float) -> void:
 	var height: float = NodeUtil.get_parent_heights(self)
 	var throwSpeed: float = GLOBAL_SETTINGS.DISK.LAUNCH_SPEED
 	var zDistance: float = NodeUtil.calculate_range(height, gravity, parentRotation, throwSpeed)
+	# TODO Now that the estimated launch distance is correct figure out what to set the control nodes as
 	# Handle aiming node
 	stopWatch.isHeld(delta)
 	aimNode.position = self.global_position
@@ -34,18 +35,20 @@ func hold_action(delta: float) -> void:
 	var aimTranslate: Vector3 = Vector3(0, -height, -zDistance)
 	aimNode.translate(aimTranslate)
 	DrawUtil.point(aimNode.position)
-	# Handle aim control node
-	aimControlNode.position = self.global_position
-	aimControlNode.basis = self.global_basis
-	var aimControlTranslate: Vector3 = Vector3(0, 0, -GLOBAL_SETTINGS.DISK.LAUNCH_SPEED)
-	aimControlNode.translate(aimControlTranslate)
-	DrawUtil.point(aimControlNode.position, .05, Color.DEEP_PINK)
 	# Handle launch control node
 	launchControlNode.position = self.global_position
 	launchControlNode.basis = self.global_basis
-	var launchControlTranslate: Vector3 = Vector3(0, 0, 0)
+	var launchControlTranslate: Vector3 = Vector3(0, 0, -(zDistance/3))
 	launchControlNode.translate(launchControlTranslate)
 	DrawUtil.point(launchControlNode.position, .05, Color.BLUE)
+	# Handle aim control node
+	aimControlNode.position = aimNode.position
+	aimControlNode.position.y = launchControlNode.position.y
+	var rotationAdjust: float = deg_to_rad(parentRotation) * 2.25
+	aimControlNode.basis = self.global_basis
+	var aimControlTranslate: Vector3 = Vector3(0, rotationAdjust, zDistance/4 + -rotationAdjust)
+	aimControlNode.translate(aimControlTranslate)
+	DrawUtil.point(aimControlNode.position, .05, Color.DEEP_PINK)
 	# Draw the curve
 	DrawUtil.curve(self.global_position, launchControlNode.position, aimControlNode.position, aimNode.position)
 
