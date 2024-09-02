@@ -11,6 +11,7 @@ var stopWatch: StopWatch = StopWatch.new()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	Logger.set_log_level(Logger.LEVEL.DEBUG)
 	pass # Replace with function body.
 
 
@@ -20,17 +21,23 @@ func _process(_delta: float) -> void:
 
 
 func hold_action(delta: float) -> void:
+	var gravity: float = abs(NodeUtil.get_gravity(self).y)
+	var parentRotation: float = NodeUtil.get_parent_x_rotation(self)
+	var height: float = NodeUtil.get_parent_heights(self)
+	var throwSpeed: float = GLOBAL_SETTINGS.DISK.LAUNCH_SPEED
+	var zDistance: float = NodeUtil.calculate_range(height, gravity, parentRotation, throwSpeed)
 	# Handle aiming node
 	stopWatch.isHeld(delta)
 	aimNode.position = self.global_position
 	aimNode.basis = self.global_basis
-	var aimTranslate: Vector3 = Vector3(0, NodeUtil.get_gravity(self).y, -GLOBAL_SETTINGS.DISK.LAUNCH_SPEED)
+	aimNode.rotation_degrees.x = 0
+	var aimTranslate: Vector3 = Vector3(0, -height, -zDistance)
 	aimNode.translate(aimTranslate)
 	DrawUtil.point(aimNode.position)
 	# Handle aim control node
-	aimControlNode.position = aimNode.position
+	aimControlNode.position = self.global_position
 	aimControlNode.basis = self.global_basis
-	var aimControlTranslate: Vector3 = Vector3(0, -NodeUtil.get_gravity(self).y, 0)
+	var aimControlTranslate: Vector3 = Vector3(0, 0, -GLOBAL_SETTINGS.DISK.LAUNCH_SPEED)
 	aimControlNode.translate(aimControlTranslate)
 	DrawUtil.point(aimControlNode.position, .05, Color.DEEP_PINK)
 	# Handle launch control node
@@ -50,4 +57,3 @@ func release_action() -> void:
 	newDisk.global_transform = self.global_transform
 	newDisk.linear_velocity = -newDisk.global_transform.basis.z * GLOBAL_SETTINGS.DISK.LAUNCH_SPEED
 	self.rotation.x = 0
-	Logger.debug("\n\n\n\n\n", [])

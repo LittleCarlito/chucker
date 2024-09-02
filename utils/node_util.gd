@@ -38,3 +38,20 @@ func get_gravity(node: Node3D) -> Vector3:
 			return get_gravity(node.get_parent())
 	push_error("get_gravity for " + node.name + ", no parent object found; Returning empty vector")
 	return Vector3(0, 0, 0)
+
+## Calculates the trajectory distance given parameters
+func calculate_range(height: float, gravity: float, angle: float, velocity: float) -> float:
+	# Convert angle from degrees to radians if needed
+	angle = deg_to_rad(angle)  # Uncomment this if angle is given in degrees
+	# Calculate horizontal and vertical components of the velocity
+	var v0_x = velocity * cos(angle)
+	var v0_y = velocity * sin(angle)
+	# Calculate the time of flight using the quadratic formula
+	var discriminant = v0_y * v0_y + 2 * gravity * height
+	if discriminant < 0:
+		return 0  # The projectile does not reach the ground
+	var sqrt_discriminant = sqrt(discriminant)
+	var t = (v0_y + sqrt_discriminant) / gravity
+	# Calculate the range
+	var returnRange = v0_x * t
+	return returnRange

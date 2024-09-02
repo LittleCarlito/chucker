@@ -12,27 +12,29 @@ var LOG_LEVEL: LEVEL = LEVEL.INFO
 func set_log_level(level: LEVEL) -> void:
 	self.LOG_LEVEL = level
 
-func debug(debugLog: String, params: Array) -> void:
+func debug(debugLog: String, params: Array, caller: Object) -> void:
 	if LOG_LEVEL <= LEVEL.DEBUG:
-		_print(debugLog, params)
+		_print(debugLog, params, caller)
 
-func info(infoLog: String, params: Array) -> void:
+func info(infoLog: String, params: Array, caller: Object) -> void:
 	if LOG_LEVEL <= LEVEL.INFO:
-		_print(infoLog, params)
+		_print(infoLog, params, caller)
 
-func warn(warnLog: String, params: Array) -> void:
+func warn(warnLog: String, params: Array, caller: Object) -> void:
 	if LOG_LEVEL <= LEVEL.WARN:
-		_print(warnLog, params)
+		_print(warnLog, params, caller)
 
-func error(errorLog: String, params: Array) -> void:
+func error(errorLog: String, params: Array, caller: Object) -> void:
 	if LOG_LEVEL <= LEVEL.ERROR:
-		_print(errorLog, params)
+		_print(errorLog, params, caller)
 
-func _print(printLog: String, params: Array) -> void:
+func _print(printLog: String, params: Array, caller: Object) -> void:
+	var timeStamp: String = Time.get_datetime_string_from_system()
 	var logString: String = printLog % params
-	print(logString)
+	var formatString: String =  "%s - %s: %s"
+	var formattedLogString: String = formatString % [timeStamp, caller.get("name"), logString]
+	print(formattedLogString)
 
-# TODO Need ability to identify callers and format logs to make it clear who says what
 # TODO Need to set project settings to output to a file
 # TODO Need to have this util manage that file output and keep it tidy
 #		Including creating new files and cleaning up old

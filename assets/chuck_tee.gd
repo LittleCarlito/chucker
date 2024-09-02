@@ -17,7 +17,7 @@ func _on_tee_box_area_body_entered(body: Node3D) -> void:
 		$CameraController/CameraTarget/TeeboxCamera.current = true
 		if(get_viewport().get_camera_3d() != null):
 			var formatString: String = "Current camera is %s"
-			Logger.debug(formatString, [get_viewport().get_camera_3d().name])
+			Logger.debug(formatString, [get_viewport().get_camera_3d().name], self)
 
 
 
@@ -26,4 +26,4 @@ func _on_tee_box_area_body_exited(body: Node3D) -> void:
 		$CameraController/CameraTarget/TeeboxCamera.current = false
 		if(get_viewport().get_camera_3d() != null):
 			var formatString: String = "Current camera is %s"
-			Logger.debug(formatString, [get_viewport().get_camera_3d().name])
+			Logger.debug(formatString, [get_viewport().get_camera_3d().name], self)
