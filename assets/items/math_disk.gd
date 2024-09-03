@@ -9,6 +9,7 @@ class_name MathDisk
 var stopWatch: StopWatch = StopWatch.new()
 
 # TODO Add charge meter
+#		Viewport with CanvasItem ProgressBar that fills up as heldTime approaches MAX_HOLD_TIME
 # TODO Add charge effects
 # TODO Add "perfect" release window
 # TODO Give "perfect" release different effects
