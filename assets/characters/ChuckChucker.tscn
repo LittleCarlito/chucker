@@ -55,3 +55,4 @@ transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.50122e-10, 0.744641, 0)
 
 [node name="MathDisk" parent="DiskController" instance=ExtResource("2_hycx8")]
+visible = false

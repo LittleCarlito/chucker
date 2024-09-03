@@ -1,6 +1,10 @@
 extends PlayableCharacter
 class_name ChuckChucker
 
+# TODO Have the spawned disks be equipable
+# TODO Spawned disks should determine what gets picked up
+# TODO Add scorecard
+
 @onready var diskController: Node3D = $DiskController
 @onready var playerDisk: ThrowableItem = $DiskController/MathDisk
 @onready var cameraController: Node3D = $CameraController
@@ -13,7 +17,6 @@ var launchControl: Node3D = Node3D.new()
 var height: float
 
 func _ready() -> void: 
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	height = chuckMesh.get_aabb().size.y
 
 func _physics_process(delta: float) -> void:
@@ -25,11 +28,12 @@ func _physics_process(delta: float) -> void:
 
 ## Actions when disk is thrown
 func _handle_player_action(delta: float) -> void:
-	#if playerDisk.visible:
+	if playerDisk.visible:
 		if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
 			playerDisk.hold_action(delta)
 		if Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
 			playerDisk.release_action()
+			toggle_equiped(false)
 
 ## Actions to be performed when MOVE_JUMP is pressed
 func _handle_jump(delta: float) -> void:
@@ -71,8 +75,12 @@ func _handle_movement() -> void:
 	if(is_on_floor()):
 		var direction = (cameraController.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		if direction:
-			velocity.x = direction.x * GLOBAL_SETTINGS.PLAYER.RUN_SPEED
-			velocity.z = direction.z * GLOBAL_SETTINGS.PLAYER.RUN_SPEED
+			if is_equipped():
+				velocity.x = 0
+				velocity.z = 0
+			else:
+				velocity.x = direction.x * GLOBAL_SETTINGS.PLAYER.RUN_SPEED
+				velocity.z = direction.z * GLOBAL_SETTINGS.PLAYER.RUN_SPEED
 		# Otherwise set velocity to start slowing down
 		else:
 			velocity.x = move_toward(velocity.x, 0, GLOBAL_SETTINGS.PLAYER.RUN_SPEED)
@@ -84,6 +92,10 @@ func _handle_movement() -> void:
 ## Toggles the visibility logic when character has item equiped
 func toggle_equiped(value: bool) -> void:
 	playerDisk.visible = value
+
+## Returns if character has item equipped
+func is_equipped() -> bool:
+	return playerDisk.visible
 
 ## Returns the height of Chuck
 func get_height() -> float:
