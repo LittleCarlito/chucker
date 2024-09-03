@@ -1,5 +1,5 @@
 extends ThrowableItem
-class_name PlayerDisk
+class_name MathDisk
 
 @export var thrownDisk: PackedScene = load(ASSET_MANAGEMENT.DISK.SCENE)
 
@@ -8,6 +8,10 @@ class_name PlayerDisk
 @onready var launchControlNode: Node3D = Node3D.new()
 var stopWatch: StopWatch = StopWatch.new()
 
+# TODO Add charge meter
+# TODO Add charge effects
+# TODO Add "perfect" release window
+# TODO Give "perfect" release different effects
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -21,14 +25,14 @@ func _process(_delta: float) -> void:
 
 
 func hold_action(delta: float) -> void:
+	var heldTime: float = stopWatch.isHeld(delta)
+	var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, heldTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
 	var gravity: float = abs(NodeUtil.get_gravity(self).y)
 	var parentRotation: float = NodeUtil.get_parent_x_rotation(self)
 	var height: float = NodeUtil.get_parent_heights(self)
-	var throwSpeed: float = GLOBAL_SETTINGS.DISK.LAUNCH_SPEED
+	var throwSpeed: float = GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier
 	var zDistance: float = NodeUtil.calculate_range(height, gravity, parentRotation, throwSpeed)
-	# TODO Now that the estimated launch distance is correct figure out what to set the control nodes as
 	# Handle aiming node
-	stopWatch.isHeld(delta)
 	aimNode.position = self.global_position
 	aimNode.basis = self.global_basis
 	aimNode.rotation_degrees.x = 0
@@ -54,9 +58,10 @@ func hold_action(delta: float) -> void:
 
 ## Launch disk and reset objects
 func release_action() -> void:
-	stopWatch.reset()
+	var finalTime: float = stopWatch.reset()
+	var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, finalTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
 	var newDisk = thrownDisk.instantiate()
 	get_tree().get_root().add_child(newDisk)
 	newDisk.global_transform = self.global_transform
-	newDisk.linear_velocity = -newDisk.global_transform.basis.z * GLOBAL_SETTINGS.DISK.LAUNCH_SPEED
+	newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)
 	self.rotation.x = 0

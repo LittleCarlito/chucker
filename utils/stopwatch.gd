@@ -22,5 +22,7 @@ func getTime() -> float:
 	return heldTime
 
 ## Resets heldTime to 0
-func reset() -> void:
+func reset() -> float:
+	var finalTime: float = heldTime
 	heldTime = 0.0
+	return finalTime

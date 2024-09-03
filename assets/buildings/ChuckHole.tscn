@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://bpn27qpg2rm8c"]
 
-[ext_resource type="Script" path="res://assets/chuck_hole.gd" id="1_b7aec"]
+[ext_resource type="Script" path="res://assets/buildings/chuck_hole.gd" id="1_b7aec"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sj51i"]
 albedo_color = Color(0.8, 0.693333, 0, 1)

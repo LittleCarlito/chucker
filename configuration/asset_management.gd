@@ -3,7 +3,7 @@ extends Node
 class_name ASSET_MANAGEMENT 
 
 const DISK = {
-	"SCENE": "res://assets/ChuckDisk.tscn",
+	"SCENE": "res://assets/items/ChuckDisk.tscn",
 	"NAME": "ChuckDisk",
 }
 

@@ -1,61 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://iik653ttsuir"]
+[gd_scene load_steps=3 format=3 uid="uid://cfb8nwjdbjdsi"]
 
 [ext_resource type="CylinderMesh" uid="uid://bwc6i6by0861c" path="res://assets/items/DiskMesh.tres" id="1_mlfx0"]
-
-[sub_resource type="GDScript" id="GDScript_jh58w"]
-script/source = "extends ThrowableItem
-class_name TracerDisk
-
-@export var thrownDisk: PackedScene = load(ASSET_MANAGEMENT.DISK.SCENE)
-
-@onready var aimNode: Node3D = Node3D.new()
-@onready var aimControlNode: Node3D = Node3D.new()
-@onready var launchControlNode: Node3D = Node3D.new()
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
-
-
-func hold_action(_delta: float) -> void:
-	# Handle aiming node
-	aimNode.position = self.global_position
-	aimNode.basis = self.global_basis
-	var aimTranslate: Vector3 = Vector3(0, NodeUtil.get_gravity(self).y, -GLOBAL_SETTINGS.DISK.LAUNCH_SPEED)
-	aimNode.translate(aimTranslate)
-	DrawUtil.point(aimNode.position)
-	# Handle aim control node
-	aimControlNode.position = aimNode.position
-	aimControlNode.basis = self.global_basis
-	var aimControlTranslate: Vector3 = Vector3(0, -NodeUtil.get_gravity(self).y, 0)
-	aimControlNode.translate(aimControlTranslate)
-	DrawUtil.point(aimControlNode.position, .05, Color.DEEP_PINK)
-	# TODO Make launchControlNode halfway between aimControlNode and launch point
-	# Handle launch control node
-	launchControlNode.position = self.global_position
-	launchControlNode.basis = self.global_basis
-	var launchControlTranslate: Vector3 = Vector3(0, 0, 0)
-	launchControlNode.translate(launchControlTranslate)
-	DrawUtil.point(launchControlNode.position, .05, Color.BLUE)
-	# TODO Draw curve
-	DrawUtil.curve(self.global_position, launchControlNode.position, aimControlNode.position, aimNode.position)
-
-## Launch disk and reset objects
-func release_action() -> void:
-	var newDisk = thrownDisk.instantiate()
-	get_tree().get_root().add_child(newDisk)
-	newDisk.global_transform = self.global_transform
-	newDisk.linear_velocity = -newDisk.global_transform.basis.z * GLOBAL_SETTINGS.DISK.LAUNCH_SPEED
-	self.rotation.x = 0
-	Logger.debug(\"\\n\\n\\n\\n\\n\", [])
-"
+[ext_resource type="Script" path="res://assets/items/math_disk.gd" id="2_o3qw3"]
 
 [node name="MathDisk" type="MeshInstance3D"]
 mesh = ExtResource("1_mlfx0")
-script = SubResource("GDScript_jh58w")
+script = ExtResource("2_o3qw3")

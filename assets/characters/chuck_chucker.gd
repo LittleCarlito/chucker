@@ -1,9 +1,8 @@
-## TODO Make an interface like you did for ThrowableItem but make it a PlayableCharacter
-extends CharacterBody3D
+extends PlayableCharacter
 class_name ChuckChucker
 
 @onready var diskController: Node3D = $DiskController
-@onready var playerDisk: ThrowableItem = $DiskController/PlayerDisk
+@onready var playerDisk: ThrowableItem = $DiskController/MathDisk
 @onready var cameraController: Node3D = $CameraController
 @onready var frontDetection: ShapeCast3D = $FrontDetect
 @onready var chuckMesh: MeshInstance3D = $ChuckMesh
