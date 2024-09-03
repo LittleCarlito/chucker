@@ -32,29 +32,27 @@ func hold_action(delta: float) -> void:
 	var height: float = NodeUtil.get_parent_heights(self)
 	var throwSpeed: float = GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier
 	var zDistance: float = NodeUtil.calculate_range(height, gravity, parentRotation, throwSpeed)
-	# Handle aiming node
+	var gravityAdjust: float = gravity * GLOBAL_SETTINGS.DISK.GRAVITY_MULTIPLIER
+	# Handle aimNode
 	aimNode.position = self.global_position
 	aimNode.basis = self.global_basis
 	aimNode.rotation_degrees.x = 0
-	var aimTranslate: Vector3 = Vector3(0, -height, -zDistance)
-	aimNode.translate(aimTranslate)
+	aimNode.translate(Vector3(0, -height, -zDistance))
 	DrawUtil.point(aimNode.position)
-	# Handle launch control node
+	# Handle launchControlNode
 	launchControlNode.position = self.global_position
 	launchControlNode.basis = self.global_basis
-	var launchControlTranslate: Vector3 = Vector3(0, 0, -(zDistance/3))
-	launchControlNode.translate(launchControlTranslate)
+	launchControlNode.translate(Vector3(0, 0, -zDistance / 3))
 	DrawUtil.point(launchControlNode.position, .05, Color.BLUE)
-	# Handle aim control node
+	# Handle aimControlNode
 	aimControlNode.position = aimNode.position
 	aimControlNode.position.y = launchControlNode.position.y
-	var rotationAdjust: float = deg_to_rad(parentRotation) * 2.25
-	aimControlNode.basis = self.global_basis
-	var aimControlTranslate: Vector3 = Vector3(0, rotationAdjust, zDistance/4 + -rotationAdjust)
-	aimControlNode.translate(aimControlTranslate)
+	var controlPointHeight: float = (zDistance / 2.0) * tan(deg_to_rad(parentRotation)) * gravityAdjust
+	aimControlNode.translate(Vector3(0, controlPointHeight, zDistance / 2.0))
 	DrawUtil.point(aimControlNode.position, .05, Color.DEEP_PINK)
 	# Draw the curve
 	DrawUtil.curve(self.global_position, launchControlNode.position, aimControlNode.position, aimNode.position)
+
 
 ## Launch disk and reset objects
 func release_action() -> void:

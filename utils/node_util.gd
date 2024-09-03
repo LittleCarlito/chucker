@@ -55,3 +55,4 @@ func calculate_range(height: float, gravity: float, angle: float, velocity: floa
 	# Calculate the range
 	var returnRange = v0_x * t
 	return returnRange
+	
