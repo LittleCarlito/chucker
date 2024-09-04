@@ -47,6 +47,7 @@ func hold_action(delta: float) -> void:
 	DrawUtil.point(launchControlNode.position, .05, Color.BLUE)
 	# Handle aimControlNode
 	aimControlNode.position = aimNode.position
+	aimControlNode.basis = self.global_basis
 	aimControlNode.position.y = launchControlNode.position.y
 	var controlPointHeight: float = (zDistance / 2.0) * tan(deg_to_rad(parentRotation)) * gravityAdjust
 	aimControlNode.translate(Vector3(0, controlPointHeight, zDistance / 2.0))
