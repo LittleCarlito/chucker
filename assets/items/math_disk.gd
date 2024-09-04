@@ -3,6 +3,8 @@ class_name MathDisk
 
 @export var thrownDisk: PackedScene = load(ASSET_MANAGEMENT.DISK.SCENE)
 
+@onready var chargeControl: ChargeBar = $ChargeView/ChargeControl
+@onready var chargeSprite: Sprite3D = $ChargeSprite
 @onready var aimNode: Node3D = Node3D.new()
 @onready var aimControlNode: Node3D = Node3D.new()
 @onready var launchControlNode: Node3D = Node3D.new()
@@ -22,11 +24,15 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	pass
-
+	if float(chargeControl.chargeAmount.text) > 0:
+		chargeSprite.visible = true
+	else:
+		chargeSprite.visible = false
 
 func hold_action(delta: float) -> void:
+	# TODO When launch point fully rotated on x axis still shows curve in negative z direction
 	var heldTime: float = stopWatch.isHeld(delta)
+	chargeControl.set_progress((heldTime/GLOBAL_SETTINGS.DISK.MAX_HOLD) * 100)
 	var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, heldTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
 	var gravity: float = abs(NodeUtil.get_gravity(self).y)
 	var parentRotation: float = NodeUtil.get_parent_x_rotation(self)
@@ -65,3 +71,4 @@ func release_action() -> void:
 	newDisk.global_transform = self.global_transform
 	newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)
 	self.rotation.x = 0
+	chargeControl.set_progress(0)
