@@ -1,18 +1,24 @@
 extends ThrowableItem
 class_name MathDisk
 
-@export var thrownDisk: PackedScene = load(ASSET_MANAGEMENT.DISK.SCENE)
-
 @onready var chargeControl: ChargeBar = $ChargeView/ChargeControl
 @onready var chargeSprite: Sprite3D = $ChargeSprite
 @onready var aimNode: Node3D = Node3D.new()
 @onready var aimControlNode: Node3D = Node3D.new()
 @onready var launchControlNode: Node3D = Node3D.new()
 var stopWatch: StopWatch = StopWatch.new()
+var fallbackCamera: Camera3D
 
 # TODO Add scorecard
-# TODO Have camera chase released disk
-#		Add camera to ChuckDisk that switches to it until velocity is 0 then is no longer current
+# TODO Aim points when angle is very high gets weird
+#		Aim at camera from far away with an angle; wonky axis movement
+#		Consider limiting how high you can rotate up and down
+# TODO Fix disk camera tracking when throwing in positive z direction
+# TODO Allow camera rotation when disk is airborne
+# TODO Disable character movement while disk camera is active
+#		Add method to toggle movement controls on ChuckChucker
+#		Have launching the disk disable character controls
+#		Use the camera timeout signal to re-enable character controls
 # TODO Add charge effects
 # TODO Add "perfect" release window
 # TODO Give "perfect" release different effects
@@ -20,8 +26,8 @@ var stopWatch: StopWatch = StopWatch.new()
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Logger.set_log_level(Logger.LEVEL.DEBUG)
-	pass # Replace with function body.
-
+	var ownerVar: ChuckChucker = self.owner
+	fallbackCamera = ownerVar.get_camera()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -67,7 +73,7 @@ func hold_action(delta: float) -> void:
 func release_action() -> void:
 	var finalTime: float = stopWatch.reset()
 	var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, finalTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
-	var newDisk = thrownDisk.instantiate()
+	var newDisk = ChuckDisk.new_disk(fallbackCamera)
 	get_tree().get_root().add_child(newDisk)
 	newDisk.global_transform = self.global_transform
 	newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)

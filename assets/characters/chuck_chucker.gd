@@ -10,6 +10,7 @@ class_name ChuckChucker
 @onready var cameraController: Node3D = $CameraController
 @onready var frontDetection: ShapeCast3D = $FrontDetect
 @onready var chuckMesh: MeshInstance3D = $ChuckMesh
+var primaryCharacterCamera: Camera3D
 var stopwatch: StopWatch = StopWatch.new()
 var aimingNode: Node3D = Node3D.new()
 var aimingControl: Node3D = Node3D.new()
@@ -18,6 +19,7 @@ var height: float
 
 func _ready() -> void: 
 	height = chuckMesh.get_aabb().size.y
+	primaryCharacterCamera = $CameraController/CameraTarget/PrimaryCharacterCamera
 
 func _physics_process(delta: float) -> void:
 	self._handle_jump(delta)
@@ -100,3 +102,6 @@ func is_equipped() -> bool:
 ## Returns the height of Chuck
 func get_height() -> float:
 	return height
+
+func get_camera() -> Camera3D:
+	return $CameraController/CameraTarget/PrimaryCharacterCamera

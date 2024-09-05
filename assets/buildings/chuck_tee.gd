@@ -1,4 +1,7 @@
 extends StaticBody3D
+class_name ChuckTee
+
+@onready var teeCamera: Camera3D = $CameraController/CameraTarget/TeeboxCamera
 
 const consideredBodies = ["ChuckChucker"]
 
@@ -27,3 +30,6 @@ func _on_tee_box_area_body_exited(body: Node3D) -> void:
 		if(get_viewport().get_camera_3d() != null):
 			var formatString: String = "Current camera is %s"
 			Logger.debug(formatString, [get_viewport().get_camera_3d().name], self)
+
+func get_camera() -> Camera3D:
+	return teeCamera

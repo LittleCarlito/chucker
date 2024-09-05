@@ -1,10 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://blwwfxseykyuy"]
 
 [ext_resource type="Script" path="res://assets/items/chuck_disk.gd" id="1_gtghv"]
-[ext_resource type="PackedScene" uid="uid://cfb8nwjdbjdsi" path="res://assets/items/MathDisk.tscn" id="2_wfe24"]
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_ubnpb"]
-height = 0.1
+[ext_resource type="CylinderMesh" uid="uid://bwc6i6by0861c" path="res://assets/items/DiskMesh.tres" id="2_i7m5c"]
+[ext_resource type="Shape3D" uid="uid://x6uh5gkdse8r" path="res://assets/items/DiskCollision.tres" id="3_kqup5"]
 
 [node name="ChuckDisk" type="RigidBody3D"]
 collision_layer = 4
@@ -13,10 +11,11 @@ contact_monitor = true
 max_contacts_reported = 1
 script = ExtResource("1_gtghv")
 
-[node name="PlayerDisk" parent="." instance=ExtResource("2_wfe24")]
+[node name="DiskMesh" type="MeshInstance3D" parent="."]
+mesh = ExtResource("2_i7m5c")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("CylinderShape3D_ubnpb")
+[node name="DiskCollision" type="CollisionShape3D" parent="."]
+shape = ExtResource("3_kqup5")
 
 [node name="CameraControl" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.940638, 0.339411, 0, -0.339411, 0.940638, 0, 3.67279, 7.8427)
