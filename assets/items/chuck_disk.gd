@@ -3,7 +3,8 @@ class_name ChuckDisk
 
 @onready var diskCamera: Camera3D = $CameraControl/DiskCamera
 @onready var cameraControl: Node3D = $CameraControl
-@onready var diskTimer: Timer = $DiskTimer
+@onready var cameraTimer: Timer = $CameraTimer
+@onready var collisionTimer: Timer = $CollisionTimer
 
 var smoothedPosition: Vector3
 
@@ -31,22 +32,26 @@ func _process(_delta: float) -> void:
 	cameraControl.rotation_degrees.y = initialCameraRotation.y
 	cameraControl.rotation_degrees.z = initialCameraRotation.z
 	# Freeze the camera control when rigid body detects collision
+	# TODO Need to add contact timer so tumbling, bouncing, flipping on gound doesn't make camera start following
 	if self.get_contact_count() > 0:
+		collisionTimer.start(GLOBAL_SETTINGS.CAMERA.SHOT_WATCH_TIME)
 		if !collided:
-			diskTimer.start(GLOBAL_SETTINGS.CAMERA.SHOT_WATCH_TIME)
+			cameraTimer.start(GLOBAL_SETTINGS.CAMERA.SHOT_WATCH_TIME)
 			collisionPoint = cameraControl.global_position
 			collisionBasis = cameraControl.global_basis
 			collided = true
 		cameraControl.global_position = collisionPoint
 		cameraControl.global_basis = collisionBasis
-	else:
-		collided = false
-
 
 func toggle_camera() -> void:
 	diskCamera.current = not diskCamera.current
 
-
-func _on_disk_timer_timeout() -> void:
-	# TODO Figure out camera stuff; Defaults back to tee box occasionally
+func _on_camera_timer_timeout() -> void:
 	diskCamera.current = false
+	# TODO Get the holding nodes camera and set it to a variable at some stable time (something that won't be done over and over) then make it active here
+	#			Add Method to ChuckChucker for getting its camera; Makes it easier, then you just have to do get parent till you hit ChuckChucker/PlayableCharacter or whatever
+
+
+func _on_collision_timer_timeout() -> void:
+	print("in timeout")
+	collided = false

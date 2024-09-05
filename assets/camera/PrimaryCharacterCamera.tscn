@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bxcwbj55xc2iw"]
+
+[ext_resource type="Script" path="res://assets/camera/primary_character_camera.gd" id="1_wrpro"]
+
+[node name="PrimaryCharacterCamera" type="Camera3D"]
+script = ExtResource("1_wrpro")

@@ -16,6 +16,9 @@ size = Vector3(50, 3, 200)
 
 [node name="ChuckTee" parent="." instance=ExtResource("1_toa5e")]
 
+[node name="ChuckDisk" parent="ChuckTee" instance=ExtResource("4_m4tn0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.48635, -2.45964)
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.719722, -0.202133, 0.664185, -0.671976, 0.0376311, 0.739617, -0.174495, -0.978635, -0.108745, 26.7919, 21.2915, -22.7111)
 shadow_enabled = true
@@ -38,9 +41,6 @@ mesh = SubResource("BoxMesh_vba8s")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TempFloor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.505, 0)
 shape = SubResource("BoxShape3D_o6chi")
-
-[node name="ChuckDisk" parent="." instance=ExtResource("4_m4tn0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.48635, -2.45964)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("5_t0qir")

@@ -2,7 +2,7 @@
 
 [ext_resource type="Environment" uid="uid://bm00mgoeg2ojv" path="res://resources/environment_default.tres" id="1_3jkws"]
 [ext_resource type="Script" path="res://test/draw_test.gd" id="1_44ubk"]
-[ext_resource type="PackedScene" uid="uid://c57r0vbr87t4o" path="res://utils/DebugCamera.tscn" id="3_5ogtf"]
+[ext_resource type="PackedScene" uid="uid://c57r0vbr87t4o" path="res://assets/camera/DebugCamera.tscn" id="3_5ogtf"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_44t2b"]
 albedo_color = Color(0, 1, 0, 1)
