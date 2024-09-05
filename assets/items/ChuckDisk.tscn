@@ -15,3 +15,10 @@ script = ExtResource("1_gtghv")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CylinderShape3D_ubnpb")
+
+[node name="CameraControl" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 8.41133, 2.98719)
+
+[node name="DiskCamera" type="Camera3D" parent="CameraControl"]
+transform = Transform3D(1, 0, 0, 0, 0.981787, -0.189987, 0, 0.189987, 0.981787, 0, -6.84452, 2.45323)
+fov = 90.0

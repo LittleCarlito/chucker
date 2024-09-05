@@ -10,8 +10,9 @@ class_name MathDisk
 @onready var launchControlNode: Node3D = Node3D.new()
 var stopWatch: StopWatch = StopWatch.new()
 
-# TODO Add charge meter
-#		Viewport with CanvasItem ProgressBar that fills up as heldTime approaches MAX_HOLD_TIME
+# TODO Add scorecard
+# TODO Have camera chase released disk
+#		Add camera to ChuckDisk that switches to it until velocity is 0 then is no longer current
 # TODO Add charge effects
 # TODO Add "perfect" release window
 # TODO Give "perfect" release different effects
@@ -72,3 +73,5 @@ func release_action() -> void:
 	newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)
 	self.rotation.x = 0
 	chargeControl.set_progress(0)
+	if newDisk is ChuckDisk:
+		newDisk.toggle_camera()
