@@ -19,8 +19,8 @@ const DISK = {
 const CAMERA = {
 	"PAN_SPEED": .15,
 	"ROTATE_SPEED": 4,
-	"MIN_HEIGHT": 2.5,
-	"SHOT_WATCH_TIME": 1
+	"MIN_HEIGHT": 1.5,
+	"SHOT_WATCH_TIME": 2
 }
 
 # Called when the node enters the scene tree for the first time.

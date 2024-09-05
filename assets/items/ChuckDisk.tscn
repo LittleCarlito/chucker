@@ -9,6 +9,8 @@ height = 0.1
 [node name="ChuckDisk" type="RigidBody3D"]
 collision_layer = 4
 collision_mask = 14
+contact_monitor = true
+max_contacts_reported = 1
 script = ExtResource("1_gtghv")
 
 [node name="PlayerDisk" parent="." instance=ExtResource("2_wfe24")]
@@ -17,8 +19,12 @@ script = ExtResource("1_gtghv")
 shape = SubResource("CylinderShape3D_ubnpb")
 
 [node name="CameraControl" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 8.41133, 2.98719)
+transform = Transform3D(1, 0, 0, 0, 0.940638, 0.339411, 0, -0.339411, 0.940638, 0, 3.67279, 7.8427)
 
 [node name="DiskCamera" type="Camera3D" parent="CameraControl"]
-transform = Transform3D(1, 0, 0, 0, 0.981787, -0.189987, 0, 0.189987, 0.981787, 0, -6.84452, 2.45323)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 fov = 90.0
+
+[node name="DiskTimer" type="Timer" parent="."]
+
+[connection signal="timeout" from="DiskTimer" to="." method="_on_disk_timer_timeout"]
