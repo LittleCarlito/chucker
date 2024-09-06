@@ -16,6 +16,7 @@ class_name ChuckChucker
 @onready var frontDetection: ShapeCast3D = $FrontDetect
 @onready var chuckMesh: MeshInstance3D = $ChuckMesh
 @onready var playerCamera: Camera3D = $CameraController/CameraTarget/Camera3D
+var disableMovement: bool = false
 var stopwatch: StopWatch = StopWatch.new()
 var aimingNode: Node3D = Node3D.new()
 var aimingControl: Node3D = Node3D.new()
@@ -40,7 +41,7 @@ func _handle_jump(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 	# Handle jump
-	if Input.is_action_just_pressed(USER_INPUT.MOVE.JUMP) and is_on_floor():
+	if Input.is_action_just_pressed(USER_INPUT.MOVE.JUMP) and is_on_floor() and not disableMovement:
 		velocity.y = GLOBAL_SETTINGS.PLAYER.JUMP_FORCE
 
 func _handle_aiming() -> void:
@@ -105,7 +106,7 @@ func _handle_movement() -> void:
 	if(self.is_on_floor()):
 		var direction = (cameraController.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		if direction:
-			if self.is_equipped():
+			if self.is_equipped() || disableMovement:
 				velocity.x = 0
 				velocity.z = 0
 			else:

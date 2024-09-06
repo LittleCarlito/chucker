@@ -7,6 +7,7 @@ const thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.SCENE)
 @onready var cameraControl: Node3D = $CameraControl
 @onready var cameraTimer: Timer = $CameraTimer
 
+var thrower: ChuckChucker
 var fallbackCamera: Camera3D
 var initialCameraRotation: Vector3
 var collisionPoint: Vector3
@@ -42,10 +43,12 @@ func toggle_camera() -> void:
 func _on_camera_timer_timeout() -> void:
 	diskCamera.current = false
 	cameraControl.top_level = false
+	thrower.disableMovement = false
 	if fallbackCamera != null:
 		fallbackCamera.current = true
 
-static func new_disk(newdiskCamera: Camera3D) -> ChuckDisk:
+static func new_disk(newdiskCamera: Camera3D, thrower: ChuckChucker) -> ChuckDisk:
 	var newDisk: ChuckDisk = thrownDisk.instantiate()
 	newDisk.fallbackCamera = newdiskCamera
+	newDisk.thrower = thrower
 	return newDisk

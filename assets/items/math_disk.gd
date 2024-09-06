@@ -8,13 +8,10 @@ class_name MathDisk
 @onready var launchControlNode: Node3D = Node3D.new()
 var stopWatch: StopWatch = StopWatch.new()
 var fallbackCamera: Camera3D
+var ownerVar: ChuckChucker
 
 # TODO Add scorecard
 # TODO Allow camera rotation when disk is airborne
-# TODO Disable character movement while disk camera is active
-#		Add method to toggle movement controls on ChuckChucker
-#		Have launching the disk disable character controls
-#		Use the camera timeout signal to re-enable character controls
 # TODO Add charge effects
 # TODO Add "perfect" release window
 # TODO Give "perfect" release different effects
@@ -28,7 +25,7 @@ var fallbackCamera: Camera3D
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Logger.set_log_level(Logger.LEVEL.DEBUG)
-	var ownerVar: ChuckChucker = self.owner
+	ownerVar = self.owner
 	fallbackCamera = ownerVar.get_camera()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -74,7 +71,7 @@ func hold_action(delta: float) -> void:
 func release_action() -> void:
 	var finalTime: float = stopWatch.reset()
 	var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, finalTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
-	var newDisk = ChuckDisk.new_disk(fallbackCamera)
+	var newDisk = ChuckDisk.new_disk(fallbackCamera, ownerVar)
 	get_tree().get_root().add_child(newDisk)
 	newDisk.global_transform = self.global_transform
 	newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)
@@ -82,3 +79,4 @@ func release_action() -> void:
 	chargeControl.set_progress(0)
 	if newDisk is ChuckDisk:
 		newDisk.toggle_camera()
+		ownerVar.disableMovement = true
