@@ -37,7 +37,7 @@ func _process(_delta: float) -> void:
 		chargeSprite.visible = false
 
 func hold_action(delta: float) -> void:
-	# TODO When launch point fully rotated on x axis still shows curve in negative z direction
+	# TODO When aiming in positive z, negative x, with a high rotation aimControl seems to be way out of whack
 	var heldTime: float = stopWatch.isHeld(delta)
 	chargeControl.set_progress((heldTime/GLOBAL_SETTINGS.DISK.MAX_HOLD) * 100)
 	var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, heldTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
@@ -63,7 +63,7 @@ func hold_action(delta: float) -> void:
 	aimControlNode.basis = self.global_basis
 	aimControlNode.position.y = launchControlNode.position.y
 	var controlPointHeight: float = (zDistance / 2.0) * tan(deg_to_rad(parentRotation)) * gravityAdjust
-	aimControlNode.translate(Vector3(0, controlPointHeight, zDistance / 2.0))
+	aimControlNode.translate(Vector3(0, controlPointHeight, zDistance / 2))
 	DrawUtil.point(aimControlNode.position, .05, Color.DEEP_PINK)
 	# Draw the curve
 	DrawUtil.curve(self.global_position, launchControlNode.position, aimControlNode.position, aimNode.position)

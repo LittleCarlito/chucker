@@ -54,11 +54,14 @@ func _handle_camera_controls() -> void:
 	if Input.is_action_pressed(USER_INPUT.ROTATE.RIGHT):
 		cameraController.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 		rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+	# TODO Refactor this to a non camera area
 	if playerDisk.visible:
 		if Input.is_action_just_pressed(USER_INPUT.ROTATE.UP):
-			diskController.rotate_x(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+			if diskController.rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
+				diskController.rotate_x(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 		if Input.is_action_just_pressed(USER_INPUT.ROTATE.DOWN):
-			diskController.rotate_x(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+			if diskController.rotation_degrees.x > GLOBAL_SETTINGS.PLAYER.MIN_LAUNCH_ROTATION:
+				diskController.rotate_x(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 
 ## Handle player pressing interact button
 func _handle_player_interact() -> void:

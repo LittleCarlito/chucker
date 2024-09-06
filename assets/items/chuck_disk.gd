@@ -13,7 +13,6 @@ var smoothedPosition: Vector3
 var initialCameraOffset: Vector3
 var initialCameraRotation: Vector3
 var collisionPoint: Vector3
-var collisionBasis: Basis
 var collided: bool
 
 func _ready() -> void:
@@ -28,7 +27,6 @@ func _ready() -> void:
 	var fallbackName: String
 	if fallbackCamera != null:
 		fallbackName = fallbackCamera.name
-		print("Fallback camera for disk is " + fallbackName)
 
 func _process(_delta: float) -> void:
 	var target_position = self.global_transform.origin + initialCameraOffset
@@ -43,28 +41,29 @@ func _process(_delta: float) -> void:
 	cameraControl.rotation_degrees.y = initialCameraRotation.y
 	cameraControl.rotation_degrees.z = initialCameraRotation.z
 	# Freeze the camera control when rigid body detects collision
+	# TODO Usure if collision timer does anything; When disk flips camera still flips
 	if self.get_contact_count() > 0:
-		# Continuously start a collision timer while in contact with objects'
-		# When times out resets collided bool
-		collisionTimer.start(GLOBAL_SETTINGS.CAMERA.SHOT_WATCH_TIME)
 		if !collided:
-			# If it hasn't collided in a while, assume a shot and start camera countdown
+			# Initial collision so start timers
 			cameraTimer.start(GLOBAL_SETTINGS.CAMERA.SHOT_WATCH_TIME)
+			collisionTimer.start(GLOBAL_SETTINGS.CAMERA.SHOT_WATCH_TIME)
 			# Hold points where collision occured as a variable
 			collisionPoint = cameraControl.global_position
 			collided = true
 		# Move camera control to where collision occured
-		cameraControl.global_position = collisionPoint
+		# TODO Is glitchy and weird on landing
+		cameraControl.look_at_from_position(collisionPoint, self.global_position)
 
 func toggle_camera() -> void:
 	diskCamera.current = not diskCamera.current
 
 func _on_camera_timer_timeout() -> void:
 	diskCamera.current = false
-	fallbackCamera.current = true
+	cameraControl.top_level = false
+	if fallbackCamera != null:
+		fallbackCamera.current = true
 
 func _on_collision_timer_timeout() -> void:
-	print("in timeout")
 	collided = false
 
 static func new_disk(fallbackCamera: Camera3D) -> ChuckDisk:
