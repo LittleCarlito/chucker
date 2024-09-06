@@ -36,6 +36,7 @@ func _process(_delta: float) -> void:
 	else:
 		chargeSprite.visible = false
 
+# TODO Needs to be refactored to be making translations based off position and not global position
 func hold_action(delta: float) -> void:
 	var heldTime: float = stopWatch.isHeld(delta)
 	chargeControl.set_progress((heldTime / GLOBAL_SETTINGS.DISK.MAX_HOLD) * 100)
