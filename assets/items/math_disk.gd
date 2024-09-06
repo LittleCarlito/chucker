@@ -18,6 +18,12 @@ var fallbackCamera: Camera3D
 # TODO Add charge effects
 # TODO Add "perfect" release window
 # TODO Give "perfect" release different effects
+# TODO Make a disk that makes flight path based off physics (there is some method that can be called to get expected path)
+#		This will take the flight time to simulate
+#		Have a dot show where it is in calculating and a line follow behind it
+#			Use draws ability to hold the line for a few seconds before disappearing
+# TODO Make a disk that forces the flight of the released disk along the calculated path
+#		Can be done with PathFolow node apparently
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -40,6 +46,7 @@ func hold_action(delta: float) -> void:
 	var parentRotation: float = NodeUtil.get_parent_x_rotation(self)
 	var height: float = NodeUtil.get_parent_heights(self)
 	var throwSpeed: float = GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier
+	# move_and_slide() is a liar so this will always be an approximation
 	var zDistance: float = NodeUtil.calculate_range(height, gravity, parentRotation, throwSpeed)
 	var gravityAdjust: float = gravity * GLOBAL_SETTINGS.DISK.GRAVITY_MULTIPLIER
 	# Handle aimNode
@@ -55,9 +62,9 @@ func hold_action(delta: float) -> void:
 	DrawUtil.point(launchControlNode.position, .05, Color.BLUE)
 	# Handle aimControlNode
 	aimControlNode.position = self.global_position
-	aimControlNode.basis = self.global_basis
+	aimControlNode.basis = aimNode.basis
 	# Apply negative translate to flatten the curve
-	var controlPointHeight: float = -(zDistance / 2.0) * tan(deg_to_rad(parentRotation)) * gravityAdjust
+	var controlPointHeight: float = (zDistance / 2.0) * tan(deg_to_rad(parentRotation)) * gravityAdjust
 	aimControlNode.translate(Vector3(0, controlPointHeight, -zDistance / 2))
 	DrawUtil.point(aimControlNode.position, .05, Color.DEEP_PINK)
 	# Draw the curve

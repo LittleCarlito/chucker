@@ -20,7 +20,16 @@ const CAMERA = {
 	"PAN_SPEED": .15,
 	"ROTATE_SPEED": 4,
 	"MIN_HEIGHT": 4,
-	"SHOT_WATCH_TIME": 2
+	"SHOT_WATCH_TIME": 2,
+	"FOV": 90,
+	"ZOOM_FOV": 70
+	
+}
+
+const CONTROLS =  {
+	"HORIZONTAL_SENSITIVITY": 1,
+	"VERTICAL_SENSITIVITY": .5,
+	"INVERSION": -1
 }
 
 # Called when the node enters the scene tree for the first time.

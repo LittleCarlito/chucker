@@ -21,7 +21,6 @@ shape = ExtResource("3_kqup5")
 transform = Transform3D(1, 0, 0, 0, 0.940638, 0.339411, 0, -0.339411, 0.940638, 0, 3.67279, 7.8427)
 
 [node name="DiskCamera" type="Camera3D" parent="CameraControl"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 fov = 90.0
 
 [node name="CameraTimer" type="Timer" parent="."]

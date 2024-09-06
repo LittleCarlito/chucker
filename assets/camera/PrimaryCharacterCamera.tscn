@@ -1,6 +1,17 @@
-[gd_scene load_steps=2 format=3 uid="uid://bxcwbj55xc2iw"]
+[gd_scene load_steps=2 format=3 uid="uid://nx1vwbqndm6o"]
 
-[ext_resource type="Script" path="res://assets/camera/primary_character_camera.gd" id="1_wrpro"]
+[sub_resource type="GDScript" id="GDScript_syt6h"]
+script/source = "extends Camera3D
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
 
 [node name="PrimaryCharacterCamera" type="Camera3D"]
-script = ExtResource("1_wrpro")
+script = SubResource("GDScript_syt6h")

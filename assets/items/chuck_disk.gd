@@ -19,9 +19,6 @@ func _ready() -> void:
 	if parentObject is ChuckTee:
 		fallbackCamera = parentObject.get_camera()
 	initialCameraRotation = cameraControl.rotation_degrees
-	var fallbackName: String
-	if fallbackCamera != null:
-		fallbackName = fallbackCamera.name
 
 func _process(_delta: float) -> void:
 	# Maintain minimum height for the camera
@@ -48,7 +45,7 @@ func _on_camera_timer_timeout() -> void:
 	if fallbackCamera != null:
 		fallbackCamera.current = true
 
-static func new_disk(fallbackCamera: Camera3D) -> ChuckDisk:
+static func new_disk(newdiskCamera: Camera3D) -> ChuckDisk:
 	var newDisk: ChuckDisk = thrownDisk.instantiate()
-	newDisk.fallbackCamera = fallbackCamera
+	newDisk.fallbackCamera = newdiskCamera
 	return newDisk

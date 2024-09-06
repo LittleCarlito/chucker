@@ -4,38 +4,35 @@ class_name ChuckChucker
 # TODO Have the spawned disks be equipable
 # TODO Spawned disks should determine what gets picked up
 # TODO Add scorecard
+# TODO Add esc menu
+# TODO Add settings to esc menu
+#		With ability to define used controls
+# TODO Make FOV configurable between a certain range
+# TODO Add sprint ability for chuck
 
 @onready var diskController: Node3D = $DiskController
 @onready var playerDisk: ThrowableItem = $DiskController/MathDisk
 @onready var cameraController: Node3D = $CameraController
 @onready var frontDetection: ShapeCast3D = $FrontDetect
 @onready var chuckMesh: MeshInstance3D = $ChuckMesh
-var primaryCharacterCamera: Camera3D
+@onready var playerCamera: Camera3D = $CameraController/CameraTarget/Camera3D
 var stopwatch: StopWatch = StopWatch.new()
 var aimingNode: Node3D = Node3D.new()
 var aimingControl: Node3D = Node3D.new()
 var launchControl: Node3D = Node3D.new()
 var height: float
 
-func _ready() -> void: 
+func _ready() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	height = chuckMesh.get_aabb().size.y
-	primaryCharacterCamera = $CameraController/CameraTarget/PrimaryCharacterCamera
 
 func _physics_process(delta: float) -> void:
 	self._handle_jump(delta)
+	self._handle_aiming()
 	self._handle_camera_controls()
 	self._handle_player_action(delta)
 	self._handle_player_interact()
 	self._handle_movement()
-
-## Actions when disk is thrown
-func _handle_player_action(delta: float) -> void:
-	if playerDisk.visible:
-		if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
-			playerDisk.hold_action(delta)
-		if Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
-			playerDisk.release_action()
-			toggle_equiped(false)
 
 ## Actions to be performed when MOVE_JUMP is pressed
 func _handle_jump(delta: float) -> void:
@@ -46,15 +43,13 @@ func _handle_jump(delta: float) -> void:
 	if Input.is_action_just_pressed(USER_INPUT.MOVE.JUMP) and is_on_floor():
 		velocity.y = GLOBAL_SETTINGS.PLAYER.JUMP_FORCE
 
-## Handles camera/aiming related actions
-func _handle_camera_controls() -> void:
-	if Input.is_action_pressed(USER_INPUT.ROTATE.LEFT):
-		cameraController.rotate_y(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
-		rotate_y(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
-	if Input.is_action_pressed(USER_INPUT.ROTATE.RIGHT):
-		cameraController.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
-		rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
-	# TODO Refactor this to a non camera area
+func _handle_aiming() -> void:
+	if Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		if playerCamera.current:
+			playerCamera.fov = GLOBAL_SETTINGS.CAMERA.ZOOM_FOV
+	else:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	if playerDisk.visible:
 		if Input.is_action_just_pressed(USER_INPUT.ROTATE.UP):
 			if diskController.rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
@@ -62,6 +57,35 @@ func _handle_camera_controls() -> void:
 		if Input.is_action_just_pressed(USER_INPUT.ROTATE.DOWN):
 			if diskController.rotation_degrees.x > GLOBAL_SETTINGS.PLAYER.MIN_LAUNCH_ROTATION:
 				diskController.rotate_x(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+
+func _unhandled_input(event: InputEvent) -> void:
+	# Looking controls
+	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		if event is InputEventMouseMotion:
+			self.rotation.y -= event.relative.x / 1000 * GLOBAL_SETTINGS.CONTROLS.HORIZONTAL_SENSITIVITY
+			var rotationAmount = GLOBAL_SETTINGS.CONTROLS.INVERSION * (event.relative.y / 1000 * GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY)
+			if rotationAmount > 0 and diskController.rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
+				diskController.rotate_x(rotationAmount)
+			elif rotationAmount < 0 and diskController.rotation_degrees.x > GLOBAL_SETTINGS.PLAYER.MIN_LAUNCH_ROTATION:
+				diskController.rotate_x(rotationAmount)
+				
+
+func _handle_camera_controls() -> void:
+	if Input.is_action_pressed(USER_INPUT.ROTATE.LEFT):
+		cameraController.rotate_y(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+		self.rotate_y(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+	if Input.is_action_pressed(USER_INPUT.ROTATE.RIGHT):
+		cameraController.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+		self.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+
+## Actions when disk is thrown
+func _handle_player_action(delta: float) -> void:
+	if playerDisk.visible:
+		if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
+			playerDisk.hold_action(delta)
+		if Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
+			playerDisk.release_action()
+			self.toggle_equiped(false)
 
 ## Handle player pressing interact button
 func _handle_player_interact() -> void:
@@ -75,12 +99,13 @@ func _handle_player_interact() -> void:
 
 ## Detects and executes movements
 func _handle_movement() -> void:
+	# TODO Make it so chuck moves the direction he is facing
 		# If there is a direction to move set its velocity
 	var input_dir = Input.get_vector(USER_INPUT.MOVE.LEFT, USER_INPUT.MOVE.RIGHT, USER_INPUT.MOVE.FORWARD, USER_INPUT.MOVE.BACKWARD)
-	if(is_on_floor()):
+	if(self.is_on_floor()):
 		var direction = (cameraController.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		if direction:
-			if is_equipped():
+			if self.is_equipped():
 				velocity.x = 0
 				velocity.z = 0
 			else:
@@ -90,7 +115,7 @@ func _handle_movement() -> void:
 		else:
 			velocity.x = move_toward(velocity.x, 0, GLOBAL_SETTINGS.PLAYER.RUN_SPEED)
 			velocity.z = move_toward(velocity.z, 0, GLOBAL_SETTINGS.PLAYER.RUN_SPEED)
-	move_and_slide()
+	self.move_and_slide()
 	# Keep camera up
 	cameraController.position = lerp(cameraController.position, position, GLOBAL_SETTINGS.CAMERA.PAN_SPEED)
 
@@ -107,4 +132,4 @@ func get_height() -> float:
 	return height
 
 func get_camera() -> Camera3D:
-	return $CameraController/CameraTarget/PrimaryCharacterCamera
+	return $CameraController/CameraTarget/Camera3D
