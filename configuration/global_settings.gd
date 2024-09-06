@@ -19,7 +19,7 @@ const DISK = {
 const CAMERA = {
 	"PAN_SPEED": .15,
 	"ROTATE_SPEED": 4,
-	"MIN_HEIGHT": 1.5,
+	"MIN_HEIGHT": 4,
 	"SHOT_WATCH_TIME": 2
 }
 

@@ -10,10 +10,6 @@ var stopWatch: StopWatch = StopWatch.new()
 var fallbackCamera: Camera3D
 
 # TODO Add scorecard
-# TODO Aim points when angle is very high gets weird
-#		Aim at camera from far away with an angle; wonky axis movement
-#		Consider limiting how high you can rotate up and down
-# TODO Fix disk camera tracking when throwing in positive z direction
 # TODO Allow camera rotation when disk is airborne
 # TODO Disable character movement while disk camera is active
 #		Add method to toggle movement controls on ChuckChucker
@@ -36,7 +32,6 @@ func _process(_delta: float) -> void:
 	else:
 		chargeSprite.visible = false
 
-# TODO Needs to be refactored to be making translations based off position and not global position
 func hold_action(delta: float) -> void:
 	var heldTime: float = stopWatch.isHeld(delta)
 	chargeControl.set_progress((heldTime / GLOBAL_SETTINGS.DISK.MAX_HOLD) * 100)
@@ -67,7 +62,6 @@ func hold_action(delta: float) -> void:
 	DrawUtil.point(aimControlNode.position, .05, Color.DEEP_PINK)
 	# Draw the curve
 	DrawUtil.curve(self.global_position, launchControlNode.position, aimControlNode.position, aimNode.position)
-
 
 ## Launch disk and reset objects
 func release_action() -> void:

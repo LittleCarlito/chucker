@@ -26,7 +26,4 @@ fov = 90.0
 
 [node name="CameraTimer" type="Timer" parent="."]
 
-[node name="CollisionTimer" type="Timer" parent="."]
-
 [connection signal="timeout" from="CameraTimer" to="." method="_on_camera_timer_timeout"]
-[connection signal="timeout" from="CollisionTimer" to="." method="_on_collision_timer_timeout"]
