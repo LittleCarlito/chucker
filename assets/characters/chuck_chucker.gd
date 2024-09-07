@@ -8,7 +8,6 @@ class_name ChuckChucker
 # TODO Add settings to esc menu
 #		With ability to define used controls
 # TODO Make FOV configurable between a certain range
-# TODO Add sprint ability for chuck
 
 @onready var diskController: Node3D = $DiskController
 @onready var playerDisk: ThrowableItem = $DiskController/MathDisk
@@ -46,15 +45,18 @@ func _handle_jump(delta: float) -> void:
 	if Input.is_action_just_pressed(USER_INPUT.MOVE.JUMP) and is_on_floor() and not disableMovement:
 		velocity.y = GLOBAL_SETTINGS.PLAYER.JUMP_FORCE
 
+## Actions to be performed when the secondary action button is held
 func _handle_aiming() -> void:
 	if Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-		self._zoom_in()
+		disableMovement = true
 		if playerCamera.current:
 			self._zoom_in()
 	else:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		self._reset_zoom()
+		cameraController.basis = self.global_basis
+		disableMovement = false
 	if playerDisk.visible:
 		if Input.is_action_just_pressed(USER_INPUT.ROTATE.UP):
 			if diskController.rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
@@ -104,8 +106,6 @@ func _handle_player_interact() -> void:
 
 ## Detects and executes movements
 func _handle_movement() -> void:
-	# TODO Make it so chuck moves the direction he is facing
-		# If there is a direction to move set its velocity
 	var input_dir = Input.get_vector(USER_INPUT.MOVE.LEFT, USER_INPUT.MOVE.RIGHT, USER_INPUT.MOVE.FORWARD, USER_INPUT.MOVE.BACKWARD)
 	if(self.is_on_floor()):
 		var direction = (cameraController.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
