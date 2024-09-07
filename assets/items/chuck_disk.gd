@@ -10,11 +10,10 @@ const thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.SCENE)
 
 var thrower: ChuckChucker
 var fallbackCamera: Camera3D
-var rootPosition: Vector3 = Vector3.INF
+var collisionLocation: Vector3 = Vector3.INF
 var collided: bool
 
 func _ready() -> void:
-	cameraControl.look_at(self.global_position)
 	var parentObject: Object
 	if self.get_parent() != null:
 		parentObject = self.get_parent()
@@ -43,8 +42,7 @@ func _input(event: InputEvent) -> void:
 	# Looking controls
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and diskCamera.current:
 		if event is InputEventMouseMotion:
-			# TODO Add inversion stuff
-			var horizontalRotateAmount: float = GLOBAL_SETTINGS.CONTROLS.INVERSION * (deg_to_rad(event.relative.x) * GLOBAL_SETTINGS.CONTROLS.HORIZONTAL_SENSITIVITY)
+			var horizontalRotateAmount: float = GLOBAL_SETTINGS.CONTROLS.INVERT_HORIZONTAL * (deg_to_rad(event.relative.x) * GLOBAL_SETTINGS.CONTROLS.HORIZONTAL_SENSITIVITY)
 			cameraContainer.global_rotation_degrees.y += horizontalRotateAmount
 			cameraControl.look_at(self.global_position)
 
@@ -57,7 +55,7 @@ func _on_camera_timer_timeout() -> void:
 		thrower.disableMovement = false
 	if fallbackCamera != null:
 		fallbackCamera.current = true
-	rootPosition = Vector3.INF
+	collisionLocation = Vector3.INF
 	cameraContainer.top_level = false
 
 static func new_disk(newdiskCamera: Camera3D, newThrower: ChuckChucker) -> ChuckDisk:
@@ -66,22 +64,12 @@ static func new_disk(newdiskCamera: Camera3D, newThrower: ChuckChucker) -> Chuck
 	newDisk.thrower = newThrower
 	return newDisk
 
-# TODO Rework now that CameraContainer exists to rotate with
 func _idle_rotate(delta: float) -> void:
 	cameraContainer.top_level = true
 	# Calculate the rotation angle in radians
-	var rotationAmount: float = deg_to_rad(GLOBAL_SETTINGS.CAMERA.IDLE_ROTATE_SPEED * delta)
+	var rotationAmount: float = (GLOBAL_SETTINGS.CAMERA.IDLE_ROTATE_SPEED * delta)
 	# Get the current global position of the Root object
-	if rootPosition == Vector3.INF:
-		rootPosition = self.global_position
-	# Get current position of CameraControl
-	var currentPosition: Vector3 = cameraControl.global_position
-	# Compute the vector from Root to CameraControl
-	var offset: Vector3 = currentPosition - rootPosition
-	# Rotate the offset around the Y-axis
-	offset = offset.rotated(Vector3.DOWN, rotationAmount)
-	# Update the position of CameraControl relative to the moving Root
-	cameraControl.global_position = rootPosition + offset
-	# Make the CameraControl node face towards the Root
-	cameraControl.rotation_degrees.x = 0
-	cameraControl.look_at(rootPosition)
+	if collisionLocation == Vector3.INF:
+		collisionLocation = self.global_position
+	cameraContainer.global_rotation_degrees.y += rotationAmount
+	cameraControl.look_at(collisionLocation)

@@ -11,7 +11,6 @@ var fallbackCamera: Camera3D
 var ownerVar: ChuckChucker
 
 # TODO Add scorecard
-# TODO Allow camera rotation when disk is airborne
 # TODO Add charge effects
 # TODO Add "perfect" release window
 # TODO Give "perfect" release different effects

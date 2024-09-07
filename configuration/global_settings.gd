@@ -31,7 +31,8 @@ const CAMERA = {
 const CONTROLS =  {
 	"HORIZONTAL_SENSITIVITY": 1.5,
 	"VERTICAL_SENSITIVITY": .5,
-	"INVERSION": -1
+	"INVERT_HORIZONTAL": -1,
+	"INVERT_VERTICAL": -1
 }
 
 # Called when the node enters the scene tree for the first time.
