@@ -23,6 +23,8 @@ var aimingControl: Node3D = Node3D.new()
 var launchControl: Node3D = Node3D.new()
 var height: float
 
+var jumpDetected: bool = false
+
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	height = chuckMesh.get_aabb().size.y
@@ -47,10 +49,12 @@ func _handle_jump(delta: float) -> void:
 func _handle_aiming() -> void:
 	if Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		self._zoom_in()
 		if playerCamera.current:
-			playerCamera.fov = GLOBAL_SETTINGS.CAMERA.ZOOM_FOV
+			self._zoom_in()
 	else:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		self._reset_zoom()
 	if playerDisk.visible:
 		if Input.is_action_just_pressed(USER_INPUT.ROTATE.UP):
 			if diskController.rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
@@ -110,8 +114,14 @@ func _handle_movement() -> void:
 				velocity.x = 0
 				velocity.z = 0
 			else:
-				velocity.x = direction.x * GLOBAL_SETTINGS.PLAYER.RUN_SPEED
-				velocity.z = direction.z * GLOBAL_SETTINGS.PLAYER.RUN_SPEED
+				var sprintAddition: float = 0.0
+				if Input.is_action_pressed(USER_INPUT.MOVE.SPRINT):
+					sprintAddition = GLOBAL_SETTINGS.PLAYER.SPRINT_SPEED
+					self._zoom_out()
+				else:
+					self._reset_zoom()
+				velocity.x = direction.x * (GLOBAL_SETTINGS.PLAYER.RUN_SPEED + sprintAddition)
+				velocity.z = direction.z * (GLOBAL_SETTINGS.PLAYER.RUN_SPEED + sprintAddition)
 		# Otherwise set velocity to start slowing down
 		else:
 			velocity.x = move_toward(velocity.x, 0, GLOBAL_SETTINGS.PLAYER.RUN_SPEED)
@@ -134,3 +144,12 @@ func get_height() -> float:
 
 func get_camera() -> Camera3D:
 	return $CameraController/CameraTarget/Camera3D
+#
+func _reset_zoom() -> void:
+	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.FOV
+
+func _zoom_in() -> void:
+	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.FOV - GLOBAL_SETTINGS.CAMERA.IN_ADJUST
+
+func _zoom_out() -> void:
+	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.FOV + GLOBAL_SETTINGS.CAMERA.OUT_ADJUST

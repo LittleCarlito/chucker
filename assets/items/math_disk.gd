@@ -15,6 +15,7 @@ var ownerVar: ChuckChucker
 # TODO Add charge effects
 # TODO Add "perfect" release window
 # TODO Give "perfect" release different effects
+# TODO Ability to put spin on disk and curve it
 # TODO Make a disk that makes flight path based off physics (there is some method that can be called to get expected path)
 #		This will take the flight time to simulate
 #		Have a dot show where it is in calculating and a line follow behind it

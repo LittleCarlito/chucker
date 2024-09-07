@@ -43,7 +43,8 @@ func toggle_camera() -> void:
 func _on_camera_timer_timeout() -> void:
 	diskCamera.current = false
 	cameraControl.top_level = false
-	thrower.disableMovement = false
+	if thrower != null:
+		thrower.disableMovement = false
 	if fallbackCamera != null:
 		fallbackCamera.current = true
 

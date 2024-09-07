@@ -4,6 +4,7 @@ class_name GLOBAL_SETTINGS
 
 const PLAYER = {
 	"RUN_SPEED": 5.0,
+	"SPRINT_SPEED": 4.0,
 	"JUMP_FORCE": 4.5, 
 	"MAX_LAUNCH_ROTATION": 67,
 	"MIN_LAUNCH_ROTATION": -25
@@ -22,8 +23,8 @@ const CAMERA = {
 	"MIN_HEIGHT": 4,
 	"SHOT_WATCH_TIME": 2,
 	"FOV": 90,
-	"ZOOM_FOV": 70
-	
+	"IN_ADJUST": 20,
+	"OUT_ADJUST": 5
 }
 
 const CONTROLS =  {

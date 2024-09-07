@@ -1,6 +1,8 @@
 extends StaticBody3D
 class_name ChuckTee
 
+# TODO Camera stuff is messed up
+
 @onready var teeCamera: Camera3D = $CameraController/CameraTarget/TeeboxCamera
 
 const consideredBodies = ["ChuckChucker"]
