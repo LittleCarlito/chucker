@@ -49,7 +49,7 @@ top_level = true
 [node name="CameraTarget" type="Node3D" parent="CameraController"]
 transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.86867, 4.35812)
 
-[node name="Camera3D" type="Camera3D" parent="CameraController/CameraTarget"]
+[node name="ChuckCamera" type="Camera3D" parent="CameraController/CameraTarget"]
 
 [node name="DiskController" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.50122e-10, 0.744641, 0)

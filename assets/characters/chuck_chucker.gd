@@ -14,7 +14,7 @@ class_name ChuckChucker
 @onready var cameraController: Node3D = $CameraController
 @onready var frontDetection: ShapeCast3D = $FrontDetect
 @onready var chuckMesh: MeshInstance3D = $ChuckMesh
-@onready var playerCamera: Camera3D = $CameraController/CameraTarget/Camera3D
+@onready var playerCamera: Camera3D = $CameraController/CameraTarget/ChuckCamera
 var disableMovement: bool = false
 var stopwatch: StopWatch = StopWatch.new()
 var aimingNode: Node3D = Node3D.new()
@@ -126,6 +126,7 @@ func _handle_movement() -> void:
 		else:
 			velocity.x = move_toward(velocity.x, 0, GLOBAL_SETTINGS.PLAYER.RUN_SPEED)
 			velocity.z = move_toward(velocity.z, 0, GLOBAL_SETTINGS.PLAYER.RUN_SPEED)
+	# TODO Consider replacing with own physics that would match predicted paths
 	self.move_and_slide()
 	# Keep camera up
 	cameraController.position = lerp(cameraController.position, position, GLOBAL_SETTINGS.CAMERA.PAN_SPEED)
@@ -143,7 +144,7 @@ func get_height() -> float:
 	return height
 
 func get_camera() -> Camera3D:
-	return $CameraController/CameraTarget/Camera3D
+	return $CameraController/CameraTarget/ChuckCamera
 #
 func _reset_zoom() -> void:
 	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.FOV

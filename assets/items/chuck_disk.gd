@@ -18,7 +18,7 @@ func _ready() -> void:
 	if self.get_parent() != null:
 		parentObject = self.get_parent()
 	if parentObject is ChuckTee:
-		fallbackCamera = parentObject.get_camera()
+		fallbackCamera = null
 	initialCameraRotation = cameraControl.rotation_degrees
 
 func _process(_delta: float) -> void:
@@ -42,14 +42,13 @@ func toggle_camera() -> void:
 
 func _on_camera_timer_timeout() -> void:
 	diskCamera.current = false
-	cameraControl.top_level = false
 	if thrower != null:
 		thrower.disableMovement = false
 	if fallbackCamera != null:
 		fallbackCamera.current = true
 
-static func new_disk(newdiskCamera: Camera3D, thrower: ChuckChucker) -> ChuckDisk:
+static func new_disk(newdiskCamera: Camera3D, newThrower: ChuckChucker) -> ChuckDisk:
 	var newDisk: ChuckDisk = thrownDisk.instantiate()
 	newDisk.fallbackCamera = newdiskCamera
-	newDisk.thrower = thrower
+	newDisk.thrower = newThrower
 	return newDisk
