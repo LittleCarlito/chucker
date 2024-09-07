@@ -47,16 +47,17 @@ func _handle_jump(delta: float) -> void:
 
 ## Actions to be performed when the secondary action button is held
 func _handle_aiming() -> void:
-	if Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-		disableMovement = true
-		if playerCamera.current:
-			self._zoom_in()
-	else:
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		self._reset_zoom()
-		cameraController.basis = self.global_basis
-		disableMovement = false
+	if playerCamera.current:
+		if Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+			disableMovement = true
+			if playerCamera.current:
+				self._zoom_in()
+		else:
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			self._reset_zoom()
+			cameraController.basis = self.global_basis
+			disableMovement = false
 	if playerDisk.visible:
 		if Input.is_action_just_pressed(USER_INPUT.ROTATE.UP):
 			if diskController.rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
@@ -67,7 +68,7 @@ func _handle_aiming() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Looking controls
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and playerCamera.current:
 		if event is InputEventMouseMotion:
 			self.rotation.y -= event.relative.x / 1000 * GLOBAL_SETTINGS.CONTROLS.HORIZONTAL_SENSITIVITY
 			var rotationAmount = GLOBAL_SETTINGS.CONTROLS.INVERSION * (event.relative.y / 1000 * GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY)

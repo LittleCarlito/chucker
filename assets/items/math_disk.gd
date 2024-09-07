@@ -73,6 +73,7 @@ func release_action() -> void:
 	var finalTime: float = stopWatch.reset()
 	var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, finalTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
 	var newDisk = ChuckDisk.new_disk(fallbackCamera, ownerVar)
+	newDisk.top_level = true
 	get_tree().get_root().add_child(newDisk)
 	newDisk.global_transform = self.global_transform
 	newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)
