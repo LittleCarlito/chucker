@@ -1,0 +1,1990 @@
+[gd_scene load_steps=5 format=3 uid="uid://cyjoxd73gt85u"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cgjn3"]
+bg_color = Color(0.1938, 0.34, 0.240097, 1)
+
+[sub_resource type="Theme" id="Theme_hun38"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4qp54"]
+bg_color = Color(0.783523, 0.783523, 0.783523, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1lkf7"]
+bg_color = Color(0.783523, 0.783523, 0.783523, 1)
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BackgroundPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_cgjn3")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="BackgroundPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -4.0
+offset_right = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="LeftMargin" type="MarginContainer" parent="BackgroundPanel/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+
+[node name="LeftArtContainer" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LeftTopMargin" type="MarginContainer" parent="BackgroundPanel/HBoxContainer/LeftArtContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 15
+
+[node name="LeftArt" type="TextureRect" parent="BackgroundPanel/HBoxContainer/LeftArtContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="LeftBottom" type="MarginContainer" parent="BackgroundPanel/HBoxContainer/LeftArtContainer"]
+layout_mode = 2
+theme_override_constants/margin_bottom = 15
+
+[node name="LeftMidMargin" type="MarginContainer" parent="BackgroundPanel/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_right = 10
+
+[node name="ContentContainer" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer"]
+custom_minimum_size = Vector2(0, 618)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 5
+
+[node name="CourseTitle" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer"]
+custom_minimum_size = Vector2(600, 70)
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0.00350028, 0.0147874, 0.00611374, 1)
+theme_override_font_sizes/font_size = 44
+text = "$CourseName"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="TopScores" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer"]
+custom_minimum_size = Vector2(675, 275)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="TopHoleNumber" type="HBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -263.0
+offset_top = -95.5
+offset_right = 263.0
+offset_bottom = 95.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="Players" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber"]
+layout_mode = 2
+theme = SubResource("Theme_hun38")
+theme_override_constants/separation = 15
+
+[node name="GolferLabel" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Players"]
+custom_minimum_size = Vector2(175, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Players/GolferLabel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Golfers"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Label" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Players"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4qp54")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Players/Player1Label"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "$Golfer1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Label" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Players"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4qp54")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Players/Player2Label"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "$Golfer2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Label" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Players"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4qp54")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Players/Player3Label"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "$Golfer3"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Label" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Players"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4qp54")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Players/Player4Label"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "$Golfer4"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole1Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole1Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole1Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole1Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole1Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole1Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole1Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole1Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole1Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole1Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole1Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole2Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole2Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole2Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole2Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole2Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole2Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole2Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole2Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole2Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole2Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole2Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole3Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole3Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole3Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "3"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole3Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole3Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole3Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole3Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole3Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole3Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole3Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole3Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole4Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole4Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole4Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "4"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole4Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole4Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole4Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole4Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole4Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole4Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole4Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole4Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole5Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole5Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole5Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "5"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole5Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole5Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole5Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole5Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole5Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole5Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole5Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole5Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole6Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole6Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole6Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "6"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole6Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole6Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole6Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole6Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole6Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole6Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole6Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole6Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole7Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole7Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole7Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "7"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole7Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole7Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole7Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole7Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole7Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole7Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole7Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole7Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole8Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole8Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole8Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "8"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole8Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole8Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole8Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole8Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole8Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole8Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole8Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole8Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole9Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole9Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole9Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "9"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole9Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole9Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole9Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole9Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole9Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole9Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole9Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/TopScores/TopHoleNumber/Hole9Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BottomScores" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer"]
+custom_minimum_size = Vector2(675, 275)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="BotHoleNumber" type="HBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -263.0
+offset_top = -95.5
+offset_right = 263.0
+offset_bottom = 95.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="Players" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="GolferLabel" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Players"]
+custom_minimum_size = Vector2(175, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Players/GolferLabel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Golfers"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Label" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Players"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4qp54")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Players/Player1Label"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "$Golfer1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Label" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Players"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4qp54")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Players/Player2Label"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "$Golfer2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Label" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Players"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4qp54")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Players/Player3Label"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "$Golfer3"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Label" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Players"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4qp54")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Players/Player4Label"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "$Golfer4"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole10Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole10Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole10Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "10"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole10Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole10Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole10Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole10Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole10Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole10Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole10Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole10Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole11Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole11Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole11Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "11"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole11Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole11Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole11Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole11Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole11Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole11Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole11Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole11Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole12Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole12Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole12Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "12"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole12Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole12Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole12Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole12Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole12Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole12Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole12Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole12Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole13Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole13Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole13Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "13"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole13Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole13Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole13Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole13Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole13Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole13Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole13Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole13Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole14Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole14Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole14Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "14"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole14Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole14Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole14Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole14Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole14Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole14Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole14Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole14Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole15Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole15Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole15Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "15"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole15Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole15Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole15Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole15Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole15Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole15Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole15Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole15Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole16Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole16Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole16Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "16"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole16Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole16Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole16Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole16Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole16Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole16Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole16Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole16Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole17Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole17Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole17Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "17"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole17Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole17Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole17Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole17Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole17Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole17Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole17Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole17Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hole18Scores" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HoleNumber" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole18Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole18Scores/HoleNumber"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "18"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player1Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole18Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole18Scores/Player1Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole18Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole18Scores/Player2Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole18Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole18Scores/Player3Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4Score" type="Panel" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole18Scores"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1lkf7")
+
+[node name="Label" type="Label" parent="BackgroundPanel/HBoxContainer/ContentContainer/BottomScores/BotHoleNumber/Hole18Scores/Player4Score"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "123"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RightMidMargin" type="MarginContainer" parent="BackgroundPanel/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_right = 10
+
+[node name="RightArtContainer" type="VBoxContainer" parent="BackgroundPanel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RightTopMargin" type="MarginContainer" parent="BackgroundPanel/HBoxContainer/RightArtContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 15
+
+[node name="RightArt" type="TextureRect" parent="BackgroundPanel/HBoxContainer/RightArtContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="RightBottomMargin" type="MarginContainer" parent="BackgroundPanel/HBoxContainer/RightArtContainer"]
+layout_mode = 2
+theme_override_constants/margin_bottom = 15
+
+[node name="MarginRight" type="MarginContainer" parent="BackgroundPanel/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_right = 15

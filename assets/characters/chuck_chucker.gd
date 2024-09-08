@@ -1,6 +1,8 @@
 extends PlayableCharacter
 class_name ChuckChucker
 
+# TODO Disable character rotate when disk airborne
+# TODO Make disk charge based off movement keys when preparing shot
 # TODO Have the spawned disks be equipable
 # TODO Spawned disks should determine what gets picked up
 # TODO Add scorecard

@@ -11,6 +11,11 @@ var fallbackCamera: Camera3D
 var ownerVar: ChuckChucker
 
 # TODO Add scorecard
+# TODO Make dynamic scorecard
+#		Make each part of the scorecard a node object
+#		Make a script to create the scorecard based off how many holes the scene contains
+#		Also adds the number of players dynamically
+#		Creates scroll bars to allow for more than 18 holes and more than 4 players
 # TODO Add charge effects
 # TODO Add "perfect" release window
 # TODO Give "perfect" release different effects
