@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://dokcluhafc3y1"]
+[gd_scene load_steps=9 format=3 uid="uid://0p7etoed8w0v"]
 
-[ext_resource type="PackedScene" uid="uid://c3a3ygsd2ack" path="res://assets/buildings/ChuckTee.tscn" id="1_toa5e"]
-[ext_resource type="PackedScene" uid="uid://cdkknjflehfgx" path="res://assets/characters/ChuckChucker.tscn" id="2_bl408"]
-[ext_resource type="PackedScene" uid="uid://bpn27qpg2rm8c" path="res://assets/buildings/ChuckHole.tscn" id="3_myjxc"]
-[ext_resource type="PackedScene" uid="uid://blwwfxseykyuy" path="res://assets/items/ChuckDisk.tscn" id="4_m4tn0"]
-[ext_resource type="Environment" uid="uid://bm00mgoeg2ojv" path="res://resources/environment_default.tres" id="5_t0qir"]
+[ext_resource type="Script" path="res://scenes/salinas_flats.gd" id="1_1ucdp"]
+[ext_resource type="PackedScene" uid="uid://c3a3ygsd2ack" path="res://assets/buildings/ChuckTee.tscn" id="1_kikso"]
+[ext_resource type="PackedScene" uid="uid://blwwfxseykyuy" path="res://assets/items/ChuckDisk.tscn" id="2_0r0o2"]
+[ext_resource type="PackedScene" uid="uid://cdkknjflehfgx" path="res://assets/characters/ChuckChucker.tscn" id="3_wng2j"]
+[ext_resource type="PackedScene" uid="uid://bpn27qpg2rm8c" path="res://assets/buildings/ChuckHole.tscn" id="4_upk5s"]
+[ext_resource type="Environment" uid="uid://bm00mgoeg2ojv" path="res://resources/environment_default.tres" id="5_ll0n0"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_vba8s"]
 size = Vector3(50, 3, 200)
@@ -13,20 +14,21 @@ size = Vector3(50, 3, 200)
 size = Vector3(50, 3, 200)
 
 [node name="SalinasFlats" type="Node3D"]
+script = ExtResource("1_1ucdp")
 
-[node name="ChuckTee" parent="." instance=ExtResource("1_toa5e")]
+[node name="ChuckTee" parent="." instance=ExtResource("1_kikso")]
 
-[node name="ChuckDisk" parent="ChuckTee" instance=ExtResource("4_m4tn0")]
+[node name="ChuckDisk" parent="ChuckTee" instance=ExtResource("2_0r0o2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.48635, -2.45964)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.719722, -0.202133, 0.664185, -0.671976, 0.0376311, 0.739617, -0.174495, -0.978635, -0.108745, 26.7919, 21.2915, -22.7111)
 shadow_enabled = true
 
-[node name="ChuckChucker" parent="." instance=ExtResource("2_bl408")]
+[node name="ChuckChucker" parent="." instance=ExtResource("3_wng2j")]
 transform = Transform3D(0.999997, 0.00223599, -0.000878929, -0.00223614, 0.999997, -0.000169186, 0.000878546, 0.000171164, 1, 0, 0.972875, 0)
 
-[node name="ChuckHole" parent="." instance=ExtResource("3_myjxc")]
+[node name="ChuckHole" parent="." instance=ExtResource("4_upk5s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -80)
 
 [node name="TempFloor" type="StaticBody3D" parent="."]
@@ -43,6 +45,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.505, 0)
 shape = SubResource("BoxShape3D_o6chi")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = ExtResource("5_t0qir")
+environment = ExtResource("5_ll0n0")
 
 [node name="DiskSpawn" type="Node3D" parent="."]

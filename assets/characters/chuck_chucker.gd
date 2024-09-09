@@ -1,6 +1,8 @@
 extends PlayableCharacter
 class_name ChuckChucker
 
+# TODO Allow right click aiming (without zoom) when in teebox
+# TODO Add reset call to when ChuckDisk collides to get rid of camera shakes
 # TODO Disable character rotate when disk airborne
 # TODO Make disk charge based off movement keys when preparing shot
 # TODO Have the spawned disks be equipable
@@ -17,6 +19,8 @@ class_name ChuckChucker
 @onready var frontDetection: ShapeCast3D = $FrontDetect
 @onready var chuckMesh: MeshInstance3D = $ChuckMesh
 @onready var playerCamera: Camera3D = $CameraController/CameraTarget/ChuckCamera
+@onready var scoreboard: Sprite3D = $Scoreboard
+
 var disableMovement: bool = false
 var stopwatch: StopWatch = StopWatch.new()
 var aimingNode: Node3D = Node3D.new()
@@ -37,6 +41,7 @@ func _physics_process(delta: float) -> void:
 	self._handle_player_action(delta)
 	self._handle_player_interact()
 	self._handle_movement()
+	self._handle_menus()
 
 ## Actions to be performed when MOVE_JUMP is pressed
 func _handle_jump(delta: float) -> void:
@@ -133,6 +138,14 @@ func _handle_movement() -> void:
 	self.move_and_slide()
 	# Keep camera up
 	cameraController.position = lerp(cameraController.position, position, GLOBAL_SETTINGS.CAMERA.PAN_SPEED)
+
+func _handle_menus() -> void:
+	if Input.is_action_pressed(USER_INPUT.MENU.SCORE):
+		scoreboard.visible = true
+		get_viewport().get_camera_3d().look_at(scoreboard.global_position)
+	if Input.is_action_just_released(USER_INPUT.MENU.SCORE):
+		scoreboard.visible = false
+		get_viewport().get_camera_3d().rotation = Vector3.ZERO
 
 ## Toggles the visibility logic when character has item equiped
 func toggle_equiped(value: bool) -> void:

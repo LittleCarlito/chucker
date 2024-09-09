@@ -10,7 +10,7 @@ var stopWatch: StopWatch = StopWatch.new()
 var fallbackCamera: Camera3D
 var ownerVar: ChuckChucker
 
-# TODO Add scorecard
+# TODO Bind scorecard to tab key
 # TODO Make dynamic scorecard
 #		Make each part of the scorecard a node object
 #		Make a script to create the scorecard based off how many holes the scene contains

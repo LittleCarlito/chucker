@@ -25,6 +25,10 @@ const ACTION = {
 	"SECONDARY": "player_secondary"
 }
 
+const MENU = {
+	"SCORE": "menu_score"
+}
+
 const ADMIN = {
 	"DEBUG": "admin_debug"
 }

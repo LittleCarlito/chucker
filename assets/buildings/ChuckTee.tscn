@@ -38,10 +38,10 @@ shape = SubResource("BoxShape3D_n4t14")
 transform = Transform3D(1, 0.000518124, -0.000638299, -0.000516965, 0.999998, 0.00179287, 0.000639237, -0.00179253, 0.999998, 0, 0, 0)
 
 [node name="CameraTarget" type="Node3D" parent="CameraController"]
-transform = Transform3D(1, -0.000249734, -0.000344578, 0.000388565, 0.866026, 0.5, 0.000173546, -0.5, 0.866025, -4.65661e-10, 3, 5)
+transform = Transform3D(1, -0.000147548, -0.00015585, 0.000182858, 0.965926, 0.258819, 0.000112351, -0.258818, 0.965924, 0.00172521, 6.56599, 10.5974)
 
 [node name="TeeboxCamera" type="Camera3D" parent="CameraController/CameraTarget"]
-current = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [connection signal="body_entered" from="TeeBoxArea" to="." method="_on_tee_box_area_body_entered"]
 [connection signal="body_exited" from="TeeBoxArea" to="." method="_on_tee_box_area_body_exited"]
