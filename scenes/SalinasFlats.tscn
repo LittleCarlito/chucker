@@ -1,6 +1,5 @@
-[gd_scene load_steps=9 format=3 uid="uid://0p7etoed8w0v"]
+[gd_scene load_steps=8 format=3 uid="uid://0p7etoed8w0v"]
 
-[ext_resource type="Script" path="res://scenes/salinas_flats.gd" id="1_1ucdp"]
 [ext_resource type="PackedScene" uid="uid://c3a3ygsd2ack" path="res://assets/buildings/ChuckTee.tscn" id="1_kikso"]
 [ext_resource type="PackedScene" uid="uid://blwwfxseykyuy" path="res://assets/items/ChuckDisk.tscn" id="2_0r0o2"]
 [ext_resource type="PackedScene" uid="uid://cdkknjflehfgx" path="res://assets/characters/ChuckChucker.tscn" id="3_wng2j"]
@@ -14,7 +13,6 @@ size = Vector3(50, 3, 200)
 size = Vector3(50, 3, 200)
 
 [node name="SalinasFlats" type="Node3D"]
-script = ExtResource("1_1ucdp")
 
 [node name="ChuckTee" parent="." instance=ExtResource("1_kikso")]
 

@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://c3a3ygsd2ack"]
+[gd_scene load_steps=8 format=3 uid="uid://c3a3ygsd2ack"]
 
 [ext_resource type="Script" path="res://assets/buildings/chuck_tee.gd" id="1_srenv"]
+[ext_resource type="PackedScene" uid="uid://cyjoxd73gt85u" path="res://assets/ui/Scorecard.tscn" id="2_1qtt2"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_521vg"]
 albedo_color = Color(0.101961, 0.270588, 0.0745098, 1)
@@ -14,6 +15,9 @@ size = Vector3(10, 0.2, 10)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_n4t14"]
 size = Vector3(10, 10, 10)
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_acy7v"]
+viewport_path = NodePath("ScorecardViewport")
 
 [node name="ChuckTee" type="StaticBody3D"]
 collision_layer = 16
@@ -42,6 +46,20 @@ transform = Transform3D(1, -0.000147548, -0.00015585, 0.000182858, 0.965926, 0.2
 
 [node name="TeeboxCamera" type="Camera3D" parent="CameraController/CameraTarget"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="ScorecardViewport" type="SubViewport" parent="."]
+size = Vector2i(1152, 648)
+
+[node name="ScorecardControl" parent="ScorecardViewport" instance=ExtResource("2_1qtt2")]
+
+[node name="ScorecardSprite" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 19.6913, 0)
+visible = false
+pixel_size = 0.0023
+billboard = 1
+double_sided = false
+fixed_size = true
+texture = SubResource("ViewportTexture_acy7v")
 
 [connection signal="body_entered" from="TeeBoxArea" to="." method="_on_tee_box_area_body_entered"]
 [connection signal="body_exited" from="TeeBoxArea" to="." method="_on_tee_box_area_body_exited"]

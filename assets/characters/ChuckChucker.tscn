@@ -66,8 +66,8 @@ size = Vector2i(1152, 648)
 
 [node name="ScorecardControl" parent="ScorecardViewport" instance=ExtResource("3_ogwsl")]
 
-[node name="Scorecard" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.14632, -0.451599)
+[node name="ScorecardSprite" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.14632, -0.00496089)
 visible = false
 pixel_size = 0.003
 billboard = 1
