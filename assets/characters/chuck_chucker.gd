@@ -1,10 +1,8 @@
 extends PlayableCharacter
 class_name ChuckChucker
 
-# TODO Allow right click aiming (without zoom) when in teebox
-# TODO Add reset call to when ChuckDisk collides to get rid of camera shakes
-# TODO Disable character rotate when disk airborne
-# TODO Make disk charge based off movement keys when preparing shot
+# TODO Fix scorecard keybinding and camera focus
+# TODO Make disk power setable not chargeable
 # TODO Have the spawned disks be equipable
 # TODO Spawned disks should determine what gets picked up
 # TODO Add scorecard
@@ -19,9 +17,10 @@ class_name ChuckChucker
 @onready var frontDetection: ShapeCast3D = $FrontDetect
 @onready var chuckMesh: MeshInstance3D = $ChuckMesh
 @onready var playerCamera: Camera3D = $CameraController/CameraTarget/ChuckCamera
-@onready var scoreboard: Sprite3D = $Scoreboard
+@onready var scorecard: Sprite3D = $Scorecard
 
 var disableMovement: bool = false
+var justLaunched: bool = false
 var stopwatch: StopWatch = StopWatch.new()
 var aimingNode: Node3D = Node3D.new()
 var aimingControl: Node3D = Node3D.new()
@@ -54,17 +53,16 @@ func _handle_jump(delta: float) -> void:
 
 ## Actions to be performed when the secondary action button is held
 func _handle_aiming() -> void:
-	if playerCamera.current:
-		if Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-			disableMovement = true
-			if playerCamera.current:
-				self._zoom_in()
-		else:
-			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-			self._reset_zoom()
-			cameraController.basis = self.global_basis
-			disableMovement = false
+	if Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		disableMovement = true
+		if playerCamera.current:
+			self._zoom_in()
+	if Input.is_action_just_released(USER_INPUT.ACTION.SECONDARY):
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		self._reset_zoom()
+		cameraController.basis = self.global_basis
+		disableMovement = false
 	if playerDisk.visible:
 		if Input.is_action_just_pressed(USER_INPUT.ROTATE.UP):
 			if diskController.rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
@@ -75,10 +73,10 @@ func _handle_aiming() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Looking controls
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and playerCamera.current:
+	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not justLaunched:
 		if event is InputEventMouseMotion:
 			self.rotation.y -= event.relative.x / 1000 * GLOBAL_SETTINGS.CONTROLS.HORIZONTAL_SENSITIVITY
-			var rotationAmount = GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY * (event.relative.y / 1000 * GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY)
+			var rotationAmount = GLOBAL_SETTINGS.CONTROLS.INVERT_VERTICAL * (GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY * (event.relative.y / 1000 * GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY))
 			if rotationAmount > 0 and diskController.rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
 				diskController.rotate_x(rotationAmount)
 			elif rotationAmount < 0 and diskController.rotation_degrees.x > GLOBAL_SETTINGS.PLAYER.MIN_LAUNCH_ROTATION:
@@ -86,12 +84,13 @@ func _unhandled_input(event: InputEvent) -> void:
 				
 
 func _handle_camera_controls() -> void:
-	if Input.is_action_pressed(USER_INPUT.ROTATE.LEFT):
-		cameraController.rotate_y(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
-		self.rotate_y(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
-	if Input.is_action_pressed(USER_INPUT.ROTATE.RIGHT):
-		cameraController.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
-		self.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+	if not disableMovement:
+		if Input.is_action_pressed(USER_INPUT.ROTATE.LEFT):
+			cameraController.rotate_y(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+			self.rotate_y(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+		if Input.is_action_pressed(USER_INPUT.ROTATE.RIGHT):
+			cameraController.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+			self.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 
 ## Actions when disk is thrown
 func _handle_player_action(delta: float) -> void:
@@ -141,10 +140,10 @@ func _handle_movement() -> void:
 
 func _handle_menus() -> void:
 	if Input.is_action_pressed(USER_INPUT.MENU.SCORE):
-		scoreboard.visible = true
-		get_viewport().get_camera_3d().look_at(scoreboard.global_position)
+		scorecard.visible = true
+		get_viewport().get_camera_3d().look_at(scorecard.global_position)
 	if Input.is_action_just_released(USER_INPUT.MENU.SCORE):
-		scoreboard.visible = false
+		scorecard.visible = false
 		get_viewport().get_camera_3d().rotation = Vector3.ZERO
 
 ## Toggles the visibility logic when character has item equiped

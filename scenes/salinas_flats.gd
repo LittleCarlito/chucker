@@ -15,9 +15,12 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	self._handle_menu()
 
+# TODO This should be in the Teebox object
+# TODO Disable chucks movement/rotations when scorecard is held
 func _handle_menu() -> void:
 	if Input.is_action_pressed(USER_INPUT.MENU.SCORE):
 		teeOneCamera.current = false
+		chuckCamera.rotation = Vector3.ZERO
 		chuckCamera.current = true
 	if Input.is_action_just_released(USER_INPUT.MENU.SCORE):
 		teeOneCamera.current = true

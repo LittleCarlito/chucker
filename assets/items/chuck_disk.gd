@@ -29,7 +29,6 @@ func _process(delta: float) -> void:
 		if !collided:
 			# Initial collision so start timers
 			cameraTimer.start(GLOBAL_SETTINGS.CAMERA.SHOT_WATCH_TIME)
-			# Hold points where collision occured as a variable
 			collided = true
 		# Move camera control to where collision occured
 		self._idle_rotate(delta)
@@ -57,6 +56,7 @@ func _on_camera_timer_timeout() -> void:
 		fallbackCamera.current = true
 	collisionLocation = Vector3.INF
 	cameraContainer.top_level = false
+	thrower.justLaunched = false
 
 static func new_disk(newdiskCamera: Camera3D, newThrower: ChuckChucker) -> ChuckDisk:
 	var newDisk: ChuckDisk = thrownDisk.instantiate()
