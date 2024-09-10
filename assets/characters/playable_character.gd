@@ -2,22 +2,17 @@ extends CharacterBody3D
 class_name PlayableCharacter
 
 
+# TODO Update interface when more character types are made and ChuckChucker is refactored
 
 func _physics_process(delta: float) -> void:
-	self._handle_jump(delta)
 	self._handle_camera_controls()
 	self._handle_player_action(delta)
 	self._handle_player_interact()
-	self._handle_movement()
+	self._handle_movement(delta)
 
 ## Handles player action input
 func _handle_player_action(_delta: float) -> void:
 	push_error("UNIMPLEMENTED METHOD; All PlayableCharacter Objects must implement _handle_player_action method")
-
-
-## Actions to be performed when MOVE_JUMP is pressed
-func _handle_jump(_delta: float) -> void:
-	push_error("UNIMPLEMENTED METHOD; All PlayableCharacter Objects must implement _handle_jump method")
 
 
 ## Handles camera/aiming related actions
@@ -30,7 +25,7 @@ func _handle_player_interact() -> void:
 	push_error("UNIMPLEMENTED METHOD; All PlayableCharacter Objects must implement _handle_player_interact method")
 
 ## Detects and executes movements
-func _handle_movement() -> void:
+func _handle_movement(delta: float) -> void:
 	push_error("UNIMPLEMENTED METHOD; All PlayableCharacter Objects must implement _handle_movement method")
 
 ## Toggles the visibility logic when character has item equiped

@@ -32,12 +32,10 @@ func _ready() -> void:
 	height = chuckMesh.get_aabb().size.y
 
 func _physics_process(delta: float) -> void:
-	# TODO Jump should be part of movement
-	self._handle_jump(delta)
 	self._handle_camera_controls()
 	self._handle_player_action(delta)
 	self._handle_player_interact()
-	self._handle_movement()
+	self._handle_movement(delta)
 	self._handle_menus()
 
 ## Actions to be performed when MOVE_JUMP is pressed
@@ -49,7 +47,7 @@ func _handle_jump(delta: float) -> void:
 	if Input.is_action_just_pressed(USER_INPUT.MOVE.JUMP) and is_on_floor() and not disableMovement:
 		velocity.y = GLOBAL_SETTINGS.PLAYER.JUMP_FORCE
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	# Looking controls
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not justLaunched:
 		if event is InputEventMouseMotion:
@@ -111,7 +109,12 @@ func _handle_player_interact() -> void:
 				collidingObject.queue_free()
 
 ## Detects and executes movements
-func _handle_movement() -> void:
+func _handle_movement(delta: float) -> void:
+	# Handle jump
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+	if Input.is_action_just_pressed(USER_INPUT.MOVE.JUMP) and is_on_floor() and not disableMovement:
+		velocity.y = GLOBAL_SETTINGS.PLAYER.JUMP_FORCE
 	var input_dir = Input.get_vector(USER_INPUT.MOVE.LEFT, USER_INPUT.MOVE.RIGHT, USER_INPUT.MOVE.FORWARD, USER_INPUT.MOVE.BACKWARD)
 	if(self.is_on_floor()):
 		var direction = (cameraController.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
