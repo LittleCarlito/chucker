@@ -10,7 +10,7 @@ class_name ChuckChucker
 # TODO Make FOV configurable between a certain range
 
 @onready var diskController: Node3D = $DiskController
-@onready var playerDisk: ThrowableItem = $DiskController/MathDisk
+@onready var playerDisk: ThrowableItem = $DiskController/DiskMesh
 @onready var cameraController: Node3D = $CameraController
 @onready var frontDetection: ShapeCast3D = $FrontDetect
 @onready var chuckMesh: MeshInstance3D = $ChuckMesh

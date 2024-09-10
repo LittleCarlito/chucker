@@ -1,5 +1,5 @@
 extends ThrowableItem
-class_name MathDisk
+class_name ChargeDisk
 
 @onready var chargeControl: ChargeBar = $ChargeView/ChargeControl
 @onready var chargeSprite: Sprite3D = $ChargeSprite
