@@ -56,7 +56,7 @@ func _on_camera_timer_timeout() -> void:
 		fallbackCamera.current = true
 	collisionLocation = Vector3.INF
 	cameraContainer.top_level = false
-	thrower.justLaunched = false
+	thrower.reset_justLaunched()
 
 static func new_disk(newdiskCamera: Camera3D, newThrower: ChuckChucker) -> ChuckDisk:
 	var newDisk: ChuckDisk = thrownDisk.instantiate()

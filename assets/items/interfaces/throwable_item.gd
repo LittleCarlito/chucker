@@ -14,3 +14,9 @@ func hold_action(_delta: float) -> void:
 
 func release_action() -> void:
 	push_error("UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement release_action method")
+
+func handle_aiming() -> void:
+	push_error("UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement handle_aiming method")
+
+func set_just_launched(value: bool) -> void:
+	push_error("UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement is_just_launched method")

@@ -18,7 +18,6 @@ class_name ChuckChucker
 @onready var scorecard: Sprite3D = $ScorecardSprite
 
 var disableMovement: bool = false
-var justLaunched: bool = false
 var stopwatch: StopWatch = StopWatch.new()
 var aimingNode: Node3D = Node3D.new()
 var aimingControl: Node3D = Node3D.new()
@@ -47,18 +46,6 @@ func _handle_jump(delta: float) -> void:
 	if Input.is_action_just_pressed(USER_INPUT.MOVE.JUMP) and is_on_floor() and not disableMovement:
 		velocity.y = GLOBAL_SETTINGS.PLAYER.JUMP_FORCE
 
-func _input(event: InputEvent) -> void:
-	# Looking controls
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not justLaunched:
-		if event is InputEventMouseMotion:
-			self.rotation.y -= event.relative.x / 1000 * GLOBAL_SETTINGS.CONTROLS.HORIZONTAL_SENSITIVITY
-			var rotationAmount = GLOBAL_SETTINGS.CONTROLS.INVERT_VERTICAL * (GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY * (event.relative.y / 1000 * GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY))
-			if rotationAmount > 0 and diskController.rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
-				diskController.rotate_x(rotationAmount)
-			elif rotationAmount < 0 and diskController.rotation_degrees.x > GLOBAL_SETTINGS.PLAYER.MIN_LAUNCH_ROTATION:
-				diskController.rotate_x(rotationAmount)
-				
-
 ## Rotation and aiming logic
 func _handle_camera_controls() -> void:
 	# Left and right rotation inputs
@@ -69,25 +56,6 @@ func _handle_camera_controls() -> void:
 		if Input.is_action_pressed(USER_INPUT.ROTATE.RIGHT):
 			cameraController.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 			self.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
-	# Right click aiming
-	if Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-		disableMovement = true
-		if playerCamera.current:
-			self._zoom_in()
-	if Input.is_action_just_released(USER_INPUT.ACTION.SECONDARY):
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		self._reset_zoom()
-		cameraController.basis = self.global_basis
-		disableMovement = false
-	# Rotate disk with scroll wheel
-	if playerDisk.visible:
-		if Input.is_action_just_pressed(USER_INPUT.ROTATE.UP):
-			if diskController.rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
-				diskController.rotate_x(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
-		if Input.is_action_just_pressed(USER_INPUT.ROTATE.DOWN):
-			if diskController.rotation_degrees.x > GLOBAL_SETTINGS.PLAYER.MIN_LAUNCH_ROTATION:
-				diskController.rotate_x(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 
 ## Actions when disk is thrown
 func _handle_player_action(delta: float) -> void:
@@ -135,7 +103,6 @@ func _handle_movement(delta: float) -> void:
 		else:
 			velocity.x = move_toward(velocity.x, 0, GLOBAL_SETTINGS.PLAYER.RUN_SPEED)
 			velocity.z = move_toward(velocity.z, 0, GLOBAL_SETTINGS.PLAYER.RUN_SPEED)
-	# TODO Consider replacing with own physics that would match predicted paths
 	self.move_and_slide()
 	# Keep camera up
 	cameraController.position = lerp(cameraController.position, position, GLOBAL_SETTINGS.CAMERA.PAN_SPEED)
@@ -166,7 +133,7 @@ func get_height() -> float:
 
 func get_camera() -> Camera3D:
 	return $CameraController/CameraTarget/ChuckCamera
-#
+
 func _reset_zoom() -> void:
 	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.FOV
 
@@ -175,3 +142,6 @@ func _zoom_in() -> void:
 
 func _zoom_out() -> void:
 	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.FOV + GLOBAL_SETTINGS.CAMERA.OUT_ADJUST
+
+func reset_justLaunched() -> void:
+	playerDisk.set_just_launched(false)

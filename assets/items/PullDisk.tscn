@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://blyknk2r5fcfp"]
+
+[ext_resource type="CylinderMesh" uid="uid://cblsbpedig3hu" path="res://assets/items/DiskMesh_blue.tres" id="1_7ppud"]
+[ext_resource type="Script" path="res://assets/items/pull_disk.gd" id="2_ebead"]
+[ext_resource type="PackedScene" uid="uid://dgugjjr1k0dl" path="res://assets/ui/ChargeBar.tscn" id="3_x80mh"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_kirdh"]
+viewport_path = NodePath("ChargeView")
+
+[node name="PullDisk" type="MeshInstance3D"]
+mesh = ExtResource("1_7ppud")
+script = ExtResource("2_ebead")
+
+[node name="ChargeView" type="SubViewport" parent="."]
+transparent_bg = true
+
+[node name="ChargeControl" parent="ChargeView" instance=ExtResource("3_x80mh")]
+
+[node name="ChargeSprite" type="Sprite3D" parent="."]
+transform = Transform3D(-0.75, 0, -1.13247e-07, 0, 0.75, 0, 1.13247e-07, 0, -0.75, 1.1598, 0.65464, 0)
+visible = false
+billboard = 2
+texture = SubResource("ViewportTexture_kirdh")
