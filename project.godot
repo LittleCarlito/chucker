@@ -116,6 +116,10 @@ menu_score={
 3d_physics/layer_4="Hole"
 3d_physics/layer_5="Teebox"
 
+[physics]
+
+3d/physics_engine="JoltPhysics3D"
+
 [rendering]
 
 anti_aliasing/quality/msaa_3d=2

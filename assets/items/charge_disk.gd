@@ -48,7 +48,8 @@ func hold_action(delta: float) -> void:
 	var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, heldTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
 	var gravity: float = abs(NodeUtil.get_gravity(self).y)
 	var parentRotation: float = NodeUtil.get_parent_x_rotation(self)
-	var height: float = NodeUtil.get_parent_heights(self)
+	var height: float = self.global_position.y
+	#var height: float = NodeUtil.get_parent_heights(self)
 	var throwSpeed: float = GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier
 	# move_and_slide() is a liar so this will always be an approximation
 	var zDistance: float = NodeUtil.calculate_range(height, gravity, parentRotation, throwSpeed)

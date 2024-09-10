@@ -1,14 +1,5 @@
 extends Node
 
-## Returns total of parent node heights
-func get_parent_heights(node: Node3D) -> float:
-	if node.get_parent_node_3d() != null:
-		if node is ChuckChucker:
-			return node.get_height()/2
-		else:
-			return abs(node.position.y) + get_parent_heights(node.get_parent_node_3d())
-	return abs(node.position.y)
-
 ## Returns total rotation on the x axis of parent nodes up to character
 func get_parent_x_rotation(node: Node3D) -> float:
 	if node.get_parent() != null:
@@ -39,6 +30,8 @@ func get_gravity(node: Node3D) -> Vector3:
 	push_error("get_gravity for " + node.name + ", no parent object found; Returning empty vector")
 	return Vector3(0, 0, 0)
 
+# TODO Aim point is a bit long on high angles
+#			Redo it like this https://www.reddit.com/r/godot/comments/1ab8y1f/how_can_i_make_this_kind_of_bullet_trajectory/
 ## Calculates the trajectory distance given parameters
 func calculate_range(height: float, gravity: float, angle: float, velocity: float) -> float:
 	# Convert angle from degrees to radians if needed
@@ -55,4 +48,3 @@ func calculate_range(height: float, gravity: float, angle: float, velocity: floa
 	# Calculate the range
 	var returnRange = v0_x * t
 	return returnRange
-	

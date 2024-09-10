@@ -9,6 +9,8 @@ collision_layer = 4
 collision_mask = 14
 contact_monitor = true
 max_contacts_reported = 1
+linear_damp_mode = 1
+angular_damp_mode = 1
 script = ExtResource("1_gtghv")
 
 [node name="DiskMesh" type="MeshInstance3D" parent="."]

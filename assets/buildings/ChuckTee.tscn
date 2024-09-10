@@ -45,7 +45,6 @@ transform = Transform3D(1, 0.000518124, -0.000638299, -0.000516965, 0.999998, 0.
 transform = Transform3D(1, -0.000147548, -0.00015585, 0.000182858, 0.965926, 0.258819, 0.000112351, -0.258818, 0.965924, 0.00172521, 6.56599, 10.5974)
 
 [node name="TeeboxCamera" type="Camera3D" parent="CameraController/CameraTarget"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="ScorecardViewport" type="SubViewport" parent="."]
 size = Vector2i(1152, 648)

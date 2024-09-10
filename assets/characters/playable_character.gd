@@ -25,7 +25,7 @@ func _handle_player_interact() -> void:
 	push_error("UNIMPLEMENTED METHOD; All PlayableCharacter Objects must implement _handle_player_interact method")
 
 ## Detects and executes movements
-func _handle_movement(delta: float) -> void:
+func _handle_movement(_delta: float) -> void:
 	push_error("UNIMPLEMENTED METHOD; All PlayableCharacter Objects must implement _handle_movement method")
 
 ## Toggles the visibility logic when character has item equiped
