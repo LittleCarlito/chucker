@@ -7,7 +7,7 @@
 [sub_resource type="ViewportTexture" id="ViewportTexture_fvilu"]
 viewport_path = NodePath("ChargeView")
 
-[node name="MathDisk" type="MeshInstance3D"]
+[node name="ChargeDisk" type="MeshInstance3D"]
 mesh = ExtResource("1_sm6fq")
 script = ExtResource("2_o74uw")
 

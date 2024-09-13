@@ -1,10 +1,9 @@
 extends ThrowableItem
 class_name PullDisk
 
+@onready var pullDraw: PullDraw = $PullDraw
 @onready var chargeControl: ChargeBar = $ChargeView/ChargeControl
 @onready var chargeSprite: Sprite3D = $ChargeSprite
-var originPullPoint: Vector2
-var pullPoint: Vector2
 var aimNode: Node3D = Node3D.new()
 var aimControlNode: Node3D = Node3D.new()
 var launchControlNode: Node3D = Node3D.new()
@@ -16,26 +15,39 @@ var justLaunched: bool = false
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Logger.set_log_level(Logger.LEVEL.DEBUG)
-	chargeControl.chargeAmount.text = str(-1)
+	chargeControl.set_progress(-1)
 	ownerVar = self.owner
-	## IF YOU FAILED LAUNCHING ON THIS LINE ITS BECAUSE YOU LAUNCHED THE DISK AS A SCENE
-	fallbackCamera = ownerVar.get_camera()
+	if ownerVar != null:
+		fallbackCamera = ownerVar.get_camera()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	self.handle_aiming()
+	if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
+		self.hold_action(delta)
+	elif Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
+		self.release_action()
+	# TODO This should probably be handled in one of the above methods
 	if float(chargeControl.chargeAmount.text) >= 0:
 		chargeSprite.visible = true
 	else:
 		chargeSprite.visible = false
 
-func hold_action(_delta: float) -> void:
-	push_error("UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement hold_action method")
-	# TODO Detect mouse input and if it is positive move zDirection along the -z axis at a constant global velocity
-	#			do the opposite for movements detected in the negative direction
+func hold_action(delta: float) -> void:
+	var pullLength: float = pullDraw.lastLength
+	chargeControl.set_progress((pullLength / GLOBAL_SETTINGS.DISK.MAX_PULL) * 100)
+	# TODO Get last pull length from pull draw to get how much charge should be applied
+	# TODO Display in the chargeControl the ratio of last length to max pull length
+	# TODO Display aim nodes based off charge amount
+	# TODO Eventually get side pull of line and add offset to control nodes to add "curve"
+	pass
 
 func release_action() -> void:
-	push_error("UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement release_action method")
+	# TODO Get last pull length from pull draw to determine charge power
+	# TODO Stuff to launch the disk into the main scene
+	# TODO Eventually make this disk follow the path laid out by the aim nodes
+	chargeControl.set_progress(-1)
+	ownerVar.toggle_equiped(false)
 
 # TODO Right click should aim and rotate disk (no showing any aim line)
 # TODO Left click needs to be held down and pulled back give power to the shot
@@ -67,38 +79,6 @@ func _input(event: InputEvent) -> void:
 					self.get_parent().rotate_x(rotationAmount)
 				elif rotationAmount < 0 and self.get_parent().rotation_degrees.x > GLOBAL_SETTINGS.PLAYER.MIN_LAUNCH_ROTATION:
 					self.get_parent().rotate_x(rotationAmount)
-		# When right click isn't held
-		else:
-			if event is InputEventMouse:
-				# Get location where left click is starting to be held
-				if Input.is_action_just_pressed(USER_INPUT.ACTION.PRIMARY):
-					originPullPoint = event.global_position
-					chargeControl.chargeAmount.text = str(0)
-				# Determine throw power based off distance between origin of pull and mouse location
-				elif Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
-					get_viewport().get_mouse_position()
-					pullPoint = event.global_position
-					#pullDraw.draw_pull_line(Vector2.ZERO, pullPoint, Color.RED)
-					# TODO Might just be easier to draw on the viewport with a sprite and canvas thing somehow?
-					# TODO Convert Vector2 to Vector3 so you can use DrawUtil
-					#		Have x and y, z should be 0 as it doesn't need depth
-					#		These measurements have to be local and then converted to global
-					# TODO Make 2 more points for drawing on the screen
-					# NOTE Y going positive means down; Negative means up
-					# NOTE X going positive means right; Negative means left
-					# NOTE Measured in pixels; Convert pixels to meters (standard is .01 px/meter)
-					#print("Origin pull point is " + str(originPullPoint.position) + "; Pull point now is " + str(pullPoint.position))
-					
-					# TODO Code up update the charge bar to be a ratio of movedDistance to configured max allowed charge
-					# TODO Implement
-					pass
-				# Determine where left click is released to calculate launch power
-				elif Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
-					# TODO Code for launching disk into the main scene
-					originPullPoint = Vector2.INF
-					pullPoint = Vector2.INF
-					chargeControl.chargeAmount.text = str(-1)
-					ownerVar.toggle_equiped(false)
 
 func _reset_zoom() -> void:
 	fallbackCamera.fov = GLOBAL_SETTINGS.CAMERA.FOV
