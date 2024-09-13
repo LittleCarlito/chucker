@@ -1,17 +1,14 @@
 extends EquipableItem
 class_name ThrowableItem
 
-var ownerVar: ChuckChucker
-var fallbackCamera: Camera3D
 var aimNode: Node3D = Node3D.new()
 var aimControlNode: Node3D = Node3D.new()
 var launchControlNode: Node3D = Node3D.new()
+var justLaunched: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	ownerVar = self.owner
-	if ownerVar != null:
-		fallbackCamera = ownerVar.get_camera()
+	super()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -24,10 +21,31 @@ func release_action() -> void:
 	push_error("UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement release_action method")
 
 func handle_aiming() -> void:
-	push_error("UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement handle_aiming method")
+	# Right click aiming
+	if Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		ownerVar.disableMovement = true
+		if fallbackCamera.current:
+			self._zoom_in()
+	if Input.is_action_just_released(USER_INPUT.ACTION.SECONDARY):
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		self._reset_zoom()
+		ownerVar.cameraController.basis = ownerVar.global_basis
+		ownerVar.disableMovement = false
+
+func _input(event: InputEvent) -> void:
+	# Looking controls
+	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not justLaunched:
+		if event is InputEventMouseMotion:
+			ownerVar.rotation.y -= event.relative.x / 1000 * GLOBAL_SETTINGS.CONTROLS.HORIZONTAL_SENSITIVITY
+			var rotationAmount = GLOBAL_SETTINGS.CONTROLS.INVERT_VERTICAL * (GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY * (event.relative.y / 1000 * GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY))
+			if rotationAmount > 0 and self.get_parent().rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
+				self.get_parent().rotate_x(rotationAmount)
+			elif rotationAmount < 0 and self.get_parent().rotation_degrees.x > GLOBAL_SETTINGS.PLAYER.MIN_LAUNCH_ROTATION:
+				self.get_parent().rotate_x(rotationAmount)
 
 func set_just_launched(value: bool) -> void:
-	push_error("UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement set_just_launched method")
+	self.justLaunched = value
 
 func draw_aim_line(multiplier: float) -> void:
 	var gravity: float = abs(NodeUtil.get_gravity(self).y)
