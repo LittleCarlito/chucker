@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://cdkknjflehfgx"]
 
 [ext_resource type="Script" path="res://assets/characters/chuck_chucker.gd" id="1_hnkcf"]
-[ext_resource type="PackedScene" uid="uid://cfb8nwjdbjdsi" path="res://assets/items/ChargeDisk.tscn" id="2_hycx8"]
+[ext_resource type="PackedScene" uid="uid://blyknk2r5fcfp" path="res://assets/items/PullDisk.tscn" id="2_ixu7k"]
 [ext_resource type="PackedScene" uid="uid://cyjoxd73gt85u" path="res://assets/ui/Scorecard.tscn" id="3_ogwsl"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h7ubf"]
@@ -58,8 +58,7 @@ transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 
 [node name="DiskController" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.50122e-10, 0.744641, 0)
 
-[node name="DiskMesh" parent="DiskController" instance=ExtResource("2_hycx8")]
-visible = false
+[node name="DiskMesh" parent="DiskController" instance=ExtResource("2_ixu7k")]
 
 [node name="ScorecardViewport" type="SubViewport" parent="."]
 size = Vector2i(1152, 648)

@@ -30,6 +30,8 @@ func _process(delta: float) -> void:
 			# Initial collision so start timers
 			cameraTimer.start(GLOBAL_SETTINGS.CAMERA.SHOT_WATCH_TIME)
 			collided = true
+			self.linear_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
+			self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
 		# Move camera control to where collision occured
 		self._idle_rotate(delta)
 	# Otherwise handle camera controls if camera is active
@@ -56,6 +58,8 @@ func _on_camera_timer_timeout() -> void:
 		fallbackCamera.current = true
 	collisionLocation = Vector3.INF
 	cameraContainer.top_level = false
+	self.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
+	self.angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
 	thrower.reset_justLaunched()
 
 static func new_disk(newdiskCamera: Camera3D, newThrower: ChuckChucker) -> ChuckDisk:

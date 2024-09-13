@@ -3,9 +3,9 @@ class_name ChargeDisk
 
 @onready var chargeControl: ChargeBar = $ChargeView/ChargeControl
 @onready var chargeSprite: Sprite3D = $ChargeSprite
-@onready var aimNode: Node3D = Node3D.new()
-@onready var aimControlNode: Node3D = Node3D.new()
-@onready var launchControlNode: Node3D = Node3D.new()
+var aimNode: Node3D = Node3D.new()
+var aimControlNode: Node3D = Node3D.new()
+var launchControlNode: Node3D = Node3D.new()
 var stopWatch: StopWatch = StopWatch.new()
 var fallbackCamera: Camera3D
 var ownerVar: ChuckChucker
@@ -57,6 +57,17 @@ func handle_aiming() -> void:
 		ownerVar.cameraController.basis = ownerVar.global_basis
 		ownerVar.disableMovement = false
 
+func _input(event: InputEvent) -> void:
+	# Looking controls
+	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not justLaunched:
+		if event is InputEventMouseMotion:
+			ownerVar.rotation.y -= event.relative.x / 1000 * GLOBAL_SETTINGS.CONTROLS.HORIZONTAL_SENSITIVITY
+			var rotationAmount = GLOBAL_SETTINGS.CONTROLS.INVERT_VERTICAL * (GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY * (event.relative.y / 1000 * GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY))
+			if rotationAmount > 0 and self.get_parent().rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
+				self.get_parent().rotate_x(rotationAmount)
+			elif rotationAmount < 0 and self.get_parent().rotation_degrees.x > GLOBAL_SETTINGS.PLAYER.MIN_LAUNCH_ROTATION:
+				self.get_parent().rotate_x(rotationAmount)
+
 func hold_action(delta: float) -> void:
 	var heldTime: float = stopWatch.isHeld(delta)
 	chargeControl.set_progress((heldTime / GLOBAL_SETTINGS.DISK.MAX_HOLD) * 100)
@@ -105,17 +116,7 @@ func release_action() -> void:
 		newDisk.toggle_camera()
 		ownerVar.disableMovement = true
 		self.justLaunched = true
-
-func _input(event: InputEvent) -> void:
-	# Looking controls
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not justLaunched:
-		if event is InputEventMouseMotion:
-			ownerVar.rotation.y -= event.relative.x / 1000 * GLOBAL_SETTINGS.CONTROLS.HORIZONTAL_SENSITIVITY
-			var rotationAmount = GLOBAL_SETTINGS.CONTROLS.INVERT_VERTICAL * (GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY * (event.relative.y / 1000 * GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY))
-			if rotationAmount > 0 and self.get_parent().rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
-				self.get_parent().rotate_x(rotationAmount)
-			elif rotationAmount < 0 and self.get_parent().rotation_degrees.x > GLOBAL_SETTINGS.PLAYER.MIN_LAUNCH_ROTATION:
-				self.get_parent().rotate_x(rotationAmount)
+	ownerVar.toggle_equiped(false)
 
 func _reset_zoom() -> void:
 	fallbackCamera.fov = GLOBAL_SETTINGS.CAMERA.FOV

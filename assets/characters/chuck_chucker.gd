@@ -64,7 +64,6 @@ func _handle_player_action(delta: float) -> void:
 			playerDisk.hold_action(delta)
 		if Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
 			playerDisk.release_action()
-			self.toggle_equiped(false)
 
 ## Handle player pressing interact button
 func _handle_player_interact() -> void:

@@ -30,8 +30,6 @@ func get_gravity(node: Node3D) -> Vector3:
 	push_error("get_gravity for " + node.name + ", no parent object found; Returning empty vector")
 	return Vector3(0, 0, 0)
 
-# TODO Aim point is a bit long on high angles
-#			Redo it like this https://www.reddit.com/r/godot/comments/1ab8y1f/how_can_i_make_this_kind_of_bullet_trajectory/
 ## Calculates the trajectory distance given parameters
 func calculate_range(height: float, gravity: float, angle: float, velocity: float) -> float:
 	# Convert angle from degrees to radians if needed
@@ -48,3 +46,28 @@ func calculate_range(height: float, gravity: float, angle: float, velocity: floa
 	# Calculate the range
 	var returnRange = v0_x * t
 	return returnRange
+
+## Gets mouse hovering location in 3D space
+func get_mouse_position() -> Vector3:
+	# Get the physics space state to perform raycasting in the 3D world
+	var space_state = get_parent().get_world_3d().get_direct_space_state()
+	# Get the current mouse position on the viewport
+	var mouse_position = get_viewport().get_mouse_position()
+	# Get the camera node from the scene tree to project the ray
+	var camera = get_tree().root.get_camera_3d()
+	# Calculate the ray's origin point from the camera, starting from the mouse position
+	var ray_origin = camera.project_ray_origin(mouse_position)
+	# Calculate the ray's end point far into the scene to perform the intersection test
+	var ray_end = ray_origin + camera.project_ray_normal(mouse_position) * 1000
+	# Prepare the parameters for the raycasting
+	var params = PhysicsRayQueryParameters3D.new()
+	params.from = ray_origin
+	params.to = ray_end
+	params.collision_mask = 0b00000000_00000000_00000000_00000010# Define which layers the ray should collide with.
+	params.exclude = [] # Define any objects to exclude from the test."collision_priority"
+	# Perform the raycasting in the 3D world and check for intersections.
+	var rayDic = space_state.intersect_ray(params)
+	# If the ray hit an object, return the hit position; otherwise, return a very far point (infinity).
+	if rayDic.has("position"):
+		return rayDic["position"]
+	return Vector3.INF
