@@ -3,12 +3,7 @@ class_name ChargeDisk
 
 @onready var chargeControl: ChargeBar = $ChargeView/ChargeControl
 @onready var chargeSprite: Sprite3D = $ChargeSprite
-var aimNode: Node3D = Node3D.new()
-var aimControlNode: Node3D = Node3D.new()
-var launchControlNode: Node3D = Node3D.new()
 var stopWatch: StopWatch = StopWatch.new()
-var fallbackCamera: Camera3D
-var ownerVar: ChuckChucker
 var justLaunched: bool = false
 
 # TODO Get rid of scroll making disk tilt and make that how power is set instead
@@ -32,9 +27,8 @@ var justLaunched: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	super()
 	Logger.set_log_level(Logger.LEVEL.DEBUG)
-	ownerVar = self.owner
-	fallbackCamera = ownerVar.get_camera()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -72,51 +66,14 @@ func hold_action(delta: float) -> void:
 	var heldTime: float = stopWatch.isHeld(delta)
 	chargeControl.set_progress((heldTime / GLOBAL_SETTINGS.DISK.MAX_HOLD) * 100)
 	var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, heldTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
-	var gravity: float = abs(NodeUtil.get_gravity(self).y)
-	var parentRotation: float = NodeUtil.get_parent_x_rotation(self)
-	var height: float = self.global_position.y
-	#var height: float = NodeUtil.get_parent_heights(self)
-	var throwSpeed: float = GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier
-	# move_and_slide() is a liar so this will always be an approximation
-	var zDistance: float = NodeUtil.calculate_range(height, gravity, parentRotation, throwSpeed)
-	var gravityAdjust: float = gravity * GLOBAL_SETTINGS.DISK.GRAVITY_MULTIPLIER
-	# Handle aimNode
-	aimNode.position = self.global_position
-	aimNode.basis = self.global_basis
-	aimNode.rotation_degrees.x = 0
-	aimNode.translate(Vector3(0, -height, -zDistance))
-	DrawUtil.point(aimNode.position)
-	# Handle launchControlNode
-	launchControlNode.position = self.global_position
-	launchControlNode.basis = self.global_basis
-	launchControlNode.translate(Vector3(0, 0, -zDistance / 3))
-	DrawUtil.point(launchControlNode.position, .05, Color.BLUE)
-	# Handle aimControlNode
-	aimControlNode.position = self.global_position
-	aimControlNode.basis = aimNode.basis
-	# Apply negative translate to flatten the curve
-	var controlPointHeight: float = (zDistance / 2.0) * tan(deg_to_rad(parentRotation)) * gravityAdjust
-	aimControlNode.translate(Vector3(0, controlPointHeight, -zDistance / 2))
-	DrawUtil.point(aimControlNode.position, .05, Color.DEEP_PINK)
-	# Draw the curve
-	DrawUtil.curve(self.global_position, launchControlNode.position, aimControlNode.position, aimNode.position)
+	self.draw_aim_line(multiplier)
 
 ## Launch disk and reset objects
 func release_action() -> void:
+	chargeControl.set_progress(0)
 	var finalTime: float = stopWatch.reset()
 	var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, finalTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
-	var newDisk = ChuckDisk.new_disk(fallbackCamera, ownerVar)
-	newDisk.top_level = true
-	get_tree().get_root().add_child(newDisk)
-	newDisk.global_transform = self.global_transform
-	newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)
-	self.rotation.x = 0
-	chargeControl.set_progress(0)
-	if newDisk is ChuckDisk:
-		newDisk.toggle_camera()
-		ownerVar.disableMovement = true
-		self.justLaunched = true
-	ownerVar.toggle_equiped(false)
+	self.launch_disk(multiplier)
 
 func _reset_zoom() -> void:
 	fallbackCamera.fov = GLOBAL_SETTINGS.CAMERA.FOV

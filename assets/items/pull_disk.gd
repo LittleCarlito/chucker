@@ -4,21 +4,23 @@ class_name PullDisk
 @onready var pullDraw: PullDraw = $PullDraw
 @onready var chargeControl: ChargeBar = $ChargeView/ChargeControl
 @onready var chargeSprite: Sprite3D = $ChargeSprite
-var aimNode: Node3D = Node3D.new()
-var aimControlNode: Node3D = Node3D.new()
-var launchControlNode: Node3D = Node3D.new()
-var stopWatch: StopWatch = StopWatch.new()
-var fallbackCamera: Camera3D
-var ownerVar: ChuckChucker
+var pullLength: float
 var justLaunched: bool = false
+
+# TODO Look controls are messed up (holding right click and looking around without disk doesn't work right)
+# TODO When disk is launched camera doesn't follow it properly
+# TODO Right click should aim and rotate disk (no showing any aim line)
+# TODO Need to add logic to handle what to do when holding left click and right click is pressed and vice versa
+#		For holding left click and then having right click it should cancel throw reset power to zero and reset aiming
+#			Should be able to let go of left click without launch
+# TODO Get side pull of line and add offset to control nodes to add "curve"
+# TODO Make this disk follow the path laid out by the aim nodes
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	super()
 	Logger.set_log_level(Logger.LEVEL.DEBUG)
 	chargeControl.set_progress(-1)
-	ownerVar = self.owner
-	if ownerVar != null:
-		fallbackCamera = ownerVar.get_camera()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -34,24 +36,16 @@ func _process(delta: float) -> void:
 		chargeSprite.visible = false
 
 func hold_action(delta: float) -> void:
-	var pullLength: float = pullDraw.lastLength
+	pullLength = pullDraw.lastLength
 	chargeControl.set_progress((pullLength / GLOBAL_SETTINGS.DISK.MAX_PULL) * 100)
-	# TODO Get last pull length from pull draw to get how much charge should be applied
-	# TODO Display in the chargeControl the ratio of last length to max pull length
-	# TODO Display aim nodes based off charge amount
-	# TODO Eventually get side pull of line and add offset to control nodes to add "curve"
-	pass
+	var multiplier: float = (pullLength / 100) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
+	self.draw_aim_line(multiplier)
 
 func release_action() -> void:
-	# TODO Get last pull length from pull draw to determine charge power
-	# TODO Stuff to launch the disk into the main scene
-	# TODO Eventually make this disk follow the path laid out by the aim nodes
 	chargeControl.set_progress(-1)
-	ownerVar.toggle_equiped(false)
+	var multiplier: float = (pullLength / 100) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
+	self.launch_disk(multiplier)
 
-# TODO Right click should aim and rotate disk (no showing any aim line)
-# TODO Left click needs to be held down and pulled back give power to the shot
-#		Start with power but eventually angle of pullback results in different curve to angle/spin on disk
 func handle_aiming() -> void:
 	# Right click aiming
 	if Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
@@ -90,4 +84,4 @@ func _zoom_out() -> void:
 	fallbackCamera.fov = GLOBAL_SETTINGS.CAMERA.FOV + GLOBAL_SETTINGS.CAMERA.OUT_ADJUST
 
 func set_just_launched(value: bool) -> void:
-	push_error("UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement is_just_launched method")
+	push_error("UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement set_just_launched method")
