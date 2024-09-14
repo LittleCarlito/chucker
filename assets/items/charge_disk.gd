@@ -53,7 +53,8 @@ func hold_action(delta: float) -> void:
 
 ## Launch disk and reset objects
 func release_action() -> void:
-	chargeControl.set_progress(-1)
-	var finalTime: float = stopWatch.reset()
-	var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, finalTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
-	self.launch_disk(multiplier, ThrowableItem.TYPE.CHARGE)
+	if not Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
+		chargeControl.set_progress(-1)
+		var finalTime: float = stopWatch.reset()
+		var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, finalTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
+		self.launch_disk(multiplier, ThrowableItem.TYPE.CHARGE)
