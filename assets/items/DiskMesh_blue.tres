@@ -1,7 +1,7 @@
 [gd_resource type="CylinderMesh" load_steps=2 format=3 uid="uid://cblsbpedig3hu"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y830f"]
-albedo_color = Color(0.243429, 0.58675, 0.910267, 1)
+albedo_color = Color(0, 0, 1, 1)
 
 [resource]
 material = SubResource("StandardMaterial3D_y830f")

@@ -6,6 +6,8 @@ var aimControlNode: Node3D = Node3D.new()
 var launchControlNode: Node3D = Node3D.new()
 var justLaunched: bool = false
 
+enum TYPE {CHARGE, PULL}
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super()
@@ -78,8 +80,13 @@ func draw_aim_line(multiplier: float) -> void:
 	DrawUtil.curve(self.global_position, launchControlNode.position, aimControlNode.position, aimNode.position)
 
 # TODO Eventually take in enum for launch type of disk so when it is picked up character equips correct type
-func launch_disk(multiplier: float) -> void:
+func launch_disk(multiplier: float, diskType: TYPE) -> void:
 	var newDisk = ChuckDisk.new_disk(fallbackCamera, ownerVar)
+	var diskMaterial: StandardMaterial3D = newDisk.get_mesh().get_active_material(0)
+	if diskType == TYPE.CHARGE:
+		diskMaterial.albedo_color = Color.RED
+	elif diskType == TYPE.PULL:
+		diskMaterial.albedo_color = Color.BLUE
 	newDisk.top_level = true
 	get_tree().get_root().add_child(newDisk)
 	newDisk.global_transform = self.global_transform

@@ -39,9 +39,6 @@ func _process(_delta: float) -> void:
 	else:
 		chargeSprite.visible = false
 
-# TODO Should be part of throwable or equipable
-
-
 func hold_action(delta: float) -> void:
 	var heldTime: float = stopWatch.isHeld(delta)
 	chargeControl.set_progress((heldTime / GLOBAL_SETTINGS.DISK.MAX_HOLD) * 100)
@@ -53,4 +50,4 @@ func release_action() -> void:
 	chargeControl.set_progress(-1)
 	var finalTime: float = stopWatch.reset()
 	var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, finalTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
-	self.launch_disk(multiplier)
+	self.launch_disk(multiplier, ThrowableItem.TYPE.CHARGE)

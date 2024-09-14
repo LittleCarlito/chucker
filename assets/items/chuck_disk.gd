@@ -77,3 +77,6 @@ func _idle_rotate(delta: float) -> void:
 		collisionLocation = self.global_position
 	cameraContainer.global_rotation_degrees.y += rotationAmount
 	cameraControl.look_at(collisionLocation)
+
+func get_mesh() -> MeshInstance3D:
+	return $DiskMesh

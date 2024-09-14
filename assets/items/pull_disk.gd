@@ -42,4 +42,4 @@ func hold_action(_delta: float) -> void:
 func release_action() -> void:
 	chargeControl.set_progress(-1)
 	var multiplier: float = (pullLength / 100) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
-	self.launch_disk(multiplier)
+	self.launch_disk(multiplier, ThrowableItem.TYPE.PULL)
