@@ -15,7 +15,8 @@ const DISK = {
 	"MAX_HOLD": 2,
 	"HOLD_MULTIPLIER": 1.5,
 	"GRAVITY_MULTIPLIER": .009,
-	"MAX_PULL": 200
+	"MAX_PULL": 200,
+	"MAX_OFFSET": 400
 }
 
 const CAMERA = {

@@ -5,9 +5,13 @@ class_name PullDisk
 @onready var chargeControl: ChargeBar = $ChargeView/ChargeControl
 @onready var chargeSprite: Sprite3D = $ChargeSprite
 var pullLength: float
+var pullOffset: float
 
-# TODO Get side pull of line and add offset to control nodes to add "curve"
 # TODO Make this disk follow the path laid out by the aim nodes
+#		Make a path that is identical to the one created by the aim nodes
+#		Put a node on that path and have it follow the path when released
+#		Set the disk on release to follow that node
+#			Should keep physics of rigid body without tying it to the path
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -32,9 +36,10 @@ func hold_action(_delta: float) -> void:
 	# If right click isn't held while holding left click calculate throw distance
 	elif not Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
 		pullLength = pullDraw.lastLength
+		pullOffset = pullDraw.lastOffset * .01
 		chargeControl.set_progress((pullLength / GLOBAL_SETTINGS.DISK.MAX_PULL) * 100)
 		var multiplier: float = (pullLength / 100) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
-		self.draw_aim_line(multiplier)
+		self.draw_aim_line(multiplier, pullOffset)
 
 func release_action() -> void:
 	# If right click is not held launch the disk

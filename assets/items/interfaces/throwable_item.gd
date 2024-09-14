@@ -49,7 +49,7 @@ func _input(event: InputEvent) -> void:
 func set_just_launched(value: bool) -> void:
 	self.justLaunched = value
 
-func draw_aim_line(multiplier: float) -> void:
+func draw_aim_line(multiplier: float, xOffset: float = 0) -> void:
 	var gravity: float = abs(NodeUtil.get_gravity(self).y)
 	var parentRotation: float = NodeUtil.get_parent_x_rotation(self)
 	var height: float = self.global_position.y
@@ -67,14 +67,16 @@ func draw_aim_line(multiplier: float) -> void:
 	# Handle launchControlNode
 	launchControlNode.position = self.global_position
 	launchControlNode.basis = self.global_basis
-	launchControlNode.translate(Vector3(0, 0, -zDistance / 3))
+	# TODO Offset on x axis by given parameter
+	launchControlNode.translate(Vector3(xOffset, 0, -zDistance / 3))
 	DrawUtil.point(launchControlNode.position, .05, Color.BLUE)
 	# Handle aimControlNode
 	aimControlNode.position = self.global_position
 	aimControlNode.basis = aimNode.basis
 	# Apply negative translate to flatten the curve
 	var controlPointHeight: float = (zDistance / 2.0) * tan(deg_to_rad(parentRotation)) * gravityAdjust
-	aimControlNode.translate(Vector3(0, controlPointHeight, -zDistance / 2))
+	# TODO Offset on x axis by given parameter
+	aimControlNode.translate(Vector3(xOffset, controlPointHeight, -zDistance / 2))
 	DrawUtil.point(aimControlNode.position, .05, Color.DEEP_PINK)
 	# Draw the curve
 	DrawUtil.curve(self.global_position, launchControlNode.position, aimControlNode.position, aimNode.position)
