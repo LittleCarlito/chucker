@@ -17,12 +17,14 @@ func _process(_delta: float) -> void:
 		holdCurrent = get_tree().root.get_viewport().get_mouse_position()
 		self._calc_last_length()
 	elif Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
-		print("Lastlength " + str(lastLength))
+		self.reset_pull()
+	if lastLength != 0:
+		self.queue_redraw()
+
+func reset_pull() -> void:
 		originHold = Vector2.INF
 		holdCurrent = Vector2.INF
 		self._calc_last_length()
-	if lastLength != 0:
-		self.queue_redraw()
 
 func _calc_last_length() -> void:
 	var xVal: float = pow((holdCurrent.x - originHold.x), 2)

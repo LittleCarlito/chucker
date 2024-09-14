@@ -79,7 +79,6 @@ func draw_aim_line(multiplier: float) -> void:
 	# Draw the curve
 	DrawUtil.curve(self.global_position, launchControlNode.position, aimControlNode.position, aimNode.position)
 
-# TODO Eventually take in enum for launch type of disk so when it is picked up character equips correct type
 func launch_disk(multiplier: float, diskType: TYPE) -> void:
 	var newDisk = ChuckDisk.new_disk(fallbackCamera, ownerVar)
 	var diskMaterial: StandardMaterial3D = newDisk.get_mesh().get_active_material(0)

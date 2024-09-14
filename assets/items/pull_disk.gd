@@ -34,10 +34,16 @@ func _process(_delta: float) -> void:
 		chargeSprite.visible = false
 
 func hold_action(_delta: float) -> void:
-	pullLength = pullDraw.lastLength
-	chargeControl.set_progress((pullLength / GLOBAL_SETTINGS.DISK.MAX_PULL) * 100)
-	var multiplier: float = (pullLength / 100) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
-	self.draw_aim_line(multiplier)
+	# If right click is pressed while holding left reset throw
+	if Input.is_action_just_pressed(USER_INPUT.ACTION.SECONDARY):
+		pullDraw.reset_pull()
+		chargeControl.set_progress(-1)
+	# If right click isn't held while holding left click calculate throw distance
+	elif not Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
+		pullLength = pullDraw.lastLength
+		chargeControl.set_progress((pullLength / GLOBAL_SETTINGS.DISK.MAX_PULL) * 100)
+		var multiplier: float = (pullLength / 100) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
+		self.draw_aim_line(multiplier)
 
 func release_action() -> void:
 	chargeControl.set_progress(-1)
