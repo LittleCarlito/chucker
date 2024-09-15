@@ -81,6 +81,14 @@ func draw_aim_line(multiplier: float, xOffset: float = 0) -> void:
 	# Draw the curve
 	DrawUtil.curve(self.global_position, launchControlNode.position, aimControlNode.position, aimNode.position)
 
+# TODO Enable forcing disk on curve
+#		Add Array[Vector3] as optional parameter
+#		Create Path3D and PathFollow3D from curve
+#		Make PathFollow3D child of Path3D
+#		Make newDisk child of PathFollow3D
+#		Freeze newDisk and put newDisk to sleep
+#		MakePathFollow3D move along the path at the same speed the disk would've flown
+#		From tests, disk shouldn't have to be reparented, once its awake it'll just disregard the path
 func launch_disk(multiplier: float, diskType: TYPE) -> void:
 	var newDisk = ChuckDisk.new_disk(fallbackCamera, ownerVar)
 	var diskMaterial: StandardMaterial3D = newDisk.get_mesh().get_active_material(0)
