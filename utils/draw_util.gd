@@ -36,12 +36,13 @@ func line(pos1: Vector3, pos2: Vector3, color: Color = Color.AQUA, persistTime: 
 	await _finalizeAndClean(meshInstance, material, persistTime, color)
 
 ## Draws a bezier curve between origin and destination
-func curve(start: Vector3, startControl: Vector3, endControl: Vector3, end: Vector3, pointCount: int = 20, color: Color = Color.RED, persistTime: float = 1,) -> void:
-	var curvePath: Array = []
+func curve(start: Vector3, startControl: Vector3, endControl: Vector3, end: Vector3, pointCount: int = 20, color: Color = Color.RED, persistTime: float = 1,) -> Array[Vector3]:
+	var curvePath: Array[Vector3] = []
 	for n in pointCount + 1:
 		curvePath.append(start.bezier_interpolate(startControl, endControl, end, (n * (1.0/float(pointCount)))))
 	for n in (pointCount):
 		DrawUtil.line(curvePath[n], curvePath[n + 1], color, persistTime)
+	return curvePath
 
 func getRandomPoint(minRange: float, maxRange: float) -> Vector3:
 	var randOne := randf_range(minRange, maxRange)

@@ -52,10 +52,8 @@ func toggle_camera() -> void:
 
 func _on_camera_timer_timeout() -> void:
 	diskCamera.current = false
-	if thrower != null:
-		thrower.disableMovement = false
-	if fallbackCamera != null:
-		fallbackCamera.current = true
+	thrower.disableMovement = false
+	fallbackCamera.current = true
 	collisionLocation = Vector3.INF
 	cameraContainer.top_level = false
 	self.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE

@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://mfc0kjgxpvtg"]
+
+[ext_resource type="Script" path="res://assets/items/path_disk.gd" id="1_3o2g5"]
+[ext_resource type="PackedScene" uid="uid://blwwfxseykyuy" path="res://assets/items/ChuckDisk.tscn" id="2_kqhf8"]
+
+[node name="PathDisk" type="Node3D"]
+script = ExtResource("1_3o2g5")
+
+[node name="Path3D" type="Path3D" parent="."]
+
+[node name="PathFollow3D" type="PathFollow3D" parent="Path3D"]
+
+[node name="ChuckDisk" parent="Path3D/PathFollow3D" instance=ExtResource("2_kqhf8")]
+sleeping = true
+
+[node name="LaunchTimer" type="Timer" parent="."]
+wait_time = 0.1
+
+[connection signal="body_entered" from="Path3D/PathFollow3D/ChuckDisk" to="." method="_on_chuck_disk_body_entered"]
+[connection signal="timeout" from="LaunchTimer" to="." method="_on_launch_timer_timeout"]

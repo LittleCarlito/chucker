@@ -1,8 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://blwwfxseykyuy"]
+[gd_scene load_steps=5 format=3 uid="uid://blwwfxseykyuy"]
 
 [ext_resource type="Script" path="res://assets/items/chuck_disk.gd" id="1_gtghv"]
 [ext_resource type="CylinderMesh" uid="uid://bwc6i6by0861c" path="res://assets/items/DiskMesh.tres" id="2_i7m5c"]
 [ext_resource type="Shape3D" uid="uid://x6uh5gkdse8r" path="res://assets/items/DiskCollision.tres" id="3_kqup5"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cyb6e"]
+size = Vector3(1.15, 0.4, 1.15)
 
 [node name="ChuckDisk" type="RigidBody3D"]
 collision_layer = 4
@@ -28,5 +31,10 @@ transform = Transform3D(1, 0, 0, 0, 0.940638, 0.339411, 0, -0.339411, 0.940638, 
 fov = 90.0
 
 [node name="CameraTimer" type="Timer" parent="CameraContainer"]
+
+[node name="PreCollisionArea" type="Area3D" parent="."]
+
+[node name="PreCollisionDetection" type="CollisionShape3D" parent="PreCollisionArea"]
+shape = SubResource("BoxShape3D_cyb6e")
 
 [connection signal="timeout" from="CameraContainer/CameraTimer" to="." method="_on_camera_timer_timeout"]

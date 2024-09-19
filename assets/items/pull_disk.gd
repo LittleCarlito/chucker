@@ -6,6 +6,7 @@ class_name PullDisk
 @onready var chargeSprite: Sprite3D = $ChargeSprite
 var pullLength: float
 var pullOffset: float
+var throwCurve: Array[Vector3]
 
 # TODO Make this disk follow the path laid out by the aim nodes
 #		Make a path that is identical to the one created by the aim nodes
@@ -39,11 +40,11 @@ func hold_action(_delta: float) -> void:
 		pullOffset = pullDraw.lastOffset * .01
 		chargeControl.set_progress((pullLength / GLOBAL_SETTINGS.DISK.MAX_PULL) * 100)
 		var multiplier: float = (pullLength / 100) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
-		self.draw_aim_line(multiplier, pullOffset)
+		throwCurve = self.draw_aim_line(multiplier, pullOffset)
 
 func release_action() -> void:
 	# If right click is not held launch the disk
 	if not Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
 		chargeControl.set_progress(-1)
 		var multiplier: float = (pullLength / 100) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
-		self.launch_disk(multiplier, ThrowableItem.TYPE.PULL)
+		self.launch_disk(multiplier, ThrowableItem.TYPE.PULL, throwCurve)

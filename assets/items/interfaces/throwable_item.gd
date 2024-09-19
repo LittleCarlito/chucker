@@ -49,7 +49,7 @@ func _input(event: InputEvent) -> void:
 func set_just_launched(value: bool) -> void:
 	self.justLaunched = value
 
-func draw_aim_line(multiplier: float, xOffset: float = 0) -> void:
+func draw_aim_line(multiplier: float, xOffset: float = 0) -> Array[Vector3]:
 	var gravity: float = abs(NodeUtil.get_gravity(self).y)
 	var parentRotation: float = NodeUtil.get_parent_x_rotation(self)
 	var height: float = self.global_position.y
@@ -79,7 +79,7 @@ func draw_aim_line(multiplier: float, xOffset: float = 0) -> void:
 	aimControlNode.translate(Vector3(xOffset, controlPointHeight, -zDistance / 2))
 	DrawUtil.point(aimControlNode.position, .05, Color.DEEP_PINK)
 	# Draw the curve
-	DrawUtil.curve(self.global_position, launchControlNode.position, aimControlNode.position, aimNode.position)
+	return DrawUtil.curve(self.global_position, launchControlNode.position, aimControlNode.position, aimNode.position)
 
 # TODO Enable forcing disk on curve
 #		Add Array[Vector3] as optional parameter
@@ -89,20 +89,40 @@ func draw_aim_line(multiplier: float, xOffset: float = 0) -> void:
 #		Freeze newDisk and put newDisk to sleep
 #		MakePathFollow3D move along the path at the same speed the disk would've flown
 #		From tests, disk shouldn't have to be reparented, once its awake it'll just disregard the path
-func launch_disk(multiplier: float, diskType: TYPE) -> void:
+func launch_disk(multiplier: float, diskType: TYPE, throwCurve: Array[Vector3] = []) -> void:
 	var newDisk = ChuckDisk.new_disk(fallbackCamera, ownerVar)
-	var diskMaterial: StandardMaterial3D = newDisk.get_mesh().get_active_material(0)
-	if diskType == TYPE.CHARGE:
-		diskMaterial.albedo_color = Color.RED
-	elif diskType == TYPE.PULL:
-		diskMaterial.albedo_color = Color.BLUE
-	newDisk.top_level = true
-	get_tree().get_root().add_child(newDisk)
-	newDisk.global_transform = self.global_transform
-	newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)
-	self.rotation.x = 0
-	if newDisk is ChuckDisk:
+	if throwCurve.is_empty():
+		get_tree().get_root().add_child(newDisk)
+		var diskMaterial: StandardMaterial3D = newDisk.get_mesh().get_active_material(0)
+		if diskType == TYPE.CHARGE:
+			diskMaterial.albedo_color = Color.RED
+		elif diskType == TYPE.PULL:
+			diskMaterial.albedo_color = Color.BLUE
+		newDisk.top_level = true
+		newDisk.global_transform = self.global_transform
+		newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)
+		self.rotation.x = 0
 		newDisk.toggle_camera()
 		ownerVar.disableMovement = true
 		self.justLaunched = true
-	ownerVar.toggle_equiped(false)
+		ownerVar.toggle_equiped(false)
+	else:
+		# TODO Determine what above and below is repeated and combine them below if else
+		#		I think an interface needs to be created for CollisionDisks to allow the code to be combined
+		var newPathDisk = PathDisk.new_disk(newDisk, throwCurve, multiplier)
+		get_tree().get_root().add_child(newPathDisk)
+		newPathDisk.top_level = true
+		newPathDisk.chuckDisk.fallbackCamera = fallbackCamera
+		newPathDisk.chuckDisk.thrower = ownerVar
+		var diskMaterial: StandardMaterial3D = newPathDisk.chuckDisk.get_mesh().get_active_material(0)
+		if diskType == TYPE.CHARGE:
+			diskMaterial.albedo_color = Color.RED
+		elif diskType == TYPE.PULL:
+			diskMaterial.albedo_color = Color.BLUE
+		newPathDisk.prepare(throwCurve, multiplier)
+		newPathDisk.engage()
+		self.rotation.x = 0
+		newPathDisk.toggle_camera()
+		ownerVar.disableMovement = true
+		self.justLaunched = true
+		ownerVar.toggle_equiped(false)
