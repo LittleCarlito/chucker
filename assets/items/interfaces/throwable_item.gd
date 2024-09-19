@@ -67,7 +67,6 @@ func draw_aim_line(multiplier: float, xOffset: float = 0) -> Array[Vector3]:
 	# Handle launchControlNode
 	launchControlNode.position = self.global_position
 	launchControlNode.basis = self.global_basis
-	# TODO Offset on x axis by given parameter
 	launchControlNode.translate(Vector3(xOffset, 0, -zDistance / 3))
 	DrawUtil.point(launchControlNode.position, .05, Color.BLUE)
 	# Handle aimControlNode
@@ -75,20 +74,12 @@ func draw_aim_line(multiplier: float, xOffset: float = 0) -> Array[Vector3]:
 	aimControlNode.basis = aimNode.basis
 	# Apply negative translate to flatten the curve
 	var controlPointHeight: float = (zDistance / 2.0) * tan(deg_to_rad(parentRotation)) * gravityAdjust
-	# TODO Offset on x axis by given parameter
 	aimControlNode.translate(Vector3(xOffset, controlPointHeight, -zDistance / 2))
 	DrawUtil.point(aimControlNode.position, .05, Color.DEEP_PINK)
 	# Draw the curve
 	return DrawUtil.curve(self.global_position, launchControlNode.position, aimControlNode.position, aimNode.position)
 
-# TODO Enable forcing disk on curve
-#		Add Array[Vector3] as optional parameter
-#		Create Path3D and PathFollow3D from curve
-#		Make PathFollow3D child of Path3D
-#		Make newDisk child of PathFollow3D
-#		Freeze newDisk and put newDisk to sleep
-#		MakePathFollow3D move along the path at the same speed the disk would've flown
-#		From tests, disk shouldn't have to be reparented, once its awake it'll just disregard the path
+
 func launch_disk(multiplier: float, diskType: TYPE, throwCurve: Array[Vector3] = []) -> void:
 	if throwCurve.is_empty():
 		var newDisk = ChuckDisk.new_disk(fallbackCamera, ownerVar)
