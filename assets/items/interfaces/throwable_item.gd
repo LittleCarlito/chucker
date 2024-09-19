@@ -90,8 +90,8 @@ func draw_aim_line(multiplier: float, xOffset: float = 0) -> Array[Vector3]:
 #		MakePathFollow3D move along the path at the same speed the disk would've flown
 #		From tests, disk shouldn't have to be reparented, once its awake it'll just disregard the path
 func launch_disk(multiplier: float, diskType: TYPE, throwCurve: Array[Vector3] = []) -> void:
-	var newDisk = ChuckDisk.new_disk(fallbackCamera, ownerVar)
 	if throwCurve.is_empty():
+		var newDisk = ChuckDisk.new_disk(fallbackCamera, ownerVar)
 		get_tree().get_root().add_child(newDisk)
 		var diskMaterial: StandardMaterial3D = newDisk.get_mesh().get_active_material(0)
 		if diskType == TYPE.CHARGE:
@@ -109,17 +109,16 @@ func launch_disk(multiplier: float, diskType: TYPE, throwCurve: Array[Vector3] =
 	else:
 		# TODO Determine what above and below is repeated and combine them below if else
 		#		I think an interface needs to be created for CollisionDisks to allow the code to be combined
-		var newPathDisk = PathDisk.new_disk(newDisk, throwCurve, multiplier)
+		# TODO Make it so the Path disk doesn't keep repeating and collides/tumbles properly
+		var newPathDisk = PathDisk.new_disk()
 		get_tree().get_root().add_child(newPathDisk)
+		newPathDisk.prepare(throwCurve, multiplier, fallbackCamera, ownerVar)
 		newPathDisk.top_level = true
-		newPathDisk.chuckDisk.fallbackCamera = fallbackCamera
-		newPathDisk.chuckDisk.thrower = ownerVar
 		var diskMaterial: StandardMaterial3D = newPathDisk.chuckDisk.get_mesh().get_active_material(0)
 		if diskType == TYPE.CHARGE:
 			diskMaterial.albedo_color = Color.RED
 		elif diskType == TYPE.PULL:
 			diskMaterial.albedo_color = Color.BLUE
-		newPathDisk.prepare(throwCurve, multiplier)
 		newPathDisk.engage()
 		self.rotation.x = 0
 		newPathDisk.toggle_camera()

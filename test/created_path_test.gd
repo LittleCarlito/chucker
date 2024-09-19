@@ -1,6 +1,5 @@
 extends Node3D
 
-@onready var pathDisk: PathDisk = $PathDisk
 @onready var chuckChucker: ChuckChucker = $ChuckChucker
 var newPathDisk:PathDisk
 
@@ -13,16 +12,17 @@ var launched: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	newPathDisk = PathDisk.new_disk(chuckChucker.get_camera(), chuckChucker, debugCurve, multiplier)
-	get_tree().get_root().add_child(newPathDisk)
-	newPathDisk.top_level = true
-	var diskMaterial: StandardMaterial3D = newPathDisk.chuckDisk.get_mesh().get_active_material(0)
-	diskMaterial.albedo_color = Color.BLUE
-	newPathDisk.prepare(debugCurve, multiplier)
-	
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	#pass
 	if not launched:
+		newPathDisk = PathDisk.new_disk()
+		get_tree().get_root().add_child(newPathDisk)
+		newPathDisk.prepare(debugCurve, multiplier, chuckChucker.get_camera(), chuckChucker)
+		newPathDisk.top_level = true
+		var diskMaterial: StandardMaterial3D = newPathDisk.chuckDisk.get_mesh().get_active_material(0)
+		diskMaterial.albedo_color = Color.BLUE
 		newPathDisk.engage()
 		launched = true
