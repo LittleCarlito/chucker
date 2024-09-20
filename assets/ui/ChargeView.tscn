@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://cfpse6r2su0ua"]
+
+[ext_resource type="Script" path="res://assets/ui/charge_view.gd" id="1_6225c"]
+[ext_resource type="PackedScene" uid="uid://dgugjjr1k0dl" path="res://assets/ui/ChargeBar.tscn" id="2_n1xt0"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_hblt0"]
+viewport_path = NodePath("ChargeView")
+
+[node name="ChargeView" type="Node3D"]
+script = ExtResource("1_6225c")
+
+[node name="ChargeView" type="SubViewport" parent="."]
+transparent_bg = true
+handle_input_locally = false
+
+[node name="ChargeControl" parent="ChargeView" instance=ExtResource("2_n1xt0")]
+
+[node name="ChargeSprite" type="Sprite3D" parent="."]
+transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 0, 0)
+visible = false
+billboard = 2
+double_sided = false
+texture = SubResource("ViewportTexture_hblt0")

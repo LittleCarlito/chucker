@@ -11,7 +11,6 @@ var _launched: bool = false
 func _ready() -> void:
 	pass
 
-# TODO Need to make a simplier test than full integrated and get a disk flying along a created and passed in curve
 func prepare_path(multiplier: float) -> void:
 	launchSpeed = GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier
 	self._prepared = true

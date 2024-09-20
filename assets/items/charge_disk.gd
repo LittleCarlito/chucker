@@ -17,12 +17,6 @@ var stopWatch: StopWatch = StopWatch.new()
 # TODO Add "perfect" release window
 # TODO Give "perfect" release different effects
 # TODO Ability to put spin on disk and curve it
-# TODO Make a disk that makes flight path based off physics (there is some method that can be called to get expected path)
-#		This will take the flight time to simulate
-#		Have a dot show where it is in calculating and a line follow behind it
-#			Use draws ability to hold the line for a few seconds before disappearing
-# TODO Make a disk that forces the flight of the released disk along the calculated path
-#		Can be done with PathFolow node apparently
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
