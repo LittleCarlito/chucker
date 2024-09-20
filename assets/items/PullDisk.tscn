@@ -1,28 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://blyknk2r5fcfp"]
+[gd_scene load_steps=5 format=3 uid="uid://blyknk2r5fcfp"]
 
 [ext_resource type="CylinderMesh" uid="uid://cblsbpedig3hu" path="res://assets/items/DiskMesh_blue.tres" id="1_7ppud"]
 [ext_resource type="Script" path="res://assets/items/pull_disk.gd" id="2_ebead"]
-[ext_resource type="PackedScene" uid="uid://dgugjjr1k0dl" path="res://assets/ui/ChargeBar.tscn" id="3_x80mh"]
+[ext_resource type="PackedScene" uid="uid://cfpse6r2su0ua" path="res://assets/ui/ChargeView.tscn" id="3_v64oc"]
 [ext_resource type="PackedScene" uid="uid://bsh3ij28tbgvr" path="res://assets/ui/PullDraw.tscn" id="4_w350m"]
-
-[sub_resource type="ViewportTexture" id="ViewportTexture_kirdh"]
-viewport_path = NodePath("ChargeView")
 
 [node name="PullDisk" type="MeshInstance3D"]
 mesh = ExtResource("1_7ppud")
 script = ExtResource("2_ebead")
 
-[node name="ChargeView" type="SubViewport" parent="."]
-transparent_bg = true
-handle_input_locally = false
-
-[node name="ChargeControl" parent="ChargeView" instance=ExtResource("3_x80mh")]
-
-[node name="ChargeSprite" type="Sprite3D" parent="."]
-transform = Transform3D(-0.75, 0, -1.13247e-07, 0, 0.75, 0, 1.13247e-07, 0, -0.75, 1.1598, 0.65464, 0)
-visible = false
-billboard = 2
-double_sided = false
-texture = SubResource("ViewportTexture_kirdh")
+[node name="ChargeView" parent="." instance=ExtResource("3_v64oc")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 1.16, 0.655, 0)
 
 [node name="PullDraw" parent="." instance=ExtResource("4_w350m")]

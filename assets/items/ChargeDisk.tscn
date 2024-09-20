@@ -1,23 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://cfb8nwjdbjdsi"]
+[gd_scene load_steps=4 format=3 uid="uid://cfb8nwjdbjdsi"]
 
 [ext_resource type="CylinderMesh" uid="uid://bwc6i6by0861c" path="res://assets/items/DiskMesh.tres" id="1_sm6fq"]
 [ext_resource type="Script" path="res://assets/items/charge_disk.gd" id="2_o74uw"]
-[ext_resource type="PackedScene" uid="uid://dgugjjr1k0dl" path="res://assets/ui/ChargeBar.tscn" id="3_o4ufe"]
-
-[sub_resource type="ViewportTexture" id="ViewportTexture_fvilu"]
-viewport_path = NodePath("ChargeView")
+[ext_resource type="PackedScene" uid="uid://cfpse6r2su0ua" path="res://assets/ui/ChargeView.tscn" id="3_ag6h7"]
 
 [node name="ChargeDisk" type="MeshInstance3D"]
 mesh = ExtResource("1_sm6fq")
 script = ExtResource("2_o74uw")
 
-[node name="ChargeView" type="SubViewport" parent="."]
-transparent_bg = true
-
-[node name="ChargeControl" parent="ChargeView" instance=ExtResource("3_o4ufe")]
-
-[node name="ChargeSprite" type="Sprite3D" parent="."]
-transform = Transform3D(-0.75, 0, -1.13247e-07, 0, 0.75, 0, 1.13247e-07, 0, -0.75, 1.1598, 0.65464, 0)
-visible = false
-billboard = 2
-texture = SubResource("ViewportTexture_fvilu")
+[node name="ChargeView" parent="." instance=ExtResource("3_ag6h7")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 1.16, 0.655, 0)

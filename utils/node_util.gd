@@ -81,4 +81,4 @@ func find_chucker(findChuck: Node) -> Node:
 		if findChuck.owner != null:
 			return find_chucker(findChuck.owner)
 		else:
-			return findChuck
+			return Node.new()

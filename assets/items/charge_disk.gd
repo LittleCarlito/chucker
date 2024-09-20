@@ -1,8 +1,8 @@
 extends ThrowableItem
 class_name ChargeDisk
 
-@onready var chargeControl: ChargeBar = $ChargeView/ChargeControl
-@onready var chargeSprite: Sprite3D = $ChargeSprite
+@onready var chargeView: ChargeView = $ChargeView
+
 var stopWatch: StopWatch = StopWatch.new()
 
 # TODO Get rid of scroll making disk tilt and make that how power is set instead
@@ -21,34 +21,28 @@ var stopWatch: StopWatch = StopWatch.new()
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super()
-	chargeControl.set_progress(-1)
-	Logger.set_log_level(Logger.LEVEL.DEBUG)
+	chargeView.set_progress(-1)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	self.handle_aiming()
-	# TODO Get chargeControl to ThrowableItem so it can be refactored out (it is repeated)
-	if float(chargeControl.chargeAmount.text) >= 0:
-		chargeSprite.visible = true
-	else:
-		chargeSprite.visible = false
 
 func hold_action(delta: float) -> void:
 	# If right click is pressed while holding left reset throw
 	if Input.is_action_just_pressed(USER_INPUT.ACTION.SECONDARY):
 		stopWatch.reset()
-		chargeControl.set_progress(-1)
+		chargeView.set_progress(-1)
 	# If right click isn't held while holding left click calculate throw distance
 	elif not Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
 		var heldTime: float = stopWatch.isHeld(delta)
-		chargeControl.set_progress((heldTime / GLOBAL_SETTINGS.DISK.MAX_HOLD) * 100)
+		chargeView.set_progress((heldTime / GLOBAL_SETTINGS.DISK.MAX_HOLD) * 100)
 		var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, heldTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
 		self.draw_aim_line(multiplier)
 
 ## Launch disk and reset objects
 func release_action() -> void:
 	if not Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
-		chargeControl.set_progress(-1)
+		chargeView.set_progress(-1)
 		var finalTime: float = stopWatch.reset()
 		var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, finalTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
 		self.launch_disk(multiplier, ThrowableItem.TYPE.CHARGE)
