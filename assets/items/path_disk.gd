@@ -6,7 +6,6 @@ const thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.PATH_SCENE)
 @onready var path3d: Path3D = $Path3D
 @onready var pathFollow3d: PathFollow3D = $Path3D/PathFollow3D
 @onready var chuckDisk: ChuckDisk = $Path3D/PathFollow3D/ChuckDisk
-@onready var launchTimer: Timer = $LaunchTimer
 
 var launchSpeed: float = 0.0
 var _prepared: bool = false
@@ -31,14 +30,14 @@ func prepare(throwPath: Array[Vector3], multiplier: float, newFallbackCamera: Ca
 func engage() -> void:
 	if self._prepared:
 		self._launched = true
-		self.launchTimer.start(.1)
+		#self.launchTimer.start(.01)
 	else:
 		push_error("PathDisk must be prepared before launching")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	# If disk not collided or disk just launched process on path
-	if not chuckDisk.collided or self._launched:
+	if not chuckDisk.collided:
 		var velocityMagnitude: float = launchSpeed
 		var distancePerSecond: float = velocityMagnitude * delta
 		pathFollow3d.progress += distancePerSecond
@@ -46,7 +45,6 @@ func _process(delta: float) -> void:
 # TODO Need some sort of timer for just launched to keep thrower 
 func _on_chuck_disk_body_entered(_body: Node) -> void:
 	if !self._launched:
-
 		chuckDisk.sleeping = false
 
 # TODO Make this part of an interface
@@ -64,6 +62,3 @@ func toggle_camera() -> void:
 # TODO Make this part of an interface
 func _idle_rotate(delta: float) -> void:
 	self.chuckDisk._idle_rotate(delta)
-
-func _on_launch_timer_timeout() -> void:
-	self._launched = false
