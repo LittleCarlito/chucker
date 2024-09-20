@@ -1,6 +1,7 @@
 extends Node2D
 class_name PullDraw
 
+var ownerVar: ChuckChucker
 var originHold: Vector2 = Vector2.INF
 var holdCurrent: Vector2 = Vector2.INF
 var lastLength: float = 0.0
@@ -8,11 +9,13 @@ var lastOffset: float = 0.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	var chuckResult = NodeUtil.find_chucker(self)
+	if chuckResult != self:
+		ownerVar = chuckResult
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY) and not Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
+	if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY) and not Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY) and ownerVar.is_equipped():
 		if originHold == Vector2.INF:
 			originHold = get_tree().root.get_viewport().get_mouse_position()
 		holdCurrent = get_tree().root.get_viewport().get_mouse_position()

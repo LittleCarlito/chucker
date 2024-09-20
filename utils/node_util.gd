@@ -71,3 +71,14 @@ func get_mouse_position() -> Vector3:
 	if rayDic.has("position"):
 		return rayDic["position"]
 	return Vector3.INF
+
+## Traverses the ownership of the passed in node until null or ChuckChucker is found
+## Returns original Nod3D if ChuckChucker isn't found
+func find_chucker(findChuck: Node) -> Node:
+	if findChuck is ChuckChucker:
+		return findChuck
+	else:
+		if findChuck.owner != null:
+			return find_chucker(findChuck.owner)
+		else:
+			return findChuck

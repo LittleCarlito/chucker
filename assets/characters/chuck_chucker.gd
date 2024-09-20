@@ -1,7 +1,6 @@
 extends PlayableCharacter
 class_name ChuckChucker
 
-# TODO Make disk power setable not chargeable
 # TODO Have the spawned disks be equipable
 # TODO Spawned disks should determine what gets picked up
 # TODO Add esc menu
