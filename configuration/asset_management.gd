@@ -4,7 +4,6 @@ class_name ASSET_MANAGEMENT
 
 const DISK = {
 	"SCENE": "res://assets/items/ChuckDisk.tscn",
-	"NAME": "ChuckDisk",
 	"PATH_SCENE": "res://assets/items/PathDisk.tscn"
 }
 

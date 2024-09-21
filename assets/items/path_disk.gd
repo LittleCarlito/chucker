@@ -10,6 +10,8 @@ const thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.PATH_SCENE)
 var launchSpeed: float = 0.0
 var _prepared: bool = false
 
+# TODO Implement interface like below; Want it to be on all launchable and pickupable items for dequeueing them
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass
@@ -28,7 +30,7 @@ func prepare(throwPath: Array[Vector3], multiplier: float, newFallbackCamera: Ca
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	# If disk not collided or disk just launched process on path
-	if not chuckDisk.collided:
+	if chuckDisk != null and not chuckDisk.collided:
 		var velocityMagnitude: float = launchSpeed
 		var distancePerSecond: float = velocityMagnitude * delta
 		pathFollow3d.progress += distancePerSecond

@@ -66,11 +66,12 @@ func _handle_player_action(delta: float) -> void:
 
 ## Handle player pressing interact button
 func _handle_player_interact() -> void:
+	# Detect obejects in front of the character
 	if Input.is_action_just_pressed(USER_INPUT.ACTION.INTERACT) and frontDetection.is_colliding():
 		var collidingCount = frontDetection.get_collision_count()
 		for n in collidingCount:
 			var collidingObject = frontDetection.get_collider(0)
-			if collidingObject != null and collidingObject.name == ASSET_MANAGEMENT.DISK.NAME:
+			if collidingObject != null and (collidingObject is PathDisk or collidingObject is ChuckDisk):
 				self.toggle_equiped(true)
 				collidingObject.queue_free()
 
