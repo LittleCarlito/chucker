@@ -72,6 +72,24 @@ func _handle_player_interact() -> void:
 		for n in collidingCount:
 			var collidingObject = frontDetection.get_collider(0)
 			if collidingObject != null and (collidingObject is PathDisk or collidingObject is ChuckDisk):
+				# TODO Buggy as all hell when picking up and throwing different disks
+				#		Camera spin/lock isn't right after release in some cases
+				#		Disks stop being path disks after first throw
+				# TODO Verify that a memory leak isn't happening with new disk meshes being accumulated in diskContainer
+				if collidingObject is ChuckDisk:
+					if collidingObject.diskType == ThrowableItem.TYPE.CHARGE:
+						var newChargeMesh = ChargeDisk.new_disk()
+						self.diskController.add_child(newChargeMesh)
+						playerDisk = newChargeMesh
+						playerDisk.fallbackCamera = playerCamera
+						playerDisk.ownerVar = self
+					elif collidingObject.diskType == ThrowableItem.TYPE.PATH:
+						var newPullMesh = PullDisk.new_disk()
+						self.diskController.add_child(newPullMesh)
+						playerDisk = newPullMesh
+						playerDisk.fallbackCamera = playerCamera
+						playerDisk.ownerVar = self
+						playerDisk.pullDraw.ownerVar = self
 				self.toggle_equiped(true)
 				collidingObject.queue_free()
 

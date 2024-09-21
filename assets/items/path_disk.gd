@@ -12,7 +12,7 @@ var _prepared: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass
+	chuckDisk.diskType = ThrowableItem.TYPE.PATH
 
 func prepare(throwPath: Array[Vector3], multiplier: float, newFallbackCamera: Camera3D, newThrower: ChuckChucker) -> void:
 	var throwCurve: Curve3D = Curve3D.new()

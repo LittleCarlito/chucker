@@ -7,6 +7,11 @@ const DISK = {
 	"PATH_SCENE": "res://assets/items/PathDisk.tscn"
 }
 
+const MESH = {
+	"CHARGE_SCENE": "res://assets/items/ChargeDisk.tscn",
+	"PULL_SCENE": "res://assets/items/PullDisk.tscn"
+}
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.

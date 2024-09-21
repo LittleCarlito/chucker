@@ -6,7 +6,7 @@ var aimControlNode: Node3D = Node3D.new()
 var launchControlNode: Node3D = Node3D.new()
 var justLaunched: bool = false
 
-enum TYPE {CHARGE, PULL}
+enum TYPE {CHARGE, PATH}
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -87,17 +87,19 @@ func launch_disk(multiplier: float, diskType: TYPE, throwCurve: Array[Vector3] =
 		newDisk.top_level = true
 		newDisk.global_transform = self.global_transform
 		newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)
+		newDisk.diskType = ThrowableItem.TYPE.CHARGE
 	else:
 		var newPathDisk = PathDisk.new_disk()
 		get_tree().get_root().add_child(newPathDisk)
 		newPathDisk.prepare(throwCurve, multiplier, fallbackCamera, ownerVar)
 		newPathDisk.top_level = true
 		newDisk = newPathDisk.chuckDisk
+		newDisk.diskType = ThrowableItem.TYPE.PATH
 	self.rotation.x = 0
 	var diskMaterial: StandardMaterial3D = newDisk.get_mesh().get_active_material(0)
 	if diskType == TYPE.CHARGE:
 		diskMaterial.albedo_color = Color.RED
-	elif diskType == TYPE.PULL:
+	elif diskType == TYPE.PATH:
 		diskMaterial.albedo_color = Color.BLUE
 	newDisk.toggle_camera()
 	ownerVar.disableMovement = true

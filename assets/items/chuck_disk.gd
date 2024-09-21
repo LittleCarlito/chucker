@@ -8,6 +8,7 @@ const thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.SCENE)
 @onready var diskCamera: Camera3D = $CameraContainer/CameraControl/DiskCamera
 @onready var cameraTimer: Timer = $CameraContainer/CameraTimer
 
+var diskType: ThrowableItem.TYPE
 var thrower: ChuckChucker
 var fallbackCamera: Camera3D
 var collisionLocation: Vector3 = Vector3.INF

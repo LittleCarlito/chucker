@@ -1,6 +1,8 @@
 extends ThrowableItem
 class_name PullDisk
 
+const diskMesh: PackedScene = preload(ASSET_MANAGEMENT.MESH.PULL_SCENE)
+
 @onready var pullDraw: PullDraw = $PullDraw
 @onready var chargeView: ChargeView = $ChargeView
 
@@ -35,5 +37,8 @@ func release_action() -> void:
 	# If right click is not held launch the disk
 	if not Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY) and pullLength > GLOBAL_SETTINGS.DISK.MIN_PULL:
 		var multiplier: float = (pullLength / 100) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
-		self.launch_disk(multiplier, ThrowableItem.TYPE.PULL, throwCurve)
+		self.launch_disk(multiplier, ThrowableItem.TYPE.PATH, throwCurve)
 	chargeView.set_progress(-1)
+
+static func new_disk() -> PullDisk:
+	return diskMesh.instantiate()

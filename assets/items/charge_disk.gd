@@ -1,6 +1,8 @@
 extends ThrowableItem
 class_name ChargeDisk
 
+const diskMesh: PackedScene = preload(ASSET_MANAGEMENT.MESH.CHARGE_SCENE)
+
 @onready var chargeView: ChargeView = $ChargeView
 
 var stopWatch: StopWatch = StopWatch.new()
@@ -46,3 +48,6 @@ func release_action() -> void:
 		var finalTime: float = stopWatch.reset()
 		var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, finalTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
 		self.launch_disk(multiplier, ThrowableItem.TYPE.CHARGE)
+
+static func new_disk() -> ChargeDisk:
+	return diskMesh.instantiate()
