@@ -57,6 +57,7 @@ visible = false
 pixel_size = 0.0023
 billboard = 1
 double_sided = false
+fixed_size = true
 texture = SubResource("ViewportTexture_acy7v")
 
 [connection signal="body_entered" from="TeeBoxArea" to="." method="_on_tee_box_area_body_entered"]
