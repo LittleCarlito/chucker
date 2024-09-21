@@ -14,11 +14,9 @@ func _physics_process(delta: float) -> void:
 func _handle_player_action(_delta: float) -> void:
 	push_error("UNIMPLEMENTED METHOD; All PlayableCharacter Objects must implement _handle_player_action method")
 
-
 ## Handles camera/aiming related actions
 func _handle_camera_controls() -> void:
 	push_error("UNIMPLEMENTED METHOD; All PlayableCharacter Objects must implement _handle_camera_controls method")
-
 
 ## Handle player pressing interact button
 func _handle_player_interact() -> void:
@@ -31,7 +29,6 @@ func _handle_movement(_delta: float) -> void:
 ## Toggles the visibility logic when character has item equiped
 func toggle_equiped(_value: bool) -> void:
 	push_error("UNIMPLEMENTED METHOD; All PlayableCharacter Objects must implement toggle_equiped method")
-
 
 ## Returns the height of Chuck
 func get_height() -> float:
