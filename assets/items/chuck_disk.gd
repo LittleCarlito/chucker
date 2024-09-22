@@ -59,7 +59,6 @@ func _on_camera_timer_timeout() -> void:
 	cameraContainer.top_level = false
 	self.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
 	self.angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
-	thrower.reset_justLaunched()
 
 static func new_disk(newdiskCamera: Camera3D, newThrower: ChuckChucker) -> ChuckDisk:
 	var newDisk: ChuckDisk = thrownDisk.instantiate()

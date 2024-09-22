@@ -1,8 +1,8 @@
 extends PlayableCharacter
 class_name ChuckChucker
 
-# TODO Have the spawned disks be equipable
-# TODO Spawned disks should determine what gets picked up
+# TODO Start chuck unequipped with 2 of the disks in front of him
+# TODO Fix launch camera on multiple different disk type launches
 # TODO Add esc menu
 # TODO Add settings to esc menu
 #		With ability to define used controls
@@ -16,6 +16,7 @@ class_name ChuckChucker
 @onready var playerCamera: Camera3D = $CameraController/CameraTarget/ChuckCamera
 @onready var scorecard: Sprite3D = $ScorecardSprite
 
+const UNEQUIP_MESSAGE: String = "unequip_item() called but no item is equiped"
 var disableMovement: bool = false
 var stopwatch: StopWatch = StopWatch.new()
 var aimingNode: Node3D = Node3D.new()
@@ -58,7 +59,7 @@ func _handle_camera_controls() -> void:
 
 ## Actions when disk is thrown
 func _handle_player_action(delta: float) -> void:
-	if playerDisk.visible:
+	if playerDisk != null:
 		if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
 			playerDisk.hold_action(delta)
 		if Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
@@ -72,9 +73,9 @@ func _handle_player_interact() -> void:
 		for n in collidingCount:
 			var collidingObject = frontDetection.get_collider(0)
 			if collidingObject != null and (collidingObject is PathDisk or collidingObject is ChuckDisk):
-				# TODO Buggy as all hell when picking up and throwing different disks
-				#		Camera spin/lock isn't right after release in some cases
-				#		Disks stop being path disks after first throw
+				# TODO Refactor below to not be as repeated
+				# TODO Can be buggy when launching charge disk as second disk
+				#		Camera resets back to chuck too quickly
 				# TODO Verify that a memory leak isn't happening with new disk meshes being accumulated in diskContainer
 				if collidingObject is ChuckDisk:
 					if collidingObject.diskType == ThrowableItem.TYPE.CHARGE:
@@ -90,7 +91,6 @@ func _handle_player_interact() -> void:
 						playerDisk.fallbackCamera = playerCamera
 						playerDisk.ownerVar = self
 						playerDisk.pullDraw.ownerVar = self
-				self.toggle_equiped(true)
 				collidingObject.queue_free()
 
 ## Detects and executes movements
@@ -125,24 +125,32 @@ func _handle_movement(delta: float) -> void:
 	cameraController.position = lerp(cameraController.position, position, GLOBAL_SETTINGS.CAMERA.PAN_SPEED)
 
 func _handle_menus() -> void:
-		if Input.is_action_pressed(USER_INPUT.MENU.SCORE):
-			disableMovement = true
-			if playerCamera.current:
-				scorecard.visible = true
-				get_viewport().get_camera_3d().look_at(scorecard.global_position)
-		if Input.is_action_just_released(USER_INPUT.MENU.SCORE):
-			disableMovement = false
-			if playerCamera.current:
-				scorecard.visible = false
-				get_viewport().get_camera_3d().rotation = Vector3.ZERO
+	# TODO Need a menu with buttons and signals to unpause
+	#if Input.is_action_just_pressed(USER_INPUT.MENU.MAIN):
+		#get_tree().paused = not get_tree().paused
+	if Input.is_action_pressed(USER_INPUT.MENU.SCORE):
+		disableMovement = true
+		if playerCamera.current:
+			scorecard.visible = true
+			get_viewport().get_camera_3d().look_at(scorecard.global_position)
+	if Input.is_action_just_released(USER_INPUT.MENU.SCORE):
+		disableMovement = false
+		if playerCamera.current:
+			scorecard.visible = false
+			get_viewport().get_camera_3d().rotation = Vector3.ZERO
 
 ## Toggles the visibility logic when character has item equiped
-func toggle_equiped(value: bool) -> void:
-	playerDisk.visible = value
+func unequip_item() -> void:
+	if playerDisk != null:
+		playerDisk.queue_free()
+	else:
+		# TODO Make warn push warning inside logger so 2 lines don't appear here
+		Logger.warn(UNEQUIP_MESSAGE, [], self)
+		push_warning(UNEQUIP_MESSAGE)
 
 ## Returns if character has item equipped
 func is_equipped() -> bool:
-	return playerDisk.visible
+	return playerDisk != null
 
 ## Returns the height of Chuck
 func get_height() -> float:
@@ -159,6 +167,3 @@ func _zoom_in() -> void:
 
 func _zoom_out() -> void:
 	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.FOV + GLOBAL_SETTINGS.CAMERA.OUT_ADJUST
-
-func reset_justLaunched() -> void:
-	playerDisk.set_just_launched(false)

@@ -26,19 +26,22 @@ func handle_aiming() -> void:
 	# Right click aiming
 	if Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-		ownerVar.disableMovement = true
-		if fallbackCamera.current:
+		if ownerVar != null:
+			ownerVar.disableMovement = true
+		if fallbackCamera != null and fallbackCamera.current:
 			self._zoom_in()
 	if Input.is_action_just_released(USER_INPUT.ACTION.SECONDARY):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		self._reset_zoom()
-		ownerVar.cameraController.basis = ownerVar.global_basis
-		ownerVar.disableMovement = false
+		if ownerVar != null:
+			ownerVar.cameraController.basis = ownerVar.global_basis
+			ownerVar.disableMovement = false
 
 func _input(event: InputEvent) -> void:
 	# Looking controls
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not justLaunched:
-		if event is InputEventMouseMotion:
+		if ownerVar != null and event is InputEventMouseMotion:
+			# TODO I think line below is whats causing the crazy rotation when in the air on second throw
 			ownerVar.rotation.y -= event.relative.x / 1000 * GLOBAL_SETTINGS.CONTROLS.HORIZONTAL_SENSITIVITY
 			var rotationAmount = GLOBAL_SETTINGS.CONTROLS.INVERT_VERTICAL * (GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY * (event.relative.y / 1000 * GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY))
 			if rotationAmount > 0 and self.get_parent().rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
@@ -104,4 +107,4 @@ func launch_disk(multiplier: float, diskType: TYPE, throwCurve: Array[Vector3] =
 	newDisk.toggle_camera()
 	ownerVar.disableMovement = true
 	self.justLaunched = true
-	ownerVar.toggle_equiped(false)
+	ownerVar.unequip_item()

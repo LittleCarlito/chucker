@@ -26,7 +26,8 @@ const ACTION = {
 }
 
 const MENU = {
-	"SCORE": "menu_score"
+	"SCORE": "menu_score",
+	"MAIN": "menu_main"
 }
 
 const ADMIN = {
