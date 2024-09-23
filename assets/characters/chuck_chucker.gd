@@ -24,7 +24,8 @@ const UNEQUIP_MESSAGE: String = "unequip_item() called but no item is equiped"
 @onready var frontDetection: ShapeCast3D = $FrontDetect
 @onready var chuckMesh: MeshInstance3D = $ChuckMesh
 @onready var playerCamera: Camera3D = $CameraController/CameraTarget/ChuckCamera
-@onready var scorecard: Sprite3D = $ScorecardSprite
+@onready var scorecard: ScorecardView = $ScorecardView
+
 
 var playerDisk: ThrowableItem
 var disableMovement: bool = false
@@ -39,6 +40,7 @@ var jumpDetected: bool = false
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	height = chuckMesh.get_aabb().size.y
+	scorecard.set_pixel_size(GLOBAL_SETTINGS.MENU.SCORECARD.PLAYER_PIXEL_SIZE)
 
 func _physics_process(delta: float) -> void:
 	self._handle_camera_controls()
@@ -141,12 +143,12 @@ func _handle_menus() -> void:
 	if Input.is_action_pressed(USER_INPUT.MENU.SCORE):
 		disableMovement = true
 		if playerCamera.current:
-			scorecard.visible = true
-			get_viewport().get_camera_3d().look_at(scorecard.global_position)
+			scorecard.scorecardSprite.visible = true
+			get_viewport().get_camera_3d().look_at(scorecard.scorecardSprite.global_position)
 	if Input.is_action_just_released(USER_INPUT.MENU.SCORE):
 		disableMovement = false
 		if playerCamera.current:
-			scorecard.visible = false
+			scorecard.scorecardSprite.visible = false
 			get_viewport().get_camera_3d().rotation = Vector3.ZERO
 
 ## Toggles the visibility logic when character has item equiped

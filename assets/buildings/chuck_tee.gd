@@ -2,12 +2,13 @@ extends StaticBody3D
 class_name ChuckTee
 
 @onready var teeCamera: Camera3D = $CameraController/CameraTarget/TeeboxCamera
-@onready var scorecard: Sprite3D = $ScorecardSprite
+@onready var scorecard: ScorecardView = $ScorecardView
+
 const _CURRENT_CAMERA_LOG: String = "Current camera is %s"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	scorecard.set_pixel_size(GLOBAL_SETTINGS.MENU.SCORECARD.TEEBOX_PIXEL_SIZE)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -16,10 +17,10 @@ func _process(_delta: float) -> void:
 func _handle_menus() -> void:
 	if teeCamera.current:
 		if Input.is_action_pressed(USER_INPUT.MENU.SCORE):
-			scorecard.visible = true
-			get_viewport().get_camera_3d().look_at(scorecard.global_position)
+			scorecard.scorecardSprite.visible = true
+			get_viewport().get_camera_3d().look_at(scorecard.scorecardSprite.global_position)
 		if Input.is_action_just_released(USER_INPUT.MENU.SCORE):
-			scorecard.visible = false
+			scorecard.scorecardSprite.visible = false
 			get_viewport().get_camera_3d().rotation = Vector3.ZERO
 
 func _on_tee_box_area_body_entered(body: Node3D) -> void:
@@ -33,7 +34,7 @@ func _on_tee_box_area_body_entered(body: Node3D) -> void:
 
 func _on_tee_box_area_body_exited(body: Node3D) -> void:
 	if body is ChuckChucker:
-		scorecard.visible = false
+		scorecard.scorecardSprite.visible = false
 		var bodyCamera: Camera3D = body.get_camera()
 		bodyCamera.current = true
 		teeCamera.current = false

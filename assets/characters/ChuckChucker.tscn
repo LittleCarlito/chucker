@@ -1,7 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://cdkknjflehfgx"]
+[gd_scene load_steps=9 format=3 uid="uid://cdkknjflehfgx"]
 
 [ext_resource type="Script" path="res://assets/characters/chuck_chucker.gd" id="1_hnkcf"]
-[ext_resource type="PackedScene" uid="uid://cyjoxd73gt85u" path="res://assets/ui/menus/Scorecard.tscn" id="3_ogwsl"]
+[ext_resource type="PackedScene" uid="uid://btbtiiilcdji5" path="res://assets/ui/views/ScorecardView.tscn" id="2_d3xrw"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h7ubf"]
 albedo_color = Color(0.41528, 0.3828, 0.87, 1)
@@ -23,9 +23,6 @@ rings = 13
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3pknt"]
 size = Vector3(1.2, 1.2, 1)
-
-[sub_resource type="ViewportTexture" id="ViewportTexture_pa3ai"]
-viewport_path = NodePath("ScorecardViewport")
 
 [node name="ChuckChucker" type="CharacterBody3D"]
 collision_mask = 2
@@ -57,16 +54,5 @@ transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 
 [node name="DiskController" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.50122e-10, 0.744641, 0)
 
-[node name="ScorecardViewport" type="SubViewport" parent="."]
-size = Vector2i(1152, 648)
-
-[node name="ScorecardControl" parent="ScorecardViewport" instance=ExtResource("3_ogwsl")]
-
-[node name="ScorecardSprite" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.14632, -0.00496089)
-visible = false
-pixel_size = 0.003
-billboard = 1
-double_sided = false
-fixed_size = true
-texture = SubResource("ViewportTexture_pa3ai")
+[node name="ScorecardView" parent="." instance=ExtResource("2_d3xrw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)

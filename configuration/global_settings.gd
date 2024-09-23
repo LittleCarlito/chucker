@@ -38,6 +38,13 @@ const CONTROLS =  {
 	"INVERT_VERTICAL": -1
 }
 
+const MENU = {
+	"SCORECARD": {
+		"PLAYER_PIXEL_SIZE": .003,
+		"TEEBOX_PIXEL_SIZE": .0023
+	}
+}
+
 const COLOR = {
 	"CHARGE": Color.RED,
 	"PATH": Color.BLUE
