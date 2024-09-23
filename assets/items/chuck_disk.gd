@@ -1,6 +1,9 @@
 extends RigidBody3D
 class_name ChuckDisk
 
+# TODO PreCollisionDetection box isn't doing anything
+#		Add signal connection in PathDisk to awaken and add force to landing
+
 const thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.SCENE)
 
 @onready var diskMesh: MeshInstance3D = $DiskMesh

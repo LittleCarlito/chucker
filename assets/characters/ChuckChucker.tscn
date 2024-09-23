@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://cdkknjflehfgx"]
 
 [ext_resource type="Script" path="res://assets/characters/chuck_chucker.gd" id="1_hnkcf"]
-[ext_resource type="PackedScene" uid="uid://cyjoxd73gt85u" path="res://assets/ui/Scorecard.tscn" id="3_ogwsl"]
+[ext_resource type="PackedScene" uid="uid://cyjoxd73gt85u" path="res://assets/ui/menus/Scorecard.tscn" id="3_ogwsl"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h7ubf"]
 albedo_color = Color(0.41528, 0.3828, 0.87, 1)

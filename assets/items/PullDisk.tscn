@@ -2,7 +2,7 @@
 
 [ext_resource type="CylinderMesh" uid="uid://cblsbpedig3hu" path="res://assets/items/DiskMesh_blue.tres" id="1_7ppud"]
 [ext_resource type="Script" path="res://assets/items/pull_disk.gd" id="2_ebead"]
-[ext_resource type="PackedScene" uid="uid://cfpse6r2su0ua" path="res://assets/ui/ChargeView.tscn" id="3_v64oc"]
+[ext_resource type="PackedScene" uid="uid://cfpse6r2su0ua" path="res://assets/ui/views/ChargeView.tscn" id="3_v64oc"]
 [ext_resource type="PackedScene" uid="uid://bsh3ij28tbgvr" path="res://assets/ui/PullDraw.tscn" id="4_w350m"]
 
 [node name="PullDisk" type="MeshInstance3D"]

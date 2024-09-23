@@ -1,0 +1,98 @@
+[gd_scene load_steps=7 format=3 uid="uid://dxo1losx217fd"]
+
+[ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://assets/ui/menus/MainMenu_theme.tres" id="1_guofl"]
+[ext_resource type="PackedScene" uid="uid://b5pco8trxx8mb" path="res://assets/ui/buttons/CloseButton.tscn" id="2_xs8rd"]
+[ext_resource type="PackedScene" uid="uid://deqcpdfgwi2sl" path="res://assets/ui/buttons/ResumeButton.tscn" id="3_4qpds"]
+[ext_resource type="PackedScene" uid="uid://bbrn8dxpgdwys" path="res://assets/ui/buttons/OptionsButton.tscn" id="4_lgrrl"]
+[ext_resource type="PackedScene" uid="uid://3cf08tnojrg1" path="res://assets/ui/buttons/QuitButton.tscn" id="5_c14gq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7nrxq"]
+bg_color = Color(0.43, 0.362633, 0.2279, 1)
+
+[node name="PauseMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_guofl")
+
+[node name="MainContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeftMargin" type="MarginContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme = ExtResource("1_guofl")
+
+[node name="ContentBox" type="VBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TopMargin" type="MarginContainer" parent="MainContainer/ContentBox"]
+layout_mode = 2
+size_flags_vertical = 0
+theme = ExtResource("1_guofl")
+
+[node name="ButtonBox" type="VBoxContainer" parent="MainContainer/ContentBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("1_guofl")
+
+[node name="CloseButton" parent="MainContainer/ContentBox/ButtonBox" instance=ExtResource("2_xs8rd")]
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="MainContainer/ContentBox/ButtonBox"]
+custom_minimum_size = Vector2(750, 70)
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("1_guofl")
+theme_override_styles/panel = SubResource("StyleBoxFlat_7nrxq")
+
+[node name="Label" type="Label" parent="MainContainer/ContentBox/ButtonBox/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_guofl")
+text = "PAUSED"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ResumeButton" parent="MainContainer/ContentBox/ButtonBox" instance=ExtResource("3_4qpds")]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="OptionsButton" parent="MainContainer/ContentBox/ButtonBox" instance=ExtResource("4_lgrrl")]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="QuitButton" parent="MainContainer/ContentBox/ButtonBox" instance=ExtResource("5_c14gq")]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="BottomMargin" type="MarginContainer" parent="MainContainer/ContentBox"]
+layout_mode = 2
+size_flags_vertical = 8
+theme = ExtResource("1_guofl")
+
+[node name="RightMargin" type="MarginContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme = ExtResource("1_guofl")

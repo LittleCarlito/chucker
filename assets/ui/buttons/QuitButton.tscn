@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://3cf08tnojrg1"]
+
+[ext_resource type="Texture2D" uid="uid://c2qrmn1dekoqq" path="res://resources/QuitButton.png" id="1_31xwd"]
+[ext_resource type="Theme" uid="uid://dpes7vxx3rpqi" path="res://assets/ui/buttons/MenuButton_theme.tres" id="1_cyuko"]
+
+[node name="Button" type="Button"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme = ExtResource("1_cyuko")
+theme_override_icons/icon = ExtResource("1_31xwd")

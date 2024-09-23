@@ -12,5 +12,3 @@ script = ExtResource("1_3o2g5")
 
 [node name="ChuckDisk" parent="Path3D/PathFollow3D" instance=ExtResource("2_kqhf8")]
 sleeping = true
-
-[connection signal="body_entered" from="Path3D/PathFollow3D/ChuckDisk" to="." method="_on_chuck_disk_body_entered"]

@@ -1,6 +1,7 @@
 extends ThrowableItem
 class_name PullDisk
 
+# TODO Allow for holding space or something to set power but still pull for offset
 # TODO Make a maximum pull time like charge disk
 #		Probably make that part of ThrowableItem and not have it in both
 #		Make it shake the disk as timer gets closer until it finally just inaccurately launches

@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://bbrn8dxpgdwys"]
+
+[ext_resource type="Theme" uid="uid://dpes7vxx3rpqi" path="res://assets/ui/buttons/MenuButton_theme.tres" id="1_y426h"]
+[ext_resource type="Texture2D" uid="uid://5wlocgrcumg0" path="res://resources/OptionsButton.png" id="1_ypt28"]
+
+[node name="Button" type="Button"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -329.0
+offset_top = -39.0
+offset_right = 329.0
+offset_bottom = 39.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme = ExtResource("1_y426h")
+theme_override_icons/icon = ExtResource("1_ypt28")

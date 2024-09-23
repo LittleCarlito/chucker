@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3 uid="uid://b5pco8trxx8mb"]
+
+[ext_resource type="Texture2D" uid="uid://bj8wvx4cw8p8p" path="res://resources/icon.svg" id="1_ysy33"]
+[ext_resource type="Texture2D" uid="uid://p4chg0vny54l" path="res://resources/CloseButton.png" id="2_2nc1a"]
+
+[sub_resource type="Theme" id="Theme_gpe2s"]
+Button/colors/icon_hover_color = Color(1, 0.51, 0.51, 1)
+Button/colors/icon_pressed_color = Color(0.54, 0.54, 0.54, 1)
+Button/icons/icon = ExtResource("1_ysy33")
+
+[node name="CloseButton" type="Button"]
+custom_minimum_size = Vector2(50, 50)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -25.0
+offset_right = 25.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+focus_mode = 0
+theme = SubResource("Theme_gpe2s")
+theme_override_icons/icon = ExtResource("2_2nc1a")
+icon_alignment = 1
+expand_icon = true

@@ -2,6 +2,13 @@ extends Node3D
 class_name PathDisk
 
 # TODO Make ChuckDisk global x rotation locked at launch angle until collision detected
+# TODO If above doesn't fix follow camera jiggling on path lock the diskCamera's container's global x rotation as well
+# TODO Need to allow holding power consistent while still pulling offset curve
+#		Consider making another disk that is a multi click disk
+#			First click starts the shot and draws a line to the mouse (to max line length)
+#			Second click sets power and draws offset line to the mouse (to max offset line length)
+#			Third click launches the disk
+#			Right clicking during the process resets the shot
 # TODO Add original launch velocity on z axis to disk when collision is detected
 #		Need to make collision with ground more realistic
 
@@ -33,7 +40,7 @@ func prepare(throwPath: Array[Vector3], multiplier: float, newFallbackCamera: Ca
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	# If disk not collided or disk just launched process on path
-	if chuckDisk != null and not chuckDisk.collided and pathFollow3d.progress_ratio != 1:
+	if chuckDisk != null and not chuckDisk.collided and pathFollow3d.progress_ratio < 1:
 		var velocityMagnitude: float = launchSpeed
 		var distancePerSecond: float = velocityMagnitude * delta
 		pathFollow3d.progress += distancePerSecond

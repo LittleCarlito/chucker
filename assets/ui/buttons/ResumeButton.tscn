@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://deqcpdfgwi2sl"]
+
+[ext_resource type="Theme" uid="uid://dpes7vxx3rpqi" path="res://assets/ui/buttons/MenuButton_theme.tres" id="1_3rhfu"]
+[ext_resource type="Texture2D" uid="uid://d38j3sn48k67u" path="res://resources/ResumeButton.png" id="1_say6p"]
+
+[node name="Button" type="Button"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme = ExtResource("1_3rhfu")
+theme_override_icons/icon = ExtResource("1_say6p")
