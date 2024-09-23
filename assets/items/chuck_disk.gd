@@ -3,6 +3,7 @@ class_name ChuckDisk
 
 const thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.SCENE)
 
+@onready var diskMesh: MeshInstance3D = $DiskMesh
 @onready var cameraContainer: Node3D = $CameraContainer
 @onready var cameraControl: Node3D = $CameraContainer/CameraControl
 @onready var diskCamera: Camera3D = $CameraContainer/CameraControl/DiskCamera
@@ -20,6 +21,8 @@ func _ready() -> void:
 		parentObject = self.get_parent()
 	if parentObject is ChuckTee:
 		fallbackCamera = null
+	var activeMaterial: StandardMaterial3D = diskMesh.get_active_material(0)
+	activeMaterial.albedo_color = GLOBAL_SETTINGS.COLOR.CHARGE
 
 func _process(delta: float) -> void:
 	# Maintain minimum height for the camera
@@ -27,7 +30,7 @@ func _process(delta: float) -> void:
 	# Freeze the camera control when rigid body detects collision
 	if self.get_contact_count() > 0 and diskCamera.current:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		if !collided:
+		if !collided and diskCamera.current:
 			# Initial collision so start timers
 			cameraTimer.start(GLOBAL_SETTINGS.CAMERA.SHOT_WATCH_TIME)
 			collided = true

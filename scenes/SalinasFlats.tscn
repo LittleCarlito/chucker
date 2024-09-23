@@ -1,5 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://0p7etoed8w0v"]
+[gd_scene load_steps=9 format=3 uid="uid://0p7etoed8w0v"]
 
+[ext_resource type="PackedScene" uid="uid://mfc0kjgxpvtg" path="res://assets/items/PathDisk.tscn" id="1_7oa4i"]
 [ext_resource type="PackedScene" uid="uid://c3a3ygsd2ack" path="res://assets/buildings/ChuckTee.tscn" id="1_kikso"]
 [ext_resource type="PackedScene" uid="uid://blwwfxseykyuy" path="res://assets/items/ChuckDisk.tscn" id="2_0r0o2"]
 [ext_resource type="PackedScene" uid="uid://cdkknjflehfgx" path="res://assets/characters/ChuckChucker.tscn" id="3_wng2j"]
@@ -14,10 +15,13 @@ size = Vector3(50, 3, 200)
 
 [node name="SalinasFlats" type="Node3D"]
 
-[node name="ChuckTee" parent="." instance=ExtResource("1_kikso")]
+[node name="PathDisk" parent="." instance=ExtResource("1_7oa4i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.45222, 4.39647, -2.10365)
 
-[node name="ChuckDisk" parent="ChuckTee" instance=ExtResource("2_0r0o2")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.48635, -2.45964)
+[node name="ChuckDisk" parent="." instance=ExtResource("2_0r0o2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.48671, 4.48635, -2.45964)
+
+[node name="ChuckTee" parent="." instance=ExtResource("1_kikso")]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.719722, -0.202133, 0.664185, -0.671976, 0.0376311, 0.739617, -0.174495, -0.978635, -0.108745, 26.7919, 21.2915, -22.7111)

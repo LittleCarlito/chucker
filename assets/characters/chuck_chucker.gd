@@ -1,22 +1,24 @@
 extends PlayableCharacter
 class_name ChuckChucker
 
-# TODO Start chuck unequipped with 2 of the disks in front of him
-# TODO Fix launch camera on multiple different disk type launches
+# TODO Fix chucking a disk over the edge
+#		Should return to character after y goes to certain - distance
+#		Path disk should awaken and just fall
 # TODO Add esc menu
 # TODO Add settings to esc menu
 #		With ability to define used controls
 # TODO Make FOV configurable between a certain range
 
+const UNEQUIP_MESSAGE: String = "unequip_item() called but no item is equiped"
+
 @onready var diskController: Node3D = $DiskController
-@onready var playerDisk: ThrowableItem = $DiskController/DiskMesh
 @onready var cameraController: Node3D = $CameraController
 @onready var frontDetection: ShapeCast3D = $FrontDetect
 @onready var chuckMesh: MeshInstance3D = $ChuckMesh
 @onready var playerCamera: Camera3D = $CameraController/CameraTarget/ChuckCamera
 @onready var scorecard: Sprite3D = $ScorecardSprite
 
-const UNEQUIP_MESSAGE: String = "unequip_item() called but no item is equiped"
+var playerDisk: ThrowableItem
 var disableMovement: bool = false
 var stopwatch: StopWatch = StopWatch.new()
 var aimingNode: Node3D = Node3D.new()

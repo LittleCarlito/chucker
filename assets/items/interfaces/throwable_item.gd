@@ -41,7 +41,6 @@ func _input(event: InputEvent) -> void:
 	# Looking controls
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not justLaunched:
 		if ownerVar != null and event is InputEventMouseMotion:
-			# TODO I think line below is whats causing the crazy rotation when in the air on second throw
 			ownerVar.rotation.y -= event.relative.x / 1000 * GLOBAL_SETTINGS.CONTROLS.HORIZONTAL_SENSITIVITY
 			var rotationAmount = GLOBAL_SETTINGS.CONTROLS.INVERT_VERTICAL * (GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY * (event.relative.y / 1000 * GLOBAL_SETTINGS.CONTROLS.VERTICAL_SENSITIVITY))
 			if rotationAmount > 0 and self.get_parent().rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
@@ -101,9 +100,9 @@ func launch_disk(multiplier: float, diskType: TYPE, throwCurve: Array[Vector3] =
 	self.rotation.x = 0
 	var diskMaterial: StandardMaterial3D = newDisk.get_mesh().get_active_material(0)
 	if diskType == TYPE.CHARGE:
-		diskMaterial.albedo_color = Color.RED
+		diskMaterial.albedo_color = GLOBAL_SETTINGS.COLOR.CHARGE
 	elif diskType == TYPE.PATH:
-		diskMaterial.albedo_color = Color.BLUE
+		diskMaterial.albedo_color = GLOBAL_SETTINGS.COLOR.PATH
 	newDisk.toggle_camera()
 	ownerVar.disableMovement = true
 	self.justLaunched = true

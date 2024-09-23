@@ -1,6 +1,10 @@
 extends Node3D
 class_name PathDisk
 
+# TODO Make ChuckDisk global x rotation locked at launch angle until collision detected
+# TODO Add original launch velocity on z axis to disk when collision is detected
+#		Need to make collision with ground more realistic
+
 const thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.PATH_SCENE)
 
 @onready var path3d: Path3D = $Path3D
@@ -13,6 +17,8 @@ var _prepared: bool = false
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	chuckDisk.diskType = ThrowableItem.TYPE.PATH
+	var activeMaterial: StandardMaterial3D = chuckDisk.get_mesh().get_active_material(0)
+	activeMaterial.albedo_color = GLOBAL_SETTINGS.COLOR.PATH
 
 func prepare(throwPath: Array[Vector3], multiplier: float, newFallbackCamera: Camera3D, newThrower: ChuckChucker) -> void:
 	var throwCurve: Curve3D = Curve3D.new()
@@ -27,7 +33,7 @@ func prepare(throwPath: Array[Vector3], multiplier: float, newFallbackCamera: Ca
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	# If disk not collided or disk just launched process on path
-	if chuckDisk != null and not chuckDisk.collided:
+	if chuckDisk != null and not chuckDisk.collided and pathFollow3d.progress_ratio != 1:
 		var velocityMagnitude: float = launchSpeed
 		var distancePerSecond: float = velocityMagnitude * delta
 		pathFollow3d.progress += distancePerSecond
