@@ -7,9 +7,11 @@
 viewport_path = NodePath("ScorecardViewport")
 
 [node name="ScorecardView" type="Node3D"]
+process_mode = 3
 script = ExtResource("1_cnyd7")
 
 [node name="ScorecardViewport" type="SubViewport" parent="."]
+handle_input_locally = false
 size = Vector2i(1152, 648)
 
 [node name="ScorecardControl" parent="ScorecardViewport" instance=ExtResource("1_xsqs2")]

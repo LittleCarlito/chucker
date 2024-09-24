@@ -3,12 +3,14 @@ class_name ChuckTee
 
 @onready var teeCamera: Camera3D = $CameraController/CameraTarget/TeeboxCamera
 @onready var scorecard: ScorecardView = $ScorecardView
+@onready var pauseMenuView: PauseMenuView = $PauseMenuView
 
 const _CURRENT_CAMERA_LOG: String = "Current camera is %s"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	scorecard.set_pixel_size(GLOBAL_SETTINGS.MENU.SCORECARD.TEEBOX_PIXEL_SIZE)
+	pauseMenuView.set_pixel_size(GLOBAL_SETTINGS.MENU.SCORECARD.TEEBOX_PIXEL_SIZE)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -16,6 +18,10 @@ func _process(_delta: float) -> void:
 
 func _handle_menus() -> void:
 	if teeCamera.current:
+		if Input.is_action_just_pressed(USER_INPUT.MENU.MAIN) and teeCamera.current:
+			pauseMenuView.pauseMenuSprite.visible = true
+			get_viewport().get_camera_3d().look_at(pauseMenuView.pauseMenuSprite.global_position)
+			get_tree().paused = not get_tree().paused
 		if Input.is_action_pressed(USER_INPUT.MENU.SCORE):
 			scorecard.scorecardSprite.visible = true
 			get_viewport().get_camera_3d().look_at(scorecard.scorecardSprite.global_position)
