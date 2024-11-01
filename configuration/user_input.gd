@@ -27,6 +27,7 @@ const ACTION = {
 
 const MENU = {
 	"SCORE": "menu_score",
+	# TODO Refactor this to be menu_pause "PAUSE"
 	"MAIN": "menu_main"
 }
 

@@ -1,13 +1,30 @@
-[gd_scene load_steps=4 format=3 uid="uid://dmeulj1k52vw2"]
+[gd_scene load_steps=4 format=3 uid="uid://dga1phvs3bgpk"]
 
 [ext_resource type="PackedScene" uid="uid://dxo1losx217fd" path="res://assets/ui/menus/PauseMenu.tscn" id="1_dowg6"]
-[ext_resource type="Script" path="res://assets/ui/views/pause_menu_view.gd" id="1_rrmcy"]
+
+[sub_resource type="GDScript" id="GDScript_kotj2"]
+script/source = "extends Node3D
+class_name PauseMenuView
+
+@onready var pauseMenuSprite: Sprite3D = $PauseMenuSprite
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+
+func set_pixel_size(pixelSize: float) -> void:
+	pauseMenuSprite.pixel_size = pixelSize
+"
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_ovnux"]
 viewport_path = NodePath("PauseMenuViewport")
 
 [node name="PauseMenuView" type="Node3D"]
-script = ExtResource("1_rrmcy")
+script = SubResource("GDScript_kotj2")
 
 [node name="PauseMenuViewport" type="SubViewport" parent="."]
 size = Vector2i(1152, 648)

@@ -1,8 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://c3a3ygsd2ack"]
+[gd_scene load_steps=7 format=3 uid="uid://c3a3ygsd2ack"]
 
 [ext_resource type="Script" path="res://assets/buildings/chuck_tee.gd" id="1_srenv"]
 [ext_resource type="PackedScene" uid="uid://btbtiiilcdji5" path="res://assets/ui/views/ScorecardView.tscn" id="2_tncc4"]
-[ext_resource type="PackedScene" uid="uid://dmeulj1k52vw2" path="res://assets/ui/views/PauseMenuView.tscn" id="3_j1esd"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_521vg"]
 albedo_color = Color(0.101961, 0.270588, 0.0745098, 1)
@@ -46,10 +45,6 @@ transform = Transform3D(1, -0.000147548, -0.00015585, 0.000182858, 0.965926, 0.2
 
 [node name="ScorecardView" parent="." instance=ExtResource("2_tncc4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 27, 0)
-
-[node name="PauseMenuView" parent="." instance=ExtResource("3_j1esd")]
-process_mode = 3
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17.8286, 0)
 
 [connection signal="body_entered" from="TeeBoxArea" to="." method="_on_tee_box_area_body_entered"]
 [connection signal="body_exited" from="TeeBoxArea" to="." method="_on_tee_box_area_body_exited"]

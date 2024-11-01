@@ -27,6 +27,9 @@ func _ready() -> void:
 	var activeMaterial: StandardMaterial3D = diskMesh.get_active_material(0)
 	activeMaterial.albedo_color = GLOBAL_SETTINGS.COLOR.CHARGE
 
+# TODO This is the source of the issues for improperly colliding path disks
+#		I think problem is it loses its camera for some reason
+#			diskCamera.current being false makes it loop through the path never spawning a disk
 func _process(delta: float) -> void:
 	# Maintain minimum height for the camera
 	cameraControl.global_position.y = max(GLOBAL_SETTINGS.CAMERA.MIN_HEIGHT, cameraControl.global_position.y)
@@ -57,6 +60,8 @@ func _input(event: InputEvent) -> void:
 func toggle_camera() -> void:
 	diskCamera.current = not diskCamera.current
 
+# TODO Camera is timing out after being thrown; That is why path disk is causing issues when being thrown second
+#		What starts the timer?
 func _on_camera_timer_timeout() -> void:
 	diskCamera.current = false
 	thrower.disableMovement = false
@@ -65,6 +70,7 @@ func _on_camera_timer_timeout() -> void:
 	cameraContainer.top_level = false
 	self.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
 	self.angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
+	cameraTimer.stop()
 
 static func new_disk(newdiskCamera: Camera3D, newThrower: ChuckChucker) -> ChuckDisk:
 	var newDisk: ChuckDisk = thrownDisk.instantiate()

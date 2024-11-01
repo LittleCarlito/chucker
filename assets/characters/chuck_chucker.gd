@@ -1,11 +1,13 @@
 extends PlayableCharacter
 class_name ChuckChucker
 
-
+# TODO Have it recognize when throwing from tee box and use that camera
 # TODO Move button handling to objects that care about it
 #		i.e. just adding PauseMenuView is enough to add esc
 #				Will need to set owner or fallback camera or something to establish what to check for current
 # TODO Add esc menu
+#		Make cursor visible when menu is visible
+#		Make buttons work
 # TODO Add settings to esc menu
 #		With ability to define used controls
 # TODO Make FOV configurable between a certain range
@@ -28,7 +30,8 @@ const UNEQUIP_MESSAGE: String = "unequip_item() called but no item is equiped"
 @onready var chuckMesh: MeshInstance3D = $ChuckMesh
 @onready var playerCamera: Camera3D = $CameraController/CameraTarget/ChuckCamera
 @onready var scorecard: ScorecardView = $ScorecardView
-@onready var pauseMenuView: PauseMenuView = $PauseMenuView
+@onready var pauseMenu: PauseMenu = $PauseMenu
+
 
 var playerDisk: ThrowableItem
 var disableMovement: bool = false
@@ -44,7 +47,6 @@ func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	height = chuckMesh.get_aabb().size.y
 	scorecard.set_pixel_size(GLOBAL_SETTINGS.MENU.SCORECARD.PLAYER_PIXEL_SIZE)
-	pauseMenuView.set_pixel_size(GLOBAL_SETTINGS.MENU.SCORECARD.PLAYER_PIXEL_SIZE)
 
 func _physics_process(delta: float) -> void:
 	self._handle_camera_controls()
@@ -141,13 +143,12 @@ func _handle_movement(delta: float) -> void:
 	cameraController.position = lerp(cameraController.position, position, GLOBAL_SETTINGS.CAMERA.PAN_SPEED)
 
 func _handle_menus() -> void:
-	# TODO Need to add unpause signal to resume and close buttons
-	# TODO Need to add pause menu to tee box
-	# TODO Need to add conditionals to ensure this and teebox don't conflict when activated
-	if Input.is_action_just_pressed(USER_INPUT.MENU.MAIN) and playerCamera.current:
-		pauseMenuView.pauseMenuSprite.visible = not pauseMenuView.pauseMenuSprite.visible
-		if pauseMenuView.visible:
-			get_viewport().get_camera_3d().look_at(pauseMenuView.pauseMenuSprite.global_position)
+	# TODO This opens and closes like crazy
+	#		Get using escape key to close it under control
+	#		Consider a timer on the Pause menu or do stuff with event and bounce I think
+	if Input.is_action_just_pressed(USER_INPUT.MENU.MAIN) and not pauseMenu.visible:
+		# TODO make this a safer check and not this
+		pauseMenu.visible = true
 		get_tree().paused = not get_tree().paused
 	if Input.is_action_pressed(USER_INPUT.MENU.SCORE):
 		disableMovement = true

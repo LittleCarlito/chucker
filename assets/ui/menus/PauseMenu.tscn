@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://dxo1losx217fd"]
+[gd_scene load_steps=8 format=3 uid="uid://dxo1losx217fd"]
 
 [ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://assets/ui/menus/MainMenu_theme.tres" id="1_guofl"]
+[ext_resource type="Script" path="res://assets/ui/menus/pause_menu.gd" id="1_mhopn"]
 [ext_resource type="PackedScene" uid="uid://b5pco8trxx8mb" path="res://assets/ui/buttons/CloseButton.tscn" id="2_xs8rd"]
 [ext_resource type="PackedScene" uid="uid://deqcpdfgwi2sl" path="res://assets/ui/buttons/ResumeButton.tscn" id="3_4qpds"]
 [ext_resource type="PackedScene" uid="uid://bbrn8dxpgdwys" path="res://assets/ui/buttons/OptionsButton.tscn" id="4_lgrrl"]
@@ -10,12 +11,14 @@
 bg_color = Color(0.43, 0.362633, 0.2279, 1)
 
 [node name="PauseMenu" type="Control"]
+process_mode = 3
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_mhopn")
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1
@@ -96,3 +99,7 @@ theme = ExtResource("1_guofl")
 layout_mode = 2
 size_flags_horizontal = 8
 theme = ExtResource("1_guofl")
+
+[connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/CloseButton" to="." method="_on_close_menu"]
+[connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/ResumeButton" to="." method="_on_close_menu"]
+[connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/QuitButton" to="." method="_on_quit"]

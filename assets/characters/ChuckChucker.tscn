@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://assets/characters/chuck_chucker.gd" id="1_hnkcf"]
 [ext_resource type="PackedScene" uid="uid://btbtiiilcdji5" path="res://assets/ui/views/ScorecardView.tscn" id="2_d3xrw"]
-[ext_resource type="PackedScene" uid="uid://dmeulj1k52vw2" path="res://assets/ui/views/PauseMenuView.tscn" id="3_ud5yy"]
+[ext_resource type="PackedScene" uid="uid://dxo1losx217fd" path="res://assets/ui/menus/PauseMenu.tscn" id="3_u0pwn"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h7ubf"]
 albedo_color = Color(0.41528, 0.3828, 0.87, 1)
@@ -58,6 +58,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.50122e-10, 0.744641, 0)
 [node name="ScorecardView" parent="." instance=ExtResource("2_d3xrw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 
-[node name="PauseMenuView" parent="." instance=ExtResource("3_ud5yy")]
-process_mode = 3
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.0901, 2)
+[node name="PauseMenu" parent="." instance=ExtResource("3_u0pwn")]
+visible = false
