@@ -1,7 +1,6 @@
 extends PlayableCharacter
 class_name ChuckChucker
 
-# TODO Have it recognize when throwing from tee box and use that camera
 # TODO Move button handling to objects that care about it
 #		i.e. just adding PauseMenuView is enough to add esc
 #				Will need to set owner or fallback camera or something to establish what to check for current
@@ -144,22 +143,21 @@ func _handle_movement(delta: float) -> void:
 
 func _handle_menus() -> void:
 	# TODO This opens and closes like crazy
-	#		Get using escape key to close it under control
-	#		Consider a timer on the Pause menu or do stuff with event and bounce I think
-	if Input.is_action_just_pressed(USER_INPUT.MENU.MAIN) and not pauseMenu.visible:
+	if Input.is_action_pressed(USER_INPUT.MENU.MAIN) and not pauseMenu.visible:
 		# TODO make this a safer check and not this
 		pauseMenu.visible = true
 		get_tree().paused = not get_tree().paused
-	if Input.is_action_pressed(USER_INPUT.MENU.SCORE):
-		disableMovement = true
-		if playerCamera.current:
-			scorecard.scorecardSprite.visible = true
-			get_viewport().get_camera_3d().look_at(scorecard.scorecardSprite.global_position)
 	if Input.is_action_just_released(USER_INPUT.MENU.SCORE):
 		disableMovement = false
 		if playerCamera.current:
 			scorecard.scorecardSprite.visible = false
 			get_viewport().get_camera_3d().rotation = Vector3.ZERO
+	if Input.is_action_pressed(USER_INPUT.MENU.SCORE):
+		disableMovement = true
+		if playerCamera.current:
+			scorecard.scorecardSprite.visible = true
+			get_viewport().get_camera_3d().look_at(scorecard.scorecardSprite.global_position)
+
 
 ## Toggles the visibility logic when character has item equiped
 func unequip_item() -> void:
