@@ -1,0 +1,414 @@
+[gd_scene load_steps=8 format=3 uid="uid://buojyeswghm00"]
+
+[ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://assets/ui/menus/MainMenu_theme.tres" id="1_mx8pt"]
+[ext_resource type="Theme" uid="uid://df6ukhlv3h184" path="res://assets/ui/menus/OptionsMenu_theme.tres" id="2_dnfin"]
+[ext_resource type="PackedScene" uid="uid://b5pco8trxx8mb" path="res://assets/ui/buttons/CloseButton.tscn" id="3_1rkto"]
+[ext_resource type="Texture2D" uid="uid://c1q5t5w4jrmqo" path="res://resources/BackButton.png" id="3_pcjab"]
+[ext_resource type="Texture2D" uid="uid://bos42s6yyuumw" path="res://resources/OptionsTitle.png" id="4_2xypg"]
+[ext_resource type="Texture2D" uid="uid://bj8wvx4cw8p8p" path="res://resources/icon.svg" id="4_kejwi"]
+[ext_resource type="Texture2D" uid="uid://cw1r1fqfmdbj8" path="res://resources/SaveButton.png" id="5_ss4eu"]
+
+[node name="OptionsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_mx8pt")
+
+[node name="MainContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeftMargin" type="MarginContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme = ExtResource("1_mx8pt")
+
+[node name="ContentBox" type="VBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TopMargin" type="MarginContainer" parent="MainContainer/ContentBox"]
+layout_mode = 2
+size_flags_vertical = 0
+theme = ExtResource("1_mx8pt")
+
+[node name="OptionRows" type="VBoxContainer" parent="MainContainer/ContentBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("1_mx8pt")
+theme_override_constants/separation = 9
+
+[node name="TopOptionBar" type="HBoxContainer" parent="MainContainer/ContentBox/OptionRows"]
+layout_mode = 2
+theme = ExtResource("2_dnfin")
+alignment = 2
+
+[node name="BackButton" type="Button" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
+layout_mode = 2
+theme_override_icons/icon = ExtResource("3_pcjab")
+
+[node name="OptionsLabel" type="Panel" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"OptionLabel"
+
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ContentBox/OptionRows/TopOptionBar/OptionsLabel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="MainContainer/ContentBox/OptionRows/TopOptionBar/OptionsLabel/CenterContainer"]
+texture = ExtResource("4_2xypg")
+
+[node name="SaveButton" type="Button" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
+layout_mode = 2
+theme_override_icons/icon = ExtResource("5_ss4eu")
+
+[node name="CloseButton" parent="MainContainer/ContentBox/OptionRows/TopOptionBar" instance=ExtResource("3_1rkto")]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="LowerOptionTabContainer" type="TabContainer" parent="MainContainer/ContentBox/OptionRows"]
+layout_mode = 2
+current_tab = 0
+
+[node name="Controls" type="Panel" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="ControlsBackground" type="Panel" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 460.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_dnfin")
+theme_type_variation = &"TabBackground"
+
+[node name="ControlsRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 24
+
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows"]
+layout_mode = 2
+theme_override_constants/margin_top = 3
+
+[node name="TopOptionColumns" type="HBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows"]
+layout_mode = 2
+theme = ExtResource("2_dnfin")
+theme_override_constants/separation = 0
+
+[node name="TopSelectColumns" type="HBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns"]
+layout_mode = 2
+
+[node name="LeftMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSelectColumns"]
+layout_mode = 2
+
+[node name="TopSelectRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSelectColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="VInversionToggle" type="CheckButton" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSelectColumns/TopSelectRows"]
+layout_mode = 2
+text = "Vertical Inversion"
+
+[node name="HInversionToggle" type="CheckButton" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSelectColumns/TopSelectRows"]
+layout_mode = 2
+text = "Horizontal Inversion"
+
+[node name="MotionBlurCheck" type="CheckBox" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSelectColumns/TopSelectRows"]
+layout_mode = 2
+text = "Motion Blur"
+
+[node name="CheckBox" type="CheckBox" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSelectColumns/TopSelectRows"]
+layout_mode = 2
+text = "Bloom"
+
+[node name="RightMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSelectColumns"]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="TopSliderColumns" type="HBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LeftMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns"]
+layout_mode = 2
+
+[node name="TopSliderRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="LookSensitivityPanel" type="Panel" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows"]
+layout_mode = 2
+
+[node name="LookSensitivityRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/LookSensitivityPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="LookSensitivityLabelCenter" type="CenterContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/LookSensitivityPanel/LookSensitivityRows"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="LookSensitivityLabel" type="Label" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/LookSensitivityPanel/LookSensitivityRows/LookSensitivityLabelCenter"]
+layout_mode = 2
+theme = ExtResource("2_dnfin")
+text = "Look Sensitivity"
+horizontal_alignment = 1
+
+[node name="LookSensitivityColumns" type="HBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/LookSensitivityPanel/LookSensitivityRows"]
+layout_mode = 2
+
+[node name="LeftMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/LookSensitivityPanel/LookSensitivityRows/LookSensitivityColumns"]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+
+[node name="LookSensitvitySliderContainer" type="Panel" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/LookSensitivityPanel/LookSensitivityRows/LookSensitivityColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+
+[node name="LookSensitivitySlider" type="HSlider" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/LookSensitivityPanel/LookSensitivityRows/LookSensitivityColumns/LookSensitvitySliderContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = ExtResource("2_dnfin")
+min_value = 40.0
+max_value = 120.0
+value = 90.0
+
+[node name="LookSensitivityValueCenter" type="CenterContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/LookSensitivityPanel/LookSensitivityRows/LookSensitivityColumns"]
+layout_mode = 2
+size_flags_horizontal = 6
+
+[node name="LookSensitivityValue" type="Label" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/LookSensitivityPanel/LookSensitivityRows/LookSensitivityColumns/LookSensitivityValueCenter"]
+layout_mode = 2
+text = "999"
+horizontal_alignment = 1
+
+[node name="AimSensitivityPanel" type="Panel" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows"]
+layout_mode = 2
+
+[node name="AimSensitivityRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/AimSensitivityPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="AimSensitivityLabelCenter" type="CenterContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/AimSensitivityPanel/AimSensitivityRows"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="AimSensitivityLabel" type="Label" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/AimSensitivityPanel/AimSensitivityRows/AimSensitivityLabelCenter"]
+layout_mode = 2
+theme = ExtResource("2_dnfin")
+text = "Aim Sensitivity"
+horizontal_alignment = 1
+
+[node name="AimSensitivityColumns" type="HBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/AimSensitivityPanel/AimSensitivityRows"]
+layout_mode = 2
+
+[node name="LeftMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/AimSensitivityPanel/AimSensitivityRows/AimSensitivityColumns"]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+
+[node name="AimSensitvitySliderContainer" type="Panel" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/AimSensitivityPanel/AimSensitivityRows/AimSensitivityColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+
+[node name="AimSensitivitySlider" type="HSlider" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/AimSensitivityPanel/AimSensitivityRows/AimSensitivityColumns/AimSensitvitySliderContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = ExtResource("2_dnfin")
+min_value = 40.0
+max_value = 120.0
+value = 90.0
+
+[node name="AimSensitivityValueCenter" type="CenterContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/AimSensitivityPanel/AimSensitivityRows/AimSensitivityColumns"]
+layout_mode = 2
+size_flags_horizontal = 6
+
+[node name="AimSensitivityValue" type="Label" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/AimSensitivityPanel/AimSensitivityRows/AimSensitivityColumns/AimSensitivityValueCenter"]
+layout_mode = 2
+text = "999"
+horizontal_alignment = 1
+
+[node name="FoVSliderPanel" type="Panel" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows"]
+layout_mode = 2
+
+[node name="FovLabelRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="FovLabelCenter" type="CenterContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="FovLabel" type="Label" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows/FovLabelCenter"]
+layout_mode = 2
+size_flags_horizontal = 6
+text = "Field Of View"
+horizontal_alignment = 1
+
+[node name="FovSliderColumns" type="HBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows"]
+layout_mode = 2
+alignment = 1
+
+[node name="LeftMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows/FovSliderColumns"]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+
+[node name="FovSliderContainer" type="Panel" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows/FovSliderColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+
+[node name="FovSlider" type="HSlider" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows/FovSliderColumns/FovSliderContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = ExtResource("2_dnfin")
+min_value = 40.0
+max_value = 120.0
+value = 90.0
+
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows/FovSliderColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FovValue" type="Label" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows/FovSliderColumns/CenterContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "90"
+horizontal_alignment = 1
+
+[node name="RightMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSliderColumns"]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="ControlListContainer" type="Panel" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows"]
+layout_mode = 2
+
+[node name="ControlListBackground" type="Panel" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/ControlListContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 270.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ControlList" type="ItemList" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/ControlListContainer/ControlListBackground"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_dnfin")
+item_count = 15
+max_columns = 4
+same_column_width = true
+icon_scale = 0.3
+item_0/text = "Forward"
+item_0/icon = ExtResource("4_kejwi")
+item_1/text = "Backward"
+item_1/icon = ExtResource("4_kejwi")
+item_2/text = "Main Menu"
+item_2/icon = ExtResource("4_kejwi")
+item_3/text = "Scorecard"
+item_3/icon = ExtResource("4_kejwi")
+item_4/text = "Strafe Right"
+item_4/icon = ExtResource("4_kejwi")
+item_5/text = "Rotate Right"
+item_5/icon = ExtResource("4_kejwi")
+item_6/text = "Primary Action"
+item_6/icon = ExtResource("4_kejwi")
+item_7/text = "Secondary Action"
+item_7/icon = ExtResource("4_kejwi")
+item_8/text = "Strafe Left"
+item_8/icon = ExtResource("4_kejwi")
+item_9/text = "Rotate Left"
+item_9/icon = ExtResource("4_kejwi")
+item_10/text = "Rotate Up"
+item_10/icon = ExtResource("4_kejwi")
+item_11/text = "Rotate Down"
+item_11/icon = ExtResource("4_kejwi")
+item_12/text = "Jump"
+item_12/icon = ExtResource("4_kejwi")
+item_13/text = "Sprint"
+item_13/icon = ExtResource("4_kejwi")
+item_14/text = "Pick Up"
+item_14/icon = ExtResource("4_kejwi")
+
+[node name="BottomMargin" type="MarginContainer" parent="MainContainer/ContentBox"]
+layout_mode = 2
+size_flags_vertical = 8
+theme = ExtResource("1_mx8pt")
+
+[node name="RightMargin" type="MarginContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme = ExtResource("1_mx8pt")

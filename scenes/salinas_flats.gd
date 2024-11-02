@@ -4,7 +4,10 @@ extends Node3D
 
 # TODO Add settings to esc menu
 #		With ability to define used controls
+#		Add back button that takes you back to main menu
+#		Add Graphics tab and move motion blur/bloom check boxes there
 # TODO Make FOV configurable between a certain range
+# TODO Get MainMenu theme stuff cleaned up
 # TODO Fix chucking a disk over the edge
 #		Make Environment asset that is "CourseFloor"
 #			Add a signal for body exit
