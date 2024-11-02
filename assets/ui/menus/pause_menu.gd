@@ -16,8 +16,7 @@ func _input(event: InputEvent) -> void:
 		close_menu.emit()
 
 func _on_close_menu() -> void:
-	self.visible = false
-	get_tree().paused = false
+	close_menu.emit()
 
 func _on_quit() -> void:
 	get_tree().quit()

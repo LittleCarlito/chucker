@@ -19,7 +19,6 @@ func _input(event: InputEvent) -> void:
 		pauseMenu.visible = true
 		get_tree().paused = true
 		set_process_input(false)
-	# TODO Need to find best way to disable movement for all characters
 	if event.is_action_pressed(USER_INPUT.MENU.SCORE):
 		disable_movement.emit()
 		# Determine what camera is active so we know how big to make the scorecard

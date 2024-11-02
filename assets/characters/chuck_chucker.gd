@@ -1,23 +1,6 @@
 extends PlayableCharacter
 class_name ChuckChucker
 
-# TODO Add esc menu
-#		Make cursor visible when menu is visible
-#		Make buttons work
-# TODO Add settings to esc menu
-#		With ability to define used controls
-# TODO Make FOV configurable between a certain range
-# TODO Fix chucking a disk over the edge
-#		Make Environment asset that is "CourseFloor"
-#			Add a signal for body exit
-#			Code to queue_free to start with
-#				Eventually will want to respawn people and disks at certain points
-#					People probably right where they fell in
-#					Disks spawn near where they fell in but perpindicular to hole playing or something like that
-# TODO Give chuck a bag he carries
-#		Allow the bag to have 6 x 6 inventory where disks are stored and can be chosen/equipped
-
-
 const UNEQUIP_MESSAGE: String = "unequip_item() called but no item is equiped"
 
 @onready var diskController: Node3D = $DiskController
