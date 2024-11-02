@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://0p7etoed8w0v"]
+[gd_scene load_steps=10 format=3 uid="uid://0p7etoed8w0v"]
 
 [ext_resource type="PackedScene" uid="uid://mfc0kjgxpvtg" path="res://assets/items/PathDisk.tscn" id="1_7oa4i"]
 [ext_resource type="PackedScene" uid="uid://c3a3ygsd2ack" path="res://assets/buildings/ChuckTee.tscn" id="1_kikso"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cdkknjflehfgx" path="res://assets/characters/ChuckChucker.tscn" id="3_wng2j"]
 [ext_resource type="PackedScene" uid="uid://bpn27qpg2rm8c" path="res://assets/buildings/ChuckHole.tscn" id="4_upk5s"]
 [ext_resource type="Environment" uid="uid://bm00mgoeg2ojv" path="res://resources/environment_default.tres" id="5_ll0n0"]
+[ext_resource type="PackedScene" uid="uid://dga2v203y41nq" path="res://assets/ui/ControlNode.tscn" id="7_inl8g"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_vba8s"]
 size = Vector3(50, 3, 200)
@@ -50,3 +51,6 @@ shape = SubResource("BoxShape3D_o6chi")
 environment = ExtResource("5_ll0n0")
 
 [node name="DiskSpawn" type="Node3D" parent="."]
+
+[node name="ControlNode" parent="." instance=ExtResource("7_inl8g")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50.6695, -6.53482)

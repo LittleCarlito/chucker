@@ -28,8 +28,6 @@ const UNEQUIP_MESSAGE: String = "unequip_item() called but no item is equiped"
 @onready var frontDetection: ShapeCast3D = $FrontDetect
 @onready var chuckMesh: MeshInstance3D = $ChuckMesh
 @onready var playerCamera: Camera3D = $CameraController/CameraTarget/ChuckCamera
-@onready var scorecard: ScorecardView = $ScorecardView
-@onready var pauseMenu: PauseMenu = $PauseMenu
 
 
 var playerDisk: ThrowableItem
@@ -45,14 +43,13 @@ var jumpDetected: bool = false
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	height = chuckMesh.get_aabb().size.y
-	scorecard.set_pixel_size(GLOBAL_SETTINGS.MENU.SCORECARD.PLAYER_PIXEL_SIZE)
 
+# TODO Move handle_menus to _input instead
 func _physics_process(delta: float) -> void:
 	self._handle_camera_controls()
 	self._handle_player_action(delta)
 	self._handle_player_interact()
 	self._handle_movement(delta)
-	self._handle_menus()
 
 ## Actions to be performed when MOVE_JUMP is pressed
 func _handle_jump(delta: float) -> void:
@@ -140,24 +137,6 @@ func _handle_movement(delta: float) -> void:
 	self.move_and_slide()
 	# Keep camera up
 	cameraController.position = lerp(cameraController.position, position, GLOBAL_SETTINGS.CAMERA.PAN_SPEED)
-
-func _handle_menus() -> void:
-	# TODO This opens and closes like crazy
-	if Input.is_action_pressed(USER_INPUT.MENU.MAIN) and not pauseMenu.visible:
-		# TODO make this a safer check and not this
-		pauseMenu.visible = true
-		get_tree().paused = not get_tree().paused
-	if Input.is_action_just_released(USER_INPUT.MENU.SCORE):
-		disableMovement = false
-		if playerCamera.current:
-			scorecard.scorecardSprite.visible = false
-			get_viewport().get_camera_3d().rotation = Vector3.ZERO
-	if Input.is_action_pressed(USER_INPUT.MENU.SCORE):
-		disableMovement = true
-		if playerCamera.current:
-			scorecard.scorecardSprite.visible = true
-			get_viewport().get_camera_3d().look_at(scorecard.scorecardSprite.global_position)
-
 
 ## Toggles the visibility logic when character has item equiped
 func unequip_item() -> void:

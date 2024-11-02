@@ -31,8 +31,9 @@ func error(errorLog: String, params: Array, caller: Object) -> void:
 func _print(printLog: String, params: Array, caller: Object) -> void:
 	var timeStamp: String = Time.get_datetime_string_from_system()
 	var logString: String = printLog % params
-	var formatString: String =  "%s - %s: %s"
-	var formattedLogString: String = formatString % [timeStamp, caller.get("name"), logString]
+	var formatString: String =  "[%s] %s - %s: %s"
+	var levelString: String = self.LEVEL.keys()[self.LOG_LEVEL]
+	var formattedLogString: String = formatString % [levelString, timeStamp, caller.get("name"), logString]
 	print(formattedLogString)
 
 # TODO Need to set project settings to output to a file
