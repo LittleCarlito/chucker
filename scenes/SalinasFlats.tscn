@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://0p7etoed8w0v"]
+[gd_scene load_steps=11 format=3 uid="uid://0p7etoed8w0v"]
 
 [ext_resource type="PackedScene" uid="uid://mfc0kjgxpvtg" path="res://assets/items/PathDisk.tscn" id="1_7oa4i"]
 [ext_resource type="PackedScene" uid="uid://c3a3ygsd2ack" path="res://assets/buildings/ChuckTee.tscn" id="1_kikso"]
+[ext_resource type="Script" path="res://scenes/salinas_flats.gd" id="1_nouo6"]
 [ext_resource type="PackedScene" uid="uid://blwwfxseykyuy" path="res://assets/items/ChuckDisk.tscn" id="2_0r0o2"]
 [ext_resource type="PackedScene" uid="uid://cdkknjflehfgx" path="res://assets/characters/ChuckChucker.tscn" id="3_wng2j"]
 [ext_resource type="PackedScene" uid="uid://bpn27qpg2rm8c" path="res://assets/buildings/ChuckHole.tscn" id="4_upk5s"]
@@ -15,6 +16,7 @@ size = Vector3(50, 3, 200)
 size = Vector3(50, 3, 200)
 
 [node name="SalinasFlats" type="Node3D"]
+script = ExtResource("1_nouo6")
 
 [node name="PathDisk" parent="." instance=ExtResource("1_7oa4i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.45222, 4.39647, -2.10365)
@@ -54,3 +56,6 @@ environment = ExtResource("5_ll0n0")
 
 [node name="ControlNode" parent="." instance=ExtResource("7_inl8g")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50.6695, -6.53482)
+
+[connection signal="disable_movement" from="ControlNode" to="." method="_disable_character_movement"]
+[connection signal="enable_movement" from="ControlNode" to="." method="_enable_character_movement"]

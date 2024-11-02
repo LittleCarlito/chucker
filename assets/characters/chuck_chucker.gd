@@ -1,9 +1,6 @@
 extends PlayableCharacter
 class_name ChuckChucker
 
-# TODO Move button handling to objects that care about it
-#		i.e. just adding PauseMenuView is enough to add esc
-#				Will need to set owner or fallback camera or something to establish what to check for current
 # TODO Add esc menu
 #		Make cursor visible when menu is visible
 #		Make buttons work
@@ -44,7 +41,6 @@ func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	height = chuckMesh.get_aabb().size.y
 
-# TODO Move handle_menus to _input instead
 func _physics_process(delta: float) -> void:
 	self._handle_camera_controls()
 	self._handle_player_action(delta)
