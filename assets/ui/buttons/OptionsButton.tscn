@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bbrn8dxpgdwys"]
 
 [ext_resource type="Theme" uid="uid://dpes7vxx3rpqi" path="res://assets/ui/buttons/MenuButton_theme.tres" id="1_y426h"]
-[ext_resource type="Texture2D" uid="uid://5wlocgrcumg0" path="res://resources/OptionsButton.png" id="1_ypt28"]
+[ext_resource type="Texture2D" uid="uid://5wlocgrcumg0" path="res://resources/Sprites/Menu/OptionsButton.png" id="1_ypt28"]
 
 [node name="Button" type="Button"]
 anchors_preset = 8

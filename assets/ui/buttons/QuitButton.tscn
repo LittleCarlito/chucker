@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://3cf08tnojrg1"]
 
-[ext_resource type="Texture2D" uid="uid://c2qrmn1dekoqq" path="res://resources/QuitButton.png" id="1_31xwd"]
+[ext_resource type="Texture2D" uid="uid://c2qrmn1dekoqq" path="res://resources/Sprites/Menu/QuitButton.png" id="1_31xwd"]
 [ext_resource type="Theme" uid="uid://dpes7vxx3rpqi" path="res://assets/ui/buttons/MenuButton_theme.tres" id="1_cyuko"]
 
 [node name="Button" type="Button"]

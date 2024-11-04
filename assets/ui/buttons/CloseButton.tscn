@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://b5pco8trxx8mb"]
 
 [ext_resource type="Texture2D" uid="uid://bj8wvx4cw8p8p" path="res://resources/icon.svg" id="1_ysy33"]
-[ext_resource type="Texture2D" uid="uid://p4chg0vny54l" path="res://resources/CloseButton.png" id="2_2nc1a"]
+[ext_resource type="Texture2D" uid="uid://p4chg0vny54l" path="res://resources/Sprites/Menu/CloseButton.png" id="2_2nc1a"]
 
 [sub_resource type="Theme" id="Theme_gpe2s"]
 Button/colors/icon_hover_color = Color(1, 0.51, 0.51, 1)

@@ -1,12 +1,26 @@
-[gd_scene load_steps=8 format=3 uid="uid://buojyeswghm00"]
+[gd_scene load_steps=22 format=3 uid="uid://buojyeswghm00"]
 
 [ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://assets/ui/menus/MainMenu_theme.tres" id="1_mx8pt"]
 [ext_resource type="Theme" uid="uid://df6ukhlv3h184" path="res://assets/ui/menus/OptionsMenu_theme.tres" id="2_dnfin"]
 [ext_resource type="PackedScene" uid="uid://b5pco8trxx8mb" path="res://assets/ui/buttons/CloseButton.tscn" id="3_1rkto"]
-[ext_resource type="Texture2D" uid="uid://c1q5t5w4jrmqo" path="res://resources/BackButton.png" id="3_pcjab"]
-[ext_resource type="Texture2D" uid="uid://bos42s6yyuumw" path="res://resources/OptionsTitle.png" id="4_2xypg"]
-[ext_resource type="Texture2D" uid="uid://bj8wvx4cw8p8p" path="res://resources/icon.svg" id="4_kejwi"]
-[ext_resource type="Texture2D" uid="uid://cw1r1fqfmdbj8" path="res://resources/SaveButton.png" id="5_ss4eu"]
+[ext_resource type="Texture2D" uid="uid://c1q5t5w4jrmqo" path="res://resources/Sprites/Menu/BackButton.png" id="3_pcjab"]
+[ext_resource type="Texture2D" uid="uid://bos42s6yyuumw" path="res://resources/Sprites/Menu/OptionsTitle.png" id="4_2xypg"]
+[ext_resource type="Texture2D" uid="uid://cw1r1fqfmdbj8" path="res://resources/Sprites/Menu/SaveButton.png" id="5_ss4eu"]
+[ext_resource type="Texture2D" uid="uid://b0h6gar6kg58m" path="res://resources/Sprites/ControlIcons/W_Keycap.png" id="7_s5hpo"]
+[ext_resource type="Texture2D" uid="uid://5p41al6jpyxo" path="res://resources/Sprites/ControlIcons/S_Keycap.png" id="8_vmaom"]
+[ext_resource type="Texture2D" uid="uid://daluui0eb6tyk" path="res://resources/Sprites/ControlIcons/Escape_Keycap.png" id="9_mdnlt"]
+[ext_resource type="Texture2D" uid="uid://djmqwrfehpiot" path="res://resources/Sprites/ControlIcons/Tab_Keycap.png" id="10_obuis"]
+[ext_resource type="Texture2D" uid="uid://biefc6sq1rfph" path="res://resources/Sprites/ControlIcons/E_Keycap.png" id="11_o6pel"]
+[ext_resource type="Texture2D" uid="uid://dj5m7nojuriao" path="res://resources/Sprites/ControlIcons/D_Keycap.png" id="12_ypy8g"]
+[ext_resource type="Texture2D" uid="uid://bcqqkem5ct5wp" path="res://resources/Sprites/ControlIcons/LeftClick_Mouse.png" id="13_75b82"]
+[ext_resource type="Texture2D" uid="uid://ro783l80sed8" path="res://resources/Sprites/ControlIcons/RightClick_Mouse.png" id="14_5l2ab"]
+[ext_resource type="Texture2D" uid="uid://c268rqxd11osq" path="res://resources/Sprites/ControlIcons/Q_Keycap.png" id="14_ug6r6"]
+[ext_resource type="Texture2D" uid="uid://b3fy0n7hj43jc" path="res://resources/Sprites/ControlIcons/A_Keycap.png" id="15_f1qto"]
+[ext_resource type="Texture2D" uid="uid://6eekiwclr7w" path="res://resources/Sprites/ControlIcons/Space_Keycap.png" id="16_2051c"]
+[ext_resource type="Texture2D" uid="uid://c327tgy4fm0us" path="res://resources/Sprites/ControlIcons/Shift_Keycap.png" id="16_bs5uh"]
+[ext_resource type="Texture2D" uid="uid://da80lnkrg7qwt" path="res://resources/Sprites/ControlIcons/F_Keycap.png" id="17_ajqtq"]
+[ext_resource type="Texture2D" uid="uid://ba0k35l8gweeu" path="res://resources/Sprites/ControlIcons/ScrollUp_Mouse.png" id="17_hch2r"]
+[ext_resource type="Texture2D" uid="uid://du4g0bmaixkak" path="res://resources/Sprites/ControlIcons/ScrollDown_Mouse.png" id="18_esok8"]
 
 [node name="OptionsMenu" type="Control"]
 layout_mode = 3
@@ -62,12 +76,12 @@ alignment = 2
 layout_mode = 2
 theme_override_icons/icon = ExtResource("3_pcjab")
 
-[node name="OptionsLabel" type="Panel" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
+[node name="OptionsLabelBackground" type="Panel" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"OptionLabel"
 
-[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ContentBox/OptionRows/TopOptionBar/OptionsLabel"]
+[node name="OptionsLabelCenter" type="CenterContainer" parent="MainContainer/ContentBox/OptionRows/TopOptionBar/OptionsLabelBackground"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -77,7 +91,7 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Sprite2D" type="Sprite2D" parent="MainContainer/ContentBox/OptionRows/TopOptionBar/OptionsLabel/CenterContainer"]
+[node name="OptionsLabel" type="Sprite2D" parent="MainContainer/ContentBox/OptionRows/TopOptionBar/OptionsLabelBackground/OptionsLabelCenter"]
 texture = ExtResource("4_2xypg")
 
 [node name="SaveButton" type="Button" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
@@ -114,9 +128,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 24
 
-[node name="MarginContainer" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows"]
+[node name="TopMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows"]
 layout_mode = 2
 theme_override_constants/margin_top = 3
 
@@ -143,14 +156,6 @@ text = "Vertical Inversion"
 [node name="HInversionToggle" type="CheckButton" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSelectColumns/TopSelectRows"]
 layout_mode = 2
 text = "Horizontal Inversion"
-
-[node name="MotionBlurCheck" type="CheckBox" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSelectColumns/TopSelectRows"]
-layout_mode = 2
-text = "Motion Blur"
-
-[node name="CheckBox" type="CheckBox" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSelectColumns/TopSelectRows"]
-layout_mode = 2
-text = "Bloom"
 
 [node name="RightMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/TopOptionColumns/TopSelectColumns"]
 layout_mode = 2
@@ -348,65 +353,179 @@ horizontal_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 8
 
-[node name="ControlListContainer" type="Panel" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows"]
+[node name="ControlList" type="ItemList" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows"]
 layout_mode = 2
-
-[node name="ControlListBackground" type="Panel" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/ControlListContainer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_bottom = 270.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ControlList" type="ItemList" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsBackground/ControlsRows/ControlListContainer/ControlListBackground"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+size_flags_vertical = 3
 theme = ExtResource("2_dnfin")
 item_count = 15
 max_columns = 4
 same_column_width = true
-icon_scale = 0.3
+icon_scale = 0.08
 item_0/text = "Forward"
-item_0/icon = ExtResource("4_kejwi")
+item_0/icon = ExtResource("7_s5hpo")
 item_1/text = "Backward"
-item_1/icon = ExtResource("4_kejwi")
+item_1/icon = ExtResource("8_vmaom")
 item_2/text = "Main Menu"
-item_2/icon = ExtResource("4_kejwi")
+item_2/icon = ExtResource("9_mdnlt")
 item_3/text = "Scorecard"
-item_3/icon = ExtResource("4_kejwi")
+item_3/icon = ExtResource("10_obuis")
 item_4/text = "Strafe Right"
-item_4/icon = ExtResource("4_kejwi")
+item_4/icon = ExtResource("11_o6pel")
 item_5/text = "Rotate Right"
-item_5/icon = ExtResource("4_kejwi")
+item_5/icon = ExtResource("12_ypy8g")
 item_6/text = "Primary Action"
-item_6/icon = ExtResource("4_kejwi")
+item_6/icon = ExtResource("13_75b82")
 item_7/text = "Secondary Action"
-item_7/icon = ExtResource("4_kejwi")
+item_7/icon = ExtResource("14_5l2ab")
 item_8/text = "Strafe Left"
-item_8/icon = ExtResource("4_kejwi")
+item_8/icon = ExtResource("14_ug6r6")
 item_9/text = "Rotate Left"
-item_9/icon = ExtResource("4_kejwi")
+item_9/icon = ExtResource("15_f1qto")
 item_10/text = "Rotate Up"
-item_10/icon = ExtResource("4_kejwi")
+item_10/icon = ExtResource("17_hch2r")
 item_11/text = "Rotate Down"
-item_11/icon = ExtResource("4_kejwi")
+item_11/icon = ExtResource("18_esok8")
 item_12/text = "Jump"
-item_12/icon = ExtResource("4_kejwi")
+item_12/icon = ExtResource("16_2051c")
 item_13/text = "Sprint"
-item_13/icon = ExtResource("4_kejwi")
+item_13/icon = ExtResource("16_bs5uh")
 item_14/text = "Pick Up"
-item_14/icon = ExtResource("4_kejwi")
+item_14/icon = ExtResource("17_ajqtq")
 
-[node name="BottomMargin" type="MarginContainer" parent="MainContainer/ContentBox"]
+[node name="Graphics" type="Panel" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer"]
+visible = false
 layout_mode = 2
-size_flags_vertical = 8
-theme = ExtResource("1_mx8pt")
+metadata/_tab_index = 1
+
+[node name="GraphicsBackground" type="Panel" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 460.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_dnfin")
+theme_type_variation = &"TabBackground"
+
+[node name="GraphicsColumns" type="HBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="GraphicsRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TopMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows"]
+layout_mode = 2
+theme_override_constants/margin_top = 3
+
+[node name="ResolutionRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="ResolutionLabel" type="Label" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows/ResolutionRows"]
+layout_mode = 2
+text = "Resolution"
+
+[node name="ResolutionSelect" type="OptionButton" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows/ResolutionRows"]
+layout_mode = 2
+selected = 0
+item_count = 3
+popup/item_0/text = "Where to get list of official options?"
+popup/item_0/id = 1
+popup/item_1/text = "Res 2"
+popup/item_1/id = 2
+popup/item_2/text = "Res 3"
+popup/item_2/id = 3
+
+[node name="DisplayTypeRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows"]
+layout_mode = 2
+theme = ExtResource("2_dnfin")
+theme_override_constants/separation = 0
+
+[node name="DisplayTypeLabel" type="Label" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows/DisplayTypeRows"]
+layout_mode = 2
+text = "Display Type"
+
+[node name="DisplayTypeSelect" type="OptionButton" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows/DisplayTypeRows"]
+layout_mode = 2
+selected = 0
+item_count = 3
+popup/item_0/text = "Windowed"
+popup/item_0/id = 1
+popup/item_1/text = "Fullscreen"
+popup/item_1/id = 2
+popup/item_2/text = "Windowed Fullscreen"
+popup/item_2/id = 3
+
+[node name="MonitorChoiceRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows"]
+layout_mode = 2
+theme = ExtResource("2_dnfin")
+theme_override_constants/separation = 0
+
+[node name="MonitorChoiceLabel" type="Label" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows/MonitorChoiceRows"]
+layout_mode = 2
+text = "Monitor Select"
+
+[node name="MonitorChoiceSelect" type="OptionButton" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows/MonitorChoiceRows"]
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "Only enable if fullscreen"
+popup/item_0/id = 1
+popup/item_1/text = "Need to figure out how to detect monitors"
+popup/item_1/id = 2
+
+[node name="FrameRateRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="FrameRateLabel" type="Label" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows/FrameRateRows"]
+layout_mode = 2
+text = "FPS Limit"
+
+[node name="FrameRateSelect" type="OptionButton" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows/FrameRateRows"]
+layout_mode = 2
+selected = 0
+item_count = 5
+popup/item_0/text = "Unlimited"
+popup/item_1/text = "30"
+popup/item_1/id = 1
+popup/item_2/text = "60"
+popup/item_2/id = 2
+popup/item_3/text = "90"
+popup/item_3/id = 3
+popup/item_4/text = "120"
+popup/item_4/id = 4
+
+[node name="GraphicCheckColumns" type="HBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows"]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="VisualCheckRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows/GraphicCheckColumns"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="MotionBlurCheck" type="CheckBox" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows"]
+layout_mode = 2
+text = "Motion Blur"
+
+[node name="BloomCheck" type="CheckBox" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows"]
+layout_mode = 2
+text = "Bloom"
+
+[node name="DataCheckRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows/GraphicCheckColumns"]
+layout_mode = 2
+
+[node name="PerformanceDisplayCheck" type="CheckBox" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsBackground/GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows"]
+layout_mode = 2
+text = "Performance Display"
 
 [node name="RightMargin" type="MarginContainer" parent="MainContainer"]
 layout_mode = 2
