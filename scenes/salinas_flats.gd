@@ -8,6 +8,7 @@ extends Node3D
 #		Add Graphics tab and move motion blur/bloom check boxes there
 # TODO Make FOV configurable between a certain range
 # TODO Get MainMenu theme stuff cleaned up
+#		Get Asperite files redone and condensed to singular HiResButton files with overlays
 # TODO Fix chucking a disk over the edge
 #		Make Environment asset that is "CourseFloor"
 #			Add a signal for body exit

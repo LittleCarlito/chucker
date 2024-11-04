@@ -73,8 +73,10 @@ theme = ExtResource("2_dnfin")
 alignment = 2
 
 [node name="BackButton" type="Button" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
+custom_minimum_size = Vector2(170, 90)
 layout_mode = 2
 theme_override_icons/icon = ExtResource("3_pcjab")
+expand_icon = true
 
 [node name="OptionsLabelBackground" type="Panel" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
 layout_mode = 2
@@ -95,8 +97,10 @@ grow_vertical = 2
 texture = ExtResource("4_2xypg")
 
 [node name="SaveButton" type="Button" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
+custom_minimum_size = Vector2(170, 90)
 layout_mode = 2
 theme_override_icons/icon = ExtResource("5_ss4eu")
+expand_icon = true
 
 [node name="CloseButton" parent="MainContainer/ContentBox/OptionRows/TopOptionBar" instance=ExtResource("3_1rkto")]
 layout_mode = 2
