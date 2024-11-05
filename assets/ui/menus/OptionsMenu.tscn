@@ -1,5 +1,6 @@
-[gd_scene load_steps=22 format=3 uid="uid://buojyeswghm00"]
+[gd_scene load_steps=23 format=3 uid="uid://buojyeswghm00"]
 
+[ext_resource type="Script" path="res://assets/ui/menus/options_menu.gd" id="1_6pi5a"]
 [ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://assets/ui/menus/MainMenu_theme.tres" id="1_mx8pt"]
 [ext_resource type="Theme" uid="uid://df6ukhlv3h184" path="res://assets/ui/menus/OptionsMenu_theme.tres" id="2_dnfin"]
 [ext_resource type="PackedScene" uid="uid://b5pco8trxx8mb" path="res://assets/ui/buttons/CloseButton.tscn" id="3_1rkto"]
@@ -23,12 +24,14 @@
 [ext_resource type="Texture2D" uid="uid://du4g0bmaixkak" path="res://resources/Sprites/ControlIcons/ScrollDown_Mouse.png" id="18_esok8"]
 
 [node name="OptionsMenu" type="Control"]
+process_mode = 2
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_6pi5a")
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1
@@ -522,3 +525,7 @@ theme = ExtResource("1_mx8pt")
 layout_mode = 2
 size_flags_horizontal = 8
 theme = ExtResource("1_mx8pt")
+
+[connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/BackButton" to="." method="_on_back_menu"]
+[connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/SaveButton" to="." method="_on_save_menu"]
+[connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/CloseButton" to="." method="_on_close_menu"]

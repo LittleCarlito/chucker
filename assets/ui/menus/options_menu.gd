@@ -1,0 +1,27 @@
+extends Control
+
+signal close_menu
+signal back_menu
+signal save_settings
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta: float) -> void:
+	pass
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed(USER_INPUT.MENU.MAIN) and self.visible:
+		close_menu.emit()
+
+func _on_close_menu() -> void:
+	close_menu.emit()
+
+func _on_back_menu() -> void:
+	back_menu.emit()
+
+func _on_save_menu() -> void:
+	save_settings.emit()

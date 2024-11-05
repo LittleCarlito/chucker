@@ -2,11 +2,7 @@ extends Node3D
 
 @onready var chuckChucker: ChuckChucker = $ChuckChucker
 
-# TODO Add settings to esc menu
-#		With ability to define used controls
-#		Add back button that takes you back to main menu
-#		Add Graphics tab and move motion blur/bloom check boxes there
-# TODO Make FOV configurable between a certain range
+# TODO Make settings in Options actually work
 # TODO Get MainMenu theme stuff cleaned up
 #		Get Asperite files redone and condensed to singular HiResButton files with overlays
 # TODO Fix chucking a disk over the edge
@@ -24,11 +20,11 @@ func _ready() -> void:
 	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 func _disable_character_movement() -> void:
-	chuckChucker.disableMovement = true	
+	chuckChucker.disableMovement = true
 
 func _enable_character_movement() -> void:
 	chuckChucker.disableMovement = false

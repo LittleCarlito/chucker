@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://dxo1losx217fd"]
+[gd_scene load_steps=9 format=3 uid="uid://dxo1losx217fd"]
 
 [ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://assets/ui/menus/MainMenu_theme.tres" id="1_guofl"]
 [ext_resource type="Script" path="res://assets/ui/menus/pause_menu.gd" id="1_mhopn"]
@@ -6,12 +6,13 @@
 [ext_resource type="PackedScene" uid="uid://deqcpdfgwi2sl" path="res://assets/ui/buttons/ResumeButton.tscn" id="3_4qpds"]
 [ext_resource type="PackedScene" uid="uid://bbrn8dxpgdwys" path="res://assets/ui/buttons/OptionsButton.tscn" id="4_lgrrl"]
 [ext_resource type="PackedScene" uid="uid://3cf08tnojrg1" path="res://assets/ui/buttons/QuitButton.tscn" id="5_c14gq"]
+[ext_resource type="PackedScene" uid="uid://buojyeswghm00" path="res://assets/ui/menus/OptionsMenu.tscn" id="7_twhfd"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7nrxq"]
 bg_color = Color(0.43, 0.362633, 0.2279, 1)
 
 [node name="PauseMenu" type="Control"]
-process_mode = 3
+process_mode = 2
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -100,6 +101,14 @@ layout_mode = 2
 size_flags_horizontal = 8
 theme = ExtResource("1_guofl")
 
+[node name="OptionsMenu" parent="." instance=ExtResource("7_twhfd")]
+visible = false
+layout_mode = 1
+
 [connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/CloseButton" to="." method="_on_close_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/ResumeButton" to="." method="_on_close_menu"]
+[connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/OptionsButton" to="." method="_on_options_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/QuitButton" to="." method="_on_quit"]
+[connection signal="back_menu" from="OptionsMenu" to="." method="_on_submenu_back"]
+[connection signal="close_menu" from="OptionsMenu" to="." method="_on_submenu_close_menu"]
+[connection signal="save_settings" from="OptionsMenu" to="." method="_on_save_menu"]

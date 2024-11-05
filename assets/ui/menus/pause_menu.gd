@@ -1,11 +1,19 @@
 extends Control
 class_name PauseMenu
 
+@onready var optionsMenu: Control = $OptionsMenu
+
+var subMenus: Array[Control]
+
+# TODO Make MenuControl an interfact with _on_close_menu() and _on_quit() and other common methods
+#		Handling of MENU.MAIN to close while self visible should be part of interface
+
 signal close_menu
+signal save_settings
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	subMenus = [optionsMenu]
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -18,5 +26,19 @@ func _input(event: InputEvent) -> void:
 func _on_close_menu() -> void:
 	close_menu.emit()
 
+func _on_submenu_close_menu() -> void:
+	self._on_submenu_back()
+	self._on_close_menu()
+
 func _on_quit() -> void:
 	get_tree().quit()
+
+func _on_options_menu() -> void:
+	optionsMenu.visible = true
+
+func _on_submenu_back() -> void:
+	for subMenu in subMenus:
+		subMenu.visible = false
+
+func _on_save_menu() -> void:
+	save_settings.emit()
