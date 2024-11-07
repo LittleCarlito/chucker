@@ -1,8 +1,11 @@
 extends Node3D
 
+@onready var controlNode: Node3D = $ControlNode
 @onready var chuckChucker: ChuckChucker = $ChuckChucker
 
 # TODO Make settings in Options actually work
+# TODO Break out vertical and horizontal sensitivity
+#		Ensure that when doing settings stuff you now ensure both save file and default constants will work
 # TODO Get MainMenu theme stuff cleaned up
 #		Get Asperite files redone and condensed to singular HiResButton files with overlays
 # TODO Fix chucking a disk over the edge
@@ -28,3 +31,7 @@ func _disable_character_movement() -> void:
 
 func _enable_character_movement() -> void:
 	chuckChucker.disableMovement = false
+
+# TODO Make this correct and do things; Make sure the callers of it are doing it when they should as well (one is currently commented out due to startup failures)
+func _apply_settings() -> void:
+	chuckChucker.load_settings()

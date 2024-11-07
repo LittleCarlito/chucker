@@ -9,7 +9,7 @@ var subMenus: Array[Control]
 #		Handling of MENU.MAIN to close while self visible should be part of interface
 
 signal close_menu
-signal save_settings
+signal save_settings(saveSettings)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -40,5 +40,5 @@ func _on_submenu_back() -> void:
 	for subMenu in subMenus:
 		subMenu.visible = false
 
-func _on_save_menu() -> void:
-	save_settings.emit()
+func _on_save_menu(saveSettings: Array[Dictionary]) -> void:
+	save_settings.emit(saveSettings)

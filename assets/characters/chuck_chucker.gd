@@ -9,7 +9,6 @@ const UNEQUIP_MESSAGE: String = "unequip_item() called but no item is equiped"
 @onready var chuckMesh: MeshInstance3D = $ChuckMesh
 @onready var playerCamera: Camera3D = $CameraController/CameraTarget/ChuckCamera
 
-
 var playerDisk: ThrowableItem
 var disableMovement: bool = false
 var stopwatch: StopWatch = StopWatch.new()
@@ -138,10 +137,14 @@ func get_camera() -> Camera3D:
 	return $CameraController/CameraTarget/ChuckCamera
 
 func _reset_zoom() -> void:
-	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.FOV
+	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.FOV)
 
 func _zoom_in() -> void:
-	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.FOV - GLOBAL_SETTINGS.CAMERA.IN_ADJUST
+	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.FOV) - GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.IN_ADJUST)
 
 func _zoom_out() -> void:
-	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.FOV + GLOBAL_SETTINGS.CAMERA.OUT_ADJUST
+	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.FOV) + GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.OUT_ADJUST)
+
+func load_settings() -> void:
+	_reset_zoom()
+	# TODO Set values on child objects that rely on GLOBAL SETTING values that can be updated through saved settings

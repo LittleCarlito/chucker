@@ -14,3 +14,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 visible = false
 
 [connection signal="close_menu" from="PauseMenu" to="." method="_close_menu"]
+[connection signal="save_settings" from="PauseMenu" to="." method="_on_pause_menu_save_settings"]

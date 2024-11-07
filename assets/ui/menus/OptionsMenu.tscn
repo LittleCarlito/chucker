@@ -338,11 +338,11 @@ min_value = 40.0
 max_value = 120.0
 value = 90.0
 
-[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows/FovSliderColumns"]
+[node name="FovValueCenter" type="CenterContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows/FovSliderColumns"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="FovValue" type="Label" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows/FovSliderColumns/CenterContainer"]
+[node name="FovValue" type="Label" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows/FovSliderColumns/FovValueCenter"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "90"
@@ -529,3 +529,9 @@ theme = ExtResource("1_mx8pt")
 [connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/BackButton" to="." method="_on_back_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/SaveButton" to="." method="_on_save_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/CloseButton" to="." method="_on_close_menu"]
+[connection signal="toggled" from="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSelectColumns/TopSelectRows/VInversionToggle" to="." method="_on_v_inversion_toggle_toggled"]
+[connection signal="toggled" from="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSelectColumns/TopSelectRows/HInversionToggle" to="." method="_on_h_inversion_toggle_toggled"]
+[connection signal="drag_ended" from="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/LookSensitivityPanel/LookSensitivityRows/LookSensitivityColumns/LookSensitvitySliderContainer/LookSensitivitySlider" to="." method="_on_look_sensitivity_slider_drag_ended"]
+[connection signal="drag_ended" from="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/AimSensitivityPanel/AimSensitivityRows/AimSensitivityColumns/AimSensitvitySliderContainer/AimSensitivitySlider" to="." method="_on_aim_sensitivity_slider_drag_ended"]
+[connection signal="drag_ended" from="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows/FovSliderColumns/FovSliderContainer/FovSlider" to="." method="_on_fov_slider_drag_ended"]
+[connection signal="toggled" from="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck" to="." method="_on_performance_display_check_toggled"]

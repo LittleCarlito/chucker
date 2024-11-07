@@ -50,7 +50,8 @@ func _input(event: InputEvent) -> void:
 	# Looking controls
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and diskCamera.current:
 		if event is InputEventMouseMotion:
-			var horizontalRotateAmount: float = GLOBAL_SETTINGS.CONTROLS.INVERT_HORIZONTAL * (deg_to_rad(event.relative.x) * GLOBAL_SETTINGS.CONTROLS.HORIZONTAL_SENSITIVITY)
+			# Doesn't have inversion multiplcation on it because it seems to have it through computation
+			var horizontalRotateAmount: float = deg_to_rad(event.relative.x) * GLOBAL_SETTINGS.CONTROLS.get(CONSTANTS.HORIZONTAL_SENSITIVITY, GLOBAL_SETTINGS.CONTROLS_DEFAULTS.HORIZONTAL_SENSITIVITY)
 			cameraContainer.global_rotation_degrees.y += horizontalRotateAmount
 			cameraControl.look_at(self.global_position)
 

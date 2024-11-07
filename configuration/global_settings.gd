@@ -20,23 +20,30 @@ const DISK = {
 	"MAX_OFFSET": 400
 }
 
-const CAMERA = {
+const CAMERA_DEFAULTS = {
 	"PAN_SPEED": .15,
 	"ROTATE_SPEED": 4,
 	"IDLE_ROTATE_SPEED": 25.0,
 	"MIN_HEIGHT": 4,
 	"SHOT_WATCH_TIME": 5,
-	"FOV": 90,
-	"IN_ADJUST": 20,
-	"OUT_ADJUST": 5
+	CONSTANTS.FOV: 90,
+	CONSTANTS.IN_ADJUST: 20,
+	CONSTANTS.OUT_ADJUST: 5
 }
+static var CAMERA = CAMERA_DEFAULTS.duplicate(true)
 
-const CONTROLS =  {
-	"HORIZONTAL_SENSITIVITY": 1.5,
-	"VERTICAL_SENSITIVITY": .5,
-	"INVERT_HORIZONTAL": -1,
-	"INVERT_VERTICAL": -1
+const CONTROLS_DEFAULTS =  {
+	CONSTANTS.HORIZONTAL_SENSITIVITY: 1.5,
+	CONSTANTS.VERTICAL_SENSITIVITY: .5,
+	CONSTANTS.INVERT_HORIZONTAL: -1,
+	CONSTANTS.INVERT_VERTICAL: -1
 }
+static var CONTROLS: Dictionary = CONTROLS_DEFAULTS.duplicate(true)
+
+const DISPLAY_DEFAULTS = {
+	CONSTANTS.PERFORMANCE: false
+}
+static var DISPLAY = DISPLAY_DEFAULTS.duplicate(true)
 
 const MENU = {
 	"SCORECARD": {
@@ -52,8 +59,7 @@ const COLOR = {
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
-
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
