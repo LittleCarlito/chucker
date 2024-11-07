@@ -4,6 +4,7 @@ extends Node3D
 @onready var chuckChucker: ChuckChucker = $ChuckChucker
 
 # TODO Make settings in Options actually work
+# TODO Create "Reset" button for settings
 # TODO Break out vertical and horizontal sensitivity
 #		Ensure that when doing settings stuff you now ensure both save file and default constants will work
 # TODO Get MainMenu theme stuff cleaned up
@@ -20,7 +21,7 @@ extends Node3D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	self._apply_settings()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:

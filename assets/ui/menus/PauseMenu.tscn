@@ -109,6 +109,8 @@ layout_mode = 1
 [connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/ResumeButton" to="." method="_on_close_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/OptionsButton" to="." method="_on_options_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/QuitButton" to="." method="_on_quit"]
+[connection signal="apply_settings" from="OptionsMenu" to="." method="_on_apply_menu"]
 [connection signal="back_menu" from="OptionsMenu" to="." method="_on_submenu_back"]
 [connection signal="close_menu" from="OptionsMenu" to="." method="_on_submenu_close_menu"]
+[connection signal="load_settings" from="OptionsMenu" to="." method="_load_settings"]
 [connection signal="save_settings" from="OptionsMenu" to="." method="_on_save_menu"]

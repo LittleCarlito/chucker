@@ -31,6 +31,7 @@ transform = Transform3D(0.719722, -0.202133, 0.664185, -0.671976, 0.0376311, 0.7
 shadow_enabled = true
 
 [node name="ChuckChucker" parent="." instance=ExtResource("3_wng2j")]
+process_priority = -1
 transform = Transform3D(0.999997, 0.00223599, -0.000878929, -0.00223614, 0.999997, -0.000169186, 0.000878546, 0.000171164, 1, 0, 0.972875, 0)
 
 [node name="ChuckHole" parent="." instance=ExtResource("4_upk5s")]

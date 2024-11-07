@@ -218,9 +218,10 @@ grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme = ExtResource("2_dnfin")
-min_value = 40.0
-max_value = 120.0
-value = 90.0
+min_value = 0.01
+max_value = 5.0
+step = 0.01
+value = 1.2
 
 [node name="LookSensitivityValueCenter" type="CenterContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/LookSensitivityPanel/LookSensitivityRows/LookSensitivityColumns"]
 layout_mode = 2
@@ -276,9 +277,10 @@ grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme = ExtResource("2_dnfin")
-min_value = 40.0
-max_value = 120.0
-value = 90.0
+min_value = 0.01
+max_value = 5.0
+step = 0.01
+value = 1.2
 
 [node name="AimSensitivityValueCenter" type="CenterContainer" parent="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/AimSensitivityPanel/AimSensitivityRows/AimSensitivityColumns"]
 layout_mode = 2
@@ -532,6 +534,9 @@ theme = ExtResource("1_mx8pt")
 [connection signal="toggled" from="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSelectColumns/TopSelectRows/VInversionToggle" to="." method="_on_v_inversion_toggle_toggled"]
 [connection signal="toggled" from="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSelectColumns/TopSelectRows/HInversionToggle" to="." method="_on_h_inversion_toggle_toggled"]
 [connection signal="drag_ended" from="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/LookSensitivityPanel/LookSensitivityRows/LookSensitivityColumns/LookSensitvitySliderContainer/LookSensitivitySlider" to="." method="_on_look_sensitivity_slider_drag_ended"]
+[connection signal="value_changed" from="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/LookSensitivityPanel/LookSensitivityRows/LookSensitivityColumns/LookSensitvitySliderContainer/LookSensitivitySlider" to="." method="_on_look_sensitivity_slider_value_changed"]
 [connection signal="drag_ended" from="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/AimSensitivityPanel/AimSensitivityRows/AimSensitivityColumns/AimSensitvitySliderContainer/AimSensitivitySlider" to="." method="_on_aim_sensitivity_slider_drag_ended"]
+[connection signal="value_changed" from="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/AimSensitivityPanel/AimSensitivityRows/AimSensitivityColumns/AimSensitvitySliderContainer/AimSensitivitySlider" to="." method="_on_aim_sensitivity_slider_value_changed"]
 [connection signal="drag_ended" from="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows/FovSliderColumns/FovSliderContainer/FovSlider" to="." method="_on_fov_slider_drag_ended"]
+[connection signal="value_changed" from="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows/FovSliderColumns/FovSliderContainer/FovSlider" to="." method="_on_fov_slider_value_changed"]
 [connection signal="toggled" from="MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck" to="." method="_on_performance_display_check_toggled"]

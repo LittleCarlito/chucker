@@ -15,6 +15,8 @@ const INVERT_VERTICAL: String = "INVERT_VERTICAL"
 const Display: String = "Display"
 const PERFORMANCE: String = "PERFORMANCE"
 
+const SETTING_LABELS: Array[String] = [CONSTANTS.Camera, CONSTANTS.Controls, CONSTANTS.Display]
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.

@@ -10,6 +10,8 @@ var subMenus: Array[Control]
 
 signal close_menu
 signal save_settings(saveSettings)
+signal load_settings
+signal apply_settings
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -40,5 +42,11 @@ func _on_submenu_back() -> void:
 	for subMenu in subMenus:
 		subMenu.visible = false
 
-func _on_save_menu(saveSettings: Array[Dictionary]) -> void:
+func _on_save_menu(saveSettings: Dictionary) -> void:
 	save_settings.emit(saveSettings)
+
+func _load_settings() -> void:
+	load_settings.emit()
+
+func _on_apply_menu() -> void:
+	apply_settings.emit()
