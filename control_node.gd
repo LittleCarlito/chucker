@@ -91,20 +91,28 @@ func _update_settings(saveSettings: Dictionary) -> Dictionary:
 			settingsDictionary.get_or_add(category, saveSettings.get(category))
 	return settingsDictionary
 
+# TODO Only 2 of the sensitivity bars load when saved
 func load_settings() -> void:
 	var dataReceived: Dictionary = self._get_settings_dictionary()
 	# Control settings
 	if dataReceived.has(CONSTANTS.Controls):
 		var controlSettings: Dictionary = dataReceived.get(CONSTANTS.Controls)
-		if controlSettings.has(CONSTANTS.HORIZONTAL_SENSITIVITY):
-			# TODO Make sure all sensitivity refs are floats and not ints
-			var aimSenseValue: float = controlSettings.get(CONSTANTS.HORIZONTAL_SENSITIVITY)
-			GLOBAL_SETTINGS.CONTROLS.erase(CONSTANTS.HORIZONTAL_SENSITIVITY)
-			GLOBAL_SETTINGS.CONTROLS.get_or_add(CONSTANTS.HORIZONTAL_SENSITIVITY, aimSenseValue)
-		if controlSettings.has(CONSTANTS.VERTICAL_SENSITIVITY):
-			var lookSenseValue: float = controlSettings.get(CONSTANTS.VERTICAL_SENSITIVITY)
-			GLOBAL_SETTINGS.CONTROLS.erase(CONSTANTS.VERTICAL_SENSITIVITY)
-			GLOBAL_SETTINGS.CONTROLS.get_or_add(CONSTANTS.VERTICAL_SENSITIVITY, lookSenseValue)
+		if controlSettings.has(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY):
+			var horizontalAimSenseValue: float = controlSettings.get(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY)
+			GLOBAL_SETTINGS.CONTROLS.erase(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY)
+			GLOBAL_SETTINGS.CONTROLS.get_or_add(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, horizontalAimSenseValue)
+		if controlSettings.has(CONSTANTS.VERTICAL_AIM_SENSITIVITY):
+			var verticalAimSenseValue: float = controlSettings.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY)
+			GLOBAL_SETTINGS.CONTROLS.erase(CONSTANTS.VERTICAL_AIM_SENSITIVITY)
+			GLOBAL_SETTINGS.CONTROLS.get_or_add(CONSTANTS.VERTICAL_AIM_SENSITIVITY, verticalAimSenseValue)
+		if controlSettings.has(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY):
+			var horizontalLookSenseValue: float = controlSettings.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY)
+			GLOBAL_SETTINGS.CONTROLS.erase(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY)
+			GLOBAL_SETTINGS.CONTROLS.get_or_add(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, horizontalLookSenseValue)
+		if controlSettings.has(CONSTANTS.VERTICAL_LOOK_SENSITIVITY):
+			var verticalLookSenseValue: float = controlSettings.get(CONSTANTS.VERTICAL_LOOK_SENSITIVITY)
+			GLOBAL_SETTINGS.CONTROLS.erase(CONSTANTS.VERTICAL_LOOK_SENSITIVITY)
+			GLOBAL_SETTINGS.CONTROLS.get_or_add(CONSTANTS.VERTICAL_LOOK_SENSITIVITY, verticalLookSenseValue)
 		if controlSettings.has(CONSTANTS.INVERT_VERTICAL):
 			var vInversion: bool = controlSettings.get(CONSTANTS.INVERT_VERTICAL)
 			GLOBAL_SETTINGS.CONTROLS.erase(CONSTANTS.INVERT_VERTICAL)

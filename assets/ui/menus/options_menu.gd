@@ -1,20 +1,24 @@
 extends Control
 
-@onready var fovSlider: HSlider = $MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows/FovSliderColumns/FovSliderContainer/FovSlider
-@onready var fovValue: Label = $MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/FoVSliderPanel/FovLabelRows/FovSliderColumns/FovValueCenter/FovValue
-@onready var aimSensitivitySlider: HSlider = $MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/AimSensitivityPanel/AimSensitivityRows/AimSensitivityColumns/AimSensitvitySliderContainer/AimSensitivitySlider
-@onready var aimSensitivityValue: Label = $MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/AimSensitivityPanel/AimSensitivityRows/AimSensitivityColumns/AimSensitivityValueCenter/AimSensitivityValue
-@onready var lookSensitivitySlider: HSlider = $MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/LookSensitivityPanel/LookSensitivityRows/LookSensitivityColumns/LookSensitvitySliderContainer/LookSensitivitySlider
-@onready var lookSensitivityValue: Label = $MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSliderColumns/TopSliderRows/LookSensitivityPanel/LookSensitivityRows/LookSensitivityColumns/LookSensitivityValueCenter/LookSensitivityValue
-@onready var vInversionToggle: CheckButton = $MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSelectColumns/TopSelectRows/VInversionToggle
-@onready var hInversionToggle: CheckButton = $MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Controls/ControlsRows/TopOptionColumns/TopSelectColumns/TopSelectRows/HInversionToggle
-@onready var motionBlurCheck: CheckBox = $MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows/MotionBlurCheck
-@onready var bloomCheck: CheckBox = $MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows/BloomCheck
-@onready var performanceDisplayCheck: CheckBox = $MainContainer/ContentBox/OptionRows/LowerOptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck
+@onready var fovSlider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovSliderContainer/FovSlider
+@onready var fovValue: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovValueCenter/FovValue
+@onready var horizontalAimSensitivitySlider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalAimSensitivityRows/HorizontalAimSensitivityColumns/HorizontalAimSensitvitySliderContainer/HorizontalAimSensitivitySlider
+@onready var horizontalAimSensitivityValue: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalAimSensitivityRows/HorizontalAimSensitivityColumns/HorizontalAimSensitivityValueCenter/HorizontalAimSensitivityValue
+@onready var verticalAimSensitivitySlider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityColumns/VerticalAimSensitvitySliderContainer/VerticalAimSensitivitySlider
+@onready var verticalAimSensitivityValue: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityColumns/VerticalAimSensitivityValueCenter/VerticalAimSensitivityValue
+@onready var horizontalLookSensitivitySlider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalLookSensitivityRows/HorizontalLookSensitivityColumns/HorizontalLookSensitvitySliderContainer/HorizontalLookSensitivitySlider
+@onready var horizontalLookSensitivityValue: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalLookSensitivityRows/HorizontalLookSensitivityColumns/HorizontalLookSensitivityValueCenter/HorizontalLookSensitivityValue
+@onready var verticalLookSensitivitySlider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalLookSensitivityRows/VerticalLookSensitivityColumns/VerticalLookSensitvitySliderContainer/VerticalLookSensitivitySlider
+@onready var verticalLookSensitivityValue: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalLookSensitivityRows/VerticalLookSensitivityColumns/VerticalLookSensitivityValueCenter/VerticalLookSensitivityValue
+@onready var vInversionToggle: CheckButton = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/VInversionToggle
+@onready var hInversionToggle: CheckButton = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/HInversionToggle
+@onready var motionBlurCheck: CheckBox = $MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows/MotionBlurCheck
+@onready var bloomCheck: CheckBox = $MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows/BloomCheck
+@onready var performanceDisplayCheck: CheckBox = $MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck
 
-var cameraSettings: Dictionary = {}
-var controlSettings: Dictionary = {}
-var displaySettings: Dictionary = {}
+var cameraSettings: Dictionary
+var controlSettings: Dictionary
+var displaySettings: Dictionary
 var saveSettings: Dictionary
 
 signal close_menu
@@ -23,21 +27,22 @@ signal save_settings(updatedSettings)
 signal load_settings
 signal apply_settings
 
-# TODO Break out horizontal and vertical sensitivity and fix these values to be what they should be
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	self.initialize_ui()
 
-# TODO make this check for an existing settings file and load that in first
 func initialize_ui() -> void:
 	load_settings.emit()
 	fovSlider.value = GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.FOV, GLOBAL_SETTINGS.CAMERA_DEFAULTS.FOV)
 	fovValue.text = str(fovSlider.value)
-	aimSensitivitySlider.value = GLOBAL_SETTINGS.CONTROLS.get(CONSTANTS.HORIZONTAL_SENSITIVITY, GLOBAL_SETTINGS.CONTROLS_DEFAULTS.HORIZONTAL_SENSITIVITY)
-	aimSensitivityValue.text = str(aimSensitivitySlider.value)
-	lookSensitivitySlider.value = GLOBAL_SETTINGS.CONTROLS.get(CONSTANTS.VERTICAL_SENSITIVITY, GLOBAL_SETTINGS.CONTROLS_DEFAULTS.VERTICAL_SENSITIVITY)
-	lookSensitivityValue.text = str(lookSensitivitySlider.value)
+	horizontalAimSensitivitySlider.value = GLOBAL_SETTINGS.CONTROLS.get(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, GLOBAL_SETTINGS.CONTROLS_DEFAULTS.HORIZONTAL_AIM_SENSITIVITY)
+	horizontalAimSensitivityValue.text = str(horizontalAimSensitivitySlider.value)
+	verticalAimSensitivitySlider.value = GLOBAL_SETTINGS.CONTROLS.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GLOBAL_SETTINGS.CONTROLS_DEFAULTS.VERTICAL_AIM_SENSITIVITY)
+	verticalAimSensitivityValue.text = str(verticalAimSensitivitySlider.value)
+	horizontalLookSensitivitySlider.value = GLOBAL_SETTINGS.CONTROLS.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GLOBAL_SETTINGS.CONTROLS_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
+	horizontalLookSensitivityValue.text = str(horizontalLookSensitivitySlider.value)
+	verticalLookSensitivitySlider.value = GLOBAL_SETTINGS.CONTROLS.get(CONSTANTS.VERTICAL_LOOK_SENSITIVITY, GLOBAL_SETTINGS.CONTROLS_DEFAULTS.VERTICAL_LOOK_SENSITIVITY)
+	verticalLookSensitivityValue.text = str(verticalLookSensitivitySlider.value)
 	vInversionToggle.button_pressed = GLOBAL_SETTINGS.CONTROLS.get(CONSTANTS.INVERT_VERTICAL, GLOBAL_SETTINGS.CONTROLS_DEFAULTS.INVERT_VERTICAL)
 	hInversionToggle.button_pressed = GLOBAL_SETTINGS.CONTROLS.get(CONSTANTS.INVERT_HORIZONTAL, GLOBAL_SETTINGS.CONTROLS_DEFAULTS.INVERT_HORIZONTAL)
 	performanceDisplayCheck.button_pressed = GLOBAL_SETTINGS.DISPLAY.get(CONSTANTS.PERFORMANCE, GLOBAL_SETTINGS.DISPLAY_DEFAULTS.PERFORMANCE)
@@ -83,20 +88,6 @@ func _on_fov_slider_drag_ended(valueChanged: bool) -> void:
 func _on_fov_slider_value_changed(value: float) -> void:
 	fovValue.text = str(value)
 
-func _on_aim_sensitivity_slider_drag_ended(valueChanged: bool) -> void:
-	if valueChanged:
-		controlSettings.get_or_add(CONSTANTS.HORIZONTAL_SENSITIVITY, aimSensitivitySlider.value)
-
-func _on_aim_sensitivity_slider_value_changed(value: float) -> void:
-	aimSensitivityValue.text = str(value)
-
-func _on_look_sensitivity_slider_drag_ended(valueChanged: bool) -> void:
-	if valueChanged:
-		controlSettings.get_or_add(CONSTANTS.VERTICAL_SENSITIVITY, lookSensitivitySlider.value)
-
-func _on_look_sensitivity_slider_value_changed(value: float) -> void:
-	lookSensitivityValue.text = str(value)
-
 func _on_v_inversion_toggle_toggled(toggledOn: bool) -> void:
 	controlSettings.get_or_add(CONSTANTS.INVERT_VERTICAL, toggledOn)
 
@@ -105,3 +96,31 @@ func _on_h_inversion_toggle_toggled(toggledOn: bool) -> void:
 
 func _on_performance_display_check_toggled(toggledOn: bool) -> void:
 	controlSettings.get_or_add(CONSTANTS.PERFORMANCE, toggledOn)
+
+func _on_vertical_aim_sensitivity_slider_value_changed(value: float) -> void:
+	verticalAimSensitivityValue.text = str(value)
+
+func _on_vertical_aim_sensitivity_slider_drag_ended(valueChanged: bool) -> void:
+	if valueChanged:
+		controlSettings.get_or_add(CONSTANTS.VERTICAL_AIM_SENSITIVITY, verticalAimSensitivitySlider.value)
+
+func _on_horizontal_aim_sensitivity_slider_value_changed(value: float) -> void:
+	horizontalAimSensitivityValue.text = str(value)
+
+func _on_horizontal_aim_sensitivity_slider_drag_ended(valueChanged: bool) -> void:
+	if valueChanged:
+		controlSettings.get_or_add(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, horizontalAimSensitivitySlider.value)
+
+func _on_vertical_look_sensitivity_slider_value_changed(value: float) -> void:
+	verticalLookSensitivityValue.text = str(value)
+
+func _on_vertical_look_sensitivity_slider_drag_ended(valueChanged: bool) -> void:
+	if valueChanged:
+		controlSettings.get_or_add(CONSTANTS.VERTICAL_LOOK_SENSITIVITY, verticalLookSensitivitySlider.value)
+
+func _on_horizontal_look_sensitivity_slider_value_changed(value: float) -> void:
+	horizontalLookSensitivityValue.text = str(value)
+
+func _on_horizontal_look_sensitivity_slider_drag_ended(valueChanged: bool) -> void:
+	if valueChanged:
+		controlSettings.get_or_add(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, horizontalLookSensitivitySlider.value)
