@@ -53,7 +53,7 @@ size_flags_vertical = 3
 theme = ExtResource("1_guofl")
 
 [node name="ButtonBox" type="VBoxContainer" parent="MainContainer/ContentBox"]
-custom_minimum_size = Vector2(0, 600)
+custom_minimum_size = Vector2(0, 590)
 layout_mode = 2
 size_flags_stretch_ratio = 20.0
 theme = ExtResource("1_guofl")
