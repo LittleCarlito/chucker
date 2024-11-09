@@ -4,11 +4,10 @@
 bg_color = Color(0.686275, 0.580392, 0.360784, 1)
 
 [resource]
-Button/constants/icon_max_width = 650
 Label/font_sizes/font_size = 24
 MarginContainer/constants/margin_bottom = 15
 MarginContainer/constants/margin_left = 15
 MarginContainer/constants/margin_right = 15
 MarginContainer/constants/margin_top = 15
 Panel/styles/panel = SubResource("StyleBoxFlat_nnxlh")
-VBoxContainer/constants/separation = 45
+VBoxContainer/constants/separation = 49

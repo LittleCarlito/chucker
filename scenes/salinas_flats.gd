@@ -3,12 +3,17 @@ extends Node3D
 @onready var controlNode: Node3D = $ControlNode
 @onready var chuckChucker: ChuckChucker = $ChuckChucker
 
-# TODO Make settings in Options actually work
+# TODO Make Options menu scale with window
+# TODO Create Hover, Select, etc states on asperite buttons and export textures for texture buttons
+# TODO Make set controls work
+#			Create sub menu
+# TODO Add more button fuctionality to menus
+#		Tab should change selected button
+#			Or change what tab is displayed when a different tab is the next object
+#		Arrow keys should navigate buttons
+#			Configured movement keys should move selected buttons
 # TODO Create "Reset" button for settings
-# TODO Break out vertical and horizontal sensitivity
-#		Ensure that when doing settings stuff you now ensure both save file and default constants will work
-# TODO Get MainMenu theme stuff cleaned up
-#		Get Asperite files redone and condensed to singular HiResButton files with overlays
+#		Have this just delete the user settings file
 # TODO Fix chucking a disk over the edge
 #		Make Environment asset that is "CourseFloor"
 #			Add a signal for body exit
