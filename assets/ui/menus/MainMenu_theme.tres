@@ -4,6 +4,7 @@
 bg_color = Color(0.686275, 0.580392, 0.360784, 1)
 
 [resource]
+Button/constants/icon_max_width = 650
 Label/font_sizes/font_size = 24
 MarginContainer/constants/margin_bottom = 15
 MarginContainer/constants/margin_left = 15
