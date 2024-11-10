@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://buojyeswghm00"]
+[gd_scene load_steps=24 format=3 uid="uid://buojyeswghm00"]
 
 [ext_resource type="Script" path="res://assets/ui/menus/options_menu.gd" id="1_6pi5a"]
 [ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://assets/ui/menus/MainMenu_theme.tres" id="1_mx8pt"]
@@ -22,6 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://da80lnkrg7qwt" path="res://resources/Sprites/ControlIcons/F_Keycap.png" id="17_ajqtq"]
 [ext_resource type="Texture2D" uid="uid://ba0k35l8gweeu" path="res://resources/Sprites/ControlIcons/ScrollUp_Mouse.png" id="17_hch2r"]
 [ext_resource type="Texture2D" uid="uid://du4g0bmaixkak" path="res://resources/Sprites/ControlIcons/ScrollDown_Mouse.png" id="18_esok8"]
+[ext_resource type="PackedScene" uid="uid://br204kkclspff" path="res://assets/ui/menus/ControlSelectMenu.tscn" id="23_4fv4d"]
 
 [node name="OptionsMenu" type="Control"]
 process_mode = 2
@@ -110,7 +111,9 @@ expand_icon = true
 
 [node name="CloseButton" parent="MainContainer/ContentBox/OptionRows/TopOptionBar" instance=ExtResource("3_1rkto")]
 layout_mode = 2
+size_flags_horizontal = 8
 size_flags_vertical = 0
+size_flags_stretch_ratio = 0.0
 
 [node name="OptionTabContainer" type="TabContainer" parent="MainContainer/ContentBox/OptionRows"]
 layout_mode = 2
@@ -610,9 +613,13 @@ layout_mode = 2
 size_flags_horizontal = 8
 theme = ExtResource("1_mx8pt")
 
+[node name="ControlSelectMenu" parent="." instance=ExtResource("23_4fv4d")]
+visible = false
+layout_mode = 1
+
 [connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/BackButton" to="." method="_on_back_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/SaveButton" to="." method="_on_save_menu"]
-[connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/CloseButton" to="." method="_on_close_menu"]
+[connection signal="close_menu" from="MainContainer/ContentBox/OptionRows/TopOptionBar/CloseButton" to="." method="_on_close_menu"]
 [connection signal="drag_ended" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovSliderContainer/FovSlider" to="." method="_on_fov_slider_drag_ended"]
 [connection signal="value_changed" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovSliderContainer/FovSlider" to="." method="_on_fov_slider_value_changed"]
 [connection signal="toggled" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/VInversionToggle" to="." method="_on_v_inversion_toggle_toggled"]

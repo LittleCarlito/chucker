@@ -3,8 +3,6 @@ extends Node3D
 @onready var controlNode: Node3D = $ControlNode
 @onready var chuckChucker: ChuckChucker = $ChuckChucker
 
-# TODO Make Options menu scale with window
-# TODO Create Hover, Select, etc states on asperite buttons and export textures for texture buttons
 # TODO Make set controls work
 #			Create sub menu
 # TODO Add more button fuctionality to menus
