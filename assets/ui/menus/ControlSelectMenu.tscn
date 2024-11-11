@@ -1,6 +1,16 @@
-[gd_scene load_steps=2 format=3 uid="uid://br204kkclspff"]
+[gd_scene load_steps=8 format=3 uid="uid://br204kkclspff"]
 
 [ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://assets/ui/menus/MainMenu_theme.tres" id="1_2j2cw"]
+[ext_resource type="Script" path="res://assets/ui/menus/control_select_menu.gd" id="1_pwala"]
+[ext_resource type="Texture2D" uid="uid://dp7ixwl5200ai" path="res://resources/Sprites/Menu/WaitingTitle.png" id="2_xubpx"]
+[ext_resource type="PackedScene" uid="uid://djhanwg2fiofw" path="res://assets/ui/buttons/SaveButton.tscn" id="3_klx70"]
+[ext_resource type="PackedScene" uid="uid://bet7qye2parpa" path="res://assets/ui/buttons/BackButton.tscn" id="4_0msth"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r061l"]
+bg_color = Color(0.6, 0.505882, 0.317647, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_714ji"]
+bg_color = Color(0.695503, 0.695503, 0.695503, 1)
 
 [node name="ControlSelectMenu" type="Control"]
 layout_mode = 3
@@ -9,6 +19,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_pwala")
 
 [node name="ControlSelectBackground" type="Panel" parent="."]
 layout_mode = 1
@@ -18,7 +29,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ControlSelectWindowColumns" type="HBoxContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="ControlSelectBackground"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -26,28 +37,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="LeftMargin" type="MarginContainer" parent="ControlSelectWindowColumns"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme = ExtResource("1_2j2cw")
-
-[node name="ControlSelectWindowRows" type="VBoxContainer" parent="ControlSelectWindowColumns"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 3.36
-
-[node name="TopMargin" type="MarginContainer" parent="ControlSelectWindowColumns/ControlSelectWindowRows"]
-layout_mode = 2
-size_flags_vertical = 3
-theme = ExtResource("1_2j2cw")
-
-[node name="ControlSelectWindow" type="Panel" parent="ControlSelectWindowColumns/ControlSelectWindowRows"]
+[node name="ControlSelectWindow" type="Panel" parent="ControlSelectBackground/CenterContainer"]
+custom_minimum_size = Vector2(700, 475)
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 5.59
 theme = ExtResource("1_2j2cw")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ControlSelectWindowColumns/ControlSelectWindowRows/ControlSelectWindow"]
+[node name="VBoxContainer" type="VBoxContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -57,28 +54,88 @@ grow_vertical = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="TopMargin" type="MarginContainer" parent="ControlSelectWindowColumns/ControlSelectWindowRows/ControlSelectWindow/VBoxContainer"]
+[node name="TopMargin" type="MarginContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ControlSelectWindowColumns/ControlSelectWindowRows/ControlSelectWindow/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="LeftMargin" type="MarginContainer" parent="ControlSelectWindowColumns/ControlSelectWindowRows/ControlSelectWindow/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-
-[node name="RightMargin" type="MarginContainer" parent="ControlSelectWindowColumns/ControlSelectWindowRows/ControlSelectWindow/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-
-[node name="BottomMargin" type="MarginContainer" parent="ControlSelectWindowColumns/ControlSelectWindowRows/ControlSelectWindow/VBoxContainer"]
-layout_mode = 2
-
-[node name="BottomMargin" type="MarginContainer" parent="ControlSelectWindowColumns/ControlSelectWindowRows"]
+[node name="HBoxContainer" type="HBoxContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme = ExtResource("1_2j2cw")
 
-[node name="RightMargin" type="MarginContainer" parent="ControlSelectWindowColumns"]
+[node name="LeftMargin" type="MarginContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme = ExtResource("1_2j2cw")
+
+[node name="SetInputBackground" type="Panel" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_r061l")
+
+[node name="SetInputLabel" type="Label" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/SetInputBackground"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "New binding for \"%s\""
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InputDisplayBackground" type="Panel" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_714ji")
+
+[node name="InputDisplayCenter" type="CenterContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WaitingTitle" type="TextureRect" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground/InputDisplayCenter"]
+layout_mode = 2
+texture = ExtResource("2_xubpx")
+
+[node name="InputIconDisplay" type="TextureRect" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground/InputDisplayCenter"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+expand_mode = 4
+stretch_mode = 5
+
+[node name="ButtonColumns" type="HBoxContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="BackButton" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns" instance=ExtResource("4_0msth")]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="CenterMargin" type="MarginContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SaveButton" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns" instance=ExtResource("3_klx70")]
+layout_mode = 2
+
+[node name="RightMargin" type="MarginContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="BottomMargin" type="MarginContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer"]
+layout_mode = 2
+
+[connection signal="mouse_entered" from="ControlSelectBackground/CenterContainer" to="." method="_cursor_off_menu"]
+[connection signal="mouse_exited" from="ControlSelectBackground/CenterContainer" to="." method="_cursor_on_menu"]
+[connection signal="mouse_entered" from="ControlSelectBackground/CenterContainer/ControlSelectWindow" to="." method="_enable_left_detect"]
+[connection signal="mouse_exited" from="ControlSelectBackground/CenterContainer/ControlSelectWindow" to="." method="_disable_left_detect"]
+[connection signal="mouse_entered" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/SetInputBackground" to="." method="_enable_left_detect"]
+[connection signal="mouse_exited" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/SetInputBackground" to="." method="_enable_left_detect"]
+[connection signal="mouse_entered" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground" to="." method="_enable_left_detect"]
+[connection signal="mouse_exited" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground" to="." method="_enable_left_detect"]
+[connection signal="button_up" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns/BackButton" to="." method="close_menu"]
+[connection signal="button_up" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns/SaveButton" to="." method="_save_input"]

@@ -21,6 +21,7 @@ script = ExtResource("1_gntwj")
 
 [node name="CloseButtonBorder" type="Panel" parent="."]
 custom_minimum_size = Vector2(30, 30)
+layout_mode = 0
 size_flags_horizontal = 8
 theme = ExtResource("1_wfqlp")
 theme_type_variation = &"Subpanel"

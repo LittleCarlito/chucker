@@ -1,19 +1,15 @@
-[gd_scene load_steps=28 format=3 uid="uid://buojyeswghm00"]
+[gd_scene load_steps=25 format=3 uid="uid://buojyeswghm00"]
 
 [ext_resource type="Script" path="res://assets/ui/menus/options_menu.gd" id="1_6pi5a"]
 [ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://assets/ui/menus/MainMenu_theme.tres" id="1_mx8pt"]
 [ext_resource type="Theme" uid="uid://df6ukhlv3h184" path="res://assets/ui/menus/OptionsMenu_theme.tres" id="2_dnfin"]
 [ext_resource type="PackedScene" uid="uid://b5pco8trxx8mb" path="res://assets/ui/buttons/CloseButton.tscn" id="3_1rkto"]
-[ext_resource type="Texture2D" uid="uid://c1q5t5w4jrmqo" path="res://resources/Sprites/Menu/BackButton.png" id="3_pcjab"]
 [ext_resource type="Texture2D" uid="uid://bos42s6yyuumw" path="res://resources/Sprites/Menu/OptionsTitle.png" id="4_2xypg"]
-[ext_resource type="Texture2D" uid="uid://cw1r1fqfmdbj8" path="res://resources/Sprites/Menu/SaveButton.png" id="5_ss4eu"]
-[ext_resource type="Texture2D" uid="uid://y1vww1i618st" path="res://resources/Sprites/Menu/BackButton_pressed.png" id="5_yfepa"]
-[ext_resource type="Texture2D" uid="uid://dfe6rlr8xqgkm" path="res://resources/Sprites/Menu/BackButton_hover.png" id="6_2drd8"]
+[ext_resource type="PackedScene" uid="uid://bet7qye2parpa" path="res://assets/ui/buttons/BackButton.tscn" id="4_bsnlx"]
 [ext_resource type="Texture2D" uid="uid://b0h6gar6kg58m" path="res://resources/Sprites/ControlIcons/W_Keycap.png" id="7_s5hpo"]
+[ext_resource type="PackedScene" uid="uid://djhanwg2fiofw" path="res://assets/ui/buttons/SaveButton.tscn" id="8_8ua6o"]
 [ext_resource type="Texture2D" uid="uid://5p41al6jpyxo" path="res://resources/Sprites/ControlIcons/S_Keycap.png" id="8_vmaom"]
 [ext_resource type="Texture2D" uid="uid://daluui0eb6tyk" path="res://resources/Sprites/ControlIcons/Escape_Keycap.png" id="9_mdnlt"]
-[ext_resource type="Texture2D" uid="uid://cex11gyjvq5y7" path="res://resources/Sprites/Menu/SaveButton_pressed.png" id="9_qe7tq"]
-[ext_resource type="Texture2D" uid="uid://b2o6ilwy67tut" path="res://resources/Sprites/Menu/SaveButton_hover.png" id="10_c083n"]
 [ext_resource type="Texture2D" uid="uid://djmqwrfehpiot" path="res://resources/Sprites/ControlIcons/Tab_Keycap.png" id="10_obuis"]
 [ext_resource type="Texture2D" uid="uid://biefc6sq1rfph" path="res://resources/Sprites/ControlIcons/E_Keycap.png" id="11_o6pel"]
 [ext_resource type="Texture2D" uid="uid://dj5m7nojuriao" path="res://resources/Sprites/ControlIcons/D_Keycap.png" id="12_ypy8g"]
@@ -27,6 +23,24 @@
 [ext_resource type="Texture2D" uid="uid://ba0k35l8gweeu" path="res://resources/Sprites/ControlIcons/ScrollUp_Mouse.png" id="17_hch2r"]
 [ext_resource type="Texture2D" uid="uid://du4g0bmaixkak" path="res://resources/Sprites/ControlIcons/ScrollDown_Mouse.png" id="18_esok8"]
 [ext_resource type="PackedScene" uid="uid://br204kkclspff" path="res://assets/ui/menus/ControlSelectMenu.tscn" id="23_4fv4d"]
+
+[sub_resource type="GDScript" id="GDScript_bli58"]
+script/source = "extends Control
+
+signal close_menu
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+
+func _on_close_menu() -> void:
+	close_menu.emit()
+"
 
 [node name="OptionsMenu" type="Control"]
 process_mode = 2
@@ -82,14 +96,8 @@ layout_mode = 2
 theme = ExtResource("2_dnfin")
 alignment = 2
 
-[node name="BackButton" type="TextureButton" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
-custom_minimum_size = Vector2(170, 90)
+[node name="BackButton" parent="MainContainer/ContentBox/OptionRows/TopOptionBar" instance=ExtResource("4_bsnlx")]
 layout_mode = 2
-texture_normal = ExtResource("3_pcjab")
-texture_pressed = ExtResource("5_yfepa")
-texture_hover = ExtResource("6_2drd8")
-ignore_texture_size = true
-stretch_mode = 5
 
 [node name="OptionsLabelBackground" type="Panel" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
 custom_minimum_size = Vector2(300, 0)
@@ -107,23 +115,19 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="OptionsLabel" type="Sprite2D" parent="MainContainer/ContentBox/OptionRows/TopOptionBar/OptionsLabelBackground/OptionsLabelCenter"]
+[node name="TextureRect" type="TextureRect" parent="MainContainer/ContentBox/OptionRows/TopOptionBar/OptionsLabelBackground/OptionsLabelCenter"]
+layout_mode = 2
 texture = ExtResource("4_2xypg")
 
-[node name="SaveButton" type="TextureButton" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
-custom_minimum_size = Vector2(170, 90)
+[node name="SaveButton" parent="MainContainer/ContentBox/OptionRows/TopOptionBar" instance=ExtResource("8_8ua6o")]
 layout_mode = 2
-texture_normal = ExtResource("5_ss4eu")
-texture_pressed = ExtResource("9_qe7tq")
-texture_hover = ExtResource("10_c083n")
-ignore_texture_size = true
-stretch_mode = 5
 
 [node name="CloseButton" parent="MainContainer/ContentBox/OptionRows/TopOptionBar" instance=ExtResource("3_1rkto")]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 size_flags_stretch_ratio = 0.0
+script = SubResource("GDScript_bli58")
 
 [node name="OptionTabContainer" type="TabContainer" parent="MainContainer/ContentBox/OptionRows"]
 layout_mode = 2
