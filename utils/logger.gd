@@ -7,7 +7,7 @@ enum LEVEL {
 	ERROR
 }
 
-var LOG_LEVEL: LEVEL = LEVEL.INFO
+var LOG_LEVEL: LEVEL = LEVEL.DEBUG
 
 func set_log_level(level: LEVEL) -> void:
 	self.LOG_LEVEL = level

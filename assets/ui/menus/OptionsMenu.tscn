@@ -35,7 +35,7 @@ func _ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 func _on_close_menu() -> void:
@@ -465,7 +465,7 @@ item_0/text = "Forward"
 item_0/icon = ExtResource("7_s5hpo")
 item_1/text = "Backward"
 item_1/icon = ExtResource("8_vmaom")
-item_2/text = "Main Menu"
+item_2/text = "Pause"
 item_2/icon = ExtResource("9_mdnlt")
 item_3/text = "Scorecard"
 item_3/icon = ExtResource("10_obuis")
@@ -628,6 +628,7 @@ size_flags_horizontal = 8
 theme = ExtResource("1_mx8pt")
 
 [node name="ControlSelectMenu" parent="." instance=ExtResource("23_4fv4d")]
+process_mode = 4
 visible = false
 layout_mode = 1
 
@@ -646,4 +647,7 @@ layout_mode = 1
 [connection signal="value_changed" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalAimSensitivityRows/HorizontalAimSensitivityColumns/HorizontalAimSensitvitySliderContainer/HorizontalAimSensitivitySlider" to="." method="_on_horizontal_aim_sensitivity_slider_value_changed"]
 [connection signal="drag_ended" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityColumns/VerticalAimSensitvitySliderContainer/VerticalAimSensitivitySlider" to="." method="_on_vertical_aim_sensitivity_slider_drag_ended"]
 [connection signal="value_changed" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityColumns/VerticalAimSensitvitySliderContainer/VerticalAimSensitivitySlider" to="." method="_on_vertical_aim_sensitivity_slider_value_changed"]
+[connection signal="item_clicked" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls/ControlsRows/ControlList" to="." method="_open_control_select_menu"]
 [connection signal="toggled" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck" to="." method="_on_performance_display_check_toggled"]
+[connection signal="menu_closed" from="ControlSelectMenu" to="." method="_control_select_closed"]
+[connection signal="save_input" from="ControlSelectMenu" to="." method="_control_select_set"]

@@ -91,50 +91,32 @@ func _update_settings(saveSettings: Dictionary) -> Dictionary:
 			settingsDictionary.get_or_add(category, saveSettings.get(category))
 	return settingsDictionary
 
-# TODO Only 2 of the sensitivity bars load when saved
 func load_settings() -> void:
-	var dataReceived: Dictionary = self._get_settings_dictionary()
+	var dataReceived: Dictionary = self._get_settings_dictionary()	
 	# Control settings
 	if dataReceived.has(CONSTANTS.Controls):
 		var controlSettings: Dictionary = dataReceived.get(CONSTANTS.Controls)
-		if controlSettings.has(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY):
-			var horizontalAimSenseValue: float = controlSettings.get(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY)
-			GLOBAL_SETTINGS.CONTROLS.erase(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY)
-			GLOBAL_SETTINGS.CONTROLS.get_or_add(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, horizontalAimSenseValue)
-		if controlSettings.has(CONSTANTS.VERTICAL_AIM_SENSITIVITY):
-			var verticalAimSenseValue: float = controlSettings.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY)
-			GLOBAL_SETTINGS.CONTROLS.erase(CONSTANTS.VERTICAL_AIM_SENSITIVITY)
-			GLOBAL_SETTINGS.CONTROLS.get_or_add(CONSTANTS.VERTICAL_AIM_SENSITIVITY, verticalAimSenseValue)
-		if controlSettings.has(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY):
-			var horizontalLookSenseValue: float = controlSettings.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY)
-			GLOBAL_SETTINGS.CONTROLS.erase(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY)
-			GLOBAL_SETTINGS.CONTROLS.get_or_add(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, horizontalLookSenseValue)
-		if controlSettings.has(CONSTANTS.VERTICAL_LOOK_SENSITIVITY):
-			var verticalLookSenseValue: float = controlSettings.get(CONSTANTS.VERTICAL_LOOK_SENSITIVITY)
-			GLOBAL_SETTINGS.CONTROLS.erase(CONSTANTS.VERTICAL_LOOK_SENSITIVITY)
-			GLOBAL_SETTINGS.CONTROLS.get_or_add(CONSTANTS.VERTICAL_LOOK_SENSITIVITY, verticalLookSenseValue)
-		if controlSettings.has(CONSTANTS.INVERT_VERTICAL):
-			var vInversion: bool = controlSettings.get(CONSTANTS.INVERT_VERTICAL)
-			GLOBAL_SETTINGS.CONTROLS.erase(CONSTANTS.INVERT_VERTICAL)
-			GLOBAL_SETTINGS.CONTROLS.get_or_add(CONSTANTS.INVERT_VERTICAL, vInversion)
-		if controlSettings.has(CONSTANTS.INVERT_HORIZONTAL):
-			var hInversion: bool = controlSettings.get(CONSTANTS.INVERT_HORIZONTAL)
-			GLOBAL_SETTINGS.CONTROLS.erase(CONSTANTS.INVERT_VERTICAL)
-			GLOBAL_SETTINGS.CONTROLS.get_or_add(CONSTANTS.INVERT_VERTICAL, hInversion)
+		for controlKey in GLOBAL_SETTINGS.CONTROLS.keys():
+			if controlSettings.has(controlKey):
+				var controlSettingValue: Variant = controlSettings.get(controlKey)
+				GLOBAL_SETTINGS.CONTROLS.erase(controlKey)
+				GLOBAL_SETTINGS.CONTROLS.get_or_add(controlKey, controlSettingValue)
 	# Camera settings
 	if dataReceived.has(CONSTANTS.Camera):
 		var cameraSettings: Dictionary = dataReceived.get(CONSTANTS.Camera)
-		var fovValue: int = cameraSettings.get(CONSTANTS.FOV)
-		if fovValue != null:
-			GLOBAL_SETTINGS.CAMERA.erase(CONSTANTS.FOV)
-			GLOBAL_SETTINGS.CAMERA.get_or_add(CONSTANTS.FOV, fovValue)
+		for cameraKey in GLOBAL_SETTINGS.CAMERA.keys():
+			if cameraSettings.has(cameraKey):
+				var cameraSettingValue: Variant = cameraSettings.get(cameraKey)
+				GLOBAL_SETTINGS.CAMERA.erase(cameraKey)
+				GLOBAL_SETTINGS.CAMERA.get_or_add(cameraKey, cameraSettingValue)
 	# Display settings
 	if dataReceived.has(CONSTANTS.Display):
 		var displaySettings: Dictionary = dataReceived.get(CONSTANTS.Display)
-		var performanceDisplay: bool = displaySettings.get(CONSTANTS.PERFORMANCE)
-		if performanceDisplay != null:
-			GLOBAL_SETTINGS.DISPLAY.erase(CONSTANTS.PERFORMANCE)
-			GLOBAL_SETTINGS.DISPLAY.get_or_add(CONSTANTS.PERFORMANCE, performanceDisplay)
+		for displayKey in GLOBAL_SETTINGS.DISPLAY.keys():
+			if displaySettings.has(displayKey):
+				var displaySettingValue: Variant = displaySettings.get(displayKey)
+				GLOBAL_SETTINGS.DISPLAY.erase(displayKey)
+				GLOBAL_SETTINGS.DISPLAY.get_or_add(displayKey, displaySettingValue)
 
 # Retrieves the settings file from User:// or returns an empty dictionary if an error occured
 func _get_settings_dictionary() -> Dictionary:

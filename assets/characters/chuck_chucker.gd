@@ -42,10 +42,10 @@ func _handle_jump(delta: float) -> void:
 func _handle_camera_controls() -> void:
 	# Left and right rotation inputs
 	if not disableMovement:
-		if Input.is_action_pressed(USER_INPUT.ROTATE.LEFT):
+		if Input.is_action_pressed(USER_INPUT.MOVE.ROTATE_LEFT):
 			cameraController.rotate_y(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 			self.rotate_y(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
-		if Input.is_action_pressed(USER_INPUT.ROTATE.RIGHT):
+		if Input.is_action_pressed(USER_INPUT.MOVE.ROTATE_RIGHT):
 			cameraController.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 			self.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 
@@ -92,7 +92,7 @@ func _handle_movement(delta: float) -> void:
 		velocity += get_gravity() * delta
 	if Input.is_action_just_pressed(USER_INPUT.MOVE.JUMP) and is_on_floor() and not disableMovement:
 		velocity.y = GLOBAL_SETTINGS.PLAYER.JUMP_FORCE
-	var input_dir = Input.get_vector(USER_INPUT.MOVE.LEFT, USER_INPUT.MOVE.RIGHT, USER_INPUT.MOVE.FORWARD, USER_INPUT.MOVE.BACKWARD)
+	var input_dir = Input.get_vector(USER_INPUT.MOVE.STRAFE_LEFT, USER_INPUT.MOVE.STRAFE_RIGHT, USER_INPUT.MOVE.FORWARD, USER_INPUT.MOVE.BACKWARD)
 	if(self.is_on_floor()):
 		var direction = (cameraController.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		if direction:

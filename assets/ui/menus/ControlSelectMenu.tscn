@@ -138,4 +138,8 @@ layout_mode = 2
 [connection signal="mouse_entered" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground" to="." method="_enable_left_detect"]
 [connection signal="mouse_exited" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground" to="." method="_enable_left_detect"]
 [connection signal="button_up" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns/BackButton" to="." method="close_menu"]
+[connection signal="mouse_entered" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns/BackButton" to="." method="_disable_left_detect"]
+[connection signal="mouse_exited" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns/BackButton" to="." method="_enable_left_detect"]
 [connection signal="button_up" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns/SaveButton" to="." method="_save_input"]
+[connection signal="mouse_entered" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns/SaveButton" to="." method="_disable_left_detect"]
+[connection signal="mouse_exited" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns/SaveButton" to="." method="_enable_left_detect"]

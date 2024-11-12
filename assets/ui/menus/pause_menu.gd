@@ -27,6 +27,7 @@ func _input(event: InputEvent) -> void:
 
 func _on_close_menu() -> void:
 	close_menu.emit()
+	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 
 func _on_submenu_close_menu() -> void:
 	self._on_submenu_back()
@@ -37,10 +38,12 @@ func _on_quit() -> void:
 
 func _on_options_menu() -> void:
 	optionsMenu.visible = true
+	self.process_mode = Node.PROCESS_MODE_DISABLED
 
 func _on_submenu_back() -> void:
 	for subMenu in subMenus:
 		subMenu.visible = false
+	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 
 func _on_save_menu(saveSettings: Dictionary) -> void:
 	save_settings.emit(saveSettings)
