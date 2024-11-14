@@ -95,16 +95,25 @@ func _update_settings(saveSettings: Dictionary) -> Dictionary:
 			settingsDictionary.get_or_add(category, saveSettings.get(category))
 	return settingsDictionary
 
+# TODO Need to refactor save structure to new Keyboard and Mouse control Dictionaries
 func load_settings() -> void:
 	var dataReceived: Dictionary = self._get_settings_dictionary()	
-	# Control settings
+	# Keyboard controls
 	if dataReceived.has(CONSTANTS.Controls):
-		var controlSettings: Dictionary = dataReceived.get(CONSTANTS.Controls)
-		for controlKey in GLOBAL_SETTINGS.CONTROLS.keys():
+		var controlSettings: Dictionary = dataReceived.get(.Controls)
+		for keyboardControl in GLOBAL_SETTINGS.KEYBOARD_CONTROLS.keys():
 			if controlSettings.has(controlKey):
 				var controlSettingValue: Variant = controlSettings.get(controlKey)
-				GLOBAL_SETTINGS.CONTROLS.erase(controlKey)
-				GLOBAL_SETTINGS.CONTROLS.get_or_add(controlKey, controlSettingValue)
+				GLOBAL_SETTINGS.KEYBOARD_CONTROLS.erase(controlKey)
+				GLOBAL_SETTINGS.KEYBOARD_CONTROLS.get_or_add(controlKey, controlSettingValue)
+	# Mouse controls
+	if dataReceived.has(CONSTANTS.Controls):
+		var controlSettings: Dictionary = dataReceived.get(CONSTANTS.Controls)
+		for keyboardControl in GLOBAL_SETTINGS.KEYBOARD_CONTROLS.keys():
+			if controlSettings.has(controlKey):
+				var controlSettingValue: Variant = controlSettings.get(controlKey)
+				GLOBAL_SETTINGS.KEYBOARD_CONTROLS.erase(controlKey)
+				GLOBAL_SETTINGS.KEYBOARD_CONTROLS.get_or_add(controlKey, controlSettingValue)
 	# Camera settings
 	if dataReceived.has(CONSTANTS.Camera):
 		var cameraSettings: Dictionary = dataReceived.get(CONSTANTS.Camera)

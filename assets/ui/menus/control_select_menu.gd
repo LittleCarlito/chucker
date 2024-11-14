@@ -17,9 +17,10 @@ var controlToUpdate: String
 var detectLeftClickInput: bool = false
 var cursorOffMenu: bool = false
 var pressCount: int = 0 
-var selectedKeycode: int
+var selectedInput: InputEvent
+var inputKeycode: int
 
-signal save_input(controlToUpdate, newInput)
+signal save_input(controlToUpdate, selectedInput)
 signal menu_closed
 
 # TODO Determine if you want to allow setting of controls with undefined key values (if possible should allow setting with N/A icon)
@@ -37,8 +38,9 @@ func _input(event: InputEvent) -> void:
 		# Regular input handling
 		elif event.is_pressed():
 			pressCount += 1
-			self._set_icon_texture(CONSTANTS.INPUT_ICONS.get(eventKeycode, ""), event)
+			self._set_icon_texture(ASSET_MANAGEMENT.INPUT_ICONS.get(eventKeycode, ""), event, eventKeycode)
 
+# TODO Need to store as InputEvent and not int; See how far InputEvent can make it before JSON stringify
 func _extract_keycode(event: InputEvent) -> int:
 	var returnValue: int
 	if event is InputEventMouseButton:
@@ -49,15 +51,14 @@ func _extract_keycode(event: InputEvent) -> int:
 		Logger.error(UNSUPPORTED_TYPE, [str(event)], self)
 	return returnValue
 
-func _set_icon_texture(texturePath: String, event: InputEvent) -> void:
-	# TODO Repeated in OptionsMenu move to Global singelton or something
+func _set_icon_texture(texturePath: String, event: InputEvent, eventKeycode: int) -> void:
 	if texturePath == "":
 		Logger.error(INPUT_NOT_FOUND, [event], self)
-		texturePath = CONSTANTS.INPUT_ICONS.get(KEY_UNKNOWN)
+		texturePath = ASSET_MANAGEMENT.INPUT_ICONS.get(KEY_UNKNOWN)
 	var inputTexture: Texture2D = load(texturePath)
 	self.inputIconDisplay.texture = inputTexture
-	# TODO Should use a local variable or something instead of the tooltip
-	self.selectedKeycode = self._extract_keycode(event)
+	self.selectedInput = event
+	self.inputKeycode = eventKeycode
 	self.waitingTitle.visible = false
 
 func reset_ui() -> void:
@@ -65,7 +66,8 @@ func reset_ui() -> void:
 	self.controlToUpdate = ""
 	self.waitingTitle.visible = true
 	self.pressCount = 0
-	self.selectedKeycode = 0
+	self.selectedInput = null
+	self.inputKeycode = 0
 
 func _disable_left_detect() -> void:
 	self.detectLeftClickInput = false
@@ -86,7 +88,7 @@ func _cursor_on_menu() -> void:
 	self.cursorOffMenu = false
 
 func _save_input() -> void:
-	save_input.emit(controlToUpdate, selectedKeycode)
+	save_input.emit(controlToUpdate, selectedInput, inputKeycode)
 	self.close_menu()
 
 func open_menu(incomingControl: String) -> void:
