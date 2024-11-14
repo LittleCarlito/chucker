@@ -1,6 +1,65 @@
 extends Node
 class_name CONSTANTS
 
+# TODO Should make constants its own folder and these sections of constants their own classes
+
+const MENU: Dictionary = {
+	"SCORECARD": {
+		"PLAYER_PIXEL_SIZE": .003,
+		"TEEBOX_PIXEL_SIZE": .0023
+	}
+}
+
+# TODO Really should refactor USER_INPUT and INPUT_LABEL into one dictionary or some kind of data object
+
+# Keys are how it is handled in code
+# Values are how project settings handle those behaviors
+const USER_INPUT: Dictionary = {
+	"FORWARD": "move_forward",
+	"BACKWARD": "move_backward",
+	"ROTATE_LEFT": "rotate_left",
+	"STRAFE_LEFT": "move_left",
+	"ROTATE_RIGHT": "rotate_right",
+	"STRAFE_RIGHT": "move_right",
+	"ROTATE_UP": "rotate_up",
+	"ROTATE_DOWN": "rotate_down",
+	"JUMP": "move_jump",
+	"CROUCH": "move_crouch",
+	"SPRINT": "move_sprint",
+	"INTERACT": "player_interact",
+	"PRIMARY": "player_primary",
+	"SECONDARY": "player_secondary",
+	"SCORE": "menu_score",
+	# TODO Refactor this to be menu_pause "PAUSE"
+	"MAIN": "menu_main",
+	"DEBUG": "admin_debug"
+}
+
+# Keys are how we display input type on UI
+# Values are how project settings handle those behaviors
+const INPUT_LABEL: Dictionary = {
+	# Menu labels
+	"Scorecard": self.USER_INPUT.SCORE,
+	"Pause": self.USER_INPUT.MAIN,
+	# Action labels
+	"Primary Action": self.USER_INPUT.PRIMARY,
+	"Secondary Action": self.USER_INPUT.SECONDARY,
+	"Pick Up": self.USER_INPUT.INTERACT,
+	# Rotate labels
+	"Rotate Left": self.USER_INPUT.ROTATE_LEFT,
+	"Rotate Right": self.USER_INPUT.ROTATE_RIGHT,
+	"Rotate Up": self.USER_INPUT.ROTATE_UP,
+	"Rotate Down": self.USER_INPUT.ROTATE_DOWN,
+	# Control labels
+	"Forward": self.USER_INPUT.FORWARD,
+	"Backward": self.USER_INPUT.BACKWARD,
+	"Strafe Left": self.USER_INPUT.STRAFE_LEFT,
+	"Strafe Right": self.USER_INPUT.STRAFE_RIGHT,
+	"Jump": self.USER_INPUT.JUMP, 
+	"Crouch": self.USER_INPUT.CROUCH,
+	"Sprint": self.USER_INPUT.SPRINT
+}
+
 const Camera: String = "Camera"
 const FOV: String = "FOV"
 const IN_ADJUST: String = "IN_ADJUST"

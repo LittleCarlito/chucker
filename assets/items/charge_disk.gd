@@ -31,11 +31,11 @@ func _process(_delta: float) -> void:
 
 func hold_action(delta: float) -> void:
 	# If right click is pressed while holding left reset throw
-	if Input.is_action_just_pressed(USER_INPUT.ACTION.SECONDARY):
+	if Input.is_action_just_pressed(CONSTANTS.USER_INPUT.SECONDARY):
 		stopWatch.reset()
 		chargeView.set_progress(-1)
 	# If right click isn't held while holding left click calculate throw distance
-	elif not Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
+	elif not Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
 		var heldTime: float = stopWatch.isHeld(delta)
 		chargeView.set_progress((heldTime / GLOBAL_SETTINGS.DISK.MAX_HOLD) * 100)
 		var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, heldTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
@@ -43,7 +43,7 @@ func hold_action(delta: float) -> void:
 
 ## Launch disk and reset objects
 func release_action() -> void:
-	if not Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
+	if not Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
 		chargeView.set_progress(-1)
 		var finalTime: float = stopWatch.reset()
 		var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, finalTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER

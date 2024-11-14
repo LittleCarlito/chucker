@@ -4,7 +4,7 @@ class_name OptionsMenu
 const UPDATE_CONTROL_LOG: String = "Updating control \"%s\" to input \"%s\""
 const BAD_INPUT_LOG: String = "Input \"%s\" does not have an associated icon"
 const SELECT_ERROR_LOG: String = "Incorrect number of items selected to change control input; \"%s\" items selected"
-const MISSING_CONSTANT_LOG: String = "\"%s\" does not have an associated value in USER_INPUT.INPUT_LABEL"
+const MISSING_CONSTANT_LOG: String = "\"%s\" does not have an associated value in CONSTANTS.INPUT_LABEL"
 const BAD_CONSTANT_LOG: String = "Control setting \"%s\" couldn't be mapped back to a ControlList text label"
 
 @onready var fovSlider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovSliderContainer/FovSlider
@@ -80,7 +80,7 @@ func _process(_delta: float) -> void:
 	pass
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed(USER_INPUT.MENU.MAIN) and self.visible:
+	if event.is_action_pressed(CONSTANTS.USER_INPUT.MAIN) and self.visible:
 		self._on_close_menu()
 
 func _on_close_menu() -> void:
@@ -224,7 +224,7 @@ func _assign_blank_keycap(index: int) -> void:
 
 # Converts the itemText to its assoicated GLOBAL_SETTINGS input name
 func _get_constant_name(itemText: String) -> String:
-	var constantValue: String = USER_INPUT.INPUT_LABEL.get(itemText, "")
+	var constantValue: String = CONSTANTS.INPUT_LABEL.get(itemText, "")
 	if constantValue == "":
 		Logger.error(self.MISSING_CONSTANT_LOG, [itemText], self)
 	return constantValue
@@ -232,10 +232,9 @@ func _get_constant_name(itemText: String) -> String:
 # Returns the index in ControlList for the provided GLOBAL_SETTINGS name
 # If not found returns INT32_MAX
 func _get_control_index(constantName: String) -> int:
-	# TODO Go backwards from constant name to index in controlList
-	var constantItemText: String = USER_INPUT.INPUT_LABEL.find_key(constantName)
+	var constantItemText: String = CONSTANTS.INPUT_LABEL.find_key(constantName)
 	for controlSetting in self.controlList.item_count:
-		var itemText: String = self._get_constant_name(self.controlList.get_item_text(controlSetting))
+		var itemText: String = self.controlList.get_item_text(controlSetting)
 		if itemText == constantItemText:
 			return controlSetting
 	return CONSTANTS.INT32_MAX

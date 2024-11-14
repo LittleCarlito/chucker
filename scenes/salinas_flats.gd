@@ -1,6 +1,6 @@
 extends Node3D
 
-@onready var controlNode: Node3D = $ControlNode
+@onready var controlNode: ControlNode = $ControlNode
 @onready var chuckChucker: ChuckChucker = $ChuckChucker
 
 # TODO Make set controls work
@@ -12,6 +12,14 @@ extends Node3D
 #			Configured movement keys should move selected buttons
 # TODO Create "Reset" button for settings
 #		Have this just delete the user settings file
+# TODO Add more force when path disk lands
+#			Disks shoudl travel along ground
+# TODO make disks able to tilt in air (like pivot object) so they roll when landing
+# TODO Add wind
+# TODO Add different landing resistances
+# TODO Add hazards
+#		Water
+#		Bunkers
 # TODO Fix chucking a disk over the edge
 #		Make Environment asset that is "CourseFloor"
 #			Add a signal for body exit
@@ -40,6 +48,7 @@ func _disable_character_movement() -> void:
 func _enable_character_movement() -> void:
 	chuckChucker.disableMovement = false
 
-# TODO Make this correct and do things; Make sure the callers of it are doing it when they should as well (one is currently commented out due to startup failures)
+# TODO Make this load the values set in Controls into ProjectSettings control fields
 func _apply_settings() -> void:
+	controlNode.reload_project_settings()
 	chuckChucker.load_settings()

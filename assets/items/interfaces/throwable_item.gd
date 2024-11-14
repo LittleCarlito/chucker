@@ -24,13 +24,13 @@ func release_action() -> void:
 
 func handle_aiming() -> void:
 	# Right click aiming
-	if Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY):
+	if Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		if ownerVar != null:
 			ownerVar.disableMovement = true
 		if fallbackCamera != null and fallbackCamera.current:
 			self._zoom_in()
-	if Input.is_action_just_released(USER_INPUT.ACTION.SECONDARY):
+	if Input.is_action_just_released(CONSTANTS.USER_INPUT.SECONDARY):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		self._reset_zoom()
 		if ownerVar != null:

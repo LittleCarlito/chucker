@@ -16,12 +16,12 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	if ownerVar != null:
-		if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY) and not Input.is_action_pressed(USER_INPUT.ACTION.SECONDARY) and ownerVar.is_equipped():
+		if Input.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY) and not Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY) and ownerVar.is_equipped():
 			if originHold == Vector2.INF:
 				originHold = get_tree().root.get_viewport().get_mouse_position()
 			holdCurrent = get_tree().root.get_viewport().get_mouse_position()
 			self._calc_last_values()
-		elif Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
+		elif Input.is_action_just_released(CONSTANTS.USER_INPUT.PRIMARY):
 			self.reset_pull()
 		if lastLength != 0:
 			self.queue_redraw()

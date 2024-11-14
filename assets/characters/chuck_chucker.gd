@@ -35,32 +35,32 @@ func _handle_jump(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 	# Handle jump
-	if Input.is_action_just_pressed(USER_INPUT.MOVE.JUMP) and is_on_floor() and not disableMovement:
+	if Input.is_action_just_pressed(CONSTANTS.USER_INPUT.JUMP) and is_on_floor() and not disableMovement:
 		velocity.y = GLOBAL_SETTINGS.PLAYER.JUMP_FORCE
 
 ## Rotation and aiming logic
 func _handle_camera_controls() -> void:
 	# Left and right rotation inputs
 	if not disableMovement:
-		if Input.is_action_pressed(USER_INPUT.MOVE.ROTATE_LEFT):
+		if Input.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_LEFT):
 			cameraController.rotate_y(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 			self.rotate_y(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
-		if Input.is_action_pressed(USER_INPUT.MOVE.ROTATE_RIGHT):
+		if Input.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_RIGHT):
 			cameraController.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 			self.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
 
 ## Actions when disk is thrown
 func _handle_player_action(delta: float) -> void:
 	if playerDisk != null:
-		if Input.is_action_pressed(USER_INPUT.ACTION.PRIMARY):
+		if Input.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY):
 			playerDisk.hold_action(delta)
-		if Input.is_action_just_released(USER_INPUT.ACTION.PRIMARY):
+		if Input.is_action_just_released(CONSTANTS.USER_INPUT.PRIMARY):
 			playerDisk.release_action()
 
 ## Handle player pressing interact button
 func _handle_player_interact() -> void:
 	# Detect obejects in front of the character
-	if Input.is_action_just_pressed(USER_INPUT.ACTION.INTERACT) and frontDetection.is_colliding():
+	if Input.is_action_just_pressed(CONSTANTS.USER_INPUT.INTERACT) and frontDetection.is_colliding():
 		var collidingCount = frontDetection.get_collision_count()
 		for n in collidingCount:
 			var collidingObject = frontDetection.get_collider(0)
@@ -90,9 +90,9 @@ func _handle_movement(delta: float) -> void:
 	# Handle jump
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-	if Input.is_action_just_pressed(USER_INPUT.MOVE.JUMP) and is_on_floor() and not disableMovement:
+	if Input.is_action_just_pressed(CONSTANTS.USER_INPUT.JUMP) and is_on_floor() and not disableMovement:
 		velocity.y = GLOBAL_SETTINGS.PLAYER.JUMP_FORCE
-	var input_dir = Input.get_vector(USER_INPUT.MOVE.STRAFE_LEFT, USER_INPUT.MOVE.STRAFE_RIGHT, USER_INPUT.MOVE.FORWARD, USER_INPUT.MOVE.BACKWARD)
+	var input_dir = Input.get_vector(CONSTANTS.USER_INPUT.STRAFE_LEFT, CONSTANTS.USER_INPUT.STRAFE_RIGHT, CONSTANTS.USER_INPUT.FORWARD, CONSTANTS.USER_INPUT.BACKWARD)
 	if(self.is_on_floor()):
 		var direction = (cameraController.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		if direction:
@@ -101,7 +101,7 @@ func _handle_movement(delta: float) -> void:
 				velocity.z = 0
 			else:
 				var sprintAddition: float = 0.0
-				if Input.is_action_pressed(USER_INPUT.MOVE.SPRINT):
+				if Input.is_action_pressed(CONSTANTS.USER_INPUT.SPRINT):
 					sprintAddition = GLOBAL_SETTINGS.PLAYER.SPRINT_SPEED
 					self._zoom_out()
 				else:
