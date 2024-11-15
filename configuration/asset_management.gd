@@ -1,5 +1,8 @@
 extends Node
 
+const NO_MATCH_FOUND_LOG: String = "Matching icon for input \"%s\" could not be found"
+const UNSUPPORTED_TYPE: String = "Event was unsupported type \"%s\""
+
 const DISK = {
 	"SCENE": "res://assets/items/ChuckDisk.tscn",
 	"PATH_SCENE": "res://assets/items/PathDisk.tscn"
@@ -101,3 +104,28 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
+
+# TODO Refactor users of AssetManagement to use this method instead of direct access
+func get_sprite(event: InputEvent) -> Texture2D:
+	var fuckingnuggets = event.keycode
+	var possibleInputs: Array = InputEventLibrary.ALL_INPUTS.values()
+	var matchedInput: InputEvent
+	var matchedKeyCode: int = self._extract_keycode(event)
+	for possibleInput in possibleInputs:
+		var possibleKeyCode: int = self._extract_keycode(possibleInput)
+		if possibleKeyCode == matchedKeyCode:
+			matchedInput =  possibleInput
+	if matchedInput == null:
+		Logger.error(NO_MATCH_FOUND_LOG, [event], self)
+		matchedInput = InputEventLibrary.UNKOWN_KEY
+	return load(AssetManagement.INPUT_ICONS.get(matchedInput))
+
+func _extract_keycode(event: InputEvent) -> int:
+	var returnValue: int
+	if event is InputEventMouseButton:
+		returnValue = event.button_index
+	elif event is InputEventKey:
+		returnValue = event.physical_keycode
+	else:
+		Logger.error(UNSUPPORTED_TYPE, [str(event)], self)
+	return returnValue

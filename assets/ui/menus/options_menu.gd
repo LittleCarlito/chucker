@@ -72,7 +72,6 @@ func initialize_ui() -> void:
 		# TODO Make a private method to get the mappedKeyCode or buttonCode from whatever control dictionary the constant is stored in
 		#			Should be alright treating them as ints but with typing this might be an issue now and make us rework how icons are stored/referenced
 		var mappedInput: InputEvent = self._get_constant_value(constantName)
-		# TODO This won't work because ASSET_MANAGEMENT is mapped to keycode and not InputEvent
 		var mappedTexturePath: String = AssetManagement.INPUT_ICONS.get(mappedInput, "")
 		if mappedTexturePath != "":
 			var mappedTexture: Texture2D = load(mappedTexturePath)

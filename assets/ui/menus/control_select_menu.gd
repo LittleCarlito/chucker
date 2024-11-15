@@ -1,7 +1,6 @@
 extends Control
 class_name ControlSelectMenu
 
-const UNSUPPORTED_TYPE: String = "Event was unsupported type \"%s\""
 const INPUT_NOT_FOUND: String = "Input \"%s\" could not be mapped to a texture"
 const INPUT_LABEL: String = "New binding for \"%s\""
 
@@ -14,7 +13,6 @@ var detectLeftClickInput: bool = false
 var cursorOffMenu: bool = false
 var pressCount: int = 0 
 var selectedInput: InputEvent
-var inputKeycode: int
 
 signal save_input(controlToUpdate, selectedInput)
 signal menu_closed
@@ -23,7 +21,6 @@ signal menu_closed
 
 func _input(event: InputEvent) -> void:
 	if !(event is InputEventMouseMotion):
-		var eventKeycode: int = self._extract_keycode(event)
 		# Left click filtering logic
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and (cursorOffMenu or !detectLeftClickInput):
 			if cursorOffMenu:
@@ -34,26 +31,13 @@ func _input(event: InputEvent) -> void:
 		# Regular input handling
 		elif event.is_pressed():
 			pressCount += 1
-			self._set_icon_texture(AssetManagement.INPUT_ICONS.get(eventKeycode, ""), event, eventKeycode)
+			self._set_icon_texture(event)
 
-func _extract_keycode(event: InputEvent) -> int:
-	var returnValue: int
-	if event is InputEventMouseButton:
-		returnValue = event.button_index
-	elif event is InputEventKey:
-		returnValue = event.physical_keycode
-	else:
-		Logger.error(UNSUPPORTED_TYPE, [str(event)], self)
-	return returnValue
-
-func _set_icon_texture(texturePath: String, event: InputEvent, eventKeycode: int) -> void:
-	if texturePath == "":
-		Logger.error(INPUT_NOT_FOUND, [event], self)
-		texturePath = AssetManagement.INPUT_ICONS.get(KEY_UNKNOWN)
-	var inputTexture: Texture2D = load(texturePath)
+# TODO Not working
+func _set_icon_texture(event: InputEvent) -> void:
+	var inputTexture: Texture2D = AssetManagement.get_sprite(event)
 	self.inputIconDisplay.texture = inputTexture
 	self.selectedInput = event
-	self.inputKeycode = eventKeycode
 	self.waitingTitle.visible = false
 
 func reset_ui() -> void:
@@ -62,7 +46,6 @@ func reset_ui() -> void:
 	self.waitingTitle.visible = true
 	self.pressCount = 0
 	self.selectedInput = null
-	self.inputKeycode = 0
 
 func _disable_left_detect() -> void:
 	self.detectLeftClickInput = false
