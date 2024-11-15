@@ -1,7 +1,7 @@
 extends ThrowableItem
 class_name ChargeDisk
 
-const diskMesh: PackedScene = preload(ASSET_MANAGEMENT.MESH.CHARGE_SCENE)
+const diskMesh: PackedScene = preload(AssetManagement.MESH.CHARGE_SCENE)
 
 @onready var chargeView: ChargeView = $ChargeView
 
@@ -37,8 +37,8 @@ func hold_action(delta: float) -> void:
 	# If right click isn't held while holding left click calculate throw distance
 	elif not Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
 		var heldTime: float = stopWatch.isHeld(delta)
-		chargeView.set_progress((heldTime / GLOBAL_SETTINGS.DISK.MAX_HOLD) * 100)
-		var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, heldTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
+		chargeView.set_progress((heldTime / GlobalSettings.DISK.MAX_HOLD) * 100)
+		var multiplier: float = min(GlobalSettings.DISK.MAX_HOLD, heldTime) * GlobalSettings.DISK.HOLD_MULTIPLIER
 		self.draw_aim_line(multiplier)
 
 ## Launch disk and reset objects
@@ -46,7 +46,7 @@ func release_action() -> void:
 	if not Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
 		chargeView.set_progress(-1)
 		var finalTime: float = stopWatch.reset()
-		var multiplier: float = min(GLOBAL_SETTINGS.DISK.MAX_HOLD, finalTime) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
+		var multiplier: float = min(GlobalSettings.DISK.MAX_HOLD, finalTime) * GlobalSettings.DISK.HOLD_MULTIPLIER
 		self.launch_disk(multiplier, ThrowableItem.TYPE.CHARGE)
 
 static func new_disk() -> ChargeDisk:

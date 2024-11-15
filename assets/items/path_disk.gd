@@ -15,7 +15,7 @@ class_name PathDisk
 # TODO Add original launch velocity on z axis to disk when collision is detected
 #		Need to make collision with ground more realistic
 
-const thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.PATH_SCENE)
+const thrownDisk: PackedScene = preload(AssetManagement.DISK.PATH_SCENE)
 
 @onready var path3d: Path3D = $Path3D
 @onready var pathFollow3d: PathFollow3D = $Path3D/PathFollow3D
@@ -28,14 +28,14 @@ var _prepared: bool = false
 func _ready() -> void:
 	chuckDisk.diskType = ThrowableItem.TYPE.PATH
 	var activeMaterial: StandardMaterial3D = chuckDisk.get_mesh().get_active_material(0)
-	activeMaterial.albedo_color = GLOBAL_SETTINGS.COLOR.PATH
+	activeMaterial.albedo_color = GlobalSettings.COLOR.PATH
 
 func prepare(throwPath: Array[Vector3], multiplier: float, newFallbackCamera: Camera3D, newThrower: ChuckChucker) -> void:
 	var throwCurve: Curve3D = Curve3D.new()
 	for throwPoint in throwPath:
 		throwCurve.add_point(throwPoint)
 	self.path3d.curve = throwCurve
-	self.launchSpeed = GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier
+	self.launchSpeed = GlobalSettings.DISK.LAUNCH_SPEED * multiplier
 	self.chuckDisk.fallbackCamera = newFallbackCamera
 	self.chuckDisk.thrower = newThrower
 	self._prepared = true

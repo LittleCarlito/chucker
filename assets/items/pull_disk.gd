@@ -6,7 +6,7 @@ class_name PullDisk
 #		Probably make that part of ThrowableItem and not have it in both
 #		Make it shake the disk as timer gets closer until it finally just inaccurately launches
 
-const diskMesh: PackedScene = preload(ASSET_MANAGEMENT.MESH.PULL_SCENE)
+const diskMesh: PackedScene = preload(AssetManagement.MESH.PULL_SCENE)
 
 @onready var pullDraw: PullDraw = $PullDraw
 @onready var chargeView: ChargeView = $ChargeView
@@ -34,14 +34,14 @@ func hold_action(_delta: float) -> void:
 	elif not Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
 		pullLength = pullDraw.lastLength
 		pullOffset = pullDraw.lastOffset * .01
-		chargeView.set_progress((pullLength / GLOBAL_SETTINGS.DISK.MAX_PULL) * 100)
-		var multiplier: float = (pullLength / 100) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
+		chargeView.set_progress((pullLength / GlobalSettings.DISK.MAX_PULL) * 100)
+		var multiplier: float = (pullLength / 100) * GlobalSettings.DISK.HOLD_MULTIPLIER
 		throwCurve = self.draw_aim_line(multiplier, pullOffset)
 
 func release_action() -> void:
 	# If right click is not held launch the disk
-	if not Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY) and pullLength > GLOBAL_SETTINGS.DISK.MIN_PULL:
-		var multiplier: float = (pullLength / 100) * GLOBAL_SETTINGS.DISK.HOLD_MULTIPLIER
+	if not Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY) and pullLength > GlobalSettings.DISK.MIN_PULL:
+		var multiplier: float = (pullLength / 100) * GlobalSettings.DISK.HOLD_MULTIPLIER
 		self.launch_disk(multiplier, ThrowableItem.TYPE.PATH, throwCurve)
 	chargeView.set_progress(-1)
 

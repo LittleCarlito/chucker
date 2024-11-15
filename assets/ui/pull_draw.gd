@@ -34,12 +34,12 @@ func reset_pull() -> void:
 func _calc_last_values() -> void:
 	var xVal: float = pow((holdCurrent.x - originHold.x), 2)
 	var yVal: float = pow((holdCurrent.y - originHold.y), 2)
-	lastLength = min(GLOBAL_SETTINGS.DISK.MAX_PULL, sqrt(xVal + yVal))
+	lastLength = min(GlobalSettings.DISK.MAX_PULL, sqrt(xVal + yVal))
 	var offset: float = originHold.x - holdCurrent.x
 	if offset > 0:
-		lastOffset = min(GLOBAL_SETTINGS.DISK.MAX_OFFSET, offset)
+		lastOffset = min(GlobalSettings.DISK.MAX_OFFSET, offset)
 	else:
-		lastOffset = max(-GLOBAL_SETTINGS.DISK.MAX_OFFSET, offset)
+		lastOffset = max(-GlobalSettings.DISK.MAX_OFFSET, offset)
 
 func _draw() -> void:
 	# Draw aim line

@@ -48,7 +48,7 @@ func _disable_character_movement() -> void:
 func _enable_character_movement() -> void:
 	chuckChucker.disableMovement = false
 
-# TODO Make this load the values set in Controls into ProjectSettings control fields
 func _apply_settings() -> void:
-	controlNode.reload_project_settings()
+	# TODO Was removing all user inputs improperly
+	#controlNode.reload_project_settings()
 	chuckChucker.load_settings()

@@ -53,33 +53,34 @@ func _ready() -> void:
 func initialize_ui() -> void:
 	self.controlSelectMenu.visible = false
 	load_settings.emit()
-	self.fovSlider.value = GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.FOV, GLOBAL_SETTINGS.CAMERA_DEFAULTS.FOV)
+	self.fovSlider.value = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV)
 	self.fovValue.text = str(self.fovSlider.value)
-	self.horizontalAimSensitivitySlider.value = GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, GLOBAL_SETTINGS.CAMERA_DEFAULTS.HORIZONTAL_AIM_SENSITIVITY)
+	self.horizontalAimSensitivitySlider.value = GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_AIM_SENSITIVITY)
 	self.horizontalAimSensitivityValue.text = str(self.horizontalAimSensitivitySlider.value)
-	self.verticalAimSensitivitySlider.value = GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GLOBAL_SETTINGS.CAMERA_DEFAULTS.VERTICAL_AIM_SENSITIVITY)
+	self.verticalAimSensitivitySlider.value = GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.VERTICAL_AIM_SENSITIVITY)
 	self.verticalAimSensitivityValue.text = str(self.verticalAimSensitivitySlider.value)
-	self.horizontalLookSensitivitySlider.value = GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GLOBAL_SETTINGS.CAMERA_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
+	self.horizontalLookSensitivitySlider.value = GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
 	self.horizontalLookSensitivityValue.text = str(self.horizontalLookSensitivitySlider.value)
-	self.verticalLookSensitivitySlider.value = GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.VERTICAL_LOOK_SENSITIVITY, GLOBAL_SETTINGS.CAMERA_DEFAULTS.VERTICAL_LOOK_SENSITIVITY)
+	self.verticalLookSensitivitySlider.value = GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.VERTICAL_LOOK_SENSITIVITY)
 	self.verticalLookSensitivityValue.text = str(self.verticalLookSensitivitySlider.value)
-	self.vInversionToggle.button_pressed = GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.INVERT_VERTICAL, GLOBAL_SETTINGS.CAMERA_DEFAULTS.INVERT_VERTICAL)
-	self.hInversionToggle.button_pressed = GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.INVERT_HORIZONTAL, GLOBAL_SETTINGS.CAMERA_DEFAULTS.INVERT_HORIZONTAL)
-	self.performanceDisplayCheck.button_pressed = GLOBAL_SETTINGS.DISPLAY.get(CONSTANTS.PERFORMANCE, GLOBAL_SETTINGS.DISPLAY_DEFAULTS.PERFORMANCE)
+	self.vInversionToggle.button_pressed = GlobalSettings.CAMERA.get(CONSTANTS.INVERT_VERTICAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_VERTICAL)
+	self.hInversionToggle.button_pressed = GlobalSettings.CAMERA.get(CONSTANTS.INVERT_HORIZONTAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_HORIZONTAL)
+	self.performanceDisplayCheck.button_pressed = GlobalSettings.DISPLAY.get(CONSTANTS.PERFORMANCE, GlobalSettings.DISPLAY_DEFAULTS.PERFORMANCE)
 	# Load in icons for set controls
 	for i in self.controlList.item_count:
 		var constantName: String = self._get_constant_name(self.controlList.get_item_text(i))
 		# TODO Make a private method to get the mappedKeyCode or buttonCode from whatever control dictionary the constant is stored in
 		#			Should be alright treating them as ints but with typing this might be an issue now and make us rework how icons are stored/referenced
-		var mappedKeyCode: int = self._get_constant_value(constantName)
-		var mappedTexturePath: String = CONSTANTS.INPUT_ICONS.get(mappedKeyCode, "")
+		var mappedInput: InputEvent = self._get_constant_value(constantName)
+		# TODO This won't work because ASSET_MANAGEMENT is mapped to keycode and not InputEvent
+		var mappedTexturePath: String = AssetManagement.INPUT_ICONS.get(mappedInput, "")
 		if mappedTexturePath != "":
 			var mappedTexture: Texture2D = load(mappedTexturePath)
 			self.controlList.set_item_icon(i, mappedTexture)
 		else:
-			var naKeyTexture: Texture2D = load(CONSTANTS.INPUT_ICONS.UNKOWN)
+			var naKeyTexture: Texture2D = load(AssetManagement.INPUT_ICONS.UNKOWN)
 			self._update_selected_icons(naKeyTexture)
-			Logger.error(self.BAD_INPUT_LOG, [mappedKeyCode], self)
+			Logger.error(self.BAD_INPUT_LOG, [mappedInput], self)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -173,13 +174,14 @@ func _open_control_select_menu(index: int, _clickPosition: Vector2, mouseButtonI
 func _control_select_closed() -> void:
 	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 
-# TODO See if InputEvent can't be stored in control Dictionaries instead of KeyCode shit
-#			would allow combining back to single dictionary instead of one for each input type
-func _control_select_set(controlToUpdate: String, selectedInput: InputEvent, inputKeycode: int) -> void:
+# TODO InputEvent has been set as stored value instead of keycodes fix this shit so it isn't clunky
+# TODO Also fix emitter of signal to not emit keycode once fixed
+# TODO Been fixed should just be able to remove shit
+func _control_select_set(controlToUpdate: String, selectedInput: InputEvent) -> void:
 	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 	Logger.debug(UPDATE_CONTROL_LOG, [controlToUpdate, str(selectedInput.as_text())], self)
 	# TODO If Dictionaries can store InputEvents refactor this to not be based off keyCode
-	var newTexturePath: String = CONSTANTS.INPUT_ICONS.get(inputKeycode, "")
+	var newTexturePath: String = AssetManagement.INPUT_ICONS.get(selectedInput, "")
 	if newTexturePath != "":
 		var inputTexture: Texture2D = load(newTexturePath)
 		var selectedIcons: PackedInt32Array = self.controlList.get_selected_items()
@@ -193,9 +195,9 @@ func _control_select_set(controlToUpdate: String, selectedInput: InputEvent, inp
 		else:
 			Logger.error(self.SELECT_ERROR_LOG, [str(selectedIcons.size())], self)
 	else:
-		var naKeyTexture: Texture2D = load(CONSTANTS.INPUT_ICONS.UNKOWN)
+		var naKeyTexture: Texture2D = load(AssetManagement.INPUT_ICONS.UNKOWN)
 		self._update_selected_icons(naKeyTexture)
-		Logger.error(self.BAD_INPUT_LOG, [inputKeycode], self)
+		Logger.error(self.BAD_INPUT_LOG, [selectedInput], self)
 
 # Updates selected icons in ControlList to the passed in texture
 func _update_selected_icons(newIcon: Texture2D) -> void:
@@ -203,17 +205,14 @@ func _update_selected_icons(newIcon: Texture2D) -> void:
 	for i in selectedIcons.size():
 		self.controlList.set_item_icon(selectedIcons[i], newIcon)
 
-# TODO Need to have this check in controlSettings as well
 # TODO Redo comments
 func _unbind_input(selectedInput: InputEvent) -> void:
 	# Check intermediate changes
-	# TODO Add check in Keyboard list
-	# TODO Add check in mouse list
 	for settingKey in controlSettings.keys():
 		var updatedKeyCode: InputEvent = controlSettings.get(settingKey)
 		# TODO Not sure if this is how you compare InputEvents
 		# TODO Add unbound filter here once you figure out how to do it
-		if selectedInput == updatedKeyCode:
+		if updatedKeyCode != InputEventLibrary.UNKOWN_KEY and (selectedInput == updatedKeyCode):
 			var settingIndex: int = self._get_control_index(settingKey)
 			if settingIndex != CONSTANTS.INT32_MAX:
 				self._assign_blank_keycap(settingIndex)
@@ -224,9 +223,8 @@ func _unbind_input(selectedInput: InputEvent) -> void:
 	# Check set controls
 	for controlListIndex in self.controlList.item_count:
 		var constantName: String = self._get_constant_name(self.controlList.get_item_text(controlListIndex))
-		var mappedKeyCode: int = self._get_constant_value(constantName)
-		# TODO Once unbound way is found filter it from here
-		if keycode != TYPE_NIL and (mappedKeyCode == keycode):
+		var mappedInput: InputEvent = self._get_constant_value(constantName)
+		if mappedInput != InputEventLibrary.UNKOWN_KEY and (mappedInput == selectedInput):
 			self._assign_blank_keycap(controlListIndex)
 			var controlTextToUnbind: String = self.controlList.get_item_text(controlListIndex)
 			var controlConstant: String = self._get_constant_name(controlTextToUnbind)
@@ -235,7 +233,7 @@ func _unbind_input(selectedInput: InputEvent) -> void:
 
 # Applys blank keycap texture to the passed in index of ControlList
 func _assign_blank_keycap(index: int) -> void:
-	var blankKeyTexture: Texture2D = load(CONSTANTS.INPUT_ICONS.BLANK)
+	var blankKeyTexture: Texture2D = load(AssetManagement.INPUT_ICONS.BLANK)
 	self.controlList.set_item_icon(index, blankKeyTexture)
 
 # Converts the itemText to its assoicated GLOBAL_SETTINGS input name
@@ -246,16 +244,13 @@ func _get_constant_name(itemText: String) -> String:
 	return constantValue
 
 # Checks control dictionaries for stored value of constantName
-# If not found returns INT32_MAX
-func _get_constant_value(constantName: String) -> int:
-	# Check Keyboard controls for constant
-	var mappedValue: int = GLOBAL_SETTINGS.KEYBOARD_CONTROLS.get(constantName, CONSTANTS.INT32_MAX)
-	if mappedValue == CONSTANTS.INT32_MAX:
-		# Check Mouse controls for constant
-		mappedValue = GLOBAL_SETTINGS.MOUSE_CONTROLS.get(constantName, CONSTANTS.INT32_MAX)
-		if mappedValue == CONSTANTS.INT32_MAX:
-			# Not found; Log and return value for UNKOWN
-			Logger.error(MISSING_CONSTANT_LOG, [constantName], self)
+# If not found returns UKNOWN_KEY InputEvent
+func _get_constant_value(constantName: String) -> InputEvent:
+	# Check GlobalSettings for control constant with matching name
+	var mappedValue: InputEvent = GlobalSettings.CONTROLS.get(constantName, InputEventLibrary.UNKOWN_KEY)
+	if mappedValue == InputEventLibrary.UNKOWN_KEY:
+		# Not found; Log and return value for UNKOWN
+		Logger.error(MISSING_CONSTANT_LOG, [constantName], self)
 	return mappedValue
 
 # Returns the index in ControlList for the provided GLOBAL_SETTINGS name

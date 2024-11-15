@@ -36,18 +36,18 @@ func _handle_jump(delta: float) -> void:
 		velocity += get_gravity() * delta
 	# Handle jump
 	if Input.is_action_just_pressed(CONSTANTS.USER_INPUT.JUMP) and is_on_floor() and not disableMovement:
-		velocity.y = GLOBAL_SETTINGS.PLAYER.JUMP_FORCE
+		velocity.y = GlobalSettings.PLAYER.JUMP_FORCE
 
 ## Rotation and aiming logic
 func _handle_camera_controls() -> void:
 	# Left and right rotation inputs
 	if not disableMovement:
 		if Input.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_LEFT):
-			cameraController.rotate_y(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
-			self.rotate_y(deg_to_rad(GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+			cameraController.rotate_y(deg_to_rad(GlobalSettings.CAMERA.ROTATE_SPEED))
+			self.rotate_y(deg_to_rad(GlobalSettings.CAMERA.ROTATE_SPEED))
 		if Input.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_RIGHT):
-			cameraController.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
-			self.rotate_y(deg_to_rad(-GLOBAL_SETTINGS.CAMERA.ROTATE_SPEED))
+			cameraController.rotate_y(deg_to_rad(-GlobalSettings.CAMERA.ROTATE_SPEED))
+			self.rotate_y(deg_to_rad(-GlobalSettings.CAMERA.ROTATE_SPEED))
 
 ## Actions when disk is thrown
 func _handle_player_action(delta: float) -> void:
@@ -91,7 +91,7 @@ func _handle_movement(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 	if Input.is_action_just_pressed(CONSTANTS.USER_INPUT.JUMP) and is_on_floor() and not disableMovement:
-		velocity.y = GLOBAL_SETTINGS.PLAYER.JUMP_FORCE
+		velocity.y = GlobalSettings.PLAYER.JUMP_FORCE
 	var input_dir = Input.get_vector(CONSTANTS.USER_INPUT.STRAFE_LEFT, CONSTANTS.USER_INPUT.STRAFE_RIGHT, CONSTANTS.USER_INPUT.FORWARD, CONSTANTS.USER_INPUT.BACKWARD)
 	if(self.is_on_floor()):
 		var direction = (cameraController.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
@@ -102,19 +102,19 @@ func _handle_movement(delta: float) -> void:
 			else:
 				var sprintAddition: float = 0.0
 				if Input.is_action_pressed(CONSTANTS.USER_INPUT.SPRINT):
-					sprintAddition = GLOBAL_SETTINGS.PLAYER.SPRINT_SPEED
+					sprintAddition = GlobalSettings.PLAYER.SPRINT_SPEED
 					self._zoom_out()
 				else:
 					self._reset_zoom()
-				velocity.x = direction.x * (GLOBAL_SETTINGS.PLAYER.RUN_SPEED + sprintAddition)
-				velocity.z = direction.z * (GLOBAL_SETTINGS.PLAYER.RUN_SPEED + sprintAddition)
+				velocity.x = direction.x * (GlobalSettings.PLAYER.RUN_SPEED + sprintAddition)
+				velocity.z = direction.z * (GlobalSettings.PLAYER.RUN_SPEED + sprintAddition)
 		# Otherwise set velocity to start slowing down
 		else:
-			velocity.x = move_toward(velocity.x, 0, GLOBAL_SETTINGS.PLAYER.RUN_SPEED)
-			velocity.z = move_toward(velocity.z, 0, GLOBAL_SETTINGS.PLAYER.RUN_SPEED)
+			velocity.x = move_toward(velocity.x, 0, GlobalSettings.PLAYER.RUN_SPEED)
+			velocity.z = move_toward(velocity.z, 0, GlobalSettings.PLAYER.RUN_SPEED)
 	self.move_and_slide()
 	# Keep camera up
-	cameraController.position = lerp(cameraController.position, position, GLOBAL_SETTINGS.CAMERA.PAN_SPEED)
+	cameraController.position = lerp(cameraController.position, position, GlobalSettings.CAMERA.PAN_SPEED)
 
 ## Toggles the visibility logic when character has item equiped
 func unequip_item() -> void:
@@ -137,13 +137,13 @@ func get_camera() -> Camera3D:
 	return $CameraController/CameraTarget/ChuckCamera
 
 func _reset_zoom() -> void:
-	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.FOV)
+	playerCamera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV)
 
 func _zoom_in() -> void:
-	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.FOV) - GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.IN_ADJUST)
+	playerCamera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV) - GlobalSettings.CAMERA.get(CONSTANTS.IN_ADJUST)
 
 func _zoom_out() -> void:
-	playerCamera.fov = GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.FOV) + GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.OUT_ADJUST)
+	playerCamera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV) + GlobalSettings.CAMERA.get(CONSTANTS.OUT_ADJUST)
 
 func load_settings() -> void:
 	_reset_zoom()

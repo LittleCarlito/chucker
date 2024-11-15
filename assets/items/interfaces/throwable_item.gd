@@ -43,17 +43,17 @@ func _input(event: InputEvent) -> void:
 		if ownerVar != null and event is InputEventMouseMotion:
 			# TODO Now that this h as inversion added it needs to be added to the disk as it flys
 			var hInversionValue: int = 1
-			if GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.INVERT_HORIZONTAL, GLOBAL_SETTINGS.CAMERA_DEFAULTS.INVERT_HORIZONTAL):
+			if GlobalSettings.CAMERA.get(CONSTANTS.INVERT_HORIZONTAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_HORIZONTAL):
 				hInversionValue = -1
 			var vInversionValue: int = -1
-			if GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.INVERT_VERTICAL, GLOBAL_SETTINGS.CAMERA_DEFAULTS.INVERT_VERTICAL):
+			if GlobalSettings.CAMERA.get(CONSTANTS.INVERT_VERTICAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_VERTICAL):
 				vInversionValue = 1
-			ownerVar.rotation.y -= hInversionValue * (event.relative.x / 1000 * GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, GLOBAL_SETTINGS.CAMERA_DEFAULTS.HORIZONTAL_AIM_SENSITIVITY))
-			var rotationAmount = vInversionValue * (GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GLOBAL_SETTINGS.CAMERA.VERTICAL_AIM_SENSITIVITY) * (event.relative.y / 1000 * GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GLOBAL_SETTINGS.CAMERA_DEFAULTS.VERTICAL_AIM_SENSITIVITY)))
-			if rotationAmount > 0 and self.get_parent().rotation_degrees.x < GLOBAL_SETTINGS.PLAYER.MAX_LAUNCH_ROTATION:
+			ownerVar.rotation.y -= hInversionValue * (event.relative.x / 1000 * GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_AIM_SENSITIVITY))
+			var rotationAmount = vInversionValue * (GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GlobalSettings.CAMERA.VERTICAL_AIM_SENSITIVITY) * (event.relative.y / 1000 * GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.VERTICAL_AIM_SENSITIVITY)))
+			if rotationAmount > 0 and self.get_parent().rotation_degrees.x < GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION:
 				# TODO Redo all self.get_parent() type calls with signaling something up instead
 				self.get_parent().rotate_x(rotationAmount)
-			elif rotationAmount < 0 and self.get_parent().rotation_degrees.x > GLOBAL_SETTINGS.PLAYER.MIN_LAUNCH_ROTATION:
+			elif rotationAmount < 0 and self.get_parent().rotation_degrees.x > GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION:
 				self.get_parent().rotate_x(rotationAmount)
 
 func set_just_launched(value: bool) -> void:
@@ -64,10 +64,10 @@ func draw_aim_line(multiplier: float, xOffset: float = 0) -> Array[Vector3]:
 	var parentRotation: float = NodeUtil.get_parent_x_rotation(self)
 	var height: float = self.global_position.y
 	#var height: float = NodeUtil.get_parent_heights(self)
-	var throwSpeed: float = GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier
+	var throwSpeed: float = GlobalSettings.DISK.LAUNCH_SPEED * multiplier
 	# move_and_slide() is a liar so this will always be an approximation
 	var zDistance: float = NodeUtil.calculate_range(height, gravity, parentRotation, throwSpeed)
-	var gravityAdjust: float = gravity * GLOBAL_SETTINGS.DISK.GRAVITY_MULTIPLIER
+	var gravityAdjust: float = gravity * GlobalSettings.DISK.GRAVITY_MULTIPLIER
 	# Handle aimNode
 	aimNode.position = self.global_position
 	aimNode.basis = self.global_basis
@@ -96,7 +96,7 @@ func launch_disk(multiplier: float, diskType: TYPE, throwCurve: Array[Vector3] =
 		get_tree().get_root().add_child(newDisk)
 		newDisk.top_level = true
 		newDisk.global_transform = self.global_transform
-		newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier)
+		newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GlobalSettings.DISK.LAUNCH_SPEED * multiplier)
 		newDisk.diskType = ThrowableItem.TYPE.CHARGE
 	else:
 		var newPathDisk = PathDisk.new_disk()
@@ -108,9 +108,9 @@ func launch_disk(multiplier: float, diskType: TYPE, throwCurve: Array[Vector3] =
 	self.rotation.x = 0
 	var diskMaterial: StandardMaterial3D = newDisk.get_mesh().get_active_material(0)
 	if diskType == TYPE.CHARGE:
-		diskMaterial.albedo_color = GLOBAL_SETTINGS.COLOR.CHARGE
+		diskMaterial.albedo_color = GlobalSettings.COLOR.CHARGE
 	elif diskType == TYPE.PATH:
-		diskMaterial.albedo_color = GLOBAL_SETTINGS.COLOR.PATH
+		diskMaterial.albedo_color = GlobalSettings.COLOR.PATH
 	newDisk.toggle_camera()
 	ownerVar.disableMovement = true
 	self.justLaunched = true

@@ -1,10 +1,6 @@
 extends Control
 class_name ControlSelectMenu
 
-# TODO Make esc just close this menu not escape all menus
-# TODO Make Save button work
-#			Should signal out with keybinding that was saved
-#			Then make self not visible with same method as back and clicking outside
 const UNSUPPORTED_TYPE: String = "Event was unsupported type \"%s\""
 const INPUT_NOT_FOUND: String = "Input \"%s\" could not be mapped to a texture"
 const INPUT_LABEL: String = "New binding for \"%s\""
@@ -38,9 +34,8 @@ func _input(event: InputEvent) -> void:
 		# Regular input handling
 		elif event.is_pressed():
 			pressCount += 1
-			self._set_icon_texture(ASSET_MANAGEMENT.INPUT_ICONS.get(eventKeycode, ""), event, eventKeycode)
+			self._set_icon_texture(AssetManagement.INPUT_ICONS.get(eventKeycode, ""), event, eventKeycode)
 
-# TODO Need to store as InputEvent and not int; See how far InputEvent can make it before JSON stringify
 func _extract_keycode(event: InputEvent) -> int:
 	var returnValue: int
 	if event is InputEventMouseButton:
@@ -54,7 +49,7 @@ func _extract_keycode(event: InputEvent) -> int:
 func _set_icon_texture(texturePath: String, event: InputEvent, eventKeycode: int) -> void:
 	if texturePath == "":
 		Logger.error(INPUT_NOT_FOUND, [event], self)
-		texturePath = ASSET_MANAGEMENT.INPUT_ICONS.get(KEY_UNKNOWN)
+		texturePath = AssetManagement.INPUT_ICONS.get(KEY_UNKNOWN)
 	var inputTexture: Texture2D = load(texturePath)
 	self.inputIconDisplay.texture = inputTexture
 	self.selectedInput = event
@@ -88,7 +83,7 @@ func _cursor_on_menu() -> void:
 	self.cursorOffMenu = false
 
 func _save_input() -> void:
-	save_input.emit(controlToUpdate, selectedInput, inputKeycode)
+	save_input.emit(controlToUpdate, selectedInput)
 	self.close_menu()
 
 func open_menu(incomingControl: String) -> void:

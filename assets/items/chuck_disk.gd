@@ -4,7 +4,7 @@ class_name ChuckDisk
 # TODO PreCollisionDetection box isn't doing anything
 #		Add signal connection in PathDisk to awaken and add force to landing
 
-const thrownDisk: PackedScene = preload(ASSET_MANAGEMENT.DISK.SCENE)
+const thrownDisk: PackedScene = preload(AssetManagement.DISK.SCENE)
 
 @onready var diskMesh: MeshInstance3D = $DiskMesh
 @onready var cameraContainer: Node3D = $CameraContainer
@@ -25,17 +25,17 @@ func _ready() -> void:
 	if parentObject is ChuckTee:
 		fallbackCamera = null
 	var activeMaterial: StandardMaterial3D = diskMesh.get_active_material(0)
-	activeMaterial.albedo_color = GLOBAL_SETTINGS.COLOR.CHARGE
+	activeMaterial.albedo_color = GlobalSettings.COLOR.CHARGE
 
 func _process(delta: float) -> void:
 	# Maintain minimum height for the camera
-	cameraControl.global_position.y = max(GLOBAL_SETTINGS.CAMERA.MIN_HEIGHT, cameraControl.global_position.y)
+	cameraControl.global_position.y = max(GlobalSettings.CAMERA.MIN_HEIGHT, cameraControl.global_position.y)
 	# Freeze the camera control when rigid body detects collision
 	if self.get_contact_count() > 0 and diskCamera.current:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		if !collided and diskCamera.current:
 			# Initial collision so start timers
-			cameraTimer.start(GLOBAL_SETTINGS.CAMERA.SHOT_WATCH_TIME)
+			cameraTimer.start(GlobalSettings.CAMERA.SHOT_WATCH_TIME)
 			collided = true
 			self.linear_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
 			self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
@@ -51,7 +51,7 @@ func _input(event: InputEvent) -> void:
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and diskCamera.current:
 		if event is InputEventMouseMotion:
 			# Doesn't have inversion multiplcation on it because it seems to have it through computation
-			var horizontalRotateAmount: float = deg_to_rad(event.relative.x) * GLOBAL_SETTINGS.CAMERA.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GLOBAL_SETTINGS.CAMERA_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
+			var horizontalRotateAmount: float = deg_to_rad(event.relative.x) * GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
 			cameraContainer.global_rotation_degrees.y += horizontalRotateAmount
 			cameraControl.look_at(self.global_position)
 
@@ -77,7 +77,7 @@ static func new_disk(newdiskCamera: Camera3D, newThrower: ChuckChucker) -> Chuck
 func _idle_rotate(delta: float) -> void:
 	cameraContainer.top_level = true
 	# Calculate the rotation angle in radians
-	var rotationAmount: float = (GLOBAL_SETTINGS.CAMERA.IDLE_ROTATE_SPEED * delta)
+	var rotationAmount: float = (GlobalSettings.CAMERA.IDLE_ROTATE_SPEED * delta)
 	# Get the current global position of the Root object
 	if collisionLocation == Vector3.INF:
 		collisionLocation = self.global_position

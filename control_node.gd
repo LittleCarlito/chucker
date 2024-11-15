@@ -22,6 +22,8 @@ func _ready() -> void:
 	# Create game file structures
 	var baseDir = DirAccess.open(self.BASE_PATH)
 	baseDir.make_dir(self.SAVE_DIR)
+	# TODO InputMap doesn't have actions; Either need to be added through code or code is removing them on accident
+	#			Or "input/" needs to be appended when 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -36,7 +38,7 @@ func _input(event: InputEvent) -> void:
 		disable_movement.emit()
 		# Determine what camera is active so we know how big to make the scorecard
 		var currentCamera: Camera3D = self.get_tree().root.get_camera_3d()
-		if(currentCamera.name == ASSET_MANAGEMENT.CAMERA.TEE_CAMERA):
+		if(currentCamera.name == AssetManagement.CAMERA.TEE_CAMERA):
 			self.scorecard.set_pixel_size(CONSTANTS.MENU.SCORECARD.TEEBOX_PIXEL_SIZE)
 		else:
 			self.scorecard.set_pixel_size(CONSTANTS.MENU.SCORECARD.PLAYER_PIXEL_SIZE)
@@ -95,41 +97,32 @@ func _update_settings(saveSettings: Dictionary) -> Dictionary:
 			settingsDictionary.get_or_add(category, saveSettings.get(category))
 	return settingsDictionary
 
-# TODO Need to refactor save structure to new Keyboard and Mouse control Dictionaries
 func load_settings() -> void:
-	var dataReceived: Dictionary = self._get_settings_dictionary()	
-	# Keyboard controls
-	if dataReceived.has(CONSTANTS.Controls):
-		var controlSettings: Dictionary = dataReceived.get(.Controls)
-		for keyboardControl in GLOBAL_SETTINGS.KEYBOARD_CONTROLS.keys():
-			if controlSettings.has(controlKey):
-				var controlSettingValue: Variant = controlSettings.get(controlKey)
-				GLOBAL_SETTINGS.KEYBOARD_CONTROLS.erase(controlKey)
-				GLOBAL_SETTINGS.KEYBOARD_CONTROLS.get_or_add(controlKey, controlSettingValue)
-	# Mouse controls
+	var dataReceived: Dictionary = self._get_settings_dictionary()
+	# Controls
 	if dataReceived.has(CONSTANTS.Controls):
 		var controlSettings: Dictionary = dataReceived.get(CONSTANTS.Controls)
-		for keyboardControl in GLOBAL_SETTINGS.KEYBOARD_CONTROLS.keys():
+		for controlKey in GlobalSettings.CONTROLS.keys():
 			if controlSettings.has(controlKey):
-				var controlSettingValue: Variant = controlSettings.get(controlKey)
-				GLOBAL_SETTINGS.KEYBOARD_CONTROLS.erase(controlKey)
-				GLOBAL_SETTINGS.KEYBOARD_CONTROLS.get_or_add(controlKey, controlSettingValue)
+				var controlInput: InputEvent = controlSettings.get(controlKey)
+				GlobalSettings.CONTROLS.erase(controlKey)
+				GlobalSettings.CONTROLS.get_or_add(controlKey, controlInput)
 	# Camera settings
 	if dataReceived.has(CONSTANTS.Camera):
 		var cameraSettings: Dictionary = dataReceived.get(CONSTANTS.Camera)
-		for cameraKey in GLOBAL_SETTINGS.CAMERA.keys():
+		for cameraKey in GlobalSettings.CAMERA.keys():
 			if cameraSettings.has(cameraKey):
 				var cameraSettingValue: Variant = cameraSettings.get(cameraKey)
-				GLOBAL_SETTINGS.CAMERA.erase(cameraKey)
-				GLOBAL_SETTINGS.CAMERA.get_or_add(cameraKey, cameraSettingValue)
+				GlobalSettings.CAMERA.erase(cameraKey)
+				GlobalSettings.CAMERA.get_or_add(cameraKey, cameraSettingValue)
 	# Display settings
 	if dataReceived.has(CONSTANTS.Display):
 		var displaySettings: Dictionary = dataReceived.get(CONSTANTS.Display)
-		for displayKey in GLOBAL_SETTINGS.DISPLAY.keys():
+		for displayKey in GlobalSettings.DISPLAY.keys():
 			if displaySettings.has(displayKey):
 				var displaySettingValue: Variant = displaySettings.get(displayKey)
-				GLOBAL_SETTINGS.DISPLAY.erase(displayKey)
-				GLOBAL_SETTINGS.DISPLAY.get_or_add(displayKey, displaySettingValue)
+				GlobalSettings.DISPLAY.erase(displayKey)
+				GlobalSettings.DISPLAY.get_or_add(displayKey, displaySettingValue)
 
 # Retrieves the settings file from User:// or returns an empty dictionary if an error occured
 func _get_settings_dictionary() -> Dictionary:
@@ -153,27 +146,16 @@ func _get_settings_dictionary() -> Dictionary:
 			Logger.error(self.UNABLE_TO_OPEN_LOG, [self.SAVE_FILE, saveError], self)
 	return {}
 
-# TODO I don't think reloading Project_Settings is possible at runtime
-# Reloads Project input settings using GLOBAL_SETTINGS
+# Reloads Project input settings using GlobalSettings
 func reload_project_settings() -> void:
-	# TODO Iterate over each USER_INPUT setting and get the associate project setting string
-	#		Then get the GLOBAL_SETTING associated to that project setting
-	#		Then overwrite the ProjectSetting for that key
-	# TODO Ensure you are saving ProjectSetting and make is so the application doesn't have to be restarted
-	var userInputs: Array = CONSTANTS.USER_INPUT.values()
+	var userInputs: Array = GlobalSettings.CONTROLS.keys()
 	for userInput in userInputs:
-		# TODO userInput should be the GLOBAL_SETTING version of the control
-		var boundKeyCode: int = GLOBAL_SETTINGS.CONTROLS.get(userInput)
-		if boundKeyCode != null:
-			# TODO Get "input/" to a constant
-			#ProjectSettings.set_setting("input/" + userInput, boundKeyCode)
-			var inputEvent = InputEventKey.new()
-			inputEvent.scancode = boundKeyCode
+		var boundKey: InputEvent = GlobalSettings.CONTROLS.get(userInput)
+		if boundKey != null:
 			InputMap.erase_action(userInput)
-			InputMap.action_add_event(userInput, inputEvent)
+			InputMap.action_add_event(userInput, boundKey)
 		else:
 			Logger.error(BAD_USER_INPUT_LOG, [userInput], self)
-	#ProjectSettings.save()
 
 func _apply_settings() -> void:
 	apply_settings.emit()

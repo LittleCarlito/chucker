@@ -1,10 +1,5 @@
 extends Node
 
-# TODO Switch from class to global singleton
-class_name GLOBAL_SETTINGS
-
-# TODO add typing to dictionaries
-
 const PLAYER: Dictionary = {
 	"RUN_SPEED": 5.0,
 	"SPRINT_SPEED": 4.0,
