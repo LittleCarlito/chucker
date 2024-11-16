@@ -92,9 +92,10 @@ var INPUT_ICONS: Dictionary = {
 	InputEventLibrary.XBUTTON2_MOUSE_BUTTON: "res://resources/Sprites/ControlIcons/4Click_Mouse.png",
 	InputEventLibrary.UP_MOUSE_BUTTON: "res://resources/Sprites/ControlIcons/ScrollUp_Mouse.png",
 	InputEventLibrary.DOWN_MOUSE_BUTTON: "res://resources/Sprites/ControlIcons/ScrollDown_Mouse.png",
-	InputEventLibrary.UNKOWN_KEY: "res://resources/Sprites/ControlIcons/Blank_Keycap.png",
-	"BLANK": "res://resources/Sprites/ControlIcons/Blank_Keycap.png"
+	InputEventLibrary.UNKOWN_KEY: "res://resources/Sprites/ControlIcons/Blank_Keycap.png"
 }
+
+var UKNOWN_TEXTURE: Texture2D = load("res://resources/Sprites/ControlIcons/Blank_Keycap.png")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -107,12 +108,11 @@ func _process(_delta: float) -> void:
 
 # TODO Refactor users of AssetManagement to use this method instead of direct access
 func get_sprite(event: InputEvent) -> Texture2D:
-	var fuckingnuggets = event.keycode
 	var possibleInputs: Array = InputEventLibrary.ALL_INPUTS.values()
 	var matchedInput: InputEvent
-	var matchedKeyCode: int = self._extract_keycode(event)
+	var matchedKeyCode: int = self.extract_keycode(event)
 	for possibleInput in possibleInputs:
-		var possibleKeyCode: int = self._extract_keycode(possibleInput)
+		var possibleKeyCode: int = self.extract_keycode(possibleInput)
 		if possibleKeyCode == matchedKeyCode:
 			matchedInput =  possibleInput
 	if matchedInput == null:
@@ -120,7 +120,7 @@ func get_sprite(event: InputEvent) -> Texture2D:
 		matchedInput = InputEventLibrary.UNKOWN_KEY
 	return load(AssetManagement.INPUT_ICONS.get(matchedInput))
 
-func _extract_keycode(event: InputEvent) -> int:
+func extract_keycode(event: InputEvent) -> int:
 	var returnValue: int
 	if event is InputEventMouseButton:
 		returnValue = event.button_index

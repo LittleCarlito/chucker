@@ -97,6 +97,7 @@ func _update_settings(saveSettings: Dictionary) -> Dictionary:
 			settingsDictionary.get_or_add(category, saveSettings.get(category))
 	return settingsDictionary
 
+# TODO Broken start here
 func load_settings() -> void:
 	var dataReceived: Dictionary = self._get_settings_dictionary()
 	# Controls
@@ -104,9 +105,21 @@ func load_settings() -> void:
 		var controlSettings: Dictionary = dataReceived.get(CONSTANTS.Controls)
 		for controlKey in GlobalSettings.CONTROLS.keys():
 			if controlSettings.has(controlKey):
-				var controlInput: InputEvent = controlSettings.get(controlKey)
-				GlobalSettings.CONTROLS.erase(controlKey)
-				GlobalSettings.CONTROLS.get_or_add(controlKey, controlInput)
+				var controlInputString: String = controlSettings.get(controlKey)
+				var jsonThing: JSON = JSON.new()
+				var jsonError: Error = jsonThing.parse(controlInputString)
+				if jsonError == OK:
+					var controlData: InputEventKey = jsonThing.data
+					if controlData is InputEventKey:
+						Logger.info("Poo poo pee pee", [], self)
+						pass
+					#if controlData is InputEventMouseButton:
+						#Logger.info("Baflarnnm", [], self)
+						#pass
+				else:
+					Logger.error(self.JSON_ERROR_LOG, [jsonThing.get_error_message(), controlInputString, jsonThing.get_error_line(), self.SAVE_FILE], self)
+				#GlobalSettings.CONTROLS.erase(controlKey)
+				#GlobalSettings.CONTROLS.get_or_add(controlKey, controlInput)
 	# Camera settings
 	if dataReceived.has(CONSTANTS.Camera):
 		var cameraSettings: Dictionary = dataReceived.get(CONSTANTS.Camera)
@@ -130,12 +143,13 @@ func _get_settings_dictionary() -> Dictionary:
 	if file != null:
 		var content: String = file.get_as_text()
 		if not content.is_empty():
-			var json = JSON.new()
-			var error = json.parse(content)
+			var json: JSON = JSON.new()
+			var error: Error = json.parse(content)
 			if error == OK:
 				var dataReceived: Dictionary = json.data
 				var expectedType: Variant.Type = TYPE_DICTIONARY
 				if typeof(dataReceived) == expectedType:
+					# TODO Need to deserialize InputEvents from the save file
 					return dataReceived
 				else:
 					Logger.error(self.UNEXPTECTED_FORMAT_LOG, [self.SAVE_FILE, expectedType, content], self)

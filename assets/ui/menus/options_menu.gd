@@ -173,21 +173,15 @@ func _open_control_select_menu(index: int, _clickPosition: Vector2, mouseButtonI
 func _control_select_closed() -> void:
 	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 
-# TODO InputEvent has been set as stored value instead of keycodes fix this shit so it isn't clunky
-# TODO Also fix emitter of signal to not emit keycode once fixed
-# TODO Been fixed should just be able to remove shit
 func _control_select_set(controlToUpdate: String, selectedInput: InputEvent) -> void:
 	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 	Logger.debug(UPDATE_CONTROL_LOG, [controlToUpdate, str(selectedInput.as_text())], self)
-	# TODO If Dictionaries can store InputEvents refactor this to not be based off keyCode
-	var newTexturePath: String = AssetManagement.INPUT_ICONS.get(selectedInput, "")
-	if newTexturePath != "":
-		var inputTexture: Texture2D = load(newTexturePath)
+	var newTexture: Texture2D = AssetManagement.get_sprite(selectedInput)
+	if newTexture != AssetManagement.UKNOWN_TEXTURE:
 		var selectedIcons: PackedInt32Array = self.controlList.get_selected_items()
 		if selectedIcons.size() == 1:
-			# TODO Refactor this to be based off InputEvent
 			self._unbind_input(selectedInput)
-			self._update_selected_icons(inputTexture)
+			self._update_selected_icons(newTexture)
 			var controlItemText: String = self.controlList.get_item_text(selectedIcons[0])
 			var controlConstant: String = self._get_constant_name(controlItemText)
 			self.controlSettings.get_or_add(controlConstant, selectedInput)
@@ -204,36 +198,36 @@ func _update_selected_icons(newIcon: Texture2D) -> void:
 	for i in selectedIcons.size():
 		self.controlList.set_item_icon(selectedIcons[i], newIcon)
 
-# TODO Redo comments
 func _unbind_input(selectedInput: InputEvent) -> void:
+	var selectedKeycode: int = AssetManagement.extract_keycode(selectedInput)
 	# Check intermediate changes
 	for settingKey in controlSettings.keys():
-		var updatedKeyCode: InputEvent = controlSettings.get(settingKey)
-		# TODO Not sure if this is how you compare InputEvents
-		# TODO Add unbound filter here once you figure out how to do it
-		if updatedKeyCode != InputEventLibrary.UNKOWN_KEY and (selectedInput == updatedKeyCode):
+		var updatedKeyEvent: InputEvent = controlSettings.get(settingKey)
+		var updatedKeycode: int = AssetManagement.extract_keycode(updatedKeyEvent)
+		# TODO selectedInput is the event from controlSelect _input and needs to be converted to be compatible with InputEventLibrary objects
+		if updatedKeyEvent != InputEventLibrary.UNKOWN_KEY and (selectedKeycode == updatedKeycode):
 			var settingIndex: int = self._get_control_index(settingKey)
 			if settingIndex != CONSTANTS.INT32_MAX:
 				self._assign_blank_keycap(settingIndex)
 				self.controlSettings.erase(settingKey)
-				self.controlSettings.get_or_add(settingKey, TYPE_NIL)
+				self.controlSettings.get_or_add(settingKey, InputEventLibrary.UNKOWN_KEY)
 			else:
 				Logger.error(BAD_CONSTANT_LOG, [settingKey], self)
 	# Check set controls
 	for controlListIndex in self.controlList.item_count:
 		var constantName: String = self._get_constant_name(self.controlList.get_item_text(controlListIndex))
 		var mappedInput: InputEvent = self._get_constant_value(constantName)
-		if mappedInput != InputEventLibrary.UNKOWN_KEY and (mappedInput == selectedInput):
+		var mappedKeycode: int = AssetManagement.extract_keycode(mappedInput)
+		if mappedInput != InputEventLibrary.UNKOWN_KEY and (mappedKeycode == selectedKeycode):
 			self._assign_blank_keycap(controlListIndex)
 			var controlTextToUnbind: String = self.controlList.get_item_text(controlListIndex)
 			var controlConstant: String = self._get_constant_name(controlTextToUnbind)
 			# TODO Need to find a way to assign unbound as an InputEvent in the map
-			self.controlSettings.get_or_add(controlConstant, TYPE_NIL)
+			self.controlSettings.get_or_add(controlConstant, InputEventLibrary.UNKOWN_KEY)
 
 # Applys blank keycap texture to the passed in index of ControlList
 func _assign_blank_keycap(index: int) -> void:
-	var blankKeyTexture: Texture2D = load(AssetManagement.INPUT_ICONS.BLANK)
-	self.controlList.set_item_icon(index, blankKeyTexture)
+	self.controlList.set_item_icon(index, AssetManagement.UKNOWN_TEXTURE)
 
 # Converts the itemText to its assoicated GLOBAL_SETTINGS input name
 func _get_constant_name(itemText: String) -> String:
