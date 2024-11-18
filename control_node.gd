@@ -3,8 +3,8 @@ class_name ControlNode
 
 const UNABLE_TO_OPEN_LOG: String = "Unable to open %s; Error: %s"
 const EMPTY_SAVE_LOG:String = "Must provide settings to be saved; Input: %s"
-const UNEXPTECTED_FORMAT_LOG: String = "%s in unexected format; Expected %s; File content: %s"
-const JSON_ERROR_LOG: String = "JSON Parse Error: \"%s\" in \"%s\" at line \"%s\" for file \"%s\""
+const UNEXPTECTED_TYPE_LOG: String = "Save file object was not expected type %s; Saved object type \"%s\""
+const BAD_SAVE_FILE_LOG: String = "Save Dictionary contained more than the 1 expected item; Contained \"%d\" items"
 const BAD_USER_INPUT_LOG: String = "Value from USER_INPUT \"%s\" could not be mapped to a GLOBAL_SETTING"
 
 @onready var scorecard: ScorecardView = $ScorecardView
@@ -58,6 +58,7 @@ func _on_pause_menu_save_settings(saveSettings: Dictionary) -> void:
 	self.save_to_settings(saveSettings)
 	self.load_settings()
 
+# TODO Refactor this to use file.set_vars instead of using JSON
 func save_to_settings(saveSettings: Dictionary) -> void:
 	if !saveSettings.is_empty():
 		var finalSettings: Dictionary
@@ -70,8 +71,9 @@ func save_to_settings(saveSettings: Dictionary) -> void:
 		# Write to settings file
 		var file = FileAccess.open(self.SAVE_FILE, FileAccess.WRITE)
 		if file != null:
-			var saveJson: String = JSON.stringify(finalSettings)
-			file.store_string(saveJson)
+			# TODO If this works see if setting this to false works too
+			#		Otherwise will need some kind of executable scanning because the loading of this could be used to inject code
+			file.store_var(finalSettings, true)
 		else:
 			var saveError: Error = FileAccess.get_open_error()
 			Logger.error(self.UNABLE_TO_OPEN_LOG, [self.SAVE_FILE, saveError], self)
@@ -105,21 +107,9 @@ func load_settings() -> void:
 		var controlSettings: Dictionary = dataReceived.get(CONSTANTS.Controls)
 		for controlKey in GlobalSettings.CONTROLS.keys():
 			if controlSettings.has(controlKey):
-				var controlInputString: String = controlSettings.get(controlKey)
-				var jsonThing: JSON = JSON.new()
-				var jsonError: Error = jsonThing.parse(controlInputString)
-				if jsonError == OK:
-					var controlData: InputEventKey = jsonThing.data
-					if controlData is InputEventKey:
-						Logger.info("Poo poo pee pee", [], self)
-						pass
-					#if controlData is InputEventMouseButton:
-						#Logger.info("Baflarnnm", [], self)
-						#pass
-				else:
-					Logger.error(self.JSON_ERROR_LOG, [jsonThing.get_error_message(), controlInputString, jsonThing.get_error_line(), self.SAVE_FILE], self)
-				#GlobalSettings.CONTROLS.erase(controlKey)
-				#GlobalSettings.CONTROLS.get_or_add(controlKey, controlInput)
+				var controlInput: InputEvent = controlSettings.get(controlKey)
+				GlobalSettings.CONTROLS.erase(controlKey)
+				GlobalSettings.CONTROLS.get_or_add(controlKey, controlInput)
 	# Camera settings
 	if dataReceived.has(CONSTANTS.Camera):
 		var cameraSettings: Dictionary = dataReceived.get(CONSTANTS.Camera)
@@ -138,26 +128,25 @@ func load_settings() -> void:
 				GlobalSettings.DISPLAY.get_or_add(displayKey, displaySettingValue)
 
 # Retrieves the settings file from User:// or returns an empty dictionary if an error occured
+# TODO Will have to be refactored to not be get_var store_var because that is a security issue
+#		Even if you add encryption its still unecessary and a risk if key got leaked
+# TODO For the moment adding a key and encrypting it could be fun though
 func _get_settings_dictionary() -> Dictionary:
 	var file = FileAccess.open(self.SAVE_FILE, FileAccess.READ)
 	if file != null:
-		var content: String = file.get_as_text()
-		if not content.is_empty():
-			var json: JSON = JSON.new()
-			var error: Error = json.parse(content)
-			if error == OK:
-				var dataReceived: Dictionary = json.data
-				var expectedType: Variant.Type = TYPE_DICTIONARY
-				if typeof(dataReceived) == expectedType:
-					# TODO Need to deserialize InputEvents from the save file
-					return dataReceived
-				else:
-					Logger.error(self.UNEXPTECTED_FORMAT_LOG, [self.SAVE_FILE, expectedType, content], self)
+		if file.get_reference_count() == 1:
+			var storedObject = file.get_var(true)
+			var expectedType: Variant.Type = TYPE_DICTIONARY
+			var storedType: Variant.Type = typeof(storedObject)
+			if typeof(storedObject) == expectedType:
+				return storedObject
 			else:
-				Logger.error(self.JSON_ERROR_LOG, [json.get_error_message(), content, json.get_error_line(), self.SAVE_FILE], self)
+				Logger.error(UNEXPTECTED_TYPE_LOG, [expectedType, storedType], self)
 		else:
-			var saveError: Error = FileAccess.get_open_error()
-			Logger.error(self.UNABLE_TO_OPEN_LOG, [self.SAVE_FILE, saveError], self)
+			Logger.error(self.BAD_SAVE_FILE_LOG, [file.get_reference_count()], self)
+	else:
+		var saveError: Error = FileAccess.get_open_error()
+		Logger.error(self.UNABLE_TO_OPEN_LOG, [self.SAVE_FILE, saveError], self)
 	return {}
 
 # Reloads Project input settings using GlobalSettings
