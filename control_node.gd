@@ -144,7 +144,7 @@ func _get_settings_dictionary() -> Dictionary:
 				Logger.error(UNEXPTECTED_TYPE_LOG, [expectedType, storedType], self)
 		else:
 			Logger.error(self.BAD_SAVE_FILE_LOG, [file.get_reference_count()], self)
-	else:
+	elif FileAccess.get_open_error() != 7:
 		var saveError: Error = FileAccess.get_open_error()
 		Logger.error(self.UNABLE_TO_OPEN_LOG, [self.SAVE_FILE, saveError], self)
 	return {}
