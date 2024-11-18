@@ -69,17 +69,9 @@ func initialize_ui() -> void:
 	# Load in icons for set controls
 	for i in self.controlList.item_count:
 		var constantName: String = self._get_constant_name(self.controlList.get_item_text(i))
-		# TODO Make a private method to get the mappedKeyCode or buttonCode from whatever control dictionary the constant is stored in
-		#			Should be alright treating them as ints but with typing this might be an issue now and make us rework how icons are stored/referenced
 		var mappedInput: InputEvent = self._get_constant_value(constantName)
-		var mappedTexturePath: String = AssetManagement.INPUT_ICONS.get(mappedInput, "")
-		if mappedTexturePath != "":
-			var mappedTexture: Texture2D = load(mappedTexturePath)
-			self.controlList.set_item_icon(i, mappedTexture)
-		else:
-			var naKeyTexture: Texture2D = load(AssetManagement.INPUT_ICONS.UNKOWN)
-			self._update_selected_icons(naKeyTexture)
-			Logger.error(self.BAD_INPUT_LOG, [mappedInput], self)
+		var mappedTexture: Texture2D = AssetManagement.get_sprite(mappedInput)
+		self.controlList.set_item_icon(i, mappedTexture)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:

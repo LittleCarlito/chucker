@@ -18,7 +18,7 @@ const CAMERA = {
 	"TEE_CAMERA": "TeeboxCamera"
 }
 
-# TODO Verify that every caller is using InputEventLibrary as the key and not KeyCode
+# TODO Refactor this back to keycode you fucking retard
 var INPUT_ICONS: Dictionary = {
 	InputEventLibrary.A_KEY: "res://resources/Sprites/ControlIcons/A_Keycap.png",
 	InputEventLibrary.B_KEY: "res://resources/Sprites/ControlIcons/B_Keycap.png",
