@@ -60,6 +60,10 @@ const INPUT_LABEL: Dictionary = {
 	"Sprint": self.USER_INPUT.SPRINT
 }
 
+const KEYCODE_STRING: String = "keycode"
+const INPUT_TYPE_STRING:String = "input_type"
+const INPUT_DESCRIPTION_STRING: String = "input_description"
+
 const TEE_CAMERA: String = "TeeboxCamera"
 const Camera: String = "Camera"
 const FOV: String = "FOV"

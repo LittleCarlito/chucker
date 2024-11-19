@@ -1,5 +1,102 @@
 extends Node
 
+# TODO Ensure all of these are used
+const MISSING_KEY_LOG: String = "Incoming Dictionary was missing key \"%s\"; Using value \"%s\""
+const NO_MATCHED_TYPE_LOG: String = "Incoming value \"%s\", to method \"%s\", could not be matched to an input type; Returning INPUT_TYPE.UNKNOWN"
+const _CONVERT_KEYCODE_STRING: String = "convert_keycode_to_input_type"
+const _CONVERT_INT_STRING: String = "convert_int_to_input_type"
+const UNSUPPORTED_TYPE_LOG: String = "ControlSetting couldn't be converted to an InputEvent as it is not of a supported type; \"%s\""
+const NO_MATCHING_EVENT_LOG: String = "Keycode \"%s\" did not have a match in ALL_INPUTS and could not be converted to an InputEvent"
+
+enum INPUT_TYPE {
+	MOUSE,
+	KEYBOARD,
+	JOYSTICK,
+	UNKNOWN
+}
+
+# INPUT_TYPE conversions
+# TODO Add this call to the save_settings thing you were doing in options menu
+func convert_keycode_to_input_type(keycode: int) -> INPUT_TYPE:
+	var returnType: INPUT_TYPE
+	if KEYBOARD_INPUTS.has(keycode):
+		returnType = INPUT_TYPE.KEYBOARD
+	elif MOUSE_BUTTON_INPUTS.has(keycode):
+		returnType = INPUT_TYPE.MOUSE
+	else:
+		Logger.error(NO_MATCHED_TYPE_LOG, [str(keycode), _CONVERT_KEYCODE_STRING], self)
+		returnType = INPUT_TYPE.UNKNOWN
+	return returnType
+
+func convert_int_to_input_type(intValue: int) -> INPUT_TYPE:
+	var returnType: INPUT_TYPE
+	match intValue:
+		0:
+			returnType = INPUT_TYPE.MOUSE
+		1:
+			returnType = INPUT_TYPE.KEYBOARD
+		2:
+			returnType = INPUT_TYPE.JOYSTICK
+		_:
+			Logger.error(NO_MATCHED_TYPE_LOG, [str(intValue), _CONVERT_INT_STRING], self)
+			returnType = INPUT_TYPE.UNKNOWN
+	return returnType
+
+# ControlSetting conversions
+func convert_event_to_control_setting(event: InputEvent) -> ControlSetting:
+	var keycode: int = InputSprite.extract_keycode(event)
+	var inputType: INPUT_TYPE = InputSprite.extract_input_type(event)
+	var returnSetting: ControlSetting = ControlSetting.new(keycode, inputType, event.as_text())
+	return returnSetting
+
+func convert_dictionary_to_control_setting(incomingDictionary: Dictionary) -> ControlSetting:
+	# Get setting items from dictionary
+	var keycode: int = incomingDictionary.get(CONSTANTS.KEYCODE_STRING)
+	# TODO When deserialzing from saved file this is actually a string and needs to be converted back to an int
+	var inputTypeInt := incomingDictionary.get(CONSTANTS.INPUT_TYPE_STRING) as int
+	var inputDescription: String = incomingDictionary.get(CONSTANTS.INPUT_DESCRIPTION_STRING)
+	if keycode == null:
+		keycode = KEY_UNKNOWN
+		Logger.error(MISSING_KEY_LOG, [CONSTANTS.KEYCODE_STRING, str(keycode)], self)
+	if inputTypeInt == null:
+		inputTypeInt = INPUT_TYPE.UNKNOWN
+		Logger.error(MISSING_KEY_LOG, [CONSTANTS.KEYCODE_STRING, str(inputTypeInt)], self)
+	if inputDescription == null:
+		inputDescription = UNKNOWN_STRING
+		Logger.error(MISSING_KEY_LOG, [CONSTANTS.KEYCODE_STRING, inputDescription], self)
+	# Convert int back to enum
+	var inputType: INPUT_TYPE = self.convert_int_to_input_type(inputTypeInt)
+	return ControlSetting.new(keycode, inputType, inputDescription)
+
+func convert_controlsetting_to_dictionary(controlSetting: ControlSetting) -> Dictionary:
+	var returnDictionary = {}
+	returnDictionary.get_or_add(CONSTANTS.KEYCODE_STRING, controlSetting.keycode)
+	returnDictionary.get_or_add(CONSTANTS.INPUT_TYPE_STRING, str(controlSetting.inputType))
+	returnDictionary.get_or_add(CONSTANTS.INPUT_DESCRIPTION_STRING, controlSetting.inputDescription)
+	return returnDictionary
+
+# InputEvent conversions
+func convert_control_setting_to_input_event(controlSetting: ControlSetting) -> InputEvent:
+	var returnEvent: InputEvent
+	match controlSetting.inputType:
+		INPUT_TYPE.MOUSE:
+			returnEvent = MOUSE_BUTTON_INPUTS.get(controlSetting.keycode)
+		INPUT_TYPE.KEYBOARD:
+			returnEvent = KEYBOARD_INPUTS.get(controlSetting.keycode)
+		_:
+			# TODO Will need to implement gdscript version of to_string on ControlSetting object
+			Logger.error(UNSUPPORTED_TYPE_LOG, [str(controlSetting)], self)
+			returnEvent = UNKNOWN_KEY
+	return returnEvent
+
+# TODO Implmeent and add to OptionsMenu call to allow for description determination
+func convert_keycode_to_input_event(keycode: int) -> InputEvent:
+	var returnEvent: InputEvent = ALL_INPUTS.get(keycode, null)
+	if returnEvent == null:
+		Logger.error(NO_MATCHING_EVENT_LOG, [str(keycode)], self)
+		returnEvent = self.UNKNOWN_KEY
+	return returnEvent
+
 func _ready() -> void:
 	# A-Z keys
 	self.A_KEY.physical_keycode = KEY_A
@@ -69,7 +166,7 @@ func _ready() -> void:
 	self.PAGEDOWN_KEY.physical_keycode = KEY_PAGEDOWN
 	self.END_KEY.physical_keycode = KEY_END
 	self.INSERT_KEY.physical_keycode = KEY_INSERT
-	self.UNKOWN_KEY.physical_keycode = KEY_UNKNOWN
+	self.UNKNOWN_KEY.physical_keycode = KEY_UNKNOWN
 	# Mouse buttons
 	self.LEFT_MOUSE_BUTTON.button_index = MOUSE_BUTTON_LEFT
 	self.RIGHT_MOUSE_BUTTON.button_index = MOUSE_BUTTON_RIGHT
@@ -154,7 +251,7 @@ var PAGEUP_KEY: InputEventKey = InputEventKey.new()
 var PAGEDOWN_KEY: InputEventKey = InputEventKey.new()
 var END_KEY: InputEventKey = InputEventKey.new()
 var INSERT_KEY: InputEventKey = InputEventKey.new()
-var UNKOWN_KEY: InputEventKey = InputEventKey.new()
+var UNKNOWN_KEY: InputEventKey = InputEventKey.new()
 # Mouse buttons
 var LEFT_MOUSE_BUTTON: InputEventMouseButton = InputEventMouseButton.new()
 var RIGHT_MOUSE_BUTTON: InputEventMouseButton = InputEventMouseButton.new()
@@ -163,6 +260,9 @@ var XBUTTON1_MOUSE_BUTTON: InputEventMouseButton = InputEventMouseButton.new()
 var XBUTTON2_MOUSE_BUTTON: InputEventMouseButton = InputEventMouseButton.new()
 var UP_MOUSE_BUTTON: InputEventMouseButton = InputEventMouseButton.new()
 var DOWN_MOUSE_BUTTON: InputEventMouseButton = InputEventMouseButton.new()
+
+const UNKNOWN_STRING: String = "Unknown input"
+var UNKNOWN_CONTROL: ControlSetting = ControlSetting.new(KEY_UNKNOWN, INPUT_TYPE.KEYBOARD, UNKNOWN_STRING)
 
 var KEYBOARD_INPUTS: Dictionary = {
 	# A-Z keys
@@ -233,7 +333,7 @@ var KEYBOARD_INPUTS: Dictionary = {
 	KEY_PAGEDOWN: self.PAGEDOWN_KEY,
 	KEY_END: self.END_KEY,
 	KEY_INSERT: self.INSERT_KEY,
-	KEY_UNKNOWN: self.UNKOWN_KEY
+	KEY_UNKNOWN: self.UNKNOWN_KEY
 }
 
 var MOUSE_BUTTON_INPUTS: Dictionary = {
@@ -315,7 +415,7 @@ var ALL_INPUTS: Dictionary = {
 	KEY_PAGEDOWN: self.PAGEDOWN_KEY,
 	KEY_END: self.END_KEY,
 	KEY_INSERT: self.INSERT_KEY,
-	KEY_UNKNOWN: self.UNKOWN_KEY,
+	KEY_UNKNOWN: self.UNKNOWN_KEY,
 	# Mouse inputs
 	MOUSE_BUTTON_LEFT: self.LEFT_MOUSE_BUTTON,
 	MOUSE_BUTTON_RIGHT: self.RIGHT_MOUSE_BUTTON,

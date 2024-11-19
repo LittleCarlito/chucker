@@ -4,7 +4,6 @@ class_name ControlNode
 const UNABLE_TO_OPEN_LOG: String = "Unable to open %s; Error: %s"
 const EMPTY_SAVE_LOG:String = "Must provide settings to be saved; Input: %s"
 const UNEXPTECTED_TYPE_LOG: String = "Save file object was not expected type"
-const BAD_SAVE_FILE_LOG: String = "Save Dictionary contained more than the 1 expected item; Contained \"%d\" items"
 const BAD_USER_INPUT_LOG: String = "Value from USER_INPUT \"%s\" could not be mapped to a GLOBAL_SETTING"
 
 @onready var scorecard: ScorecardView = $ScorecardView
@@ -68,18 +67,20 @@ func save_to_settings(saveSettings: Dictionary) -> void:
 		# If new save file
 		else:
 			finalSettings = saveSettings
+		# Convert settings Dictionary to JSON
+		var settingJson: String = JSON.stringify(finalSettings)
 		# Write to settings file
 		var file = FileAccess.open(self.SAVE_FILE, FileAccess.WRITE)
 		if file != null:
-			# TODO If this works see if setting this to false works too
-			#		Otherwise will need some kind of executable scanning because the loading of this could be used to inject code
-			file.store_var(finalSettings, true)
+			file.store_string(settingJson)
+			file.close()
 		else:
 			var saveError: Error = FileAccess.get_open_error()
 			Logger.error(self.UNABLE_TO_OPEN_LOG, [self.SAVE_FILE, saveError], self)
 	else:
 		Logger.error(self.EMPTY_SAVE_LOG,[saveSettings], self)
 
+# TODO Think this is causing issues with not breaking ControlSetting objects back down to Dictionary objects before adding to save setting output
 func _update_settings(saveSettings: Dictionary) -> Dictionary:
 	var settingsDictionary = self._get_settings_dictionary()
 	var saveCategories: Array = saveSettings.keys()
@@ -99,7 +100,8 @@ func _update_settings(saveSettings: Dictionary) -> Dictionary:
 			settingsDictionary.get_or_add(category, saveSettings.get(category))
 	return settingsDictionary
 
-# TODO Broken start here
+# TODO Setting controls to unbound isn't working
+#			For unknown it is setting keycode to 0; Would rather have some super crazy value that won't parse to null
 func load_settings() -> void:
 	var dataReceived: Dictionary = self._get_settings_dictionary()
 	# Controls
@@ -107,7 +109,9 @@ func load_settings() -> void:
 		var controlSettings: Dictionary = dataReceived.get(CONSTANTS.Controls)
 		for controlKey in GlobalSettings.CONTROLS.keys():
 			if controlSettings.has(controlKey):
-				var controlInput: InputEvent = controlSettings.get(controlKey)
+				var controlNode: ControlSetting = controlSettings.get(controlKey)
+				var controlSetting := controlNode as ControlSetting
+				var controlInput: InputEvent = InputEventLibrary.convert_control_setting_to_input_event(controlSetting)
 				GlobalSettings.CONTROLS.erase(controlKey)
 				GlobalSettings.CONTROLS.get_or_add(controlKey, controlInput)
 	# Camera settings
@@ -128,24 +132,38 @@ func load_settings() -> void:
 				GlobalSettings.DISPLAY.get_or_add(displayKey, displaySettingValue)
 
 # Retrieves the settings file from User:// or returns an empty dictionary if an error occured
-# TODO Will have to be refactored to not be get_var store_var because that is a security issue
-#		Even if you add encryption its still unecessary and a risk if key got leaked
-# TODO For the moment adding a key and encrypting it could be fun though
 func _get_settings_dictionary() -> Dictionary:
+	var returnDictionary: Dictionary = {}
 	var file = FileAccess.open(self.SAVE_FILE, FileAccess.READ)
 	if file != null:
-		if file.get_reference_count() == 1:
-			var storedObject = file.get_var(true)
-			if storedObject is Dictionary:
-				return storedObject
+		var json: JSON = JSON.new()
+		var error: Error = json.parse(file.get_as_text())
+		if error == OK:
+			var retirevedData = json.data
+			var expectedType: Variant.Type = TYPE_DICTIONARY
+			if typeof(retirevedData) == expectedType:
+				var incomingControlSettings: Dictionary = retirevedData.get(CONSTANTS.Controls, {})
+				var incomingCameraSettings: Dictionary = retirevedData.get(CONSTANTS.Camera, {})
+				var incomingDisplaySettings: Dictionary = retirevedData.get(CONSTANTS.Display, {})
+				if !incomingControlSettings.is_empty():
+					var controlSettings: Dictionary = {}
+					var controlKeys: Array = incomingControlSettings.keys()
+					for controlKey in controlKeys:
+						# TODO Had this break when mapping from an UKNOWN_KEY to a key
+						#		This is caused by an issue with the update logic
+						var convertedSetting: ControlSetting = InputEventLibrary.convert_dictionary_to_control_setting(incomingControlSettings.get(controlKey))
+						controlSettings.get_or_add(controlKey, convertedSetting)
+					returnDictionary.get_or_add(CONSTANTS.Controls, controlSettings)
+				if !incomingCameraSettings.is_empty():
+					returnDictionary.get_or_add(CONSTANTS.Camera, incomingCameraSettings)
+				if !incomingDisplaySettings.is_empty():
+					returnDictionary.get_or_add(CONSTANTS.Display, incomingDisplaySettings)
 			else:
 				Logger.error(UNEXPTECTED_TYPE_LOG, [], self)
-		else:
-			Logger.error(self.BAD_SAVE_FILE_LOG, [file.get_reference_count()], self)
 	elif FileAccess.get_open_error() != 7:
 		var saveError: Error = FileAccess.get_open_error()
 		Logger.error(self.UNABLE_TO_OPEN_LOG, [self.SAVE_FILE, saveError], self)
-	return {}
+	return returnDictionary
 
 # Reloads Project input settings using GlobalSettings
 func reload_project_settings() -> void:
@@ -153,7 +171,7 @@ func reload_project_settings() -> void:
 	for userInput in userInputs:
 		var boundKey: InputEvent = GlobalSettings.CONTROLS.get(userInput)
 		if boundKey != null:
-			InputMap.erase_action(userInput)
+			InputMap.action_erase_events(userInput)
 			InputMap.action_add_event(userInput, boundKey)
 		else:
 			Logger.error(BAD_USER_INPUT_LOG, [userInput], self)

@@ -12,7 +12,7 @@ var controlToUpdate: String
 var detectLeftClickInput: bool = false
 var cursorOffMenu: bool = false
 var pressCount: int = 0 
-var selectedInput: InputEvent
+var selectedInput: ControlSetting = null
 
 signal save_input(controlToUpdate, selectedInput)
 signal menu_closed
@@ -33,11 +33,10 @@ func _input(event: InputEvent) -> void:
 			pressCount += 1
 			self._set_icon_texture(event)
 
-# TODO Not working
 func _set_icon_texture(event: InputEvent) -> void:
 	var inputTexture: Texture2D = InputSprite.get_sprite(event)
 	self.inputIconDisplay.texture = inputTexture
-	self.selectedInput = event
+	self.selectedInput = InputEventLibrary.convert_event_to_control_setting(event)
 	self.waitingTitle.visible = false
 
 func reset_ui() -> void:
@@ -66,7 +65,8 @@ func _cursor_on_menu() -> void:
 	self.cursorOffMenu = false
 
 func _save_input() -> void:
-	save_input.emit(controlToUpdate, selectedInput)
+	if selectedInput != null:
+		save_input.emit(controlToUpdate, selectedInput)
 	self.close_menu()
 
 func open_menu(incomingControl: String) -> void:

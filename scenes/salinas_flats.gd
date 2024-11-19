@@ -46,5 +46,5 @@ func _enable_character_movement() -> void:
 
 func _apply_settings() -> void:
 	# TODO Was removing all user inputs improperly
-	#controlNode.reload_project_settings()
+	controlNode.reload_project_settings()
 	chuckChucker.load_settings()

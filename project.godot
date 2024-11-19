@@ -26,6 +26,10 @@ GlobalSettings="*res://configuration/global_settings.gd"
 InputSprite="*res://configuration/sprite/input_sprite.gd"
 SceneLibrary="*res://configuration/scenes/scene_library.gd"
 
+[improved_json]
+
+config/json_object_config_registry="res://utils/JSONObjectConfigRegistry.tres"
+
 [input]
 
 rotate_left={

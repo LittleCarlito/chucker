@@ -1,9 +1,10 @@
 extends Node
 
 const NO_MATCH_FOUND_LOG: String = "Matching icon for input \"%s\" could not be found; Returning blank keycap"
-const UNSUPPORTED_TYPE: String = "Event was unsupported type \"%s\""
+const UNSUPPORTED_TYPE: String = "%s recieved an unsupported event type \"%s\"; Returning value for Unknown"
+const _EXTRACT_KEYCODE_STRING: String = "extract_keycode"
+const _EXTRACT_INPUT_TYPE_STRING: String = "extract_input_type"
 
-# TODO Make sure all callers are using this instance and getting by keycode
 const INPUT_ICONS: Dictionary = {
 	KEY_A: "res://resources/Sprites/ControlIcons/A_Keycap.png",
 	KEY_B: "res://resources/Sprites/ControlIcons/B_Keycap.png",
@@ -80,7 +81,8 @@ const INPUT_ICONS: Dictionary = {
 	KEY_UNKNOWN: "res://resources/Sprites/ControlIcons/Blank_Keycap.png"
 }
 
-var UKNOWN_TEXTURE: Texture2D = load("res://resources/Sprites/ControlIcons/Blank_Keycap.png")
+var UNKNOWN_PATH: String = "res://resources/Sprites/ControlIcons/Blank_Keycap.png"
+var UNKNOWN_TEXTURE: Texture2D = load(self.UNKNOWN_PATH)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -106,10 +108,24 @@ func get_sprite(event: InputEvent) -> Texture2D:
 
 func extract_keycode(event: InputEvent) -> int:
 	var returnValue: int
-	if event is InputEventMouseButton:
+	if event is InputEventMouseButton || event is InputEventJoypadButton:
 		returnValue = event.button_index
 	elif event is InputEventKey:
 		returnValue = event.physical_keycode
 	else:
-		Logger.error(UNSUPPORTED_TYPE, [str(event)], self)
+		Logger.error(UNSUPPORTED_TYPE, [self._EXTRACT_KEYCODE_STRING, str(event)], self)
+		returnValue = KEY_UNKNOWN
 	return returnValue
+
+func extract_input_type(event: InputEvent) -> InputEventLibrary.INPUT_TYPE:
+	var returnType: InputEventLibrary.INPUT_TYPE
+	if event is InputEventMouseButton:
+		returnType = InputEventLibrary.INPUT_TYPE.MOUSE
+	elif event is InputEventKey:
+		returnType = InputEventLibrary.INPUT_TYPE.KEYBOARD
+	elif event is InputEventJoypadButton:
+		returnType = InputEventLibrary.INPUT_TYPE.JOYSTICK
+	else:
+		Logger.error(UNSUPPORTED_TYPE, [self._EXTRACT_INPUT_TYPE_STRING, str(event)], self)
+		returnType = InputEventLibrary.INPUT_TYPE.UNKNOWN
+	return returnType

@@ -1,11 +1,17 @@
 extends Control
 class_name OptionsMenu
 
+# TODO Have this menu go back to PauseMenu on esc and not close all menus
+
+# TODO Make sure all these are actually used
 const UPDATE_CONTROL_LOG: String = "Updating control \"%s\" to input \"%s\""
 const SELECT_ERROR_LOG: String = "Incorrect number of items selected to change control input; \"%s\" items selected"
-const MISSING_CONSTANT_LOG: String = "\"%s\" does not have an associated value in CONSTANTS.INPUT_LABEL"
+const UNBOUND_INPUT_LOG: String = "\"%s\" is not bound to an input"
 const BAD_CONSTANT_LOG: String = "Control setting \"%s\" couldn't be mapped back to a ControlList text label"
 const MISSING_CONSTNAT_LOG: String = "Value for constantName \"%s\" could not be found"
+const UNBIND_LOG: String = "Input \"%s\" key has been rebound"
+const CONTROL_REMAPPED_LOG: String = "Control \"%s\" has been remapped from \"%s\" to \"%s\""
+const NO_KEYCODE_ICON_STRING: String = "Path \"%s\" could not be mapped back to a keycode; Not persisting input change"
 
 @onready var fovSlider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovSliderContainer/FovSlider
 @onready var fovValue: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovValueCenter/FovValue
@@ -26,12 +32,6 @@ const MISSING_CONSTNAT_LOG: String = "Value for constantName \"%s\" could not be
 @onready var controlList: ItemList = $MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls/ControlsRows/ControlList
 @onready var general: Panel = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General
 @onready var optionTabContainer: TabContainer = $MainContainer/ContentBox/OptionRows/OptionTabContainer
-
-# TODO See about refactoring controlSettings to String, InputEvent dictionary
-#			If doesn't work will have to split out Keyboard and Mouse controls to separate dictionaries
-#			If it does work then GLOBAL_SETTINGS controls need to be recondensed to single dictionary
-# TODO Update fov, view invert, sensitivity references to CAMERA dictionary and not CONTROLS
-# TODO Need to have apply call overwrite PROJECT_SETTINGS stuff and save() it
 
 enum SETTING_TABS {GENERAL, CONTROLS, GRAPHICS}
 var cameraSettings: Dictionary
@@ -91,6 +91,7 @@ func _on_back_menu() -> void:
 	self.initialize_ui()
 
 func _on_save_menu() -> void:
+	self._save_controls()
 	if not self.controlSettings.is_empty():
 		self.saveSettings.get_or_add(CONSTANTS.Controls, self.controlSettings)
 	if not self.cameraSettings.is_empty():
@@ -101,6 +102,25 @@ func _on_save_menu() -> void:
 		self.save_settings.emit(self.saveSettings)
 		apply_settings.emit()
 		self._reset_variables(self.optionTabContainer.current_tab)
+
+# Compares ControlList items to set controls and saves the updated controls to ControlSetting
+func _save_controls() -> void:
+	for controlListIndex in self.controlList.item_count:
+		var constantName: String = self._get_constant_name(self.controlList.get_item_text(controlListIndex))
+		var constantValue: InputEvent = self._get_constant_value(constantName)
+		var constantIconPath: String = InputSprite.get_sprite(constantValue).resource_path
+		var iconPath: String = controlList.get_item_icon(controlListIndex).resource_path
+		if constantIconPath != iconPath:
+			var mappedKeycode: int = InputSprite.INPUT_ICONS.find_key(iconPath)
+			if mappedKeycode != null:
+				var mappedEvent: InputEvent = InputEventLibrary.convert_keycode_to_input_event(mappedKeycode)
+				var controlSetting: ControlSetting = InputEventLibrary.convert_event_to_control_setting(mappedEvent)
+				var controlDictionary: Dictionary = InputEventLibrary.convert_controlsetting_to_dictionary(controlSetting)
+				controlSettings.get_or_add(constantName, controlDictionary)
+				Logger.debug(CONTROL_REMAPPED_LOG, [constantName, constantValue.as_text(), controlSetting.inputDescription], self)
+			else:
+				Logger.error(NO_KEYCODE_ICON_STRING, [iconPath], self)
+
 
 func _reset_variables(activeTab: int) -> void:
 	self.saveSettings.clear()
@@ -163,18 +183,17 @@ func _open_control_select_menu(index: int, _clickPosition: Vector2, mouseButtonI
 func _control_select_closed() -> void:
 	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 
-func _control_select_set(controlToUpdate: String, selectedInput: InputEvent) -> void:
+# TODO To address BUG 1 refactor this class to not bother with ControlSettings until save is about to emit
+#			Iterate through ControlList items when setting and unbinding
+func _control_select_set(controlToUpdate: String, selectedInput: ControlSetting) -> void:
 	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
-	Logger.debug(UPDATE_CONTROL_LOG, [controlToUpdate, str(selectedInput.as_text())], self)
-	var newTexture: Texture2D = InputSprite.get_sprite(selectedInput)
-	if newTexture != InputSprite.UKNOWN_TEXTURE:
+	Logger.debug(UPDATE_CONTROL_LOG, [controlToUpdate, selectedInput.inputDescription], self)
+	var newTexture: Texture2D = load(InputSprite.INPUT_ICONS.get(selectedInput.keycode, InputSprite.UNKNOWN_PATH))
+	if newTexture != InputSprite.UNKNOWN_TEXTURE:
 		var selectedIcons: PackedInt32Array = self.controlList.get_selected_items()
 		if selectedIcons.size() == 1:
 			self._unbind_input(selectedInput)
 			self._update_selected_icons(newTexture)
-			var controlItemText: String = self.controlList.get_item_text(selectedIcons[0])
-			var controlConstant: String = self._get_constant_name(controlItemText)
-			self.controlSettings.get_or_add(controlConstant, selectedInput)
 		else:
 			Logger.error(self.SELECT_ERROR_LOG, [str(selectedIcons.size())], self)
 
@@ -184,36 +203,20 @@ func _update_selected_icons(newIcon: Texture2D) -> void:
 	for i in selectedIcons.size():
 		self.controlList.set_item_icon(selectedIcons[i], newIcon)
 
-func _unbind_input(selectedInput: InputEvent) -> void:
-	var selectedKeycode: int = InputSprite.extract_keycode(selectedInput)
-	# Check intermediate changes
-	for settingKey in controlSettings.keys():
-		var updatedKeyEvent: InputEvent = controlSettings.get(settingKey)
-		var updatedKeycode: int = InputSprite.extract_keycode(updatedKeyEvent)
-		# TODO selectedInput is the event from controlSelect _input and needs to be converted to be compatible with InputEventLibrary objects
-		if updatedKeyEvent != InputEventLibrary.UNKOWN_KEY and (selectedKeycode == updatedKeycode):
-			var settingIndex: int = self._get_control_index(settingKey)
-			if settingIndex != CONSTANTS.INT32_MAX:
-				self._assign_blank_keycap(settingIndex)
-				self.controlSettings.erase(settingKey)
-				self.controlSettings.get_or_add(settingKey, InputEventLibrary.UNKOWN_KEY)
-			else:
-				Logger.error(BAD_CONSTANT_LOG, [settingKey], self)
-	# Check set controls
+# Unbinds the control with the matching keycode
+func _unbind_input(selectedInput: ControlSetting) -> void:
+	# Check control list for matching items and unbind
+	var incomingInputPath: String = InputSprite.INPUT_ICONS.get(selectedInput.keycode)
 	for controlListIndex in self.controlList.item_count:
-		var constantName: String = self._get_constant_name(self.controlList.get_item_text(controlListIndex))
-		var mappedInput: InputEvent = self._get_constant_value(constantName)
-		var mappedKeycode: int = InputSprite.extract_keycode(mappedInput)
-		if mappedInput != InputEventLibrary.UNKOWN_KEY and (mappedKeycode == selectedKeycode):
+		var iconPath: String = controlList.get_item_icon(controlListIndex).resource_path
+		if iconPath == incomingInputPath:
+			var inputDescription: String = self.controlList.get_item_text(controlListIndex)
+			Logger.debug(UNBIND_LOG, [inputDescription], self)
 			self._assign_blank_keycap(controlListIndex)
-			var controlTextToUnbind: String = self.controlList.get_item_text(controlListIndex)
-			var controlConstant: String = self._get_constant_name(controlTextToUnbind)
-			# TODO Need to find a way to assign unbound as an InputEvent in the map
-			self.controlSettings.get_or_add(controlConstant, InputEventLibrary.UNKOWN_KEY)
 
 # Applys blank keycap texture to the passed in index of ControlList
 func _assign_blank_keycap(index: int) -> void:
-	self.controlList.set_item_icon(index, InputSprite.UKNOWN_TEXTURE)
+	self.controlList.set_item_icon(index, InputSprite.UNKNOWN_TEXTURE)
 
 # Converts the itemText to its assoicated GLOBAL_SETTINGS input name
 func _get_constant_name(itemText: String) -> String:
@@ -223,13 +226,14 @@ func _get_constant_name(itemText: String) -> String:
 	return constantValue
 
 # Checks control dictionaries for stored value of constantName
-# If not found returns UKNOWN_KEY InputEvent
+# If not found returns UNKNOWN_KEY InputEvent
 func _get_constant_value(constantName: String) -> InputEvent:
 	# Check GlobalSettings for control constant with matching name
-	var mappedValue: InputEvent = GlobalSettings.CONTROLS.get(constantName, InputEventLibrary.UNKOWN_KEY)
-	if mappedValue == InputEventLibrary.UNKOWN_KEY:
-		# Not found; Log and return value for UNKOWN
-		Logger.error(MISSING_CONSTANT_LOG, [constantName], self)
+	var mappedValue: InputEvent = GlobalSettings.CONTROLS.get(constantName, InputEventLibrary.UNKNOWN_KEY)
+# TODO OptionsMenu: "move_left" does not have an associated value in CONSTANTS.INPUT_LABEL log
+	if mappedValue == InputEventLibrary.UNKNOWN_KEY:
+		# Log key is not bound and return UKNOWN value
+		Logger.error(UNBOUND_INPUT_LOG, [constantName], self)
 	return mappedValue
 
 # Returns the index in ControlList for the provided GLOBAL_SETTINGS name
