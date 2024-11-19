@@ -1,7 +1,7 @@
 extends ThrowableItem
 class_name ChargeDisk
 
-const diskMesh: PackedScene = preload(AssetManagement.MESH.CHARGE_SCENE)
+const diskMesh: PackedScene = preload(SceneLibrary.MESH.CHARGE_SCENE)
 
 @onready var chargeView: ChargeView = $ChargeView
 

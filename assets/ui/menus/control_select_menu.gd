@@ -35,7 +35,7 @@ func _input(event: InputEvent) -> void:
 
 # TODO Not working
 func _set_icon_texture(event: InputEvent) -> void:
-	var inputTexture: Texture2D = AssetManagement.get_sprite(event)
+	var inputTexture: Texture2D = InputSprite.get_sprite(event)
 	self.inputIconDisplay.texture = inputTexture
 	self.selectedInput = event
 	self.waitingTitle.visible = false

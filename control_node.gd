@@ -3,7 +3,7 @@ class_name ControlNode
 
 const UNABLE_TO_OPEN_LOG: String = "Unable to open %s; Error: %s"
 const EMPTY_SAVE_LOG:String = "Must provide settings to be saved; Input: %s"
-const UNEXPTECTED_TYPE_LOG: String = "Save file object was not expected type %s; Saved object type \"%s\""
+const UNEXPTECTED_TYPE_LOG: String = "Save file object was not expected type"
 const BAD_SAVE_FILE_LOG: String = "Save Dictionary contained more than the 1 expected item; Contained \"%d\" items"
 const BAD_USER_INPUT_LOG: String = "Value from USER_INPUT \"%s\" could not be mapped to a GLOBAL_SETTING"
 
@@ -38,7 +38,7 @@ func _input(event: InputEvent) -> void:
 		disable_movement.emit()
 		# Determine what camera is active so we know how big to make the scorecard
 		var currentCamera: Camera3D = self.get_tree().root.get_camera_3d()
-		if(currentCamera.name == AssetManagement.CAMERA.TEE_CAMERA):
+		if(currentCamera.name == CONSTANTS.TEE_CAMERA):
 			self.scorecard.set_pixel_size(CONSTANTS.MENU.SCORECARD.TEEBOX_PIXEL_SIZE)
 		else:
 			self.scorecard.set_pixel_size(CONSTANTS.MENU.SCORECARD.PLAYER_PIXEL_SIZE)
@@ -136,12 +136,10 @@ func _get_settings_dictionary() -> Dictionary:
 	if file != null:
 		if file.get_reference_count() == 1:
 			var storedObject = file.get_var(true)
-			var expectedType: Variant.Type = TYPE_DICTIONARY
-			var storedType: Variant.Type = typeof(storedObject)
-			if typeof(storedObject) == expectedType:
+			if storedObject is Dictionary:
 				return storedObject
 			else:
-				Logger.error(UNEXPTECTED_TYPE_LOG, [expectedType, storedType], self)
+				Logger.error(UNEXPTECTED_TYPE_LOG, [], self)
 		else:
 			Logger.error(self.BAD_SAVE_FILE_LOG, [file.get_reference_count()], self)
 	elif FileAccess.get_open_error() != 7:

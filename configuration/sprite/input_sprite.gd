@@ -3,21 +3,6 @@ extends Node
 const NO_MATCH_FOUND_LOG: String = "Matching icon for input \"%s\" could not be found; Returning blank keycap"
 const UNSUPPORTED_TYPE: String = "Event was unsupported type \"%s\""
 
-const DISK = {
-	"SCENE": "res://assets/items/ChuckDisk.tscn",
-	"PATH_SCENE": "res://assets/items/PathDisk.tscn"
-}
-
-const MESH = {
-	"CHARGE_SCENE": "res://assets/items/ChargeDisk.tscn",
-	"PULL_SCENE": "res://assets/items/PullDisk.tscn"
-}
-
-const CAMERA = {
-	# This needs to match the camera node name in ChuckTee scene
-	"TEE_CAMERA": "TeeboxCamera"
-}
-
 # TODO Verify that every caller is using InputEventLibrary as the key and not KeyCode
 const INPUT_ICONS: Dictionary = {
 	KEY_A: "res://resources/Sprites/ControlIcons/A_Keycap.png",
@@ -114,8 +99,8 @@ func get_sprite(event: InputEvent) -> Texture2D:
 	for possibleInput in possibleInputs:
 		var possibleKeyCode: int = self.extract_keycode(possibleInput)
 		if possibleKeyCode == incomingKeycode:
-			matchedInputKeycode =  possibleInput
-	if matchedInputKeycode == KEY_UNKNOWN:
+			matchedInputKeycode = possibleKeyCode
+	if (incomingKeycode != KEY_UNKNOWN) && (matchedInputKeycode == KEY_UNKNOWN):
 		Logger.error(NO_MATCH_FOUND_LOG, [str(event)], self)
 	return load(self.INPUT_ICONS.get(matchedInputKeycode))
 

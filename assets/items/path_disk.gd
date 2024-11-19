@@ -15,7 +15,7 @@ class_name PathDisk
 # TODO Add original launch velocity on z axis to disk when collision is detected
 #		Need to make collision with ground more realistic
 
-const thrownDisk: PackedScene = preload(AssetManagement.DISK.PATH_SCENE)
+const thrownDisk: PackedScene = preload(SceneLibrary.DISK.PATH_SCENE)
 
 @onready var path3d: Path3D = $Path3D
 @onready var pathFollow3d: PathFollow3D = $Path3D/PathFollow3D

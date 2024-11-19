@@ -118,7 +118,7 @@ func get_sprite(event: InputEvent) -> Texture2D:
 	if matchedInput == null:
 		Logger.error(NO_MATCH_FOUND_LOG, [event], self)
 		matchedInput = InputEventLibrary.UNKOWN_KEY
-	return load(AssetManagement.INPUT_ICONS.get(matchedInput))
+	return load(self.INPUT_ICONS.get(matchedInput))
 
 func extract_keycode(event: InputEvent) -> int:
 	var returnValue: int

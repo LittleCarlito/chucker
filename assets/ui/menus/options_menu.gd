@@ -70,7 +70,7 @@ func initialize_ui() -> void:
 	for i in self.controlList.item_count:
 		var constantName: String = self._get_constant_name(self.controlList.get_item_text(i))
 		var mappedInput: InputEvent = self._get_constant_value(constantName)
-		var mappedTexture: Texture2D = AssetManagement.get_sprite(mappedInput)
+		var mappedTexture: Texture2D = InputSprite.get_sprite(mappedInput)
 		self.controlList.set_item_icon(i, mappedTexture)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -167,8 +167,8 @@ func _control_select_closed() -> void:
 func _control_select_set(controlToUpdate: String, selectedInput: InputEvent) -> void:
 	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 	Logger.debug(UPDATE_CONTROL_LOG, [controlToUpdate, str(selectedInput.as_text())], self)
-	var newTexture: Texture2D = AssetManagement.get_sprite(selectedInput)
-	if newTexture != AssetManagement.UKNOWN_TEXTURE:
+	var newTexture: Texture2D = InputSprite.get_sprite(selectedInput)
+	if newTexture != InputSprite.UKNOWN_TEXTURE:
 		var selectedIcons: PackedInt32Array = self.controlList.get_selected_items()
 		if selectedIcons.size() == 1:
 			self._unbind_input(selectedInput)
@@ -179,7 +179,7 @@ func _control_select_set(controlToUpdate: String, selectedInput: InputEvent) -> 
 		else:
 			Logger.error(self.SELECT_ERROR_LOG, [str(selectedIcons.size())], self)
 	else:
-		var naKeyTexture: Texture2D = load(AssetManagement.INPUT_ICONS.UNKOWN)
+		var naKeyTexture: Texture2D = load(InputSprite.INPUT_ICONS.KEY_UNKNOWN)
 		self._update_selected_icons(naKeyTexture)
 		Logger.error(self.BAD_INPUT_LOG, [selectedInput], self)
 
@@ -190,11 +190,11 @@ func _update_selected_icons(newIcon: Texture2D) -> void:
 		self.controlList.set_item_icon(selectedIcons[i], newIcon)
 
 func _unbind_input(selectedInput: InputEvent) -> void:
-	var selectedKeycode: int = AssetManagement.extract_keycode(selectedInput)
+	var selectedKeycode: int = InputSprite.extract_keycode(selectedInput)
 	# Check intermediate changes
 	for settingKey in controlSettings.keys():
 		var updatedKeyEvent: InputEvent = controlSettings.get(settingKey)
-		var updatedKeycode: int = AssetManagement.extract_keycode(updatedKeyEvent)
+		var updatedKeycode: int = InputSprite.extract_keycode(updatedKeyEvent)
 		# TODO selectedInput is the event from controlSelect _input and needs to be converted to be compatible with InputEventLibrary objects
 		if updatedKeyEvent != InputEventLibrary.UNKOWN_KEY and (selectedKeycode == updatedKeycode):
 			var settingIndex: int = self._get_control_index(settingKey)
@@ -208,7 +208,7 @@ func _unbind_input(selectedInput: InputEvent) -> void:
 	for controlListIndex in self.controlList.item_count:
 		var constantName: String = self._get_constant_name(self.controlList.get_item_text(controlListIndex))
 		var mappedInput: InputEvent = self._get_constant_value(constantName)
-		var mappedKeycode: int = AssetManagement.extract_keycode(mappedInput)
+		var mappedKeycode: int = InputSprite.extract_keycode(mappedInput)
 		if mappedInput != InputEventLibrary.UNKOWN_KEY and (mappedKeycode == selectedKeycode):
 			self._assign_blank_keycap(controlListIndex)
 			var controlTextToUnbind: String = self.controlList.get_item_text(controlListIndex)
@@ -218,7 +218,7 @@ func _unbind_input(selectedInput: InputEvent) -> void:
 
 # Applys blank keycap texture to the passed in index of ControlList
 func _assign_blank_keycap(index: int) -> void:
-	self.controlList.set_item_icon(index, AssetManagement.UKNOWN_TEXTURE)
+	self.controlList.set_item_icon(index, InputSprite.UKNOWN_TEXTURE)
 
 # Converts the itemText to its assoicated GLOBAL_SETTINGS input name
 func _get_constant_name(itemText: String) -> String:

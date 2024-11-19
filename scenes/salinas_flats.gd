@@ -30,10 +30,6 @@ extends Node3D
 # TODO Give chuck a bag he carries
 #		Allow the bag to have 6 x 6 inventory where disks are stored and can be chosen/equipped
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		Logger.error(str(event.button_index), [], self)
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	self._apply_settings()

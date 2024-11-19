@@ -4,7 +4,7 @@ class_name ChuckDisk
 # TODO PreCollisionDetection box isn't doing anything
 #		Add signal connection in PathDisk to awaken and add force to landing
 
-const thrownDisk: PackedScene = preload(AssetManagement.DISK.SCENE)
+const thrownDisk: PackedScene = preload(SceneLibrary.DISK.SCENE)
 
 @onready var diskMesh: MeshInstance3D = $DiskMesh
 @onready var cameraContainer: Node3D = $CameraContainer

@@ -6,7 +6,7 @@ class_name PullDisk
 #		Probably make that part of ThrowableItem and not have it in both
 #		Make it shake the disk as timer gets closer until it finally just inaccurately launches
 
-const diskMesh: PackedScene = preload(AssetManagement.MESH.PULL_SCENE)
+const diskMesh: PackedScene = preload(SceneLibrary.MESH.PULL_SCENE)
 
 @onready var pullDraw: PullDraw = $PullDraw
 @onready var chargeView: ChargeView = $ChargeView
