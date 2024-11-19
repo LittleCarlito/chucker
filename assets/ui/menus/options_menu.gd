@@ -92,7 +92,6 @@ func _on_back_menu() -> void:
 	self.initialize_ui()
 
 func _on_save_menu() -> void:
-	# TODO Need to refactor for keyboard mouse sections
 	if not self.controlSettings.is_empty():
 		self.saveSettings.get_or_add(CONSTANTS.Controls, self.controlSettings)
 	if not self.cameraSettings.is_empty():
