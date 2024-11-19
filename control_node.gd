@@ -58,7 +58,7 @@ func _on_pause_menu_save_settings(saveSettings: Dictionary) -> void:
 	self.save_to_settings(saveSettings)
 	self.load_settings()
 
-# TODO Refactor this to use file.set_vars instead of using JSON
+# TODO Refactor this to write a useable data object in JSON instead of store_var and get_var
 func save_to_settings(saveSettings: Dictionary) -> void:
 	if !saveSettings.is_empty():
 		var finalSettings: Dictionary

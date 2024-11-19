@@ -3,7 +3,7 @@ extends Node
 const NO_MATCH_FOUND_LOG: String = "Matching icon for input \"%s\" could not be found; Returning blank keycap"
 const UNSUPPORTED_TYPE: String = "Event was unsupported type \"%s\""
 
-# TODO Verify that every caller is using InputEventLibrary as the key and not KeyCode
+# TODO Make sure all callers are using this instance and getting by keycode
 const INPUT_ICONS: Dictionary = {
 	KEY_A: "res://resources/Sprites/ControlIcons/A_Keycap.png",
 	KEY_B: "res://resources/Sprites/ControlIcons/B_Keycap.png",

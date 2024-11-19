@@ -2,7 +2,6 @@ extends Control
 class_name OptionsMenu
 
 const UPDATE_CONTROL_LOG: String = "Updating control \"%s\" to input \"%s\""
-const BAD_INPUT_LOG: String = "Input \"%s\" does not have an associated icon"
 const SELECT_ERROR_LOG: String = "Incorrect number of items selected to change control input; \"%s\" items selected"
 const MISSING_CONSTANT_LOG: String = "\"%s\" does not have an associated value in CONSTANTS.INPUT_LABEL"
 const BAD_CONSTANT_LOG: String = "Control setting \"%s\" couldn't be mapped back to a ControlList text label"
@@ -178,10 +177,6 @@ func _control_select_set(controlToUpdate: String, selectedInput: InputEvent) -> 
 			self.controlSettings.get_or_add(controlConstant, selectedInput)
 		else:
 			Logger.error(self.SELECT_ERROR_LOG, [str(selectedIcons.size())], self)
-	else:
-		var naKeyTexture: Texture2D = load(InputSprite.INPUT_ICONS.KEY_UNKNOWN)
-		self._update_selected_icons(naKeyTexture)
-		Logger.error(self.BAD_INPUT_LOG, [selectedInput], self)
 
 # Updates selected icons in ControlList to the passed in texture
 func _update_selected_icons(newIcon: Texture2D) -> void:
