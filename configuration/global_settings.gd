@@ -18,10 +18,6 @@ const DISK: Dictionary = {
 	"MAX_OFFSET": 400
 }
 
-# TODO Need to get all logic using changed dictionaries fixed
-#		Contorl Setting will need to sort through multiple dictionaries to find what it wants now
-#			Or maybe there is a way to make a ditionary reference for the location/input type of each control so it knows where to look immediately
-#				A lookup table of sorts
 const CAMERA_DEFAULTS: Dictionary = {
 	"PAN_SPEED": .15,
 	"ROTATE_SPEED": 4,
@@ -52,7 +48,7 @@ var CONTROL_DEFAULTS: Dictionary = {
 	CONSTANTS.USER_INPUT.SPRINT: InputEventLibrary.SHIFT_KEY,
 	CONSTANTS.USER_INPUT.INTERACT: InputEventLibrary.F_KEY,
 	CONSTANTS.USER_INPUT.SCORE: InputEventLibrary.TAB_KEY,
-	CONSTANTS.USER_INPUT.MAIN: InputEventLibrary.ESCAPE_KEY,
+	CONSTANTS.USER_INPUT.PAUSE: InputEventLibrary.ESCAPE_KEY,
 	CONSTANTS.USER_INPUT.DEBUG: InputEventLibrary.PAGEDOWN_KEY,
 	CONSTANTS.USER_INPUT.PRIMARY: InputEventLibrary.LEFT_MOUSE_BUTTON,
 	CONSTANTS.USER_INPUT.SECONDARY: InputEventLibrary.RIGHT_MOUSE_BUTTON,

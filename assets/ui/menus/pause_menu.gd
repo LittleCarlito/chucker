@@ -6,9 +6,6 @@ class_name PauseMenu
 
 var subMenus: Array[Control]
 
-# TODO Make MenuControl an interfact with _on_close_menu() and _on_quit() and other common methods
-#		Handling of MENU.MAIN to close while self visible should be part of interface
-
 signal close_menu
 signal save_settings(saveSettings)
 signal load_settings
@@ -23,7 +20,7 @@ func _process(_delta: float) -> void:
 	pass
 	
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed(CONSTANTS.USER_INPUT.MAIN) and self.visible and self.backTimer.is_stopped():
+	if event.is_action_pressed(CONSTANTS.USER_INPUT.PAUSE) and self.visible and self.backTimer.is_stopped():
 		close_menu.emit()
 
 func _on_close_menu() -> void:

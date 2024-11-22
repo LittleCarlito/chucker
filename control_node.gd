@@ -21,15 +21,13 @@ func _ready() -> void:
 	# Create game file structures
 	var baseDir = DirAccess.open(self.BASE_PATH)
 	baseDir.make_dir(self.SAVE_DIR)
-	# TODO InputMap doesn't have actions; Either need to be added through code or code is removing them on accident
-	#			Or "input/" needs to be appended when 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed(CONSTANTS.USER_INPUT.MAIN):
+	if event.is_action_pressed(CONSTANTS.USER_INPUT.PAUSE):
 		self.pauseMenu.visible = true
 		self.get_tree().paused = true
 		self.set_process_input(false)
@@ -57,7 +55,6 @@ func _on_pause_menu_save_settings(saveSettings: Dictionary) -> void:
 	self.save_to_settings(saveSettings)
 	self.load_settings()
 
-# TODO Refactor this to write a useable data object in JSON instead of store_var and get_var
 func save_to_settings(saveSettings: Dictionary) -> void:
 	if !saveSettings.is_empty():
 		var finalSettings: Dictionary
@@ -80,28 +77,29 @@ func save_to_settings(saveSettings: Dictionary) -> void:
 	else:
 		Logger.error(self.EMPTY_SAVE_LOG,[saveSettings], self)
 
-# TODO Think this is causing issues with not breaking ControlSetting objects back down to Dictionary objects before adding to save setting output
 func _update_settings(saveSettings: Dictionary) -> Dictionary:
 	var settingsDictionary = self._get_settings_dictionary()
 	var saveCategories: Array = saveSettings.keys()
 	for category in saveCategories:
 		# See if settings have primary setting category
 		if settingsDictionary.has(category):
-			var settingCategory: Dictionary = settingsDictionary.get(category)
-			var saveAttributes: Dictionary = saveSettings.get(category)
-			var saveAttributeKeys: Array = saveAttributes.keys()
-			for attribute in saveAttributeKeys:
-				# See if settings category contains the updated attribute
-				if settingCategory.has(attribute):
-					settingCategory.erase(attribute)
-				settingCategory.get_or_add(attribute, saveAttributes.get(attribute))
+			if category == CONSTANTS.Controls:
+				settingsDictionary.erase(category)
+				settingsDictionary.get_or_add(category, saveSettings.get(category))
+			else:
+				var settingCategory: Dictionary = settingsDictionary.get(category)
+				var saveAttributes: Dictionary = saveSettings.get(category)
+				var saveAttributeKeys: Array = saveAttributes.keys()
+				for attribute in saveAttributeKeys:
+					# See if settings category contains the updated attribute
+					if settingCategory.has(attribute):
+						settingCategory.erase(attribute)
+					settingCategory.get_or_add(attribute, saveAttributes.get(attribute))
 		# If missing setting category add the entire thing
 		else:
 			settingsDictionary.get_or_add(category, saveSettings.get(category))
 	return settingsDictionary
 
-# TODO Setting controls to unbound isn't working
-#			For unknown it is setting keycode to 0; Would rather have some super crazy value that won't parse to null
 func load_settings() -> void:
 	var dataReceived: Dictionary = self._get_settings_dictionary()
 	# Controls
@@ -149,8 +147,6 @@ func _get_settings_dictionary() -> Dictionary:
 					var controlSettings: Dictionary = {}
 					var controlKeys: Array = incomingControlSettings.keys()
 					for controlKey in controlKeys:
-						# TODO Had this break when mapping from an UKNOWN_KEY to a key
-						#		This is caused by an issue with the update logic
 						var convertedSetting: ControlSetting = InputEventLibrary.convert_dictionary_to_control_setting(incomingControlSettings.get(controlKey))
 						controlSettings.get_or_add(controlKey, convertedSetting)
 					returnDictionary.get_or_add(CONSTANTS.Controls, controlSettings)

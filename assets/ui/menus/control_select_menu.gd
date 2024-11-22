@@ -17,8 +17,6 @@ var selectedInput: ControlSetting = null
 signal save_input(controlToUpdate, selectedInput)
 signal menu_closed
 
-# TODO Determine if you want to allow setting of controls with undefined key values (if possible should allow setting with N/A icon)
-
 func _input(event: InputEvent) -> void:
 	if !(event is InputEventMouseMotion):
 		# Left click filtering logic

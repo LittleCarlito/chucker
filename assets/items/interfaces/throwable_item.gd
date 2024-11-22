@@ -41,7 +41,6 @@ func _input(event: InputEvent) -> void:
 	# Looking controls
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not justLaunched:
 		if ownerVar != null and event is InputEventMouseMotion:
-			# TODO Now that this h as inversion added it needs to be added to the disk as it flys
 			var hInversionValue: int = 1
 			if GlobalSettings.CAMERA.get(CONSTANTS.INVERT_HORIZONTAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_HORIZONTAL):
 				hInversionValue = -1
@@ -51,6 +50,7 @@ func _input(event: InputEvent) -> void:
 			ownerVar.rotation.y -= hInversionValue * (event.relative.x / 1000 * GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_AIM_SENSITIVITY))
 			var rotationAmount = vInversionValue * (GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GlobalSettings.CAMERA.VERTICAL_AIM_SENSITIVITY) * (event.relative.y / 1000 * GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.VERTICAL_AIM_SENSITIVITY)))
 			if rotationAmount > 0 and self.get_parent().rotation_degrees.x < GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION:
+				# TODO Continue here
 				# TODO Redo all self.get_parent() type calls with signaling something up instead
 				self.get_parent().rotate_x(rotationAmount)
 			elif rotationAmount < 0 and self.get_parent().rotation_degrees.x > GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION:

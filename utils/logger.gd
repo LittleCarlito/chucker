@@ -1,5 +1,9 @@
 extends Node3D
 
+# TODO Need to set project settings to output to a file
+# 		Need to have this util manage that file output and keep it tidy
+#			Including creating new files and cleaning up old
+
 enum LEVEL {
 	DEBUG,
 	INFO,
@@ -35,8 +39,3 @@ func _print(printLog: String, params: Array, caller: Object, logLevel: LEVEL) ->
 	var levelString: String = self.LEVEL.keys()[logLevel]
 	var formattedLogString: String = formatString % [levelString, timeStamp, caller.get("name"), logString]
 	print(formattedLogString)
-
-# TODO Need to set project settings to output to a file
-# TODO Need to have this util manage that file output and keep it tidy
-#		Including creating new files and cleaning up old
-# TODO Figure out how to handle exceptions and crash during certain ones

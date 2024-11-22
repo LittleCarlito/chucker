@@ -17,9 +17,6 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	pass
 
-# TODO Refactor logger so when a warn or error log is given to it it will push error or push warn
-#		Then get rid of double log
-
 func _reset_zoom() -> void:
 	if fallbackCamera != null:
 		fallbackCamera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV)

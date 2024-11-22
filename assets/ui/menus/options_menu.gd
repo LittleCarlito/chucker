@@ -72,7 +72,7 @@ func _process(_delta: float) -> void:
 	pass
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed(CONSTANTS.USER_INPUT.MAIN) and self.visible:
+	if event.is_action_pressed(CONSTANTS.USER_INPUT.PAUSE) and self.visible:
 		self._on_back_menu()
 
 func _on_close_menu() -> void:
@@ -102,7 +102,7 @@ func _on_save_menu() -> void:
 func _save_controls() -> void:
 	for controlListIndex in self.controlList.item_count:
 		var constantName: String = self._get_constant_name(self.controlList.get_item_text(controlListIndex))
-		var constantValue: InputEvent = self._get_constant_value(constantName)
+		var constantValue: InputEvent = self._get_default_value(constantName)
 		var constantIconPath: String = InputSprite.get_sprite(constantValue).resource_path
 		var iconPath: String = controlList.get_item_icon(controlListIndex).resource_path
 		if constantIconPath != iconPath:
@@ -223,6 +223,16 @@ func _get_constant_name(itemText: String) -> String:
 func _get_constant_value(constantName: String) -> InputEvent:
 	# Check GlobalSettings for control constant with matching name
 	var mappedValue: InputEvent = GlobalSettings.CONTROLS.get(constantName, InputEventLibrary.UNKNOWN_KEY)
+	if mappedValue == InputEventLibrary.UNKNOWN_KEY:
+		# Log key is not bound and return UKNOWN value
+		Logger.error(UNBOUND_INPUT_LOG, [constantName], self)
+	return mappedValue
+
+# Checks default control dictionaries for stored value of constantName
+# If not found returns UNKNOWN_KEY InputEvent
+func _get_default_value(constantName: String) -> InputEvent:
+	# Check GlobalSettings for control constant with matching name
+	var mappedValue: InputEvent = GlobalSettings.CONTROL_DEFAULTS.get(constantName, InputEventLibrary.UNKNOWN_KEY)
 	if mappedValue == InputEventLibrary.UNKNOWN_KEY:
 		# Log key is not bound and return UKNOWN value
 		Logger.error(UNBOUND_INPUT_LOG, [constantName], self)

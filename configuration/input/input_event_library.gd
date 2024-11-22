@@ -1,12 +1,15 @@
 extends Node
 
-# TODO Ensure all of these are used
 const MISSING_KEY_LOG: String = "Incoming Dictionary was missing key \"%s\"; Using value \"%s\""
 const NO_MATCHED_TYPE_LOG: String = "Incoming value \"%s\", to method \"%s\", could not be matched to an input type; Returning INPUT_TYPE.UNKNOWN"
 const _CONVERT_KEYCODE_STRING: String = "convert_keycode_to_input_type"
 const _CONVERT_INT_STRING: String = "convert_int_to_input_type"
 const UNSUPPORTED_TYPE_LOG: String = "ControlSetting couldn't be converted to an InputEvent as it is not of a supported type; \"%s\""
 const NO_MATCHING_EVENT_LOG: String = "Keycode \"%s\" did not have a match in ALL_INPUTS and could not be converted to an InputEvent"
+
+const MOUSE_TYPE: String = "MOUSE"
+const KEYBOARD_TYPE: String = "KEYBOARD"
+const UNKNOWN_TYPE: String = "UNKNOWN"
 
 enum INPUT_TYPE {
 	MOUSE,
@@ -15,8 +18,18 @@ enum INPUT_TYPE {
 	UNKNOWN
 }
 
+func get_type_string(incomingType: INPUT_TYPE) -> String:
+	var returnString: String
+	match incomingType:
+		self.INPUT_TYPE.MOUSE:
+			returnString = self.MOUSE_TYPE
+		self.INPUT_TYPE.KEYBOARD:
+			returnString = self.KEYBOARD_TYPE
+		_:
+			returnString = self.UNKNOWN_TYPE
+	return returnString
+
 # INPUT_TYPE conversions
-# TODO Add this call to the save_settings thing you were doing in options menu
 func convert_keycode_to_input_type(keycode: int) -> INPUT_TYPE:
 	var returnType: INPUT_TYPE
 	if KEYBOARD_INPUTS.has(keycode):
@@ -52,7 +65,6 @@ func convert_event_to_control_setting(event: InputEvent) -> ControlSetting:
 func convert_dictionary_to_control_setting(incomingDictionary: Dictionary) -> ControlSetting:
 	# Get setting items from dictionary
 	var keycode: int = incomingDictionary.get(CONSTANTS.KEYCODE_STRING)
-	# TODO When deserialzing from saved file this is actually a string and needs to be converted back to an int
 	var inputTypeInt := incomingDictionary.get(CONSTANTS.INPUT_TYPE_STRING) as int
 	var inputDescription: String = incomingDictionary.get(CONSTANTS.INPUT_DESCRIPTION_STRING)
 	if keycode == null:
@@ -84,18 +96,23 @@ func convert_control_setting_to_input_event(controlSetting: ControlSetting) -> I
 		INPUT_TYPE.KEYBOARD:
 			returnEvent = KEYBOARD_INPUTS.get(controlSetting.keycode)
 		_:
-			# TODO Will need to implement gdscript version of to_string on ControlSetting object
 			Logger.error(UNSUPPORTED_TYPE_LOG, [str(controlSetting)], self)
 			returnEvent = UNKNOWN_KEY
 	return returnEvent
 
-# TODO Implmeent and add to OptionsMenu call to allow for description determination
 func convert_keycode_to_input_event(keycode: int) -> InputEvent:
 	var returnEvent: InputEvent = ALL_INPUTS.get(keycode, null)
 	if returnEvent == null:
 		Logger.error(NO_MATCHING_EVENT_LOG, [str(keycode)], self)
 		returnEvent = self.UNKNOWN_KEY
 	return returnEvent
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta: float) -> void:
+	pass
+
+# TODO Eventually refactor to not be brute force
+#		Should be able to programatically work through Mouse and Keyboard enums and create same effect as below
 
 func _ready() -> void:
 	# A-Z keys
@@ -175,13 +192,6 @@ func _ready() -> void:
 	self.XBUTTON2_MOUSE_BUTTON.button_index = MOUSE_BUTTON_XBUTTON2
 	self.UP_MOUSE_BUTTON.button_index = MOUSE_BUTTON_WHEEL_UP
 	self.DOWN_MOUSE_BUTTON.button_index = MOUSE_BUTTON_WHEEL_DOWN
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
-
-# TODO Eventually refactor to not be brute force
-#		Should be able to programatically work through Mouse and Keyboard enums and create same effect as below
 
 # A - Z keys
 var A_KEY: InputEventKey = InputEventKey.new()

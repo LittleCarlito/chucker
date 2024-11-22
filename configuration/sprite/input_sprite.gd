@@ -93,7 +93,6 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	pass
 
-# TODO Refactor users of AssetManagement to use this method instead of direct access
 func get_sprite(event: InputEvent) -> Texture2D:
 	var possibleInputs: Array = InputEventLibrary.ALL_INPUTS.values()
 	var matchedInputKeycode: int = KEY_UNKNOWN

@@ -1,16 +1,12 @@
 extends Node
 class_name CONSTANTS
 
-# TODO Should make constants its own folder and these sections of constants their own classes
-
 const MENU: Dictionary = {
 	"SCORECARD": {
 		"PLAYER_PIXEL_SIZE": .003,
 		"TEEBOX_PIXEL_SIZE": .0023
 	}
 }
-
-# TODO Really should refactor USER_INPUT and INPUT_LABEL into one dictionary or some kind of data object
 
 # Keys are how it is handled in code
 # Values are how project settings handle those behaviors
@@ -30,8 +26,7 @@ const USER_INPUT: Dictionary = {
 	"PRIMARY": "player_primary",
 	"SECONDARY": "player_secondary",
 	"SCORE": "menu_score",
-	# TODO Refactor this to be menu_pause "PAUSE"
-	"MAIN": "menu_main",
+	"PAUSE": "menu_pause",
 	"DEBUG": "admin_debug"
 }
 
@@ -40,7 +35,7 @@ const USER_INPUT: Dictionary = {
 const INPUT_LABEL: Dictionary = {
 	# Menu labels
 	"Scorecard": self.USER_INPUT.SCORE,
-	"Pause": self.USER_INPUT.MAIN,
+	"Pause": self.USER_INPUT.PAUSE,
 	# Action labels
 	"Primary Action": self.USER_INPUT.PRIMARY,
 	"Secondary Action": self.USER_INPUT.SECONDARY,

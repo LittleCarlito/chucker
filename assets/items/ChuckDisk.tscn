@@ -31,6 +31,7 @@ transform = Transform3D(1, 0, 0, 0, 0.940638, 0.339411, 0, -0.339411, 0.940638, 
 fov = 90.0
 
 [node name="CameraTimer" type="Timer" parent="CameraContainer"]
+one_shot = true
 
 [node name="PreCollisionArea" type="Area3D" parent="."]
 collision_layer = 4

@@ -1,8 +1,6 @@
 extends Control
 class_name ChargeBar
 
-# TODO Redo 2D theme stuff to not override everything and actually create/use themes
-
 @onready var chargeAmount: Label = $ChargeBarParentContainer/ChargeAmount
 @onready var progressBar: ProgressBar = $ChargeBarParentContainer/ChargeBarContainer/ChargeBackground/ProgressBar
 
