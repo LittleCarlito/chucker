@@ -1,6 +1,7 @@
 extends Control
 class_name PauseMenu
 
+@onready var backTimer: Timer = $BackTimer
 @onready var optionsMenu: Control = $OptionsMenu
 
 var subMenus: Array[Control]
@@ -15,14 +16,14 @@ signal apply_settings
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	subMenus = [optionsMenu]
+	self.subMenus = [self.optionsMenu]
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
 	
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed(CONSTANTS.USER_INPUT.MAIN) and self.visible:
+	if event.is_action_pressed(CONSTANTS.USER_INPUT.MAIN) and self.visible and self.backTimer.is_stopped():
 		close_menu.emit()
 
 func _on_close_menu() -> void:
@@ -37,13 +38,14 @@ func _on_quit() -> void:
 	get_tree().quit()
 
 func _on_options_menu() -> void:
-	optionsMenu.visible = true
 	self.process_mode = Node.PROCESS_MODE_DISABLED
+	optionsMenu.visible = true
 
 func _on_submenu_back() -> void:
 	for subMenu in subMenus:
 		subMenu.visible = false
 	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+	backTimer.start()
 
 func _on_save_menu(saveSettings: Dictionary) -> void:
 	save_settings.emit(saveSettings)

@@ -1,14 +1,9 @@
 extends Control
 class_name OptionsMenu
 
-# TODO Have this menu go back to PauseMenu on esc and not close all menus
-
-# TODO Make sure all these are actually used
 const UPDATE_CONTROL_LOG: String = "Updating control \"%s\" to input \"%s\""
 const SELECT_ERROR_LOG: String = "Incorrect number of items selected to change control input; \"%s\" items selected"
 const UNBOUND_INPUT_LOG: String = "\"%s\" is not bound to an input"
-const BAD_CONSTANT_LOG: String = "Control setting \"%s\" couldn't be mapped back to a ControlList text label"
-const MISSING_CONSTNAT_LOG: String = "Value for constantName \"%s\" could not be found"
 const UNBIND_LOG: String = "Input \"%s\" key has been rebound"
 const CONTROL_REMAPPED_LOG: String = "Control \"%s\" has been remapped from \"%s\" to \"%s\""
 const NO_KEYCODE_ICON_STRING: String = "Path \"%s\" could not be mapped back to a keycode; Not persisting input change"
@@ -78,7 +73,7 @@ func _process(_delta: float) -> void:
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(CONSTANTS.USER_INPUT.MAIN) and self.visible:
-		self._on_close_menu()
+		self._on_back_menu()
 
 func _on_close_menu() -> void:
 	close_menu.emit()
@@ -183,8 +178,6 @@ func _open_control_select_menu(index: int, _clickPosition: Vector2, mouseButtonI
 func _control_select_closed() -> void:
 	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 
-# TODO To address BUG 1 refactor this class to not bother with ControlSettings until save is about to emit
-#			Iterate through ControlList items when setting and unbinding
 func _control_select_set(controlToUpdate: String, selectedInput: ControlSetting) -> void:
 	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 	Logger.debug(UPDATE_CONTROL_LOG, [controlToUpdate, selectedInput.inputDescription], self)
@@ -230,7 +223,6 @@ func _get_constant_name(itemText: String) -> String:
 func _get_constant_value(constantName: String) -> InputEvent:
 	# Check GlobalSettings for control constant with matching name
 	var mappedValue: InputEvent = GlobalSettings.CONTROLS.get(constantName, InputEventLibrary.UNKNOWN_KEY)
-# TODO OptionsMenu: "move_left" does not have an associated value in CONSTANTS.INPUT_LABEL log
 	if mappedValue == InputEventLibrary.UNKNOWN_KEY:
 		# Log key is not bound and return UKNOWN value
 		Logger.error(UNBOUND_INPUT_LOG, [constantName], self)

@@ -158,6 +158,10 @@ theme = ExtResource("1_guofl")
 visible = false
 layout_mode = 1
 
+[node name="BackTimer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
 [connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/CloseButtonBorder/CloseButton" to="." method="_on_close_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/ResumeButton" to="." method="_on_close_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/OptionsButton" to="." method="_on_options_menu"]
