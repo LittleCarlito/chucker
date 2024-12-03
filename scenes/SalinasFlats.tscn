@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://cdkknjflehfgx" path="res://assets/characters/ChuckChucker.tscn" id="3_wng2j"]
 [ext_resource type="PackedScene" uid="uid://bpn27qpg2rm8c" path="res://assets/buildings/ChuckHole.tscn" id="4_upk5s"]
 [ext_resource type="Environment" uid="uid://bm00mgoeg2ojv" path="res://resources/environment_default.tres" id="5_ll0n0"]
-[ext_resource type="PackedScene" uid="uid://dga2v203y41nq" path="res://assets/ui/ControlNode.tscn" id="7_inl8g"]
+[ext_resource type="PackedScene" uid="uid://dga2v203y41nq" path="res://assets/ui/menus/ControlNode.tscn" id="7_inl8g"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_vba8s"]
 size = Vector3(50, 3, 200)

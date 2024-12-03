@@ -1,9 +1,7 @@
 extends Node3D
 class_name PathDisk
 
-# TODO Make this disk stop with its half path following restarting shit
-#			Camera stops following, disk continues for a time, then restarts at beginning of path, no actual disk spawning
-#			Seems to be when thrown second but can't be sure
+# BUG When thrown with speed and angle straight hits ground and spawns chuck disk and launch point
 # TODO Make ChuckDisk global x rotation locked at launch angle until collision detected
 # TODO If above doesn't fix follow camera jiggling on path lock the diskCamera's container's global x rotation as well
 # TODO Need to allow holding power consistent while still pulling offset curve

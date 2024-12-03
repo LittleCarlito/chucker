@@ -65,9 +65,6 @@ func _handle_player_interact() -> void:
 		for n in collidingCount:
 			var collidingObject = frontDetection.get_collider(0)
 			if collidingObject != null and (collidingObject is PathDisk or collidingObject is ChuckDisk):
-				# TODO Refactor below to not be as repeated
-				# TODO Can be buggy when launching charge disk as second disk
-				#		Camera resets back to chuck too quickly
 				# TODO Verify that a memory leak isn't happening with new disk meshes being accumulated in diskContainer
 				if collidingObject is ChuckDisk:
 					if collidingObject.diskType == ThrowableItem.TYPE.CHARGE:
@@ -83,7 +80,11 @@ func _handle_player_interact() -> void:
 						playerDisk.fallbackCamera = playerCamera
 						playerDisk.ownerVar = self
 						playerDisk.pullDraw.ownerVar = self
+					playerDisk.rotate_parent.connect(self._handle_rotation)
 				collidingObject.queue_free()
+
+func _handle_rotation(rotationAmount: float) -> void:
+	self.diskController.rotate_x(rotationAmount)
 
 ## Detects and executes movements
 func _handle_movement(delta: float) -> void:
@@ -120,6 +121,7 @@ func _handle_movement(delta: float) -> void:
 func unequip_item() -> void:
 	if playerDisk != null:
 		playerDisk.queue_free()
+		playerDisk.rotate_parent.disconnect(self._handle_rotation)
 	else:
 		# TODO Make warn push warning inside logger so 2 lines don't appear here
 		Logger.warn(UNEQUIP_MESSAGE, [], self)

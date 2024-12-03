@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cfpse6r2su0ua"]
 
 [ext_resource type="Script" path="res://assets/ui/views/charge_view.gd" id="1_sixo3"]
-[ext_resource type="PackedScene" uid="uid://dgugjjr1k0dl" path="res://assets/ui/ChargeBar.tscn" id="2_m4y6h"]
+[ext_resource type="PackedScene" uid="uid://dgugjjr1k0dl" path="res://assets/ui/action/ChargeBar.tscn" id="2_m4y6h"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_hblt0"]
 viewport_path = NodePath("ChargeView")

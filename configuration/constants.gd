@@ -76,7 +76,11 @@ const INVERT_VERTICAL: String = "INVERT_VERTICAL"
 const Display: String = "Display"
 const PERFORMANCE: String = "PERFORMANCE"
 
-const SETTING_LABELS: Array[String] = [CONSTANTS.Camera, CONSTANTS.Controls, CONSTANTS.Display]
+const Unknown: String = "Unknown"
+
+const SETTING_LABELS: Array[String] = [self.Camera, self.Controls, self.Display]
+
+# TODO Move this to a MathConstants file
 
 #https://gist.github.com/geekley/5bf72d3cbaa1da196545bee977ee8eda
 # Public domain, as per The Unlicense. NO WARRANTY. See https://unlicense.org

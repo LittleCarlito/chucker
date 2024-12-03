@@ -1,6 +1,10 @@
 extends Control
 class_name OptionsMenu
 
+# BUG Alter controls and save; Reset controls to default values and save; Controls don't rebind and saved settings remain non defaults
+#		Need to identify when controls are changed and ALWAYS delete ControlSettings from the save file
+#			If there were non default changes it will add those to the dictionary, if not the deletion will put everything back at default
+
 const UPDATE_CONTROL_LOG: String = "Updating control \"%s\" to input \"%s\""
 const SELECT_ERROR_LOG: String = "Incorrect number of items selected to change control input; \"%s\" items selected"
 const UNBOUND_INPUT_LOG: String = "\"%s\" is not bound to an input"
@@ -93,10 +97,10 @@ func _on_save_menu() -> void:
 		self.saveSettings.get_or_add(CONSTANTS.Camera, self.cameraSettings)
 	if not self.displaySettings.is_empty():
 		self.saveSettings.get_or_add(CONSTANTS.Display, self.displaySettings)
-	if not self.saveSettings.is_empty():
-		self.save_settings.emit(self.saveSettings)
-		apply_settings.emit()
-		self._reset_variables(self.optionTabContainer.current_tab)
+	# Always emit saveSettings even if empty; Returns to defaults then
+	self.save_settings.emit(self.saveSettings)
+	apply_settings.emit()
+	self._reset_variables(self.optionTabContainer.current_tab)
 
 # Compares ControlList items to set controls and saves the updated controls to ControlSetting
 func _save_controls() -> void:
@@ -225,7 +229,7 @@ func _get_constant_value(constantName: String) -> InputEvent:
 	var mappedValue: InputEvent = GlobalSettings.CONTROLS.get(constantName, InputEventLibrary.UNKNOWN_KEY)
 	if mappedValue == InputEventLibrary.UNKNOWN_KEY:
 		# Log key is not bound and return UKNOWN value
-		Logger.error(UNBOUND_INPUT_LOG, [constantName], self)
+		Logger.debug(UNBOUND_INPUT_LOG, [constantName], self)
 	return mappedValue
 
 # Checks default control dictionaries for stored value of constantName
@@ -235,7 +239,7 @@ func _get_default_value(constantName: String) -> InputEvent:
 	var mappedValue: InputEvent = GlobalSettings.CONTROL_DEFAULTS.get(constantName, InputEventLibrary.UNKNOWN_KEY)
 	if mappedValue == InputEventLibrary.UNKNOWN_KEY:
 		# Log key is not bound and return UKNOWN value
-		Logger.error(UNBOUND_INPUT_LOG, [constantName], self)
+		Logger.debug(UNBOUND_INPUT_LOG, [constantName], self)
 	return mappedValue
 
 # Returns the index in ControlList for the provided GLOBAL_SETTINGS name

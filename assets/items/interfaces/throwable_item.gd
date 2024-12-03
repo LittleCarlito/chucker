@@ -1,6 +1,8 @@
 extends EquipableItem
 class_name ThrowableItem
 
+signal rotate_parent(rotationAmount)
+
 var aimNode: Node3D = Node3D.new()
 var aimControlNode: Node3D = Node3D.new()
 var launchControlNode: Node3D = Node3D.new()
@@ -41,6 +43,7 @@ func _input(event: InputEvent) -> void:
 	# Looking controls
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not justLaunched:
 		if ownerVar != null and event is InputEventMouseMotion:
+			# TODO Inversion stuff seems needlessly complex
 			var hInversionValue: int = 1
 			if GlobalSettings.CAMERA.get(CONSTANTS.INVERT_HORIZONTAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_HORIZONTAL):
 				hInversionValue = -1
@@ -48,13 +51,14 @@ func _input(event: InputEvent) -> void:
 			if GlobalSettings.CAMERA.get(CONSTANTS.INVERT_VERTICAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_VERTICAL):
 				vInversionValue = 1
 			ownerVar.rotation.y -= hInversionValue * (event.relative.x / 1000 * GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_AIM_SENSITIVITY))
-			var rotationAmount = vInversionValue * (GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GlobalSettings.CAMERA.VERTICAL_AIM_SENSITIVITY) * (event.relative.y / 1000 * GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.VERTICAL_AIM_SENSITIVITY)))
-			if rotationAmount > 0 and self.get_parent().rotation_degrees.x < GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION:
-				# TODO Continue here
-				# TODO Redo all self.get_parent() type calls with signaling something up instead
-				self.get_parent().rotate_x(rotationAmount)
-			elif rotationAmount < 0 and self.get_parent().rotation_degrees.x > GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION:
-				self.get_parent().rotate_x(rotationAmount)
+			# TODO Continue here
+			# TODO This is the right click rotation shit; FIND AND DO THIS ON MOUSE WHEEL STUFF INSTEAD
+			# TODO vSenseValue is resolving to 0 can preventing signal emission; Check loading settings to see why value or default isn't correct
+			var vSenseValue: float = GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.VERTICAL_AIM_SENSITIVITY)
+			var rotationAmount: float = vInversionValue * (event.relative.y / 1000 * vSenseValue)
+			# TODO Refacotr the get_parent calls to ownerVar
+			if (rotationAmount > 0 and self.get_parent().rotation_degrees.x < GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION) or (rotationAmount < 0 and self.get_parent().rotation_degrees.x > GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION):
+				rotate_parent.emit(rotationAmount)
 
 func set_just_launched(value: bool) -> void:
 	self.justLaunched = value
