@@ -22,9 +22,9 @@ DrawUtil="*res://utils/draw_util.gd"
 NodeUtil="*res://utils/node_util.gd"
 Logger="*res://utils/logger.gd"
 InputEventLibrary="*res://configuration/input/input_event_library.gd"
-GlobalSettings="*res://configuration/global_settings.gd"
 InputSprite="*res://configuration/sprite/input_sprite.gd"
 SceneLibrary="*res://configuration/scenes/scene_library.gd"
+GlobalSettings="*res://configuration/global_settings.gd"
 
 [improved_json]
 

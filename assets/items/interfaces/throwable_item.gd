@@ -40,25 +40,26 @@ func handle_aiming() -> void:
 			ownerVar.disableMovement = false
 
 func _input(event: InputEvent) -> void:
-	# Looking controls
+	# Look/Aim controls
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not justLaunched:
 		if ownerVar != null and event is InputEventMouseMotion:
-			# TODO Inversion stuff seems needlessly complex
+			# Inversion values are stored as booleans for UI purposes; Below is conversion to 1/-1
 			var hInversionValue: int = 1
 			if GlobalSettings.CAMERA.get(CONSTANTS.INVERT_HORIZONTAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_HORIZONTAL):
 				hInversionValue = -1
 			var vInversionValue: int = -1
 			if GlobalSettings.CAMERA.get(CONSTANTS.INVERT_VERTICAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_VERTICAL):
 				vInversionValue = 1
-			ownerVar.rotation.y -= hInversionValue * (event.relative.x / 1000 * GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_AIM_SENSITIVITY))
-			# TODO Continue here
-			# TODO This is the right click rotation shit; FIND AND DO THIS ON MOUSE WHEEL STUFF INSTEAD
-			# TODO vSenseValue is resolving to 0 can preventing signal emission; Check loading settings to see why value or default isn't correct
 			var vSenseValue: float = GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.VERTICAL_AIM_SENSITIVITY)
+			ownerVar.rotation.y -= hInversionValue * (event.relative.x / 1000 * vSenseValue)
 			var rotationAmount: float = vInversionValue * (event.relative.y / 1000 * vSenseValue)
-			# TODO Refacotr the get_parent calls to ownerVar
-			if (rotationAmount > 0 and self.get_parent().rotation_degrees.x < GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION) or (rotationAmount < 0 and self.get_parent().rotation_degrees.x > GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION):
-				rotate_parent.emit(rotationAmount)
+			rotate_parent.emit(rotationAmount)
+	# Rotate input control
+	if event.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_UP) || event.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_DOWN):
+		var rotationAdjust: float = GlobalSettings.DISK.ROTATE_ADJUST
+		if event.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_DOWN):
+			rotationAdjust *= -1
+		rotate_parent.emit(rotationAdjust)
 
 func set_just_launched(value: bool) -> void:
 	self.justLaunched = value

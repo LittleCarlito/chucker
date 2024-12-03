@@ -20,7 +20,8 @@ const DISK: Dictionary = {
 	"GRAVITY_MULTIPLIER": .009,
 	"MAX_PULL": 200,
 	"MIN_PULL": 15,
-	"MAX_OFFSET": 400
+	"MAX_OFFSET": 400,
+	"ROTATE_ADJUST": .1
 }
 
 const CAMERA_DEFAULTS: Dictionary = {

@@ -83,8 +83,24 @@ func _handle_player_interact() -> void:
 					playerDisk.rotate_parent.connect(self._handle_rotation)
 				collidingObject.queue_free()
 
+# Handles rotation signals from held nodes
 func _handle_rotation(rotationAmount: float) -> void:
-	self.diskController.rotate_x(rotationAmount)
+	var isMinRotate: bool = rotationAmount > 0 and self.diskController.rotation_degrees.x < GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION
+	var isMaxRotate: bool = rotationAmount < 0 and self.diskController.rotation_degrees.x > GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION
+	if isMinRotate or isMaxRotate:
+		var projectedRotation: float
+		if rotationAmount > 0:
+			projectedRotation = rad_to_deg(rotationAmount + self.diskController.rotation.x)
+			if projectedRotation > GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION:
+				self.diskController.rotation_degrees.x = GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION
+			else:
+				self.diskController.rotate_x(rotationAmount)
+		else:
+			projectedRotation = rad_to_deg(rotationAmount + self.diskController.rotation.x)
+			if projectedRotation < GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION:
+				self.diskController.rotation_degrees.x = GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION
+			else:
+				self.diskController.rotate_x(rotationAmount)
 
 ## Detects and executes movements
 func _handle_movement(delta: float) -> void:
@@ -126,6 +142,8 @@ func unequip_item() -> void:
 		# TODO Make warn push warning inside logger so 2 lines don't appear here
 		Logger.warn(UNEQUIP_MESSAGE, [], self)
 		push_warning(UNEQUIP_MESSAGE)
+	# Reset item controller rotation
+	self.diskController.rotation_degrees.x = 0
 
 ## Returns if character has item equipped
 func is_equipped() -> bool:

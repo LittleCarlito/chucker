@@ -48,15 +48,18 @@ func _input(event: InputEvent) -> void:
 		self.scorecard.scorecardSprite.visible = false
 		self.get_viewport().get_camera_3d().rotation = Vector3.ZERO
 
+# Handling close menu signals
 func _close_menu() -> void:
 	self.pauseMenu.visible = false
 	self.get_tree().paused = false
 	self.set_process_input(true)
 
+# Handling of save setting signals from sub menus
 func _on_pause_menu_save_settings(saveSettings: Dictionary) -> void:
 	self.save_to_settings(saveSettings)
 	self.load_settings()
 
+# Deletes existing setting save file and saves recieved dictionary to new file
 func save_to_settings(saveSettings: Dictionary) -> void:
 	# If settings file already exists delete it
 	if FileAccess.file_exists(self.SAVE_FILE):
@@ -75,9 +78,9 @@ func save_to_settings(saveSettings: Dictionary) -> void:
 	else:
 		Logger.error(self.EMPTY_SAVE_LOG,[saveSettings], self)
 
+# Loads from settings file or default dictionaries if no file/setting
 func load_settings() -> void:
 	var userSettings: Array[String] = GlobalSettings.CONFIGURABLE_SETTINGS
-	var userControls: Array = GlobalSettings.CONTROLS.keys()
 	var dataReceived: Dictionary = self._get_settings_dictionary()
 	for userSetting in userSettings:
 		var settingCategory: String = GlobalSettings.extract_category(userSetting)
@@ -141,8 +144,6 @@ func _get_settings_dictionary() -> Dictionary:
 		Logger.error(self.UNABLE_TO_OPEN_LOG, [self.SAVE_FILE, saveError], self)
 	return returnDictionary
 
-# TODO Start here; Sensitivity values are VERY low when loading with no save settings file
-# TODO Rotation logic has also been disabled and half changed to signal in throable_item; Need to fix that before addressing values
 # Loads preconfigured default value for the given setting
 func load_default(settingName: String, settingCategory: String) -> void:
 	var globalDefaultCateogry: Dictionary = GlobalSettings.get_default_category(settingCategory)
