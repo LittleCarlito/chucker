@@ -3,6 +3,10 @@ class_name ThrowableItem
 
 signal rotate_parent(rotationAmount)
 
+const _UNIMPLEMENTED_LOG: String = "UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement \"%s\""
+const _HOLD_ACTION: String = "hold_action"
+const _RELEASE_ACTION: String = "release_action"
+
 var aimNode: Node3D = Node3D.new()
 var aimControlNode: Node3D = Node3D.new()
 var launchControlNode: Node3D = Node3D.new()
@@ -19,10 +23,10 @@ func _process(_delta: float) -> void:
 	pass
 
 func hold_action(_delta: float) -> void:
-	push_error("UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement hold_action method")
+	Logger.error(self._UNIMPLEMENTED_LOG, [self._HOLD_ACTION], self)
 
 func release_action() -> void:
-	push_error("UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement release_action method")
+	Logger.error(self._UNIMPLEMENTED_LOG, [self._RELEASE_ACTION], self)
 
 func handle_aiming() -> void:
 	# Right click aiming

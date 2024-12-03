@@ -1,7 +1,7 @@
 extends MeshInstance3D
 class_name EquipableItem
 
-const NULL_FALLBACK_MESSAGE: String = "%s called but fallbackCamera is null"
+const _NULL_FALLBACK_MESSAGE: String = "%s called but fallbackCamera is null"
 var ownerVar: ChuckChucker
 var fallbackCamera: Camera3D
 
@@ -21,19 +21,16 @@ func _reset_zoom() -> void:
 	if fallbackCamera != null:
 		fallbackCamera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV)
 	else:
-		Logger.error(NULL_FALLBACK_MESSAGE, ["_reset_zoom()"], self)
-		push_error("_reset_zoom() called but fallbackCamera is null")
+		Logger.error(self._NULL_FALLBACK_MESSAGE, ["_reset_zoom()"], self)
 
 func _zoom_in() -> void:
 	if fallbackCamera != null:
 		fallbackCamera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV) - GlobalSettings.CAMERA.IN_ADJUST
 	else:
-		Logger.error(NULL_FALLBACK_MESSAGE, ["_zoom_in()"], self)
-		push_error("_zoom_in() called but fallbackCamera is null")
+		Logger.error(self._NULL_FALLBACK_MESSAGE, ["_zoom_in()"], self)
 
 func _zoom_out() -> void:
 	if fallbackCamera != null:
 		fallbackCamera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV) + GlobalSettings.CAMERA.OUT_ADJUST
 	else:
-		Logger.error(NULL_FALLBACK_MESSAGE, ["_zoom_out()"], self)
-		push_error("_zoom_out() called but fallbackCamera is null")
+		Logger.error(self._NULL_FALLBACK_MESSAGE, ["_zoom_out()"], self)

@@ -65,7 +65,6 @@ func _handle_player_interact() -> void:
 		for n in collidingCount:
 			var collidingObject = frontDetection.get_collider(0)
 			if collidingObject != null and (collidingObject is PathDisk or collidingObject is ChuckDisk):
-				# TODO Verify that a memory leak isn't happening with new disk meshes being accumulated in diskContainer
 				if collidingObject is ChuckDisk:
 					if collidingObject.diskType == ThrowableItem.TYPE.CHARGE:
 						var newChargeMesh = ChargeDisk.new_disk()
@@ -139,9 +138,7 @@ func unequip_item() -> void:
 		playerDisk.queue_free()
 		playerDisk.rotate_parent.disconnect(self._handle_rotation)
 	else:
-		# TODO Make warn push warning inside logger so 2 lines don't appear here
 		Logger.warn(UNEQUIP_MESSAGE, [], self)
-		push_warning(UNEQUIP_MESSAGE)
 	# Reset item controller rotation
 	self.diskController.rotation_degrees.x = 0
 
@@ -167,4 +164,3 @@ func _zoom_out() -> void:
 
 func load_settings() -> void:
 	_reset_zoom()
-	# TODO Set values on child objects that rely on GLOBAL SETTING values that can be updated through saved settings

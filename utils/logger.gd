@@ -39,3 +39,7 @@ func _print(printLog: String, params: Array, caller: Object, logLevel: LEVEL) ->
 	var levelString: String = self.LEVEL.keys()[logLevel]
 	var formattedLogString: String = formatString % [levelString, timeStamp, caller.get("name"), logString]
 	print(formattedLogString)
+	if logLevel == self.LEVEL.WARN:
+		push_warning(formattedLogString)
+	elif logLevel == self.LEVEL.ERROR:
+		push_error(formattedLogString)

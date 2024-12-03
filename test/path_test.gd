@@ -3,7 +3,7 @@ extends Node3D
 @onready var chuckDisk: ChuckDisk = $Path3D/PathFollow3D/ChuckDisk
 @onready var path3d: Path3D = $Path3D
 @onready var pathFollow3d: PathFollow3D = $Path3D/PathFollow3D
-var launchSpeed: float =  GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * 3
+var launchSpeed: float =  GlobalSettings.DISK.LAUNCH_SPEED * 3
 var _prepared: bool = false
 var _launched: bool = false
 
@@ -12,7 +12,7 @@ func _ready() -> void:
 	pass
 
 func prepare_path(multiplier: float) -> void:
-	launchSpeed = GLOBAL_SETTINGS.DISK.LAUNCH_SPEED * multiplier
+	launchSpeed = GlobalSettings.DISK.LAUNCH_SPEED * multiplier
 	self._prepared = true
 
 func launch() -> void:

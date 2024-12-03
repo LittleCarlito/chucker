@@ -1,5 +1,9 @@
 extends Node
 
+const _NO_PARENT_LOG: String = "No parent object found for method \"%s\"; Returning \"%s\""
+const _PARENT_GROUNDED: String = "is_parent_grounded"
+const _GET_GRAVITY: String = "get_gravity"
+
 ## Returns total rotation on the x axis of parent nodes up to character
 func get_parent_x_rotation(node: Node3D) -> float:
 	if node.get_parent() != null:
@@ -16,7 +20,7 @@ func is_parent_grounded(node: Node3D) -> bool:
 		return node.is_on_floor()
 	if node.get_parent_node_3d() != null:
 		return is_parent_grounded(node.get_parent_node_3d())
-	push_error("is_parent_grounded for " + node.name + ", no parent object found; Returning false")
+	Logger.error(self._NO_PARENT_LOG, [self._PARENT_GROUNDED, str(false)], self)
 	return false
 
 ## Returns gravity value for the environment
@@ -27,7 +31,7 @@ func get_gravity(node: Node3D) -> Vector3:
 			return node.get_gravity()
 		else:
 			return get_gravity(node.get_parent())
-	push_error("get_gravity for " + node.name + ", no parent object found; Returning empty vector")
+	Logger.error(_NO_PARENT_LOG, [self._GET_GRAVITY, "Empty Vector3"], self)
 	return Vector3(0, 0, 0)
 
 ## Calculates the trajectory distance given parameters
