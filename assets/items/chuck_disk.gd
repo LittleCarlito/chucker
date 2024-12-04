@@ -30,6 +30,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	# Maintain minimum height for the camera
 	cameraControl.global_position.y = max(GlobalSettings.CAMERA.MIN_HEIGHT, cameraControl.global_position.y)
+	cameraControl.look_at(self.global_position)
 	# Freeze the camera control when rigid body detects collision
 	if self.get_contact_count() > 0 and diskCamera.current:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE

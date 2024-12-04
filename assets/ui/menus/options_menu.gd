@@ -1,10 +1,6 @@
 extends Control
 class_name OptionsMenu
 
-# BUG Alter controls and save; Reset controls to default values and save; Controls don't rebind and saved settings remain non defaults
-#		Need to identify when controls are changed and ALWAYS delete ControlSettings from the save file
-#			If there were non default changes it will add those to the dictionary, if not the deletion will put everything back at default
-
 const UPDATE_CONTROL_LOG: String = "Updating control \"%s\" to input \"%s\""
 const SELECT_ERROR_LOG: String = "Incorrect number of items selected to change control input; \"%s\" items selected"
 const UNBOUND_INPUT_LOG: String = "\"%s\" is not bound to an input"

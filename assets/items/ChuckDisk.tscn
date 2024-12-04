@@ -17,6 +17,7 @@ script = ExtResource("1_gtghv")
 mesh = ExtResource("2_i7m5c")
 
 [node name="DiskCollision" type="CollisionShape3D" parent="."]
+physics_interpolation_mode = 2
 shape = ExtResource("3_kqup5")
 
 [node name="CameraContainer" type="Node3D" parent="."]

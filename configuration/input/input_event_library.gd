@@ -111,9 +111,6 @@ func convert_keycode_to_input_event(keycode: int) -> InputEvent:
 func _process(_delta: float) -> void:
 	pass
 
-# TODO Eventually refactor to not be brute force
-#		Should be able to programatically work through Mouse and Keyboard enums and create same effect as below
-
 func _ready() -> void:
 	# A-Z keys
 	self.A_KEY.physical_keycode = KEY_A

@@ -1,9 +1,5 @@
 extends Node3D
 
-# TODO Need to set project settings to output to a file
-# 		Need to have this util manage that file output and keep it tidy
-#			Including creating new files and cleaning up old
-
 enum LEVEL {
 	DEBUG,
 	INFO,
