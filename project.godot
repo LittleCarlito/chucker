@@ -126,10 +126,12 @@ menu_pause={
 3d_physics/layer_3="Disk"
 3d_physics/layer_4="Hole"
 3d_physics/layer_5="Teebox"
+3d_physics/layer_6="CollisionBox"
 
 [physics]
 
 3d/physics_engine="JoltPhysics3D"
+jolt_3d/collisions/areas_detect_static_bodies=true
 
 [rendering]
 

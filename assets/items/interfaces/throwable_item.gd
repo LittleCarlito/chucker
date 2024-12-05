@@ -3,6 +3,9 @@ class_name ThrowableItem
 
 signal rotate_parent(rotationAmount)
 
+# TODO Make the disks spin with passed in speed when launched
+#			Should be able to make it spin counter/clockwise depending on sign
+
 const _UNIMPLEMENTED_LOG: String = "UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement \"%s\""
 const _HOLD_ACTION: String = "hold_action"
 const _RELEASE_ACTION: String = "release_action"

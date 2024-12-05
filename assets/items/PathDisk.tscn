@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://mfc0kjgxpvtg"]
+[gd_scene load_steps=4 format=3 uid="uid://mfc0kjgxpvtg"]
 
 [ext_resource type="Script" path="res://assets/items/path_disk.gd" id="1_3o2g5"]
 [ext_resource type="PackedScene" uid="uid://blwwfxseykyuy" path="res://assets/items/ChuckDisk.tscn" id="2_kqhf8"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_reyi1"]
+size = Vector3(1.2, 0.6, 1.2)
 
 [node name="PathDisk" type="Node3D"]
 script = ExtResource("1_3o2g5")
@@ -12,3 +15,12 @@ script = ExtResource("1_3o2g5")
 
 [node name="ChuckDisk" parent="Path3D/PathFollow3D" instance=ExtResource("2_kqhf8")]
 sleeping = true
+
+[node name="CollisionArea" type="Area3D" parent="Path3D/PathFollow3D/ChuckDisk"]
+collision_layer = 32
+collision_mask = 31
+
+[node name="CollisionShape" type="CollisionShape3D" parent="Path3D/PathFollow3D/ChuckDisk/CollisionArea"]
+shape = SubResource("BoxShape3D_reyi1")
+
+[connection signal="body_shape_entered" from="Path3D/PathFollow3D/ChuckDisk/CollisionArea" to="." method="_body_enter"]

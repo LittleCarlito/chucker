@@ -2,6 +2,7 @@ extends Node3D
 
 @onready var controlNode: ControlNode = $ControlNode
 @onready var chuckChucker: ChuckChucker = $ChuckChucker
+@onready var tempFloor: StaticBody3D = $TempFloor
 
 # TODO Make set controls work
 #			Create sub menu
@@ -27,6 +28,11 @@ extends Node3D
 #				Eventually will want to respawn people and disks at certain points
 #					People probably right where they fell in
 #					Disks spawn near where they fell in but perpindicular to hole playing or something like that
+# TODO Make dynamic scorecard
+#		Make each part of the scorecard a node object
+#		Make a script to create the scorecard based off how many holes the scene contains
+#		Also adds the number of players dynamically
+#		Creates scroll bars to allow for more than 18 holes and more than 4 players
 # TODO Give chuck a bag he carries
 #		Allow the bag to have 6 x 6 inventory where disks are stored and can be chosen/equipped
 
@@ -45,6 +51,5 @@ func _enable_character_movement() -> void:
 	chuckChucker.disableMovement = false
 
 func _apply_settings() -> void:
-	# TODO Was removing all user inputs improperly
 	controlNode.reload_project_settings()
 	chuckChucker.load_settings()

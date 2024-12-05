@@ -1,8 +1,9 @@
 extends Node3D
 class_name PathDisk
 
-# BUG When thrown with speed and angle straight hits ground and spawns chuck disk and launch point
-# TODO Make ChuckDisk global x rotation locked at launch angle until collision detected
+# TODO Lock x rotation until collision is detected
+# BUG Mouse capture is not returned if thrown over the edge
+# TODO Make disk tilt in the air when curve is added
 # TODO If above doesn't fix follow camera jiggling on path lock the diskCamera's container's global x rotation as well
 # TODO Need to allow holding power consistent while still pulling offset curve
 #		Consider making another disk that is a multi click disk
@@ -15,9 +16,14 @@ class_name PathDisk
 
 const thrownDisk: PackedScene = preload(SceneLibrary.DISK.PATH_SCENE)
 
+const _BODY_EXIT: String = "body_exit"
+const _BODY_ENTER: String = "body_enter"
+
+@onready var pathDisk: PathDisk = $"."
 @onready var path3d: Path3D = $Path3D
 @onready var pathFollow3d: PathFollow3D = $Path3D/PathFollow3D
 @onready var chuckDisk: ChuckDisk = $Path3D/PathFollow3D/ChuckDisk
+@onready var collisionArea: Area3D = $Path3D/PathFollow3D/ChuckDisk/CollisionArea
 
 var launchSpeed: float = 0.0
 var _prepared: bool = false
@@ -57,3 +63,16 @@ func toggle_camera() -> void:
 
 func _idle_rotate(delta: float) -> void:
 	self.chuckDisk._idle_rotate(delta)
+
+func _body_enter(body_rid: RID, body: Node3D, body_shape_index: int, local_shape_index: int) -> void:
+	var chuckRid: RID = self.chuckDisk.get_rid()
+	var throwerRid: RID
+	if self.chuckDisk.thrower != null:
+		throwerRid = self.chuckDisk.thrower.get_rid()
+		if body_rid != chuckRid && body_rid != throwerRid:
+			self._deparent_disk()
+
+# Breaks the disk from the path and adds velocity
+func _deparent_disk() -> void:
+	chuckDisk.reparent(pathDisk, true)
+	chuckDisk.linear_velocity = -chuckDisk.global_transform.basis.z * (self.launchSpeed/2)

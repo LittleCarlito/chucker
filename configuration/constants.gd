@@ -1,6 +1,8 @@
 extends Node
 class_name CONSTANTS
 
+const METHOD_LOG: String = "\"%s\"; \"%s\""
+
 const MENU: Dictionary = {
 	"SCORECARD": {
 		"PLAYER_PIXEL_SIZE": .003,

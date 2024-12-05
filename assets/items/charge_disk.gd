@@ -7,12 +7,7 @@ const diskMesh: PackedScene = preload(SceneLibrary.MESH.CHARGE_SCENE)
 
 var stopWatch: StopWatch = StopWatch.new()
 
-# TODO Get rid of scroll making disk tilt and make that how power is set instead
-# TODO Make dynamic scorecard
-#		Make each part of the scorecard a node object
-#		Make a script to create the scorecard based off how many holes the scene contains
-#		Also adds the number of players dynamically
-#		Creates scroll bars to allow for more than 18 holes and more than 4 players
+# TODO Have charge and line decrease after reaching max and increase after reaching min on long holds
 # TODO Add charge effects
 #		Wobble if held too long
 #		Will just inaccurately launch after x amount of time
