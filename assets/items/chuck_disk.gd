@@ -1,9 +1,6 @@
 extends RigidBody3D
 class_name ChuckDisk
 
-# TODO PreCollisionDetection box isn't doing anything
-#		Add signal connection in PathDisk to awaken and add force to landing
-
 const thrownDisk: PackedScene = preload(SceneLibrary.DISK.SCENE)
 
 @onready var diskMesh: MeshInstance3D = $DiskMesh
@@ -17,6 +14,9 @@ var thrower: ChuckChucker
 var fallbackCamera: Camera3D
 var collisionLocation: Vector3 = Vector3.INF
 var collided: bool
+# In radians
+var launchAngle: Basis
+var holdAngle: bool = false
 
 func _ready() -> void:
 	var parentObject: Object
@@ -26,6 +26,15 @@ func _ready() -> void:
 		fallbackCamera = null
 	var activeMaterial: StandardMaterial3D = diskMesh.get_active_material(0)
 	activeMaterial.albedo_color = GlobalSettings.COLOR.CHARGE
+#
+#func _integrate_forces(_state: PhysicsDirectBodyState3D) -> void:
+	## TODO In here if launchAngle isn't null get the x (pitch) from it and set the x rotation until collided
+	#if holdAngle:
+		#self.axis_lock_angular_x = true
+		#self.axis_lock_linear_x = true
+	#else:
+		#self.axis_lock_angular_x = false
+		#self.axis_lock_linear_x = false
 
 func _process(delta: float) -> void:
 	# Maintain minimum height for the camera

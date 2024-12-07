@@ -101,7 +101,6 @@ func draw_aim_line(multiplier: float, xOffset: float = 0) -> Array[Vector3]:
 	# Draw the curve
 	return DrawUtil.curve(self.global_position, launchControlNode.position, aimControlNode.position, aimNode.position)
 
-
 func launch_disk(multiplier: float, diskType: TYPE, throwCurve: Array[Vector3] = []) -> void:
 	var newDisk = ChuckDisk.new_disk(fallbackCamera, ownerVar)
 	if throwCurve.is_empty():
@@ -117,6 +116,12 @@ func launch_disk(multiplier: float, diskType: TYPE, throwCurve: Array[Vector3] =
 		newPathDisk.top_level = true
 		newDisk = newPathDisk.chuckDisk
 		newDisk.diskType = ThrowableItem.TYPE.PATH
+		# TODO Seems like messing with rotation of Rigid3D bodies is a nono
+		#			Need to refactor path disk to be a mesh with area box for pre collision
+		#			Pre collision detection then spawns in a RigidBody3D with same global basis as mesh and adds launching force
+		newDisk.holdAngle = true
+		newDisk.rotate_x(self.global_basis.get_euler().x)
+	newDisk.launchAngle = self.global_basis
 	self.rotation.x = 0
 	var diskMaterial: StandardMaterial3D = newDisk.get_mesh().get_active_material(0)
 	if diskType == TYPE.CHARGE:

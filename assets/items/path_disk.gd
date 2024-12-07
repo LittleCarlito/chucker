@@ -27,6 +27,7 @@ const _BODY_ENTER: String = "body_enter"
 
 var launchSpeed: float = 0.0
 var _prepared: bool = false
+var _pre_collide: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -74,5 +75,8 @@ func _body_enter(body_rid: RID, body: Node3D, body_shape_index: int, local_shape
 
 # Breaks the disk from the path and adds velocity
 func _deparent_disk() -> void:
+	chuckDisk.holdAngle = false
 	chuckDisk.reparent(pathDisk, true)
 	chuckDisk.linear_velocity = -chuckDisk.global_transform.basis.z * (self.launchSpeed/2)
+	var debugVar = rad_to_deg(chuckDisk.launchAngle.get_euler().x)
+	Logger.debug("%s", [str(debugVar)], self)
