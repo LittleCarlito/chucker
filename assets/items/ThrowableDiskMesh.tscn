@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://daoarb2bmuvir"]
+
+[ext_resource type="Script" path="res://assets/items/throwable_disk_mesh.gd" id="1_6w20u"]
+[ext_resource type="PackedScene" uid="uid://jvw5pa8yws2g" path="res://assets/items/DiskMesh.tscn" id="2_pnqo5"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cd2i4"]
+resource_local_to_scene = true
+albedo_color = Color(0.93, 0, 0, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_mgwq2"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_cd2i4")
+height = 0.1
+
+[node name="ThrowableDiskMesh" type="Node3D"]
+script = ExtResource("1_6w20u")
+
+[node name="DiskMesh" parent="." instance=ExtResource("2_pnqo5")]
+mesh = SubResource("CylinderMesh_mgwq2")
+
+[connection signal="lose_focus" from="DiskMesh" to="." method="_handle_lose_focus"]

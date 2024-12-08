@@ -1,7 +1,8 @@
 extends PlayableCharacter
 class_name ChuckChucker
 
-const UNEQUIP_MESSAGE: String = "unequip_item() called but no item is equiped"
+const _UKNOWN_OBJECT_LOG: String = "Tried to pick up UKNOWN object; Where did you get that?"
+const _UNEQUIP_MESSAGE_LOG: String = "unequip_item() called but no item is equiped"
 
 @onready var diskController: Node3D = $DiskController
 @onready var cameraController: Node3D = $CameraController
@@ -16,8 +17,9 @@ var aimingNode: Node3D = Node3D.new()
 var aimingControl: Node3D = Node3D.new()
 var launchControl: Node3D = Node3D.new()
 var height: float
-
 var jumpDetected: bool = false
+
+# BUG After throwing the disk a second time mesh was spun sidways but controls remained normal (cube rotated on y axis)
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -64,22 +66,18 @@ func _handle_player_interact() -> void:
 		var collidingCount = frontDetection.get_collision_count()
 		for n in collidingCount:
 			var collidingObject = frontDetection.get_collider(0)
-			if collidingObject != null and (collidingObject is PathDisk or collidingObject is ChuckDisk):
-				if collidingObject is ChuckDisk:
-					if collidingObject.diskType == ThrowableItem.TYPE.CHARGE:
-						var newChargeMesh = ChargeDisk.new_disk()
-						self.diskController.add_child(newChargeMesh)
-						playerDisk = newChargeMesh
-						playerDisk.fallbackCamera = playerCamera
-						playerDisk.ownerVar = self
-					elif collidingObject.diskType == ThrowableItem.TYPE.PATH:
-						var newPullMesh = PullDisk.new_disk()
-						self.diskController.add_child(newPullMesh)
-						playerDisk = newPullMesh
-						playerDisk.fallbackCamera = playerCamera
-						playerDisk.ownerVar = self
-						playerDisk.pullDraw.ownerVar = self
+			if collidingObject != null and collidingObject is ChuckDisk:
+				match collidingObject.get_type():
+					CONSTANTS.ITEM_TYPE.FORCE:
+						playerDisk = ChargeDisk.new_disk(self, playerCamera, CONSTANTS.ITEM_TYPE.FORCE)
+					CONSTANTS.ITEM_TYPE.PATH:
+						playerDisk = PullDisk.new_disk(self, playerCamera, CONSTANTS.ITEM_TYPE.PATH)
+					_:
+						Logger.error(_UKNOWN_OBJECT_LOG, [], self)
+				# Connect the playerDisk rotation signal to chucker
+				if playerDisk != null:
 					playerDisk.rotate_parent.connect(self._handle_rotation)
+					self.diskController.add_child(playerDisk)
 				collidingObject.queue_free()
 
 # Handles rotation signals from held nodes
@@ -138,7 +136,7 @@ func unequip_item() -> void:
 		playerDisk.queue_free()
 		playerDisk.rotate_parent.disconnect(self._handle_rotation)
 	else:
-		Logger.warn(UNEQUIP_MESSAGE, [], self)
+		Logger.warn(_UNEQUIP_MESSAGE_LOG, [], self)
 	# Reset item controller rotation
 	self.diskController.rotation_degrees.x = 0
 
@@ -152,6 +150,9 @@ func get_height() -> float:
 
 func get_camera() -> Camera3D:
 	return $CameraController/CameraTarget/ChuckCamera
+
+# TODO Duplicated code in EquipableItem
+# TODO Make the camera its own scene and class with these methods then have the scenes use that
 
 func _reset_zoom() -> void:
 	playerCamera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV)

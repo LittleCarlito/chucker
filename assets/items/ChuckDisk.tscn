@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://blwwfxseykyuy"]
 
 [ext_resource type="Script" path="res://assets/items/chuck_disk.gd" id="1_gtghv"]
-[ext_resource type="CylinderMesh" uid="uid://bwc6i6by0861c" path="res://assets/items/DiskMesh.tres" id="2_i7m5c"]
+[ext_resource type="PackedScene" uid="uid://daoarb2bmuvir" path="res://assets/items/ThrowableDiskMesh.tscn" id="2_2xdv6"]
 [ext_resource type="Shape3D" uid="uid://x6uh5gkdse8r" path="res://assets/items/DiskCollision.tres" id="3_kqup5"]
 
 [node name="ChuckDisk" type="RigidBody3D"]
@@ -13,22 +13,8 @@ linear_damp_mode = 1
 angular_damp_mode = 1
 script = ExtResource("1_gtghv")
 
-[node name="DiskMesh" type="MeshInstance3D" parent="."]
-mesh = ExtResource("2_i7m5c")
+[node name="ThrowableMesh" parent="." instance=ExtResource("2_2xdv6")]
 
 [node name="DiskCollision" type="CollisionShape3D" parent="."]
 physics_interpolation_mode = 2
 shape = ExtResource("3_kqup5")
-
-[node name="CameraContainer" type="Node3D" parent="."]
-
-[node name="CameraControl" type="Node3D" parent="CameraContainer"]
-transform = Transform3D(1, 0, 0, 0, 0.940638, 0.339411, 0, -0.339411, 0.940638, 0, 3.67279, 7.8427)
-
-[node name="DiskCamera" type="Camera3D" parent="CameraContainer/CameraControl"]
-fov = 90.0
-
-[node name="CameraTimer" type="Timer" parent="CameraContainer"]
-one_shot = true
-
-[connection signal="timeout" from="CameraContainer/CameraTimer" to="." method="_on_camera_timer_timeout"]

@@ -69,7 +69,7 @@ const DISPLAY_DEFAULTS: Dictionary = {
 static var DISPLAY = DISPLAY_DEFAULTS.duplicate()
 
 const COLOR: Dictionary = {
-	"CHARGE": Color.RED,
+	"FORCE": Color.RED,
 	"PATH": Color.BLUE
 }
 

@@ -13,7 +13,6 @@ const diskMesh: PackedScene = preload(SceneLibrary.MESH.PULL_SCENE)
 
 var pullLength: float
 var pullOffset: float
-var throwCurve: Array[Vector3]
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -24,6 +23,16 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	self.handle_aiming()
+
+static func new_disk(newThrower: ChuckChucker, newDiskCamera: Camera3D, newType: CONSTANTS.ITEM_TYPE) -> PullDisk:
+	var newDisk: PullDisk = diskMesh.instantiate()
+	# TODO Not sure if this does anything as method is static; Look at variables in returned object outside of the method
+	newDisk.prepare_item(newThrower, newDiskCamera, newType)
+	return newDisk
+
+func prepare_item(incomingOwner: ChuckChucker, incomingCamera: Camera3D, incomingType: CONSTANTS.ITEM_TYPE) -> void:
+	super(incomingOwner, incomingCamera, incomingType)
+	pullDraw.ownerVar = incomingOwner
 
 func hold_action(_delta: float) -> void:
 	# If right click is pressed while holding left reset throw
@@ -36,14 +45,11 @@ func hold_action(_delta: float) -> void:
 		pullOffset = pullDraw.lastOffset * .01
 		chargeView.set_progress((pullLength / GlobalSettings.DISK.MAX_PULL) * 100)
 		var multiplier: float = (pullLength / 100) * GlobalSettings.DISK.HOLD_MULTIPLIER
-		throwCurve = self.draw_aim_line(multiplier, pullOffset)
+		launchPath = self.draw_aim_line(multiplier, pullOffset)
 
 func release_action() -> void:
 	# If right click is not held launch the disk
 	if not Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY) and pullLength > GlobalSettings.DISK.MIN_PULL:
 		var multiplier: float = (pullLength / 100) * GlobalSettings.DISK.HOLD_MULTIPLIER
-		self.launch_disk(multiplier, ThrowableItem.TYPE.PATH, throwCurve)
+		self.launch_disk()
 	chargeView.set_progress(-1)
-
-static func new_disk() -> PullDisk:
-	return diskMesh.instantiate()

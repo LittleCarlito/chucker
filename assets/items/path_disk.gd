@@ -1,4 +1,4 @@
-extends Node3D
+extends ThrowableItem
 class_name PathDisk
 
 # TODO Lock x rotation until collision is detected
@@ -22,61 +22,62 @@ const _BODY_ENTER: String = "body_enter"
 @onready var pathDisk: PathDisk = $"."
 @onready var path3d: Path3D = $Path3D
 @onready var pathFollow3d: PathFollow3D = $Path3D/PathFollow3D
-@onready var chuckDisk: ChuckDisk = $Path3D/PathFollow3D/ChuckDisk
-@onready var collisionArea: Area3D = $Path3D/PathFollow3D/ChuckDisk/CollisionArea
+@onready var throwableMesh: ThrowableDiskMesh = $Path3D/PathFollow3D/CollisionArea/ThrowableMesh
+@onready var collisionArea: Area3D = $Path3D/PathFollow3D/CollisionArea
 
-var launchSpeed: float = 0.0
-var _prepared: bool = false
 var _pre_collide: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	chuckDisk.diskType = ThrowableItem.TYPE.PATH
-	var activeMaterial: StandardMaterial3D = chuckDisk.get_mesh().get_active_material(0)
+	var activeMaterial: StandardMaterial3D = throwableMesh.get_active_material()
 	activeMaterial.albedo_color = GlobalSettings.COLOR.PATH
-
-func prepare(throwPath: Array[Vector3], multiplier: float, newFallbackCamera: Camera3D, newThrower: ChuckChucker) -> void:
-	var throwCurve: Curve3D = Curve3D.new()
-	for throwPoint in throwPath:
-		throwCurve.add_point(throwPoint)
-	self.path3d.curve = throwCurve
-	self.launchSpeed = GlobalSettings.DISK.LAUNCH_SPEED * multiplier
-	self.chuckDisk.fallbackCamera = newFallbackCamera
-	self.chuckDisk.thrower = newThrower
-	self._prepared = true
+	throwableMesh.itemType = CONSTANTS.ITEM_TYPE.PATH
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	# If disk not collided or disk just launched process on path
-	if chuckDisk != null and not chuckDisk.collided and pathFollow3d.progress_ratio < 1:
-		var velocityMagnitude: float = launchSpeed
+	if pathFollow3d.progress_ratio < 1:
+		var velocityMagnitude: float = self.launchSpeed
 		var distancePerSecond: float = velocityMagnitude * delta
 		pathFollow3d.progress += distancePerSecond
 
-static func new_disk() -> PathDisk:
-	# Create a new path disk
+# Create a new path disk
+static func new_disk(incomingOwnerVar: ChuckChucker, incomingFallbackCamera: Camera3D, incomingType: CONSTANTS.ITEM_TYPE) -> PathDisk:
 	var newPathDisk: PathDisk = thrownDisk.instantiate()
-	# Prepare the path disk with passed in variables and return
+	# TODO Not sure if setting all this does anything as its in a static method; Look at variable returned outside of method
+	newPathDisk.prepare_item(incomingOwnerVar, incomingFallbackCamera, incomingType)
+	var newMesh: ThrowableDiskMesh = ThrowableDiskMesh.new_disk()
+	newPathDisk.throwableMesh = newMesh
 	return newPathDisk
 
-func toggle_camera() -> void:
-	self.chuckDisk.toggle_camera()
+# TODO Refactor to prepare_launch
+func set_launch_parameters(incomingPath: Array[Vector3], multiplier: float, incomingAngle: float) -> void:
+	super(incomingPath, multiplier, incomingAngle)
+	var throwCurve: Curve3D = Curve3D.new()
+	for throwPoint in incomingPath:
+		throwCurve.add_point(throwPoint)
+	self.path3d.curve = throwCurve
 
-func _idle_rotate(delta: float) -> void:
-	self.chuckDisk._idle_rotate(delta)
+func toggle_camera() -> void:
+	throwableMesh.toggle_camera()
 
 func _body_enter(body_rid: RID, body: Node3D, body_shape_index: int, local_shape_index: int) -> void:
-	var chuckRid: RID = self.chuckDisk.get_rid()
-	var throwerRid: RID
-	if self.chuckDisk.thrower != null:
-		throwerRid = self.chuckDisk.thrower.get_rid()
-		if body_rid != chuckRid && body_rid != throwerRid:
-			self._deparent_disk()
+	var ownerRid: RID
+	if self.ownerVar != null:
+		ownerRid = self.ownerVar.get_rid()
+		if body_rid != ownerRid:
+			self._swap_disk()
 
 # Breaks the disk from the path and adds velocity
-func _deparent_disk() -> void:
-	chuckDisk.holdAngle = false
-	chuckDisk.reparent(pathDisk, true)
-	chuckDisk.linear_velocity = -chuckDisk.global_transform.basis.z * (self.launchSpeed/2)
-	var debugVar = rad_to_deg(chuckDisk.launchAngle.get_euler().x)
-	Logger.debug("%s", [str(debugVar)], self)
+func _swap_disk() -> void:
+	# Create a force disk
+	var newDisk = ChuckDisk.new_disk()
+	# Override its default settings to make it appear as a PATH disk
+	newDisk.diskMesh.itemType = CONSTANTS.ITEM_TYPE.PATH
+	var activeMaterial: StandardMaterial3D = newDisk.get_mesh().get_active_material()
+	activeMaterial.albedo_color = GlobalSettings.COLOR.PATH
+	# Set rotation to launchAngle
+	newDisk.rotate_x(launchAngle)
+	# Add force to collision and spawn
+	newDisk.linear_velocity = -newDisk.global_transform.basis.z * (self.launchSpeed/2)
+	pathDisk.add_child(newDisk)

@@ -3,6 +3,8 @@ class_name CONSTANTS
 
 const METHOD_LOG: String = "\"%s\"; \"%s\""
 
+enum ITEM_TYPE {FORCE, PATH, UNKOWN}
+
 const MENU: Dictionary = {
 	"SCORECARD": {
 		"PLAYER_PIXEL_SIZE": .003,

@@ -9,13 +9,16 @@ signal rotate_parent(rotationAmount)
 const _UNIMPLEMENTED_LOG: String = "UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement \"%s\""
 const _HOLD_ACTION: String = "hold_action"
 const _RELEASE_ACTION: String = "release_action"
+const _NOT_LAUNCH_READY_LOG: String = "ThrowableItem has not had its launch parameters set and could not be thrown"
 
 var aimNode: Node3D = Node3D.new()
 var aimControlNode: Node3D = Node3D.new()
 var launchControlNode: Node3D = Node3D.new()
+var launchPath: Array[Vector3]
+var launchSpeed: float = 0.0
+var launchAngle: float
+var launchReady: bool = false
 var justLaunched: bool = false
-
-enum TYPE {CHARGE, PATH}
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -68,6 +71,48 @@ func _input(event: InputEvent) -> void:
 			rotationAdjust *= -1
 		rotate_parent.emit(rotationAdjust)
 
+func set_launch_parameters(incomingPath: Array[Vector3], incomingSpeed: float, incomingAngle: float) -> void:
+	self.launchPath = incomingPath
+	self.launchSpeed = incomingSpeed
+	# TODO This is the calculation somehow for PathDisk speed I think; Otherwise its not needed
+	#self.launchSpeed = GlobalSettings.DISK.LAUNCH_SPEED * multiplier
+	self.launchAngle = incomingAngle
+	self.launchReady = true
+
+func reset_launch_parameters() -> void:
+	self.launchPath = []
+	self.launchSpeed = 0
+	self.launchAngle = 0
+	self.launchReady = false
+
+func launch_disk() -> void:
+	if launchReady:
+		match self.itemType:
+			# BUG Physics of disk seem off compared to previous working commit
+			CONSTANTS.ITEM_TYPE.FORCE:
+				var forceDisk: ChuckDisk = ChuckDisk.new_disk()
+				get_tree().get_root().add_child(forceDisk)
+				Logger.debug("forceDisk throwablemesh: %s", [str(forceDisk.throwableMesh)], self)
+				forceDisk.prepare_item(ownerVar, fallbackCamera, CONSTANTS.ITEM_TYPE.FORCE)
+				forceDisk.global_transform = self.global_transform
+				forceDisk.set_rigid_launch_parameters(self.launchPath, self.launchSpeed, self.launchAngle)
+			CONSTANTS.ITEM_TYPE.PATH:
+				# TODO PathDisk stuff should need updating after refactoring to mesh on path
+				var newPathDisk = PathDisk.new_disk(ownerVar, fallbackCamera, CONSTANTS.ITEM_TYPE.PATH)
+				#newPathDisk.prepare(throwCurve, multiplier, self.global_basis.get_euler().x)
+				#get_tree().get_root().add_child(newPathDisk)
+				#newPathDisk.top_level = true
+				#newDisk.diskMesh.itemType = CONSTANTS.ITEM_TYPE.PATH
+				pass
+			_:
+				pass
+	else:
+		Logger.error(_NOT_LAUNCH_READY_LOG, [], self)
+	self.rotation.x = 0
+	ownerVar.disableMovement = true
+	self.justLaunched = true
+	ownerVar.unequip_item()
+
 func set_just_launched(value: bool) -> void:
 	self.justLaunched = value
 
@@ -100,35 +145,3 @@ func draw_aim_line(multiplier: float, xOffset: float = 0) -> Array[Vector3]:
 	DrawUtil.point(aimControlNode.position, .05, Color.DEEP_PINK)
 	# Draw the curve
 	return DrawUtil.curve(self.global_position, launchControlNode.position, aimControlNode.position, aimNode.position)
-
-func launch_disk(multiplier: float, diskType: TYPE, throwCurve: Array[Vector3] = []) -> void:
-	var newDisk = ChuckDisk.new_disk(fallbackCamera, ownerVar)
-	if throwCurve.is_empty():
-		get_tree().get_root().add_child(newDisk)
-		newDisk.top_level = true
-		newDisk.global_transform = self.global_transform
-		newDisk.linear_velocity = -newDisk.global_transform.basis.z * (GlobalSettings.DISK.LAUNCH_SPEED * multiplier)
-		newDisk.diskType = ThrowableItem.TYPE.CHARGE
-	else:
-		var newPathDisk = PathDisk.new_disk()
-		get_tree().get_root().add_child(newPathDisk)
-		newPathDisk.prepare(throwCurve, multiplier, fallbackCamera, ownerVar)
-		newPathDisk.top_level = true
-		newDisk = newPathDisk.chuckDisk
-		newDisk.diskType = ThrowableItem.TYPE.PATH
-		# TODO Seems like messing with rotation of Rigid3D bodies is a nono
-		#			Need to refactor path disk to be a mesh with area box for pre collision
-		#			Pre collision detection then spawns in a RigidBody3D with same global basis as mesh and adds launching force
-		newDisk.holdAngle = true
-		newDisk.rotate_x(self.global_basis.get_euler().x)
-	newDisk.launchAngle = self.global_basis
-	self.rotation.x = 0
-	var diskMaterial: StandardMaterial3D = newDisk.get_mesh().get_active_material(0)
-	if diskType == TYPE.CHARGE:
-		diskMaterial.albedo_color = GlobalSettings.COLOR.CHARGE
-	elif diskType == TYPE.PATH:
-		diskMaterial.albedo_color = GlobalSettings.COLOR.PATH
-	newDisk.toggle_camera()
-	ownerVar.disableMovement = true
-	self.justLaunched = true
-	ownerVar.unequip_item()

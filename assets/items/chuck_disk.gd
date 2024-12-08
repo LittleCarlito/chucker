@@ -3,96 +3,61 @@ class_name ChuckDisk
 
 const thrownDisk: PackedScene = preload(SceneLibrary.DISK.SCENE)
 
-@onready var diskMesh: MeshInstance3D = $DiskMesh
-@onready var cameraContainer: Node3D = $CameraContainer
-@onready var cameraControl: Node3D = $CameraContainer/CameraControl
-@onready var diskCamera: Camera3D = $CameraContainer/CameraControl/DiskCamera
-@onready var cameraTimer: Timer = $CameraContainer/CameraTimer
+@onready var throwableMesh: ThrowableDiskMesh = $ThrowableMesh
 
-var diskType: ThrowableItem.TYPE
-var thrower: ChuckChucker
-var fallbackCamera: Camera3D
-var collisionLocation: Vector3 = Vector3.INF
-var collided: bool
-# In radians
-var launchAngle: Basis
-var holdAngle: bool = false
+var expectedPath: Array[Vector3]
+var launchAngle: float
+var launchSpeed: float
 
 func _ready() -> void:
-	var parentObject: Object
-	if self.get_parent() != null:
-		parentObject = self.get_parent()
-	if parentObject is ChuckTee:
-		fallbackCamera = null
-	var activeMaterial: StandardMaterial3D = diskMesh.get_active_material(0)
-	activeMaterial.albedo_color = GlobalSettings.COLOR.CHARGE
-#
-#func _integrate_forces(_state: PhysicsDirectBodyState3D) -> void:
-	## TODO In here if launchAngle isn't null get the x (pitch) from it and set the x rotation until collided
-	#if holdAngle:
-		#self.axis_lock_angular_x = true
-		#self.axis_lock_linear_x = true
-	#else:
-		#self.axis_lock_angular_x = false
-		#self.axis_lock_linear_x = false
+	var activeMaterial: StandardMaterial3D = throwableMesh.get_active_material()
+	activeMaterial.albedo_color = GlobalSettings.COLOR.FORCE
+	# TODO Make this "default disk type" configuration value
+	throwableMesh.itemType = CONSTANTS.ITEM_TYPE.FORCE
 
 func _process(delta: float) -> void:
-	# Maintain minimum height for the camera
-	cameraControl.global_position.y = max(GlobalSettings.CAMERA.MIN_HEIGHT, cameraControl.global_position.y)
-	cameraControl.look_at(self.global_position)
 	# Freeze the camera control when rigid body detects collision
-	if self.get_contact_count() > 0 and diskCamera.current:
+	if self.get_contact_count() > 0 and throwableMesh.is_camera_current():
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		if !collided and diskCamera.current:
-			# Initial collision so start timers
-			cameraTimer.start(GlobalSettings.CAMERA.SHOT_WATCH_TIME)
-			collided = true
+		if !throwableMesh.focused:
+			# Focus camera on collision location
+			throwableMesh.start_focus()
 			self.linear_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
 			self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
-		# Move camera control to where collision occured
-		self._idle_rotate(delta)
+		throwableMesh.idle_rotate(delta)
 	# Otherwise handle camera controls if camera is active
 	else:
-		if diskCamera.current:
+		if throwableMesh.is_camera_current() && !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
-func _input(event: InputEvent) -> void:
-	# Looking controls
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and diskCamera.current:
-		if event is InputEventMouseMotion:
-			# Doesn't have inversion multiplcation on it because it seems to have it through computation
-			var horizontalRotateAmount: float = deg_to_rad(event.relative.x) * GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
-			cameraContainer.global_rotation_degrees.y += horizontalRotateAmount
-			cameraControl.look_at(self.global_position)
+func prepare_item(incomingOwner: ChuckChucker, incomingCamera: Camera3D, incomingType: CONSTANTS.ITEM_TYPE) -> void:
+	self.top_level = true
+	var newThrowableMesh: ThrowableDiskMesh = ThrowableDiskMesh.new_disk()
+	self.set_throwable_mesh(newThrowableMesh)
+	newThrowableMesh.prepare_item(incomingOwner, incomingCamera, incomingType)
 
-func toggle_camera() -> void:
-	diskCamera.current = not diskCamera.current
-
-func _on_camera_timer_timeout() -> void:
-	diskCamera.current = false
-	thrower.disableMovement = false
-	fallbackCamera.current = true
-	collisionLocation = Vector3.INF
-	cameraContainer.top_level = false
-	self.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
-	self.angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
-	cameraTimer.stop()
-
-static func new_disk(newdiskCamera: Camera3D, newThrower: ChuckChucker) -> ChuckDisk:
+static func new_disk() -> ChuckDisk:
 	var newDisk: ChuckDisk = thrownDisk.instantiate()
-	newDisk.fallbackCamera = newdiskCamera
-	newDisk.thrower = newThrower
 	return newDisk
 
-func _idle_rotate(delta: float) -> void:
-	cameraContainer.top_level = true
-	# Calculate the rotation angle in radians
-	var rotationAmount: float = (GlobalSettings.CAMERA.IDLE_ROTATE_SPEED * delta)
-	# Get the current global position of the Root object
-	if collisionLocation == Vector3.INF:
-		collisionLocation = self.global_position
-	cameraContainer.global_rotation_degrees.y += rotationAmount
-	cameraControl.look_at(collisionLocation)
+func set_rigid_launch_parameters(incomingPath: Array[Vector3], multiplier: float, incomingAngle: float) -> void:
+	expectedPath = incomingPath
+	launchAngle = incomingAngle
+	launchSpeed = GlobalSettings.DISK.LAUNCH_SPEED * multiplier
+	self.linear_velocity = -self.global_transform.basis.z * launchSpeed
+	self.toggle_camera()
 
-func get_mesh() -> MeshInstance3D:
-	return $DiskMesh
+func get_type() -> CONSTANTS.ITEM_TYPE:
+	return throwableMesh.itemType
+
+func toggle_camera() -> void:
+	throwableMesh.toggle_camera()
+
+func get_mesh() -> ThrowableDiskMesh:
+	return $ThrowableMesh
+
+func set_throwable_mesh(newThrowableMesh: ThrowableDiskMesh) -> void:
+	self.add_child(newThrowableMesh)
+	var oldThrowableMesh: ThrowableDiskMesh = throwableMesh
+	oldThrowableMesh.queue_free()
+	self.throwableMesh = newThrowableMesh
