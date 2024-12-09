@@ -20,7 +20,7 @@ func _ready() -> void:
 	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	# Maintain minimum height for the camera
 	cameraControl.global_position.y = max(GlobalSettings.CAMERA.MIN_HEIGHT, cameraControl.global_position.y)
 	cameraControl.look_at(self.global_position)
@@ -38,12 +38,12 @@ static func new_disk() -> DiskMesh:
 	var newMesh: DiskMesh = thrownDisk.instantiate()
 	return newMesh
 
-func _set_type(newType: CONSTANTS.ITEM_TYPE) -> void:
+func _set_type(newType: CONSTANTS.DISK_TYPE) -> void:
 	var diskMaterial: StandardMaterial3D = self.get_active_material(0)
 	match newType:
-		CONSTANTS.ITEM_TYPE.FORCE:
+		CONSTANTS.DISK_TYPE.FORCE:
 			diskMaterial.albedo_color = GlobalSettings.COLOR.FORCE
-		CONSTANTS.ITEM_TYPE.PATH:
+		CONSTANTS.DISK_TYPE.PATH:
 			diskMaterial.albedo_color = GlobalSettings.COLOR.PATH
 		_:
 			# TODO Log that type wasn't supported; Load a weird color

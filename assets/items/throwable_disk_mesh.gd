@@ -20,6 +20,12 @@ static func new_disk() -> ThrowableDiskMesh:
 	var newThrowableMesh: ThrowableDiskMesh = thrownDisk.instantiate()
 	return newThrowableMesh
 
+func prepare_item(incomingType: CONSTANTS.DISK_TYPE, incomingOwner: ChuckChucker = null, incomingCamera: Camera3D = null) -> void:
+	super(incomingType, incomingOwner, incomingCamera)
+	var activeMaterial: StandardMaterial3D = get_active_material()
+	activeMaterial.albedo_color = CONSTANTS.DISK_COLOR.get(incomingType, GlobalSettings.COLOR_DEFAULTS.DISK)
+	self.itemType = incomingType
+
 func start_focus() -> void:
 	if !diskMesh.focused:
 		diskMesh.start_focus()

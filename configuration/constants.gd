@@ -3,7 +3,18 @@ class_name CONSTANTS
 
 const METHOD_LOG: String = "\"%s\"; \"%s\""
 
-enum ITEM_TYPE {FORCE, PATH, UNKOWN}
+enum ITEM_TYPE {DISK, UNKNOWN}
+enum DISK_TYPE {FORCE, PATH, UNKOWN}
+
+const ITEM_LIBRARY: Dictionary = {
+	ITEM_TYPE.DISK: DISK_TYPE
+}
+
+const DISK_COLOR: Dictionary = {
+	DISK_TYPE.FORCE: GlobalSettings.COLOR.FORCE,
+	DISK_TYPE.PATH: GlobalSettings.COLOR.PATH,
+	DISK_TYPE.UNKOWN: GlobalSettings.COLOR_DEFAULTS.DISK
+}
 
 const MENU: Dictionary = {
 	"SCORECARD": {

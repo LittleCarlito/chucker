@@ -53,8 +53,6 @@ shape = SubResource("BoxShape3D_o6chi")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("5_ll0n0")
 
-[node name="DiskSpawn" type="Node3D" parent="."]
-
 [node name="ControlNode" parent="." instance=ExtResource("7_inl8g")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50.6695, -6.53482)
 

@@ -68,10 +68,11 @@ func _handle_player_interact() -> void:
 			var collidingObject = frontDetection.get_collider(0)
 			if collidingObject != null and collidingObject is ChuckDisk:
 				match collidingObject.get_type():
-					CONSTANTS.ITEM_TYPE.FORCE:
-						playerDisk = ChargeDisk.new_disk(self, playerCamera, CONSTANTS.ITEM_TYPE.FORCE)
-					CONSTANTS.ITEM_TYPE.PATH:
-						playerDisk = PullDisk.new_disk(self, playerCamera, CONSTANTS.ITEM_TYPE.PATH)
+					CONSTANTS.DISK_TYPE.FORCE:
+						playerDisk = ChargeDisk.new_disk(self, playerCamera, CONSTANTS.DISK_TYPE.FORCE)
+					CONSTANTS.DISK_TYPE.PATH:
+						playerDisk = PullDisk.new_disk(self, playerCamera, CONSTANTS.DISK_TYPE.PATH)
+						#playerDisk.prepare_item(newType, newThrower, newDiskCamera)
 					_:
 						Logger.error(_UKNOWN_OBJECT_LOG, [], self)
 				# Connect the playerDisk rotation signal to chucker

@@ -6,7 +6,7 @@ const _NULL_FALLBACK_LOG: String = "%s called but fallbackCamera is null"
 # TODO Rename to itemOwner
 var ownerVar: ChuckChucker
 var fallbackCamera: Camera3D
-var itemType: CONSTANTS.ITEM_TYPE
+var itemType: CONSTANTS.DISK_TYPE
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -16,9 +16,8 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	pass
 
-# TODO Make this public
 # Another way to set ownerVar and fallback camera
-func prepare_item(incomingOwner: ChuckChucker, incomingCamera: Camera3D, incomingType: CONSTANTS.ITEM_TYPE) -> void:
+func prepare_item(incomingType: CONSTANTS.DISK_TYPE, incomingOwner: ChuckChucker = null, incomingCamera: Camera3D = null) -> void:
 	ownerVar = incomingOwner
 	fallbackCamera = incomingCamera
 	itemType = incomingType

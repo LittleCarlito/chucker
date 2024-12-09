@@ -1,6 +1,7 @@
 extends ThrowableItem
 class_name PathDisk
 
+# TODO CONTINUE FROM HERE; Got Spawned in path disk on ground, now need to pick it up and throw it then have collision work
 # TODO Lock x rotation until collision is detected
 # BUG Mouse capture is not returned if thrown over the edge
 # TODO Make disk tilt in the air when curve is added
@@ -19,65 +20,91 @@ const thrownDisk: PackedScene = preload(SceneLibrary.DISK.PATH_SCENE)
 const _BODY_EXIT: String = "body_exit"
 const _BODY_ENTER: String = "body_enter"
 
+# TODO See if maybe this needs to be made programatically instead
 @onready var pathDisk: PathDisk = $"."
 @onready var path3d: Path3D = $Path3D
 @onready var pathFollow3d: PathFollow3D = $Path3D/PathFollow3D
-@onready var throwableMesh: ThrowableDiskMesh = $Path3D/PathFollow3D/CollisionArea/ThrowableMesh
+@onready var throwableMesh: ThrowableDiskMesh = $Path3D/PathFollow3D/ThrowableMesh
 @onready var collisionArea: Area3D = $Path3D/PathFollow3D/CollisionArea
-
-var _pre_collide: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	var activeMaterial: StandardMaterial3D = throwableMesh.get_active_material()
-	activeMaterial.albedo_color = GlobalSettings.COLOR.PATH
-	throwableMesh.itemType = CONSTANTS.ITEM_TYPE.PATH
+	throwableMesh.prepare_item(CONSTANTS.DISK_TYPE.PATH)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	# If disk not collided or disk just launched process on path
-	if pathFollow3d.progress_ratio < 1:
-		var velocityMagnitude: float = self.launchSpeed
-		var distancePerSecond: float = velocityMagnitude * delta
-		pathFollow3d.progress += distancePerSecond
+	if is_instance_valid(pathFollow3d):
+		if self.launchPath.is_empty():
+			_swap_disk()
+		# If disk not collided or disk just launched process on path
+		#path3d.curve.get_baked_length()
+		elif pathFollow3d.progress_ratio < 1:
+			var velocityMagnitude: float = GlobalSettings.DISK.LAUNCH_SPEED * self.launchSpeed 
+			var distancePerSecond: float = velocityMagnitude * delta
+			pathFollow3d.progress += distancePerSecond
+			# TODO Everyting but the mesh moves; Need to add rotating/moving the mesh with everything else to this logic
+			throwableMesh.global_transform = pathFollow3d.global_transform
+			if throwableMesh.global_rotation.x != self.launchAngle:
+				throwableMesh.global_rotation.x = self.launchAngle
+		if pathFollow3d.progress_ratio >= 1:
+			self.throwableMesh.collisionLocation = throwableMesh.global_position
+			_swap_disk()
 
 # Create a new path disk
-static func new_disk(incomingOwnerVar: ChuckChucker, incomingFallbackCamera: Camera3D, incomingType: CONSTANTS.ITEM_TYPE) -> PathDisk:
+static func new_disk() -> PathDisk:
 	var newPathDisk: PathDisk = thrownDisk.instantiate()
-	# TODO Not sure if setting all this does anything as its in a static method; Look at variable returned outside of method
-	newPathDisk.prepare_item(incomingOwnerVar, incomingFallbackCamera, incomingType)
-	var newMesh: ThrowableDiskMesh = ThrowableDiskMesh.new_disk()
-	newPathDisk.throwableMesh = newMesh
 	return newPathDisk
 
-# TODO Refactor to prepare_launch
-func set_launch_parameters(incomingPath: Array[Vector3], multiplier: float, incomingAngle: float) -> void:
-	super(incomingPath, multiplier, incomingAngle)
+func prepare_item(incomingType: CONSTANTS.DISK_TYPE, incomingOwner: ChuckChucker = null, incomingCamera: Camera3D = null) -> void:
+	super(incomingType, incomingOwner, incomingCamera)
+	self.top_level = true
+	var newThrowableMesh: ThrowableDiskMesh = ThrowableDiskMesh.new_disk()
+	self.set_throwable_mesh(newThrowableMesh)
+	newThrowableMesh.prepare_item(incomingType, incomingOwner, incomingCamera)
+
+func set_throwable_mesh(newThrowableMesh: ThrowableDiskMesh) -> void:
+	self.add_child(newThrowableMesh)
+	var oldThrowableMesh: ThrowableDiskMesh = throwableMesh
+	oldThrowableMesh.queue_free()
+	self.throwableMesh = newThrowableMesh
+
+func set_launch_parameters(incomingPath: Array[Vector3], incomingSpeed: float, incomingAngle: float) -> void:
+	super(incomingPath, incomingSpeed, incomingAngle)
 	var throwCurve: Curve3D = Curve3D.new()
 	for throwPoint in incomingPath:
-		throwCurve.add_point(throwPoint)
+		throwCurve.add_point(to_local(throwPoint))
 	self.path3d.curve = throwCurve
+	self.toggle_camera()
 
 func toggle_camera() -> void:
 	throwableMesh.toggle_camera()
 
-func _body_enter(body_rid: RID, body: Node3D, body_shape_index: int, local_shape_index: int) -> void:
+func _body_enter(body_rid: RID, _body: Node3D, _body_shape_index: int, _local_shape_index: int) -> void:
 	var ownerRid: RID
 	if self.ownerVar != null:
 		ownerRid = self.ownerVar.get_rid()
 		if body_rid != ownerRid:
+			# TODO Need to save the collision location here and set the location of the newDisk to that spot
+			self.throwableMesh.collisionLocation = throwableMesh.global_position
 			self._swap_disk()
 
 # Breaks the disk from the path and adds velocity
 func _swap_disk() -> void:
+	# TODO Make shared code a method in Global DiskFactory script for generating Rigid3D disks
+#			Should then add the preparation and building of other disk types to the class
 	# Create a force disk
 	var newDisk = ChuckDisk.new_disk()
-	# Override its default settings to make it appear as a PATH disk
-	newDisk.diskMesh.itemType = CONSTANTS.ITEM_TYPE.PATH
-	var activeMaterial: StandardMaterial3D = newDisk.get_mesh().get_active_material()
-	activeMaterial.albedo_color = GlobalSettings.COLOR.PATH
-	# Set rotation to launchAngle
-	newDisk.rotate_x(launchAngle)
-	# Add force to collision and spawn
-	newDisk.linear_velocity = -newDisk.global_transform.basis.z * (self.launchSpeed/2)
-	pathDisk.add_child(newDisk)
+	get_tree().root.add_child(newDisk)
+	var prepareAngle: float
+	if self.throwableMesh.collisionLocation == Vector3.INF:
+		newDisk.global_position = self.global_position
+		prepareAngle = self.launchAngle
+	else:
+		newDisk.global_position = throwableMesh.global_position
+		prepareAngle = pathFollow3d.global_rotation.x
+		self.launchSpeed = self.launchSpeed * .5
+	newDisk.prepare_item(CONSTANTS.DISK_TYPE.PATH, ownerVar, fallbackCamera)
+	newDisk.set_rigid_launch_parameters(self.launchPath, self.launchSpeed, prepareAngle)
+	newDisk.rotate_x(self.launchAngle)
+	# Get rid of Path3D and Mesh
+	self.queue_free()

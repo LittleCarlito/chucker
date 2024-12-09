@@ -14,9 +14,9 @@ const _NOT_LAUNCH_READY_LOG: String = "ThrowableItem has not had its launch para
 var aimNode: Node3D = Node3D.new()
 var aimControlNode: Node3D = Node3D.new()
 var launchControlNode: Node3D = Node3D.new()
-var launchPath: Array[Vector3]
+var launchPath: Array[Vector3] = []
 var launchSpeed: float = 0.0
-var launchAngle: float
+var launchAngle: float = 0.0
 var launchReady: bool = false
 var justLaunched: bool = false
 
@@ -74,8 +74,6 @@ func _input(event: InputEvent) -> void:
 func set_launch_parameters(incomingPath: Array[Vector3], incomingSpeed: float, incomingAngle: float) -> void:
 	self.launchPath = incomingPath
 	self.launchSpeed = incomingSpeed
-	# TODO This is the calculation somehow for PathDisk speed I think; Otherwise its not needed
-	#self.launchSpeed = GlobalSettings.DISK.LAUNCH_SPEED * multiplier
 	self.launchAngle = incomingAngle
 	self.launchReady = true
 
@@ -87,23 +85,27 @@ func reset_launch_parameters() -> void:
 
 func launch_disk() -> void:
 	if launchReady:
+		# TODO This is what the DiskFactory's main method should do; Take in a ThrowableItem and spawn something from it
 		match self.itemType:
 			# BUG Physics of disk seem off compared to previous working commit
-			CONSTANTS.ITEM_TYPE.FORCE:
+			CONSTANTS.DISK_TYPE.FORCE:
 				var forceDisk: ChuckDisk = ChuckDisk.new_disk()
-				get_tree().get_root().add_child(forceDisk)
-				Logger.debug("forceDisk throwablemesh: %s", [str(forceDisk.throwableMesh)], self)
-				forceDisk.prepare_item(ownerVar, fallbackCamera, CONSTANTS.ITEM_TYPE.FORCE)
-				forceDisk.global_transform = self.global_transform
+				if self.ownerVar != null:
+					self.ownerVar.add_child(forceDisk)
+				else:
+					get_tree().get_root().add_child(forceDisk)
+				forceDisk.prepare_item(self.itemType, ownerVar, fallbackCamera)
+				forceDisk.global_position = self.global_position
 				forceDisk.set_rigid_launch_parameters(self.launchPath, self.launchSpeed, self.launchAngle)
-			CONSTANTS.ITEM_TYPE.PATH:
-				# TODO PathDisk stuff should need updating after refactoring to mesh on path
-				var newPathDisk = PathDisk.new_disk(ownerVar, fallbackCamera, CONSTANTS.ITEM_TYPE.PATH)
-				#newPathDisk.prepare(throwCurve, multiplier, self.global_basis.get_euler().x)
-				#get_tree().get_root().add_child(newPathDisk)
-				#newPathDisk.top_level = true
-				#newDisk.diskMesh.itemType = CONSTANTS.ITEM_TYPE.PATH
-				pass
+			CONSTANTS.DISK_TYPE.PATH:
+				var newPathDisk = PathDisk.new_disk()
+				# TODO Try adding it to the ownerVar if it isn't null
+				if self.ownerVar != null:
+					self.ownerVar.add_child(newPathDisk)
+				else:
+					get_tree().get_root().add_child(newPathDisk)
+				newPathDisk.prepare_item(self.itemType, self.ownerVar, self.fallbackCamera)
+				newPathDisk.set_launch_parameters(self.launchPath, self.launchSpeed, self.global_basis.get_euler().x)
 			_:
 				pass
 	else:

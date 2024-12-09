@@ -24,10 +24,9 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	self.handle_aiming()
 
-static func new_disk(newThrower: ChuckChucker, newDiskCamera: Camera3D, newType: CONSTANTS.ITEM_TYPE) -> ChargeDisk:
+static func new_disk(newThrower: ChuckChucker, newDiskCamera: Camera3D, newType: CONSTANTS.DISK_TYPE) -> ChargeDisk:
 	var newDisk: ChargeDisk = diskMesh.instantiate()
-	# TODO Not sure if this does anything as method is static; Look at variables in returned object outside of the method
-	newDisk.prepare_item(newThrower, newDiskCamera, newType)
+	newDisk.prepare_item(newType, newThrower, newDiskCamera)
 	return newDisk
 
 func hold_action(delta: float) -> void:
@@ -48,6 +47,6 @@ func release_action() -> void:
 	if not Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
 		chargeView.set_progress(-1)
 		var finalTime: float = stopWatch.reset()
-		var launchSpeed: float = min(GlobalSettings.DISK.MAX_HOLD, finalTime) * GlobalSettings.DISK.HOLD_MULTIPLIER
-		self.set_launch_parameters(self.launchPath, launchSpeed, self.global_basis.get_euler().x)
+		var finalLaunchSpeed: float = min(GlobalSettings.DISK.MAX_HOLD, finalTime) * GlobalSettings.DISK.HOLD_MULTIPLIER
+		self.set_launch_parameters(self.launchPath, finalLaunchSpeed, self.global_basis.get_euler().x)
 		self.launch_disk()
