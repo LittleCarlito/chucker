@@ -20,7 +20,7 @@ func is_parent_grounded(node: Node3D) -> bool:
 		return node.is_on_floor()
 	if node.get_parent_node_3d() != null:
 		return is_parent_grounded(node.get_parent_node_3d())
-	Logger.error(self._NO_PARENT_LOG, [self._PARENT_GROUNDED, str(false)], self)
+	Logger.error(_NO_PARENT_LOG, [_PARENT_GROUNDED, str(false)], self)
 	return false
 
 ## Returns gravity value for the environment
@@ -31,46 +31,46 @@ func get_gravity(node: Node3D) -> Vector3:
 			return node.get_gravity()
 		else:
 			return get_gravity(node.get_parent())
-	Logger.error(_NO_PARENT_LOG, [self._GET_GRAVITY, "Empty Vector3"], self)
+	Logger.error(_NO_PARENT_LOG, [_GET_GRAVITY, "Empty Vector3"], self)
 	return Vector3(0, 0, 0)
 
+# TODO See about some handling that errors if this returns 0
 ## Calculates the trajectory distance given parameters
 func calculate_range(height: float, gravity: float, angle: float, velocity: float) -> float:
 	# Convert angle from degrees to radians if needed
-	angle = deg_to_rad(angle)  # Uncomment this if angle is given in degrees
+	angle = deg_to_rad(angle)
 	# Calculate horizontal and vertical components of the velocity
-	var v0_x = velocity * cos(angle)
-	var v0_y = velocity * sin(angle)
+	var v0_x: float = velocity * cos(angle)
+	var v0_y: float = velocity * sin(angle)
 	# Calculate the time of flight using the quadratic formula
-	var discriminant = v0_y * v0_y + 2 * gravity * height
+	var discriminant: float = v0_y * v0_y + 2 * gravity * height
 	if discriminant < 0:
 		return 0  # The projectile does not reach the ground
-	var sqrt_discriminant = sqrt(discriminant)
-	var t = (v0_y + sqrt_discriminant) / gravity
+	var sqrt_discriminant:float = sqrt(discriminant)
+	var t: float = (v0_y + sqrt_discriminant) / gravity
 	# Calculate the range
-	var returnRange = v0_x * t
-	return returnRange
+	return v0_x * t
 
 ## Gets mouse hovering location in 3D space
 func get_mouse_position() -> Vector3:
 	# Get the physics space state to perform raycasting in the 3D world
-	var space_state = get_parent().get_world_3d().get_direct_space_state()
+	var space_state: PhysicsDirectSpaceState3D = get_parent().get_world_3d().get_direct_space_state()
 	# Get the current mouse position on the viewport
-	var mouse_position = get_viewport().get_mouse_position()
+	var mouse_position: Vector2 = get_viewport().get_mouse_position()
 	# Get the camera node from the scene tree to project the ray
-	var camera = get_tree().root.get_camera_3d()
+	var camera: Camera3D = get_tree().root.get_camera_3d()
 	# Calculate the ray's origin point from the camera, starting from the mouse position
-	var ray_origin = camera.project_ray_origin(mouse_position)
+	var ray_origin: Vector3 = camera.project_ray_origin(mouse_position)
 	# Calculate the ray's end point far into the scene to perform the intersection test
-	var ray_end = ray_origin + camera.project_ray_normal(mouse_position) * 1000
+	var ray_end: Vector3 = ray_origin + camera.project_ray_normal(mouse_position) * 1000
 	# Prepare the parameters for the raycasting
-	var params = PhysicsRayQueryParameters3D.new()
+	var params: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
 	params.from = ray_origin
 	params.to = ray_end
 	params.collision_mask = 0b00000000_00000000_00000000_00000010# Define which layers the ray should collide with.
 	params.exclude = [] # Define any objects to exclude from the test."collision_priority"
 	# Perform the raycasting in the 3D world and check for intersections.
-	var rayDic = space_state.intersect_ray(params)
+	var rayDic: Dictionary = space_state.intersect_ray(params)
 	# If the ray hit an object, return the hit position; otherwise, return a very far point (infinity).
 	if rayDic.has("position"):
 		return rayDic["position"]
@@ -78,11 +78,11 @@ func get_mouse_position() -> Vector3:
 
 ## Traverses the ownership of the passed in node until null or ChuckChucker is found
 ## Returns original Nod3D if ChuckChucker isn't found
-func find_chucker(findChuck: Node) -> Node:
-	if findChuck is ChuckChucker:
-		return findChuck
+func find_chucker(find_chuck: Node) -> Node:
+	if find_chuck is ChuckChucker:
+		return find_chuck
 	else:
-		if findChuck.owner != null:
-			return find_chucker(findChuck.owner)
+		if find_chuck.owner != null:
+			return find_chucker(find_chuck.owner)
 		else:
 			return Node.new()

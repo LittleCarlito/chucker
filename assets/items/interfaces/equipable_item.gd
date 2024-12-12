@@ -3,10 +3,9 @@ class_name EquipableItem
 
 const _NULL_FALLBACK_LOG: String = "%s called but fallbackCamera is null"
 
-# TODO Rename to itemOwner
-var ownerVar: ChuckChucker
-var fallbackCamera: Camera3D
-var itemType: CONSTANTS.DISK_TYPE
+var item_owner: ChuckChucker
+var fallback_camera: Camera3D
+var item_type: CONSTANTS.DISK_TYPE
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -16,29 +15,28 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	pass
 
-# Another way to set ownerVar and fallback camera
-func prepare_item(incomingType: CONSTANTS.DISK_TYPE, incomingOwner: ChuckChucker = null, incomingCamera: Camera3D = null) -> void:
-	ownerVar = incomingOwner
-	fallbackCamera = incomingCamera
-	itemType = incomingType
+func prepare_item(incoming_type: CONSTANTS.DISK_TYPE, incoming_owner: ChuckChucker = null, incoming_camera: Camera3D = null) -> void:
+	item_owner = incoming_owner
+	fallback_camera = incoming_camera
+	item_type = incoming_type
 
 func toggle_camera() -> void:
-	fallbackCamera.current = not fallbackCamera.current
+	fallback_camera.current = not fallback_camera.current
 
 func _reset_zoom() -> void:
-	if fallbackCamera != null:
-		fallbackCamera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV)
+	if fallback_camera != null:
+		fallback_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV)
 	else:
-		Logger.error(self._NULL_FALLBACK_LOG, ["_reset_zoom()"], self)
+		Logger.error(_NULL_FALLBACK_LOG, ["_reset_zoom()"], self)
 
 func _zoom_in() -> void:
-	if fallbackCamera != null:
-		fallbackCamera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV) - GlobalSettings.CAMERA.IN_ADJUST
+	if fallback_camera != null:
+		fallback_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV) - GlobalSettings.CAMERA.IN_ADJUST
 	else:
-		Logger.error(self._NULL_FALLBACK_LOG, ["_zoom_in()"], self)
+		Logger.error(_NULL_FALLBACK_LOG, ["_zoom_in()"], self)
 
 func _zoom_out() -> void:
-	if fallbackCamera != null:
-		fallbackCamera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV) + GlobalSettings.CAMERA.OUT_ADJUST
+	if fallback_camera != null:
+		fallback_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV) + GlobalSettings.CAMERA.OUT_ADJUST
 	else:
-		Logger.error(self._NULL_FALLBACK_LOG, ["_zoom_out()"], self)
+		Logger.error(_NULL_FALLBACK_LOG, ["_zoom_out()"], self)

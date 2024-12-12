@@ -3,15 +3,15 @@ extends Node
 class_name ControlSetting
 
 var keycode: int
-var inputType: InputEventLibrary.INPUT_TYPE
-var inputDescription: String
+var input_type: InputEventLibrary.INPUT_TYPE
+var input_description: String
 
-func _init(incomingKeycode: int, incomingInputType:  InputEventLibrary.INPUT_TYPE, incomingDescription: String) -> void:
-	self.keycode = incomingKeycode
-	self.inputType = incomingInputType
-	self.inputDescription = incomingDescription
+func _init(incomingKeycode: int, incoming_type:  InputEventLibrary.INPUT_TYPE, incoming_description: String) -> void:
+	keycode = incomingKeycode
+	input_type = incoming_type
+	input_description = incoming_description
 
 func _to_string() -> String:
-	var formatString = "Keycode: \"%s\"; Input type: \"%s\"; Description: \"%s\""
-	var inputTypeString = InputEventLibrary.get_type_string(inputType)
-	return formatString % [str(keycode), inputTypeString, inputDescription]
+	var format_string = "Keycode: \"%s\"; Input type: \"%s\"; Description: \"%s\""
+	var input_type_string = InputEventLibrary.get_type_string(input_type)
+	return format_string % [str(keycode), input_type_string, input_description]

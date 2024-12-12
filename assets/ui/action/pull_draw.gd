@@ -1,10 +1,10 @@
 extends Node2D
 class_name PullDraw
 
-var _originHold: Vector2 = Vector2.INF
-var _holdCurrent: Vector2 = Vector2.INF
-var lastLength: float = 0.0
-var lastOffset: float = 0.0
+var _origin_hold: Vector2 = Vector2.INF
+var _hold_current: Vector2 = Vector2.INF
+var last_length: float = 0.0
+var last_offset: float = 0.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -12,34 +12,34 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	if lastLength != 0:
+	if last_length != 0:
 		self.queue_redraw()
 
 func begin_pull() -> void:
-	if _originHold == Vector2.INF:
-		_originHold = get_tree().root.get_viewport().get_mouse_position()
-	_holdCurrent = get_tree().root.get_viewport().get_mouse_position()
-	self._calc_last_values()
+	if _origin_hold == Vector2.INF:
+		_origin_hold = get_tree().root.get_viewport().get_mouse_position()
+	_hold_current = get_tree().root.get_viewport().get_mouse_position()
+	_calc_last_values()
 
 func reset_pull() -> void:
-		_originHold = Vector2.INF
-		_holdCurrent = Vector2.INF
-		self._calc_last_values()
+		_origin_hold = Vector2.INF
+		_hold_current = Vector2.INF
+		_calc_last_values()
 
 func _calc_last_values() -> void:
-	var xVal: float = pow((_holdCurrent.x - _originHold.x), 2)
-	var yVal: float = pow((_holdCurrent.y - _originHold.y), 2)
-	lastLength = min(GlobalSettings.DISK.MAX_PULL, sqrt(xVal + yVal))
-	var offset: float = _originHold.x - _holdCurrent.x
+	var x_val: float = pow((_hold_current.x - _origin_hold.x), 2)
+	var y_val: float = pow((_hold_current.y - _origin_hold.y), 2)
+	last_length = min(GlobalSettings.DISK.MAX_PULL, sqrt(x_val + y_val))
+	var offset: float = _origin_hold.x - _hold_current.x
 	if offset > 0:
-		lastOffset = min(GlobalSettings.DISK.MAX_OFFSET, offset)
+		last_offset = min(GlobalSettings.DISK.MAX_OFFSET, offset)
 	else:
-		lastOffset = max(-GlobalSettings.DISK.MAX_OFFSET, offset)
+		last_offset = max(-GlobalSettings.DISK.MAX_OFFSET, offset)
 
 func _draw() -> void:
 	# Draw aim line
-	var offsetPoint: Vector2 = _originHold.move_toward(_holdCurrent, abs(lastOffset))
-	draw_line(_originHold, offsetPoint, Color.RED, .5, true)
+	var offset_point: Vector2 = _origin_hold.move_toward(_hold_current, abs(last_offset))
+	draw_line(_origin_hold, offset_point, Color.RED, .5, true)
 	# Draw power line
-	var drawPoint: Vector2 = _originHold.move_toward(_holdCurrent, lastLength)
-	draw_line(_originHold, drawPoint, Color.YELLOW, 1, true)
+	var draw_point: Vector2 = _origin_hold.move_toward(_hold_current, last_length)
+	draw_line(_origin_hold, draw_point, Color.YELLOW, 1, true)

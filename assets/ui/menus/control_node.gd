@@ -1,18 +1,22 @@
 extends Node3D
 class_name ControlNode
 
-const UNABLE_TO_OPEN_LOG: String = "Unable to open %s; Error: %s"
-const EMPTY_SAVE_LOG:String = "Must provide settings to be saved; Input: %s"
-const UNEXPTECTED_TYPE_LOG: String = "Save file object was not expected type"
-const BAD_USER_INPUT_LOG: String = "Value from USER_INPUT \"%s\" could not be mapped to a GLOBAL_SETTING"
-const NO_DEFAULT_LOG: String = "Global default value for settingName \"%s\" in category \"%s\" could not be found; Not updating control"
-const NO_CATEGORY_LOG: String = "Category could not be extracted for \"%s\"; No control is being updated"
+# TODO Refactor out reading/writing logic to a Global utility script
+
+const _UNABLE_TO_OPEN_LOG: String = "Unable to open %s; Error: %s"
+const _EMPTY_SAVE_LOG:String = "Must provide settings to be saved; Input: %s"
+const _UNEXPTECTED_TYPE_LOG: String = "Save file object was not expected type"
+const _BAD_USER_INPUT_LOG: String = "Value from USER_INPUT \"%s\" could not be mapped to a GLOBAL_SETTING"
+const _NO_DEFAULT_LOG: String = "Global default value for settingName \"%s\" in category \"%s\" could not be found; Not updating control"
+const _NO_CATEGORY_LOG: String = "Category could not be extracted for \"%s\"; No control is being updated"
+# TODO Move to file utility
+const BASE_PATH: String = "user://"
+const SAVE_DIR: String = BASE_PATH + "settings/"
+const SAVE_FILE: String = SAVE_DIR + "user_settings.json"
 
 @onready var scorecard: ScorecardView = $ScorecardView
-@onready var pauseMenu: PauseMenu = $PauseMenu
-var BASE_PATH: String = "user://"
-var SAVE_DIR: String = BASE_PATH + "settings/"
-var SAVE_FILE: String = SAVE_DIR + "user_settings.json"
+@onready var pause_menu: PauseMenu = $PauseMenu
+
 
 signal apply_settings
 signal disable_movement
@@ -21,8 +25,8 @@ signal enable_movement
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# Create game file structures
-	var baseDir = DirAccess.open(self.BASE_PATH)
-	baseDir.make_dir(self.SAVE_DIR)
+	var base_dir = DirAccess.open(BASE_PATH)
+	base_dir.make_dir(SAVE_DIR)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -30,91 +34,92 @@ func _process(_delta: float) -> void:
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(CONSTANTS.USER_INPUT.PAUSE):
-		self.pauseMenu.visible = true
+		pause_menu.visible = true
 		self.get_tree().paused = true
 		self.set_process_input(false)
 	if event.is_action_pressed(CONSTANTS.USER_INPUT.SCORE):
 		disable_movement.emit()
 		# Determine what camera is active so we know how big to make the scorecard
-		var currentCamera: Camera3D = self.get_tree().root.get_camera_3d()
-		if(currentCamera.name == CONSTANTS.TEE_CAMERA):
-			self.scorecard.set_pixel_size(CONSTANTS.MENU.SCORECARD.TEEBOX_PIXEL_SIZE)
+		var current_camera: Camera3D = self.get_tree().root.get_camera_3d()
+		if(current_camera.name == CONSTANTS.TEE_CAMERA):
+			scorecard.set_pixel_size(CONSTANTS.MENU.SCORECARD.TEEBOX_PIXEL_SIZE)
 		else:
-			self.scorecard.set_pixel_size(CONSTANTS.MENU.SCORECARD.PLAYER_PIXEL_SIZE)
-		self.scorecard.scorecardSprite.visible = true
+			scorecard.set_pixel_size(CONSTANTS.MENU.SCORECARD.PLAYER_PIXEL_SIZE)
+		scorecard.scorecardSprite.visible = true
 		self.get_viewport().get_camera_3d().look_at(scorecard.scorecardSprite.global_position)
 	if event.is_action_released(CONSTANTS.USER_INPUT.SCORE):
 		enable_movement.emit()
-		self.scorecard.scorecardSprite.visible = false
+		scorecard.scorecardSprite.visible = false
 		self.get_viewport().get_camera_3d().rotation = Vector3.ZERO
 
 # Handling close menu signals
 func _close_menu() -> void:
-	self.pauseMenu.visible = false
+	pause_menu.visible = false
 	self.get_tree().paused = false
 	self.set_process_input(true)
 
 # Handling of save setting signals from sub menus
-func _on_pause_menu_save_settings(saveSettings: Dictionary) -> void:
-	self.save_to_settings(saveSettings)
-	self.load_settings()
+func _on_pause_menu_save_settings(save_settings: Dictionary) -> void:
+	save_to_settings(save_settings)
+	load_settings()
 
 # Deletes existing setting save file and saves recieved dictionary to new file
-func save_to_settings(saveSettings: Dictionary) -> void:
+func save_to_settings(save_settings: Dictionary) -> void:
 	# If settings file already exists delete it
-	if FileAccess.file_exists(self.SAVE_FILE):
-		DirAccess.remove_absolute(self.SAVE_FILE)
-	if !saveSettings.is_empty():
+	if FileAccess.file_exists(SAVE_FILE):
+		DirAccess.remove_absolute(SAVE_FILE)
+	if !save_settings.is_empty():
 		# Convert settings Dictionary to JSON
-		var settingJson: String = JSON.stringify(saveSettings)
+		var setting_json: String = JSON.stringify(save_settings)
 		# Write to settings file
-		var file = FileAccess.open(self.SAVE_FILE, FileAccess.WRITE)
+		var file = FileAccess.open(SAVE_FILE, FileAccess.WRITE)
 		if file != null:
-			file.store_string(settingJson)
+			file.store_string(setting_json)
 			file.close()
 		else:
 			var saveError: Error = FileAccess.get_open_error()
-			Logger.error(self.UNABLE_TO_OPEN_LOG, [self.SAVE_FILE, saveError], self)
+			Logger.error(_UNABLE_TO_OPEN_LOG, [SAVE_FILE, saveError], self)
 	else:
-		Logger.error(self.EMPTY_SAVE_LOG,[saveSettings], self)
+		Logger.error(_EMPTY_SAVE_LOG,[save_settings], self)
 
+# TODO From a glance this seems like it needs to be refactored
 # Loads from settings file or default dictionaries if no file/setting
 func load_settings() -> void:
-	var userSettings: Array[String] = GlobalSettings.CONFIGURABLE_SETTINGS
-	var dataReceived: Dictionary = self._get_settings_dictionary()
-	for userSetting in userSettings:
-		var settingCategory: String = GlobalSettings.extract_category(userSetting)
-		if settingCategory != CONSTANTS.Unknown:
-			if dataReceived.has(settingCategory):
-				if settingCategory == CONSTANTS.Controls:
-					var recievedCategory: Dictionary = dataReceived.get(settingCategory)
-					if recievedCategory.has(userSetting):
-						var settingValue = recievedCategory.get(userSetting)
-						var controlSetting := settingValue as ControlSetting
-						var controlInput: InputEvent = InputEventLibrary.convert_control_setting_to_input_event(controlSetting)
-						var globalCategory: Dictionary = GlobalSettings.get_category(settingCategory)
-						globalCategory.erase(userSetting)
-						globalCategory.get_or_add(userSetting, controlInput)
+	var user_settings: Array[String] = GlobalSettings.CONFIGURABLE_SETTINGS
+	var data_received: Dictionary = _get_settings_dictionary()
+	for user_setting in user_settings:
+		var setting_category: String = GlobalSettings.extract_category(user_setting)
+		if setting_category != CONSTANTS.Unknown:
+			if data_received.has(setting_category):
+				if setting_category == CONSTANTS.Controls:
+					var recieved_category: Dictionary = data_received.get(setting_category)
+					if recieved_category.has(user_setting):
+						var setting_value = recieved_category.get(user_setting)
+						var control_setting := setting_value as ControlSetting
+						var control_input: InputEvent = InputEventLibrary.convert_control_setting_to_input_event(control_setting)
+						var global_category: Dictionary = GlobalSettings.get_category(setting_category)
+						global_category.erase(user_setting)
+						global_category.get_or_add(user_setting, control_input)
 					else:
-						self.load_default(userSetting, settingCategory)
+						load_default(user_setting, setting_category)
 				else:
-					var recievedCategory: Dictionary = dataReceived.get(settingCategory)
-					if recievedCategory.has(userSetting):
-						var settingValue = recievedCategory.get(userSetting)
-						var globalCategory: Dictionary = GlobalSettings.get_category(settingCategory)
-						globalCategory.erase(userSetting)
-						globalCategory.get_or_add(userSetting, settingValue)
+					var recieved_category: Dictionary = data_received.get(setting_category)
+					if recieved_category.has(user_setting):
+						var setting_value = recieved_category.get(user_setting)
+						var global_category: Dictionary = GlobalSettings.get_category(setting_category)
+						global_category.erase(user_setting)
+						global_category.get_or_add(user_setting, setting_value)
 					else:
-						self.load_default(userSetting, settingCategory)
+						load_default(user_setting, setting_category)
 			else:
-				self.load_default(userSetting, settingCategory)
+				load_default(user_setting, setting_category)
 		else:
-			Logger.error(NO_CATEGORY_LOG, [userSetting], self)
+			Logger.error(_NO_CATEGORY_LOG, [user_setting], self)
 
 # Retrieves the settings file from User:// or returns an empty dictionary if an error occured
 func _get_settings_dictionary() -> Dictionary:
 	var returnDictionary: Dictionary = {}
-	var file = FileAccess.open(self.SAVE_FILE, FileAccess.READ)
+	var file = FileAccess.open(SAVE_FILE, FileAccess.READ)
 	if file != null:
 		var json: JSON = JSON.new()
 		var error: Error = json.parse(file.get_as_text())
@@ -137,11 +142,11 @@ func _get_settings_dictionary() -> Dictionary:
 				if !incomingDisplaySettings.is_empty():
 					returnDictionary.get_or_add(CONSTANTS.Display, incomingDisplaySettings)
 			else:
-				Logger.error(UNEXPTECTED_TYPE_LOG, [], self)
+				Logger.error(_UNEXPTECTED_TYPE_LOG, [], self)
 	# 7 is could not open error
 	elif FileAccess.get_open_error() != 7:
 		var saveError: Error = FileAccess.get_open_error()
-		Logger.error(self.UNABLE_TO_OPEN_LOG, [self.SAVE_FILE, saveError], self)
+		Logger.error(_UNABLE_TO_OPEN_LOG, [SAVE_FILE, saveError], self)
 	return returnDictionary
 
 # Loads preconfigured default value for the given setting
@@ -154,7 +159,7 @@ func load_default(settingName: String, settingCategory: String) -> void:
 			globalCategory.erase(settingName)
 			globalCategory.get_or_add(settingName, defaultSetting)
 		else:
-			Logger.error(NO_DEFAULT_LOG, [settingName, settingCategory], self)
+			Logger.error(_NO_DEFAULT_LOG, [settingName, settingCategory], self)
 	else:
 		var defaultValue = globalDefaultCateogry.get(settingName)
 		if defaultValue != null:
@@ -162,7 +167,7 @@ func load_default(settingName: String, settingCategory: String) -> void:
 			globalCategory.erase(settingName)
 			globalCategory.get_or_add(settingName, defaultValue)
 		else:
-			Logger.error(NO_DEFAULT_LOG, [settingName, settingCategory], self)
+			Logger.error(_NO_DEFAULT_LOG, [settingName, settingCategory], self)
 
 # Reloads Project input settings using GlobalSettings
 func reload_project_settings() -> void:
@@ -173,7 +178,7 @@ func reload_project_settings() -> void:
 			InputMap.action_erase_events(userInput)
 			InputMap.action_add_event(userInput, boundKey)
 		else:
-			Logger.error(BAD_USER_INPUT_LOG, [userInput], self)
+			Logger.error(_BAD_USER_INPUT_LOG, [userInput], self)
 
 func _apply_settings() -> void:
 	apply_settings.emit()

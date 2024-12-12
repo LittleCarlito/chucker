@@ -1,8 +1,8 @@
 extends Node3D
 class_name ChargeView
 
-@onready var chargeControl: ChargeBar = $ChargeView/ChargeControl
-@onready var chargeSprite: Sprite3D = $ChargeSprite
+@onready var charge_control: ChargeBar = $ChargeView/ChargeControl
+@onready var charge_sprite: Sprite3D = $ChargeSprite
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -10,10 +10,10 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	if float(chargeControl.chargeAmount.text) >= 0:
-		chargeSprite.visible = true
+	if float(charge_control.charge_amount.text) >= 0:
+		charge_sprite.visible = true
 	else:
-		chargeSprite.visible = false
+		charge_sprite.visible = false
 
 func set_progress(value: float) -> void:
-	chargeControl.set_progress(value)
+	charge_control.set_progress(value)

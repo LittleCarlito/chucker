@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3 uid="uid://mfc0kjgxpvtg"]
+
+[ext_resource type="Script" path="res://assets/items/disks/path_disk.gd" id="1_3o2g5"]
+[ext_resource type="PackedScene" uid="uid://jvw5pa8yws2g" path="res://assets/items/disks/DiskMesh.tscn" id="2_ed5vx"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ceqpk"]
+resource_local_to_scene = true
+albedo_color = Color(0.93, 0, 0, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_n0kn4"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_ceqpk")
+height = 0.1
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_rsnlq"]
+height = 0.25
+radius = 0.55
+
+[node name="PathDisk" type="Node3D"]
+script = ExtResource("1_3o2g5")
+
+[node name="Path3D" type="Path3D" parent="."]
+
+[node name="PathFollow3D" type="PathFollow3D" parent="Path3D"]
+loop = false
+
+[node name="DiskMesh" parent="Path3D/PathFollow3D" instance=ExtResource("2_ed5vx")]
+mesh = SubResource("CylinderMesh_n0kn4")
+
+[node name="CollisionArea" type="Area3D" parent="Path3D/PathFollow3D"]
+
+[node name="CollisionShape" type="CollisionShape3D" parent="Path3D/PathFollow3D/CollisionArea"]
+shape = SubResource("CylinderShape3D_rsnlq")
+
+[connection signal="body_shape_entered" from="Path3D/PathFollow3D/CollisionArea" to="." method="_body_enter"]

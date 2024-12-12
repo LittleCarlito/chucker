@@ -7,35 +7,35 @@ enum LEVEL {
 	ERROR
 }
 
-var LOG_LEVEL: LEVEL = LEVEL.DEBUG
+var log_level: LEVEL = LEVEL.DEBUG
 
 func set_log_level(level: LEVEL) -> void:
-	self.LOG_LEVEL = level
+	log_level = level
 
-func debug(debugLog: String, params: Array, caller: Object) -> void:
-	if LOG_LEVEL <= LEVEL.DEBUG:
-		_print(debugLog, params, caller, LEVEL.DEBUG)
+func debug(debug_log: String, params: Array, caller: Object) -> void:
+	if log_level <= LEVEL.DEBUG:
+		_print(debug_log, params, caller, LEVEL.DEBUG)
 
-func info(infoLog: String, params: Array, caller: Object) -> void:
-	if LOG_LEVEL <= LEVEL.INFO:
-		_print(infoLog, params, caller, LEVEL.INFO)
+func info(info_log: String, params: Array, caller: Object) -> void:
+	if log_level <= LEVEL.INFO:
+		_print(info_log, params, caller, LEVEL.INFO)
 
-func warn(warnLog: String, params: Array, caller: Object) -> void:
-	if LOG_LEVEL <= LEVEL.WARN:
-		_print(warnLog, params, caller, LEVEL.WARN)
+func warn(warn_log: String, params: Array, caller: Object) -> void:
+	if log_level <= LEVEL.WARN:
+		_print(warn_log, params, caller, LEVEL.WARN)
 
-func error(errorLog: String, params: Array, caller: Object) -> void:
-	if LOG_LEVEL <= LEVEL.ERROR:
-		_print(errorLog, params, caller, LEVEL.ERROR)
+func error(error_log: String, params: Array, caller: Object) -> void:
+	if log_level <= LEVEL.ERROR:
+		_print(error_log, params, caller, LEVEL.ERROR)
 
-func _print(printLog: String, params: Array, caller: Object, logLevel: LEVEL) -> void:
-	var timeStamp: String = Time.get_datetime_string_from_system()
-	var logString: String = printLog % params
-	var formatString: String =  "[%s] %s - %s: %s"
-	var levelString: String = self.LEVEL.keys()[logLevel]
-	var formattedLogString: String = formatString % [levelString, timeStamp, caller.get("name"), logString]
-	print(formattedLogString)
-	if logLevel == self.LEVEL.WARN:
-		push_warning(formattedLogString)
-	elif logLevel == self.LEVEL.ERROR:
-		push_error(formattedLogString)
+func _print(print_log: String, params: Array, caller: Object, incoming_log_level: LEVEL) -> void:
+	var time_stamp: String = Time.get_datetime_string_from_system()
+	var log_string: String = print_log % params
+	var format_string: String =  "[%s] %s - %s: %s"
+	var level_string: String = LEVEL.keys()[incoming_log_level]
+	var formatted_log: String = format_string % [level_string, time_stamp, caller.get("name"), log_string]
+	print(formatted_log)
+	if incoming_log_level == LEVEL.WARN:
+		push_warning(formatted_log)
+	elif incoming_log_level == LEVEL.ERROR:
+		push_error(formatted_log)

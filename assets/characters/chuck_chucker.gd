@@ -4,32 +4,27 @@ class_name ChuckChucker
 const _UKNOWN_OBJECT_LOG: String = "Tried to pick up UKNOWN object; Where did you get that?"
 const _UNEQUIP_MESSAGE_LOG: String = "unequip_item() called but no item is equiped"
 
-@onready var diskController: Node3D = $DiskController
-@onready var cameraController: Node3D = $CameraController
-@onready var frontDetection: ShapeCast3D = $FrontDetect
-@onready var chuckMesh: MeshInstance3D = $ChuckMesh
-@onready var playerCamera: Camera3D = $CameraController/CameraTarget/ChuckCamera
+@onready var item_controller: Node3D = $ItemController
+@onready var camera_controller: Node3D = $CameraController
+@onready var front_detection: ShapeCast3D = $FrontDetect
+@onready var chuck_mesh: MeshInstance3D = $ChuckMesh
+@onready var player_camera: Camera3D = $CameraController/CameraTarget/ChuckCamera
 
-var playerDisk: ThrowableItem
-var disableMovement: bool = false
-var stopwatch: StopWatch = StopWatch.new()
-var aimingNode: Node3D = Node3D.new()
-var aimingControl: Node3D = Node3D.new()
-var launchControl: Node3D = Node3D.new()
+var player_item: ThrowableItem
+var stopwatch: Stopwatch = Stopwatch.new()
 var height: float
-var jumpDetected: bool = false
 
 # BUG After throwing the disk a second time mesh was spun sidways but controls remained normal (cube rotated on y axis)
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	height = chuckMesh.get_aabb().size.y
+	height = chuck_mesh.get_aabb().size.y
 
 func _physics_process(delta: float) -> void:
-	self._handle_camera_controls()
-	self._handle_player_action(delta)
-	self._handle_player_interact()
-	self._handle_movement(delta)
+	_handle_camera_controls()
+	_handle_player_action(delta)
+	_handle_player_interact()
+	_handle_movement(delta)
 
 ## Actions to be performed when MOVE_JUMP is pressed
 func _handle_jump(delta: float) -> void:
@@ -37,132 +32,131 @@ func _handle_jump(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 	# Handle jump
-	if Input.is_action_just_pressed(CONSTANTS.USER_INPUT.JUMP) and is_on_floor() and not disableMovement:
+	if Input.is_action_just_pressed(CONSTANTS.USER_INPUT.JUMP) and is_on_floor() and is_movement_enabled():
 		velocity.y = GlobalSettings.PLAYER.JUMP_FORCE
 
 ## Rotation and aiming logic
 func _handle_camera_controls() -> void:
 	# Left and right rotation inputs
-	if not disableMovement:
+	if is_movement_enabled():
 		if Input.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_LEFT):
-			cameraController.rotate_y(deg_to_rad(GlobalSettings.CAMERA.ROTATE_SPEED))
+			camera_controller.rotate_y(deg_to_rad(GlobalSettings.CAMERA.ROTATE_SPEED))
 			self.rotate_y(deg_to_rad(GlobalSettings.CAMERA.ROTATE_SPEED))
 		if Input.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_RIGHT):
-			cameraController.rotate_y(deg_to_rad(-GlobalSettings.CAMERA.ROTATE_SPEED))
+			camera_controller.rotate_y(deg_to_rad(-GlobalSettings.CAMERA.ROTATE_SPEED))
 			self.rotate_y(deg_to_rad(-GlobalSettings.CAMERA.ROTATE_SPEED))
 
 ## Actions when disk is thrown
 func _handle_player_action(delta: float) -> void:
-	if playerDisk != null:
+	if player_item != null:
 		if Input.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY):
-			playerDisk.hold_action(delta)
+			player_item.hold_action(delta)
 		if Input.is_action_just_released(CONSTANTS.USER_INPUT.PRIMARY):
-			playerDisk.release_action()
+			player_item.release_action()
 
 ## Handle player pressing interact button
 func _handle_player_interact() -> void:
 	# Detect obejects in front of the character
-	if Input.is_action_just_pressed(CONSTANTS.USER_INPUT.INTERACT) and frontDetection.is_colliding():
-		var collidingCount = frontDetection.get_collision_count()
-		for n in collidingCount:
-			var collidingObject = frontDetection.get_collider(0)
-			if collidingObject != null and collidingObject is ChuckDisk:
-				match collidingObject.get_type():
+	if Input.is_action_just_pressed(CONSTANTS.USER_INPUT.INTERACT) and front_detection.is_colliding():
+		var colliding_count = front_detection.get_collision_count()
+		for n in colliding_count:
+			var colliding_object = front_detection.get_collider(0)
+			if colliding_object != null and colliding_object is ChuckDisk:
+				match colliding_object.get_type():
 					CONSTANTS.DISK_TYPE.FORCE:
-						playerDisk = ChargeDisk.new_disk(self, playerCamera, CONSTANTS.DISK_TYPE.FORCE)
+						player_item = ChargeDisk.new_disk(CONSTANTS.DISK_TYPE.FORCE, self, player_camera)
 					CONSTANTS.DISK_TYPE.PATH:
-						playerDisk = PullDisk.new_disk(self, playerCamera, CONSTANTS.DISK_TYPE.PATH)
+						player_item = PullDisk.new_disk(self, player_camera, CONSTANTS.DISK_TYPE.PATH)
 						#playerDisk.prepare_item(newType, newThrower, newDiskCamera)
 					_:
 						Logger.error(_UKNOWN_OBJECT_LOG, [], self)
 				# Connect the playerDisk rotation signal to chucker
-				if playerDisk != null:
-					playerDisk.rotate_parent.connect(self._handle_rotation)
-					self.diskController.add_child(playerDisk)
-				collidingObject.queue_free()
+				if player_item != null:
+					player_item.rotate_parent.connect(_handle_rotation)
+					item_controller.add_child(player_item)
+				colliding_object.queue_free()
 
 # Handles rotation signals from held nodes
-func _handle_rotation(rotationAmount: float) -> void:
-	var isMinRotate: bool = rotationAmount > 0 and self.diskController.rotation_degrees.x < GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION
-	var isMaxRotate: bool = rotationAmount < 0 and self.diskController.rotation_degrees.x > GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION
-	if isMinRotate or isMaxRotate:
-		var projectedRotation: float
-		if rotationAmount > 0:
-			projectedRotation = rad_to_deg(rotationAmount + self.diskController.rotation.x)
-			if projectedRotation > GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION:
-				self.diskController.rotation_degrees.x = GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION
+func _handle_rotation(rotation_amount: float) -> void:
+	var is_min_rotate: bool = rotation_amount > 0 and item_controller.rotation_degrees.x < GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION
+	var is_max_rotate: bool = rotation_amount < 0 and item_controller.rotation_degrees.x > GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION
+	if is_min_rotate or is_max_rotate:
+		var projected_rotation: float
+		if rotation_amount > 0:
+			projected_rotation = rad_to_deg(rotation_amount + item_controller.rotation.x)
+			if projected_rotation > GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION:
+				item_controller.rotation_degrees.x = GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION
 			else:
-				self.diskController.rotate_x(rotationAmount)
+				item_controller.rotate_x(rotation_amount)
 		else:
-			projectedRotation = rad_to_deg(rotationAmount + self.diskController.rotation.x)
-			if projectedRotation < GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION:
-				self.diskController.rotation_degrees.x = GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION
+			projected_rotation = rad_to_deg(rotation_amount + item_controller.rotation.x)
+			if projected_rotation < GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION:
+				item_controller.rotation_degrees.x = GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION
 			else:
-				self.diskController.rotate_x(rotationAmount)
+				item_controller.rotate_x(rotation_amount)
 
 ## Detects and executes movements
 func _handle_movement(delta: float) -> void:
 	# Handle jump
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-	if Input.is_action_just_pressed(CONSTANTS.USER_INPUT.JUMP) and is_on_floor() and not disableMovement:
+	if Input.is_action_just_pressed(CONSTANTS.USER_INPUT.JUMP) and is_on_floor() and is_movement_enabled():
 		velocity.y = GlobalSettings.PLAYER.JUMP_FORCE
 	var input_dir = Input.get_vector(CONSTANTS.USER_INPUT.STRAFE_LEFT, CONSTANTS.USER_INPUT.STRAFE_RIGHT, CONSTANTS.USER_INPUT.FORWARD, CONSTANTS.USER_INPUT.BACKWARD)
-	if(self.is_on_floor()):
-		var direction = (cameraController.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+	if(is_on_floor()):
+		var direction = (camera_controller.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		if direction:
-			if self.is_equipped() || disableMovement:
+			if is_equipped() || is_movement_disabled()  :
 				velocity.x = 0
 				velocity.z = 0
 			else:
-				var sprintAddition: float = 0.0
+				var sprint_addition: float = 0.0
 				if Input.is_action_pressed(CONSTANTS.USER_INPUT.SPRINT):
-					sprintAddition = GlobalSettings.PLAYER.SPRINT_SPEED
-					self._zoom_out()
+					sprint_addition = GlobalSettings.PLAYER.SPRINT_SPEED
+					_zoom_out()
 				else:
-					self._reset_zoom()
-				velocity.x = direction.x * (GlobalSettings.PLAYER.RUN_SPEED + sprintAddition)
-				velocity.z = direction.z * (GlobalSettings.PLAYER.RUN_SPEED + sprintAddition)
+					_reset_zoom()
+				velocity.x = direction.x * (GlobalSettings.PLAYER.RUN_SPEED + sprint_addition)
+				velocity.z = direction.z * (GlobalSettings.PLAYER.RUN_SPEED + sprint_addition)
 		# Otherwise set velocity to start slowing down
 		else:
 			velocity.x = move_toward(velocity.x, 0, GlobalSettings.PLAYER.RUN_SPEED)
 			velocity.z = move_toward(velocity.z, 0, GlobalSettings.PLAYER.RUN_SPEED)
-	self.move_and_slide()
+	move_and_slide()
 	# Keep camera up
-	cameraController.position = lerp(cameraController.position, position, GlobalSettings.CAMERA.PAN_SPEED)
+	camera_controller.position = lerp(camera_controller.position, position, GlobalSettings.CAMERA.PAN_SPEED)
 
 ## Toggles the visibility logic when character has item equiped
 func unequip_item() -> void:
-	if playerDisk != null:
-		playerDisk.queue_free()
-		playerDisk.rotate_parent.disconnect(self._handle_rotation)
+	if player_item != null:
+		player_item.rotate_parent.disconnect(_handle_rotation)
+		player_item.queue_free()
 	else:
 		Logger.warn(_UNEQUIP_MESSAGE_LOG, [], self)
 	# Reset item controller rotation
-	self.diskController.rotation_degrees.x = 0
+	item_controller.rotation_degrees.x = 0
 
 ## Returns if character has item equipped
 func is_equipped() -> bool:
-	return playerDisk != null
+	return player_item != null
 
 ## Returns the height of Chuck
 func get_height() -> float:
 	return height
 
+# TODO Replace all of below with calls to CameraContainer once it replaces internal camera in object
+#		Should be able to delete all these
 func get_camera() -> Camera3D:
-	return $CameraController/CameraTarget/ChuckCamera
-
-# TODO Duplicated code in EquipableItem
-# TODO Make the camera its own scene and class with these methods then have the scenes use that
+	return player_camera
 
 func _reset_zoom() -> void:
-	playerCamera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV)
+	player_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV)
 
 func _zoom_in() -> void:
-	playerCamera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV) - GlobalSettings.CAMERA.get(CONSTANTS.IN_ADJUST)
+	player_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV) - GlobalSettings.CAMERA.get(CONSTANTS.IN_ADJUST)
 
 func _zoom_out() -> void:
-	playerCamera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV) + GlobalSettings.CAMERA.get(CONSTANTS.OUT_ADJUST)
+	player_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV) + GlobalSettings.CAMERA.get(CONSTANTS.OUT_ADJUST)
 
 func load_settings() -> void:
 	_reset_zoom()

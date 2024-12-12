@@ -50,5 +50,5 @@ transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 
 
 [node name="ChuckCamera" type="Camera3D" parent="CameraController/CameraTarget"]
 
-[node name="DiskController" type="Node3D" parent="."]
+[node name="ItemController" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.50122e-10, 0.744641, 0)

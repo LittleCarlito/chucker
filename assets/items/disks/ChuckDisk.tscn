@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://blwwfxseykyuy"]
 
-[ext_resource type="Script" path="res://assets/items/chuck_disk.gd" id="1_gtghv"]
-[ext_resource type="PackedScene" uid="uid://daoarb2bmuvir" path="res://assets/items/ThrowableDiskMesh.tscn" id="2_2xdv6"]
-[ext_resource type="Shape3D" uid="uid://x6uh5gkdse8r" path="res://assets/items/DiskCollision.tres" id="3_kqup5"]
+[ext_resource type="Script" path="res://assets/items/disks/chuck_disk.gd" id="1_gtghv"]
+[ext_resource type="PackedScene" uid="uid://jvw5pa8yws2g" path="res://assets/items/disks/DiskMesh.tscn" id="3_816v0"]
+[ext_resource type="Shape3D" uid="uid://x6uh5gkdse8r" path="res://assets/items/disks/DiskCollision.tres" id="3_kqup5"]
 
 [node name="ChuckDisk" type="RigidBody3D"]
 collision_layer = 4
@@ -13,8 +13,8 @@ linear_damp_mode = 1
 angular_damp_mode = 1
 script = ExtResource("1_gtghv")
 
-[node name="ThrowableMesh" parent="." instance=ExtResource("2_2xdv6")]
-
 [node name="DiskCollision" type="CollisionShape3D" parent="."]
 physics_interpolation_mode = 2
 shape = ExtResource("3_kqup5")
+
+[node name="DiskMesh" parent="." instance=ExtResource("3_816v0")]

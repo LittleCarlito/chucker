@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://uyfdjyipfutg"]
+
+[ext_resource type="Script" path="res://assets/items/camera/camera_container.gd" id="1_yhe62"]
+
+[node name="CameraContainer" type="Node3D"]
+script = ExtResource("1_yhe62")
+
+[node name="CameraControl" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.940638, 0.339411, 0, -0.339411, 0.940638, 0, 3.67279, 7.8427)
+
+[node name="InternalCamera" type="Camera3D" parent="CameraControl"]
+fov = 90.0
+
+[node name="CameraTimer" type="Timer" parent="."]
+one_shot = true

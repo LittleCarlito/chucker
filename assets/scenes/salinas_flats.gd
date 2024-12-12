@@ -1,8 +1,7 @@
 extends Node3D
 
-@onready var controlNode: ControlNode = $ControlNode
-@onready var chuckChucker: ChuckChucker = $ChuckChucker
-@onready var tempFloor: StaticBody3D = $TempFloor
+@onready var control_node: ControlNode = $ControlNode
+@onready var chuck_chucker: ChuckChucker = $ChuckChucker
 
 # TODO Make set controls work
 #			Create sub menu
@@ -38,18 +37,18 @@ extends Node3D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	self._apply_settings()
+	_apply_settings()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
 
 func _disable_character_movement() -> void:
-	chuckChucker.disableMovement = true
+	chuck_chucker.disable_movement()
 
 func _enable_character_movement() -> void:
-	chuckChucker.disableMovement = false
+	chuck_chucker.enable_movement()
 
 func _apply_settings() -> void:
-	controlNode.reload_project_settings()
-	chuckChucker.load_settings()
+	control_node.reload_project_settings()
+	chuck_chucker.load_settings()

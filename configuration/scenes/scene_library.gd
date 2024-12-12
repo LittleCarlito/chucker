@@ -1,14 +1,16 @@
 extends Node
 
 const DISK = {
-	# TODO Rename this to FORCE_SCENE
-	"SCENE": "res://assets/items/ChuckDisk.tscn",
-	"PATH_SCENE": "res://assets/items/PathDisk.tscn"
+	"FORCE_SCENE": "res://assets/items/disks/ChuckDisk.tscn",
+	"PATH_SCENE": "res://assets/items/disks/PathDisk.tscn"
 }
 
 const MESH = {
-	"CHARGE_SCENE": "res://assets/items/ChargeDisk.tscn",
-	"PULL_SCENE": "res://assets/items/PullDisk.tscn",
-	"THROWABLE_SCENE": "res://assets/items/ThrowableDiskMesh.tscn",
-	"DISK_MESH": "res://assets/items/DiskMesh.tscn"
+	"CHARGE_SCENE": "res://assets/items/disks/ChargeDisk.tscn",
+	"PULL_SCENE": "res://assets/items/disks/PullDisk.tscn",
+	"DISK_MESH": "res://assets/items/disks/DiskMesh.tscn"
+}
+
+const CAMERA = {
+	"CONTAINER_SCENE": "res://assets/items/camera/CameraContainer.tscn"
 }

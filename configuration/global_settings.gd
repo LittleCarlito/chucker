@@ -21,7 +21,8 @@ const DISK: Dictionary = {
 	"MAX_PULL": 200,
 	"MIN_PULL": 15,
 	"MAX_OFFSET": 400,
-	"ROTATE_ADJUST": .1
+	"ROTATE_ADJUST": .1,
+	"MAX_SPEED_REDUCE": .75
 }
 
 const CAMERA_DEFAULTS: Dictionary = {
@@ -83,46 +84,46 @@ const ITEM_DEFAULTS: Dictionary = {
 
 const CONFIGURABLE_SETTINGS: Array[String] = [CONSTANTS.FOV, CONSTANTS.IN_ADJUST, CONSTANTS.OUT_ADJUST, CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, CONSTANTS.VERTICAL_AIM_SENSITIVITY, CONSTANTS.VERTICAL_LOOK_SENSITIVITY, CONSTANTS.INVERT_HORIZONTAL, CONSTANTS.INVERT_VERTICAL, CONSTANTS.PERFORMANCE, CONSTANTS.USER_INPUT.ROTATE_LEFT, CONSTANTS.USER_INPUT.ROTATE_RIGHT, CONSTANTS.USER_INPUT.FORWARD, CONSTANTS.USER_INPUT.BACKWARD, CONSTANTS.USER_INPUT.STRAFE_LEFT, CONSTANTS.USER_INPUT.STRAFE_RIGHT, CONSTANTS.USER_INPUT.JUMP, CONSTANTS.USER_INPUT.CROUCH, CONSTANTS.USER_INPUT.SPRINT, CONSTANTS.USER_INPUT.INTERACT, CONSTANTS.USER_INPUT.SCORE, CONSTANTS.USER_INPUT.PAUSE, CONSTANTS.USER_INPUT.DEBUG, CONSTANTS.USER_INPUT.PRIMARY, CONSTANTS.USER_INPUT.SECONDARY, CONSTANTS.USER_INPUT.ROTATE_UP, CONSTANTS.USER_INPUT.ROTATE_DOWN]
 
-func extract_category(settingName: String) -> String:
-	var returnString: String
-	if CAMERA.has(settingName):
-		returnString = CONSTANTS.Camera
-	elif DISPLAY.has(settingName):
-		returnString = CONSTANTS.Display
-	elif CONTROLS.has(settingName):
-		returnString = CONSTANTS.Controls
+func extract_category(setting_name: String) -> String:
+	var return_string: String
+	if CAMERA.has(setting_name):
+		return_string = CONSTANTS.Camera
+	elif DISPLAY.has(setting_name):
+		return_string = CONSTANTS.Display
+	elif CONTROLS.has(setting_name):
+		return_string = CONSTANTS.Controls
 	else:
-		returnString = CONSTANTS.Unknown
-		Logger.error(MISSING_CATEGORY_LOG, [settingName, _EXTRACT_CATEGORY, returnString], self)
-	return returnString
+		return_string = CONSTANTS.Unknown
+		Logger.error(MISSING_CATEGORY_LOG, [setting_name, _EXTRACT_CATEGORY, return_string], self)
+	return return_string
 
-func get_category(categoryName: String) -> Dictionary:
-	var returnDictionary: Dictionary
-	match categoryName:
+func get_category(category_name: String) -> Dictionary:
+	var return_dictionary: Dictionary
+	match category_name:
 		CONSTANTS.Camera:
-			returnDictionary = self.CAMERA
+			return_dictionary = CAMERA
 		CONSTANTS.Controls:
-			returnDictionary = self.CONTROLS
+			return_dictionary = CONTROLS
 		CONSTANTS.Display:
-			returnDictionary = self.DISPLAY
+			return_dictionary = DISPLAY
 		_:
-			returnDictionary = {}
-			Logger.error(MISSING_CATEGORY_LOG, [categoryName, _GET_CATEGORY, returnDictionary], self)
-	return returnDictionary
+			return_dictionary = {}
+			Logger.error(MISSING_CATEGORY_LOG, [category_name, _GET_CATEGORY, return_dictionary], self)
+	return return_dictionary
 
-func get_default_category(categoryName: String) -> Dictionary:
-	var returnDictionary: Dictionary
-	match categoryName:
+func get_default_category(category_name: String) -> Dictionary:
+	var return_dictionary: Dictionary
+	match category_name:
 		CONSTANTS.Camera:
-			returnDictionary = self.CAMERA_DEFAULTS
+			return_dictionary = CAMERA_DEFAULTS
 		CONSTANTS.Controls:
-			returnDictionary = self.CONTROL_DEFAULTS
+			return_dictionary = CONTROL_DEFAULTS
 		CONSTANTS.Display:
-			returnDictionary = self.DISPLAY_DEFAULTS
+			return_dictionary = DISPLAY_DEFAULTS
 		_:
-			returnDictionary = {}
-			Logger.error(MISSING_CATEGORY_LOG, [categoryName, _GET_DEFAULT_CATEGORY, returnDictionary], self)
-	return returnDictionary
+			return_dictionary = {}
+			Logger.error(MISSING_CATEGORY_LOG, [category_name, _GET_DEFAULT_CATEGORY, return_dictionary], self)
+	return return_dictionary
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

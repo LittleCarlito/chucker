@@ -49,25 +49,25 @@ const USER_INPUT: Dictionary = {
 # Values are how project settings handle those behaviors
 const INPUT_LABEL: Dictionary = {
 	# Menu labels
-	"Scorecard": self.USER_INPUT.SCORE,
-	"Pause": self.USER_INPUT.PAUSE,
+	"Scorecard": USER_INPUT.SCORE,
+	"Pause": USER_INPUT.PAUSE,
 	# Action labels
-	"Primary Action": self.USER_INPUT.PRIMARY,
-	"Secondary Action": self.USER_INPUT.SECONDARY,
-	"Pick Up": self.USER_INPUT.INTERACT,
+	"Primary Action": USER_INPUT.PRIMARY,
+	"Secondary Action": USER_INPUT.SECONDARY,
+	"Pick Up": USER_INPUT.INTERACT,
 	# Rotate labels
-	"Rotate Left": self.USER_INPUT.ROTATE_LEFT,
-	"Rotate Right": self.USER_INPUT.ROTATE_RIGHT,
-	"Rotate Up": self.USER_INPUT.ROTATE_UP,
-	"Rotate Down": self.USER_INPUT.ROTATE_DOWN,
+	"Rotate Left": USER_INPUT.ROTATE_LEFT,
+	"Rotate Right": USER_INPUT.ROTATE_RIGHT,
+	"Rotate Up": USER_INPUT.ROTATE_UP,
+	"Rotate Down": USER_INPUT.ROTATE_DOWN,
 	# Control labels
-	"Forward": self.USER_INPUT.FORWARD,
-	"Backward": self.USER_INPUT.BACKWARD,
-	"Strafe Left": self.USER_INPUT.STRAFE_LEFT,
-	"Strafe Right": self.USER_INPUT.STRAFE_RIGHT,
-	"Jump": self.USER_INPUT.JUMP, 
-	"Crouch": self.USER_INPUT.CROUCH,
-	"Sprint": self.USER_INPUT.SPRINT
+	"Forward": USER_INPUT.FORWARD,
+	"Backward": USER_INPUT.BACKWARD,
+	"Strafe Left": USER_INPUT.STRAFE_LEFT,
+	"Strafe Right": USER_INPUT.STRAFE_RIGHT,
+	"Jump": USER_INPUT.JUMP, 
+	"Crouch": USER_INPUT.CROUCH,
+	"Sprint": USER_INPUT.SPRINT
 }
 
 const KEYCODE_STRING: String = "keycode"
@@ -93,7 +93,7 @@ const PERFORMANCE: String = "PERFORMANCE"
 
 const Unknown: String = "Unknown"
 
-const SETTING_LABELS: Array[String] = [self.Camera, self.Controls, self.Display]
+const SETTING_LABELS: Array[String] = [Camera, Controls, Display]
 
 # TODO Move this to a MathConstants file
 

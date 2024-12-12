@@ -1,8 +1,8 @@
 extends Node3D
 
-class_name StopWatch
+class_name Stopwatch
 
-var heldTime: float
+var _held_time: float
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -14,15 +14,15 @@ func _process(_delta: float) -> void:
 
 ## Sets isHeld timer to true to begin accumulating time
 func isHeld(delta: float) -> float:
-	heldTime += delta
-	return heldTime
+	_held_time += delta
+	return _held_time
 
 ## Returns how long isHeld was enabled
 func getTime() -> float:
-	return heldTime
+	return _held_time
 
-## Resets heldTime to 0
+## Resets held_time to 0
 func reset() -> float:
-	var finalTime: float = heldTime
-	heldTime = 0.0
-	return finalTime
+	var final_time: float = _held_time
+	_held_time = 0.0
+	return final_time

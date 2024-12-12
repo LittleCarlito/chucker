@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://c3a3ygsd2ack" path="res://assets/buildings/ChuckTee.tscn" id="1_toa5e"]
 [ext_resource type="PackedScene" uid="uid://cdkknjflehfgx" path="res://assets/characters/ChuckChucker.tscn" id="2_bl408"]
 [ext_resource type="PackedScene" uid="uid://bpn27qpg2rm8c" path="res://assets/buildings/ChuckHole.tscn" id="3_myjxc"]
-[ext_resource type="PackedScene" uid="uid://blwwfxseykyuy" path="res://assets/items/ChuckDisk.tscn" id="4_m4tn0"]
+[ext_resource type="PackedScene" uid="uid://blwwfxseykyuy" path="res://assets/items/disks/ChuckDisk.tscn" id="4_m4tn0"]
 [ext_resource type="Environment" uid="uid://bm00mgoeg2ojv" path="res://resources/environment_default.tres" id="5_t0qir"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_vba8s"]

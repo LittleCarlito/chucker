@@ -22,17 +22,16 @@ const CAMERA = {
 func _ready() -> void:
 	pass # Replace with function body.
 
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
 
 func extract_keycode(event: InputEvent) -> int:
-	var returnValue: int
+	var return_value: int
 	if event is InputEventMouseButton:
-		returnValue = event.button_index
+		return_value = event.button_index
 	elif event is InputEventKey:
-		returnValue = event.physical_keycode
+		return_value = event.physical_keycode
 	else:
 		Logger.error(UNSUPPORTED_TYPE, [str(event)], self)
-	return returnValue
+	return return_value

@@ -1,71 +1,72 @@
 extends Control
 class_name OptionsMenu
 
-const UPDATE_CONTROL_LOG: String = "Updating control \"%s\" to input \"%s\""
-const SELECT_ERROR_LOG: String = "Incorrect number of items selected to change control input; \"%s\" items selected"
-const UNBOUND_INPUT_LOG: String = "\"%s\" is not bound to an input"
-const UNBIND_LOG: String = "Input \"%s\" key has been rebound"
-const CONTROL_REMAPPED_LOG: String = "Control \"%s\" has been remapped from \"%s\" to \"%s\""
-const NO_KEYCODE_ICON_STRING: String = "Path \"%s\" could not be mapped back to a keycode; Not persisting input change"
+const _UPDATE_CONTROL_LOG: String = "Updating control \"%s\" to input \"%s\""
+const _SELECT_ERROR_LOG: String = "Incorrect number of items selected to change control input; \"%s\" items selected"
+const _UNBOUND_INPUT_LOG: String = "\"%s\" is not bound to an input"
+const _UNBIND_LOG: String = "Input \"%s\" key has been rebound"
+const _CONTROL_REMAPPED_LOG: String = "Control \"%s\" has been remapped from \"%s\" to \"%s\""
+const _NO_KEYCODE_ICON_STRING: String = "Path \"%s\" could not be mapped back to a keycode; Not persisting input change"
+const _MISSING_CONSTANT_LOG: String = "No constant could be found for input \"%s\"; Returning \"%s\""
 
-@onready var fovSlider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovSliderContainer/FovSlider
-@onready var fovValue: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovValueCenter/FovValue
-@onready var horizontalAimSensitivitySlider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalAimSensitivityRows/HorizontalAimSensitivityColumns/HorizontalAimSensitvitySliderContainer/HorizontalAimSensitivitySlider
-@onready var horizontalAimSensitivityValue: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalAimSensitivityRows/HorizontalAimSensitivityColumns/HorizontalAimSensitivityValueCenter/HorizontalAimSensitivityValue
-@onready var verticalAimSensitivitySlider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityColumns/VerticalAimSensitvitySliderContainer/VerticalAimSensitivitySlider
-@onready var verticalAimSensitivityValue: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityColumns/VerticalAimSensitivityValueCenter/VerticalAimSensitivityValue
-@onready var horizontalLookSensitivitySlider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalLookSensitivityRows/HorizontalLookSensitivityColumns/HorizontalLookSensitvitySliderContainer/HorizontalLookSensitivitySlider
-@onready var horizontalLookSensitivityValue: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalLookSensitivityRows/HorizontalLookSensitivityColumns/HorizontalLookSensitivityValueCenter/HorizontalLookSensitivityValue
-@onready var verticalLookSensitivitySlider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalLookSensitivityRows/VerticalLookSensitivityColumns/VerticalLookSensitvitySliderContainer/VerticalLookSensitivitySlider
-@onready var verticalLookSensitivityValue: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalLookSensitivityRows/VerticalLookSensitivityColumns/VerticalLookSensitivityValueCenter/VerticalLookSensitivityValue
-@onready var vInversionToggle: CheckButton = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/VInversionToggle
-@onready var hInversionToggle: CheckButton = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/HInversionToggle
-@onready var motionBlurCheck: CheckBox = $MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows/MotionBlurCheck
-@onready var bloomCheck: CheckBox = $MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows/BloomCheck
-@onready var performanceDisplayCheck: CheckBox = $MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck
-@onready var controlSelectMenu: ControlSelectMenu = $ControlSelectMenu
-@onready var controlList: ItemList = $MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls/ControlsRows/ControlList
+@onready var fov_slider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovSliderContainer/FovSlider
+@onready var fov_value: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovValueCenter/FovValue
+@onready var horizontal_aim_sensitivity_slider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalAimSensitivityRows/HorizontalAimSensitivityColumns/HorizontalAimSensitvitySliderContainer/HorizontalAimSensitivitySlider
+@onready var horizontal_aim_sensitivity_value: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalAimSensitivityRows/HorizontalAimSensitivityColumns/HorizontalAimSensitivityValueCenter/HorizontalAimSensitivityValue
+@onready var vertical_aim_sensitivity_slider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityColumns/VerticalAimSensitvitySliderContainer/VerticalAimSensitivitySlider
+@onready var vertical_aim_sensitivity_value: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityColumns/VerticalAimSensitivityValueCenter/VerticalAimSensitivityValue
+@onready var horizontal_look_sensitivity_slider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalLookSensitivityRows/HorizontalLookSensitivityColumns/HorizontalLookSensitvitySliderContainer/HorizontalLookSensitivitySlider
+@onready var horizontal_look_sensitivity_value: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalLookSensitivityRows/HorizontalLookSensitivityColumns/HorizontalLookSensitivityValueCenter/HorizontalLookSensitivityValue
+@onready var vertical_look_sensitivity_slider: HSlider = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalLookSensitivityRows/VerticalLookSensitivityColumns/VerticalLookSensitvitySliderContainer/VerticalLookSensitivitySlider
+@onready var vertical_look_sensitivity_value: Label = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalLookSensitivityRows/VerticalLookSensitivityColumns/VerticalLookSensitivityValueCenter/VerticalLookSensitivityValue
+@onready var v_inversion_toggle: CheckButton = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/VInversionToggle
+@onready var h_inversion_toggle: CheckButton = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/HInversionToggle
+@onready var motion_blur_check: CheckBox = $MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows/MotionBlurCheck
+@onready var bloom_check: CheckBox = $MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows/BloomCheck
+@onready var performance_display_check: CheckBox = $MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck
+@onready var control_select_menu: ControlSelectMenu = $ControlSelectMenu
+@onready var control_list: ItemList = $MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls/ControlsRows/ControlList
 @onready var general: Panel = $MainContainer/ContentBox/OptionRows/OptionTabContainer/General
-@onready var optionTabContainer: TabContainer = $MainContainer/ContentBox/OptionRows/OptionTabContainer
+@onready var option_tab_container: TabContainer = $MainContainer/ContentBox/OptionRows/OptionTabContainer
 
 enum SETTING_TABS {GENERAL, CONTROLS, GRAPHICS}
-var cameraSettings: Dictionary
-var controlSettings: Dictionary
-var displaySettings: Dictionary
-var saveSettings: Dictionary
+var camera_settings: Dictionary
+var control_settings: Dictionary
+var display_settings: Dictionary
+var save_settings_dictionary: Dictionary
 
 signal close_menu
 signal back_menu
-signal save_settings(updatedSettings)
+signal save_settings(updated_settings)
 signal load_settings
 signal apply_settings
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	self.initialize_ui()
+	initialize_ui()
 
 func initialize_ui() -> void:
-	self.controlSelectMenu.visible = false
+	control_select_menu.visible = false
 	load_settings.emit()
-	self.fovSlider.value = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV)
-	self.fovValue.text = str(self.fovSlider.value)
-	self.horizontalAimSensitivitySlider.value = GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_AIM_SENSITIVITY)
-	self.horizontalAimSensitivityValue.text = str(self.horizontalAimSensitivitySlider.value)
-	self.verticalAimSensitivitySlider.value = GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.VERTICAL_AIM_SENSITIVITY)
-	self.verticalAimSensitivityValue.text = str(self.verticalAimSensitivitySlider.value)
-	self.horizontalLookSensitivitySlider.value = GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
-	self.horizontalLookSensitivityValue.text = str(self.horizontalLookSensitivitySlider.value)
-	self.verticalLookSensitivitySlider.value = GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.VERTICAL_LOOK_SENSITIVITY)
-	self.verticalLookSensitivityValue.text = str(self.verticalLookSensitivitySlider.value)
-	self.vInversionToggle.button_pressed = GlobalSettings.CAMERA.get(CONSTANTS.INVERT_VERTICAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_VERTICAL)
-	self.hInversionToggle.button_pressed = GlobalSettings.CAMERA.get(CONSTANTS.INVERT_HORIZONTAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_HORIZONTAL)
-	self.performanceDisplayCheck.button_pressed = GlobalSettings.DISPLAY.get(CONSTANTS.PERFORMANCE, GlobalSettings.DISPLAY_DEFAULTS.PERFORMANCE)
+	fov_slider.value = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV)
+	fov_value.text = str(fov_slider.value)
+	horizontal_aim_sensitivity_slider.value = GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_AIM_SENSITIVITY)
+	horizontal_aim_sensitivity_value.text = str(horizontal_aim_sensitivity_slider.value)
+	vertical_aim_sensitivity_slider.value = GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.VERTICAL_AIM_SENSITIVITY)
+	vertical_aim_sensitivity_value.text = str(vertical_aim_sensitivity_slider.value)
+	horizontal_look_sensitivity_slider.value = GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
+	horizontal_look_sensitivity_value.text = str(horizontal_look_sensitivity_slider.value)
+	vertical_look_sensitivity_slider.value = GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.VERTICAL_LOOK_SENSITIVITY)
+	vertical_look_sensitivity_value.text = str(vertical_look_sensitivity_slider.value)
+	v_inversion_toggle.button_pressed = GlobalSettings.CAMERA.get(CONSTANTS.INVERT_VERTICAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_VERTICAL)
+	h_inversion_toggle.button_pressed = GlobalSettings.CAMERA.get(CONSTANTS.INVERT_HORIZONTAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_HORIZONTAL)
+	performance_display_check.button_pressed = GlobalSettings.DISPLAY.get(CONSTANTS.PERFORMANCE, GlobalSettings.DISPLAY_DEFAULTS.PERFORMANCE)
 	# Load in icons for set controls
-	for i in self.controlList.item_count:
-		var constantName: String = self._get_constant_name(self.controlList.get_item_text(i))
-		var mappedInput: InputEvent = self._get_constant_value(constantName)
-		var mappedTexture: Texture2D = InputSprite.get_sprite(mappedInput)
-		self.controlList.set_item_icon(i, mappedTexture)
+	for i in control_list.item_count:
+		var constant_name: String = _get_constant_name(control_list.get_item_text(i))
+		var mapped_input: InputEvent = _get_constant_value(constant_name)
+		var mapped_texture: Texture2D = InputSprite.get_sprite(mapped_input)
+		control_list.set_item_icon(i, mapped_texture)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -73,177 +74,177 @@ func _process(_delta: float) -> void:
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(CONSTANTS.USER_INPUT.PAUSE) and self.visible:
-		self._on_back_menu()
+		_on_back_menu()
 
 func _on_close_menu() -> void:
 	close_menu.emit()
-	self._reset_variables(self.SETTING_TABS.GENERAL)
-	self.initialize_ui()
+	_reset_variables(SETTING_TABS.GENERAL)
+	initialize_ui()
 
 func _on_back_menu() -> void:
 	back_menu.emit()
-	self._reset_variables(self.SETTING_TABS.GENERAL)
-	self.initialize_ui()
+	_reset_variables(SETTING_TABS.GENERAL)
+	initialize_ui()
 
 func _on_save_menu() -> void:
-	self._save_controls()
-	if not self.controlSettings.is_empty():
-		self.saveSettings.get_or_add(CONSTANTS.Controls, self.controlSettings)
-	if not self.cameraSettings.is_empty():
-		self.saveSettings.get_or_add(CONSTANTS.Camera, self.cameraSettings)
-	if not self.displaySettings.is_empty():
-		self.saveSettings.get_or_add(CONSTANTS.Display, self.displaySettings)
+	_save_controls()
+	if not control_settings.is_empty():
+		save_settings_dictionary.get_or_add(CONSTANTS.Controls, control_settings)
+	if not camera_settings.is_empty():
+		save_settings_dictionary.get_or_add(CONSTANTS.Camera, camera_settings)
+	if not display_settings.is_empty():
+		save_settings_dictionary.get_or_add(CONSTANTS.Display, display_settings)
 	# Always emit saveSettings even if empty; Returns to defaults then
-	self.save_settings.emit(self.saveSettings)
+	save_settings.emit(save_settings_dictionary)
 	apply_settings.emit()
-	self._reset_variables(self.optionTabContainer.current_tab)
+	_reset_variables(option_tab_container.current_tab)
 
-# Compares ControlList items to set controls and saves the updated controls to ControlSetting
+# Compares control_list items to set controls and saves the updated controls to ControlSetting
 func _save_controls() -> void:
-	for controlListIndex in self.controlList.item_count:
-		var constantName: String = self._get_constant_name(self.controlList.get_item_text(controlListIndex))
-		var constantValue: InputEvent = self._get_default_value(constantName)
-		var constantIconPath: String = InputSprite.get_sprite(constantValue).resource_path
-		var iconPath: String = controlList.get_item_icon(controlListIndex).resource_path
-		if constantIconPath != iconPath:
-			var mappedKeycode: int = InputSprite.INPUT_ICONS.find_key(iconPath)
-			if mappedKeycode != null:
-				var mappedEvent: InputEvent = InputEventLibrary.convert_keycode_to_input_event(mappedKeycode)
-				var controlSetting: ControlSetting = InputEventLibrary.convert_event_to_control_setting(mappedEvent)
-				var controlDictionary: Dictionary = InputEventLibrary.convert_controlsetting_to_dictionary(controlSetting)
-				controlSettings.get_or_add(constantName, controlDictionary)
-				Logger.debug(CONTROL_REMAPPED_LOG, [constantName, constantValue.as_text(), controlSetting.inputDescription], self)
+	for control_list_index in control_list.item_count:
+		var constant_name: String = _get_constant_name(control_list.get_item_text(control_list_index))
+		var constant_value: InputEvent = _get_default_value(constant_name)
+		var constant_icon_path: String = InputSprite.get_sprite(constant_value).resource_path
+		var icon_path: String = control_list.get_item_icon(control_list_index).resource_path
+		if constant_icon_path != icon_path:
+			var mapped_keycode: int = InputSprite.INPUT_ICONS.find_key(icon_path)
+			if mapped_keycode != null:
+				var mapped_event: InputEvent = InputEventLibrary.convert_keycode_to_input_event(mapped_keycode)
+				var control_setting: ControlSetting = InputEventLibrary.convert_event_to_control_setting(mapped_event)
+				var control_dictionary: Dictionary = InputEventLibrary.convert_controlsetting_to_dictionary(control_setting)
+				control_settings.get_or_add(constant_name, control_dictionary)
+				Logger.debug(_CONTROL_REMAPPED_LOG, [constant_name, constant_value.as_text(), control_setting.inputDescription], self)
 			else:
-				Logger.error(NO_KEYCODE_ICON_STRING, [iconPath], self)
+				Logger.error(_NO_KEYCODE_ICON_STRING, [icon_path], self)
 
 
-func _reset_variables(activeTab: int) -> void:
-	self.saveSettings.clear()
-	self.controlSettings.clear()
-	self.cameraSettings.clear()
-	self.displaySettings.clear()
-	self.controlList.deselect_all()
-	self.optionTabContainer.current_tab = activeTab
+func _reset_variables(active_tab: int) -> void:
+	save_settings_dictionary.clear()
+	control_settings.clear()
+	camera_settings.clear()
+	display_settings.clear()
+	control_list.deselect_all()
+	option_tab_container.current_tab = active_tab
 	
 
-func _on_fov_slider_drag_ended(valueChanged: bool) -> void:
-	if valueChanged:
-		self.cameraSettings.get_or_add(CONSTANTS.FOV, self.fovSlider.value)
+func _on_fov_slider_drag_ended(value_changed: bool) -> void:
+	if value_changed:
+		camera_settings.get_or_add(CONSTANTS.FOV, fov_slider.value)
 
 func _on_fov_slider_value_changed(value: float) -> void:
-	self.fovValue.text = str(value)
+	fov_value.text = str(value)
 
-func _on_v_inversion_toggle_toggled(toggledOn: bool) -> void:
-	self.cameraSettings.get_or_add(CONSTANTS.INVERT_VERTICAL, toggledOn)
+func _on_v_inversion_toggle_toggled(toggled_on: bool) -> void:
+	camera_settings.get_or_add(CONSTANTS.INVERT_VERTICAL, toggled_on)
 
-func _on_h_inversion_toggle_toggled(toggledOn: bool) -> void:
-	self.cameraSettings.get_or_add(CONSTANTS.INVERT_HORIZONTAL, toggledOn)
+func _on_h_inversion_toggle_toggled(toggled_on: bool) -> void:
+	camera_settings.get_or_add(CONSTANTS.INVERT_HORIZONTAL, toggled_on)
 
-func _on_performance_display_check_toggled(toggledOn: bool) -> void:
-	self.displaySettings.get_or_add(CONSTANTS.PERFORMANCE, toggledOn)
+func _on_performance_display_check_toggled(toggled_on: bool) -> void:
+	display_settings.get_or_add(CONSTANTS.PERFORMANCE, toggled_on)
 
 func _on_vertical_aim_sensitivity_slider_value_changed(value: float) -> void:
-	self.verticalAimSensitivityValue.text = str(value)
+	vertical_aim_sensitivity_value.text = str(value)
 
-func _on_vertical_aim_sensitivity_slider_drag_ended(valueChanged: bool) -> void:
-	if valueChanged:
-		self.cameraSettings.get_or_add(CONSTANTS.VERTICAL_AIM_SENSITIVITY, self.verticalAimSensitivitySlider.value)
+func _on_vertical_aim_sensitivity_slider_drag_ended(value_changed: bool) -> void:
+	if value_changed:
+		camera_settings.get_or_add(CONSTANTS.VERTICAL_AIM_SENSITIVITY, vertical_aim_sensitivity_slider.value)
 
 func _on_horizontal_aim_sensitivity_slider_value_changed(value: float) -> void:
-	self.horizontalAimSensitivityValue.text = str(value)
+	horizontal_aim_sensitivity_value.text = str(value)
 
-func _on_horizontal_aim_sensitivity_slider_drag_ended(valueChanged: bool) -> void:
-	if valueChanged:
-		self.cameraSettings.get_or_add(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, self.horizontalAimSensitivitySlider.value)
+func _on_horizontal_aim_sensitivity_slider_drag_ended(value_changed: bool) -> void:
+	if value_changed:
+		camera_settings.get_or_add(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, horizontal_aim_sensitivity_slider.value)
 
 func _on_vertical_look_sensitivity_slider_value_changed(value: float) -> void:
-	self.verticalLookSensitivityValue.text = str(value)
+	vertical_look_sensitivity_value.text = str(value)
 
-func _on_vertical_look_sensitivity_slider_drag_ended(valueChanged: bool) -> void:
-	if valueChanged:
-		self.cameraSettings.get_or_add(CONSTANTS.VERTICAL_LOOK_SENSITIVITY, self.verticalLookSensitivitySlider.value)
+func _on_vertical_look_sensitivity_slider_drag_ended(value_changed: bool) -> void:
+	if value_changed:
+		camera_settings.get_or_add(CONSTANTS.VERTICAL_LOOK_SENSITIVITY, vertical_look_sensitivity_slider.value)
 
 func _on_horizontal_look_sensitivity_slider_value_changed(value: float) -> void:
-	self.horizontalLookSensitivityValue.text = str(value)
+	horizontal_look_sensitivity_value.text = str(value)
 
-func _on_horizontal_look_sensitivity_slider_drag_ended(valueChanged: bool) -> void:
-	if valueChanged:
-		self.cameraSettings.get_or_add(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, self.horizontalLookSensitivitySlider.value)
+func _on_horizontal_look_sensitivity_slider_drag_ended(value_changed: bool) -> void:
+	if value_changed:
+		camera_settings.get_or_add(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, horizontal_look_sensitivity_slider.value)
 
-func _open_control_select_menu(index: int, _clickPosition: Vector2, mouseButtonIndex: int) -> void:
-	if mouseButtonIndex == MOUSE_BUTTON_LEFT:
-		self.controlSelectMenu.open_menu(self.controlList.get_item_text(index))
-		self.process_mode = Node.PROCESS_MODE_DISABLED
+func _open_control_select_menu(index: int, _click_position: Vector2, mouse_button_index: int) -> void:
+	if mouse_button_index == MOUSE_BUTTON_LEFT:
+		control_select_menu.open_menu(control_list.get_item_text(index))
+		process_mode = Node.PROCESS_MODE_DISABLED
 
 func _control_select_closed() -> void:
-	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+	process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 
-func _control_select_set(controlToUpdate: String, selectedInput: ControlSetting) -> void:
+func _control_select_set(control_to_update: String, selected_input: ControlSetting) -> void:
 	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
-	Logger.debug(UPDATE_CONTROL_LOG, [controlToUpdate, selectedInput.inputDescription], self)
-	var newTexture: Texture2D = load(InputSprite.INPUT_ICONS.get(selectedInput.keycode, InputSprite.UNKNOWN_PATH))
-	if newTexture != InputSprite.UNKNOWN_TEXTURE:
-		var selectedIcons: PackedInt32Array = self.controlList.get_selected_items()
-		if selectedIcons.size() == 1:
-			self._unbind_input(selectedInput)
-			self._update_selected_icons(newTexture)
+	Logger.debug(_UPDATE_CONTROL_LOG, [control_to_update, selected_input.inputDescription], self)
+	var new_texture: Texture2D = load(InputSprite.INPUT_ICONS.get(selected_input.keycode, InputSprite.UNKNOWN_PATH))
+	if new_texture != InputSprite.UNKNOWN_TEXTURE:
+		var selected_icons: PackedInt32Array = control_list.get_selected_items()
+		if selected_icons.size() == 1:
+			_unbind_input(selected_input)
+			_update_selected_icons(new_texture)
 		else:
-			Logger.error(self.SELECT_ERROR_LOG, [str(selectedIcons.size())], self)
+			Logger.error(_SELECT_ERROR_LOG, [str(selected_icons.size())], self)
 
-# Updates selected icons in ControlList to the passed in texture
-func _update_selected_icons(newIcon: Texture2D) -> void:
-	var selectedIcons: PackedInt32Array = self.controlList.get_selected_items()
-	for i in selectedIcons.size():
-		self.controlList.set_item_icon(selectedIcons[i], newIcon)
+# Updates selected icons in control_list to the passed in texture
+func _update_selected_icons(new_icon: Texture2D) -> void:
+	var selected_icons: PackedInt32Array = control_list.get_selected_items()
+	for i in selected_icons.size():
+		control_list.set_item_icon(selected_icons[i], new_icon)
 
 # Unbinds the control with the matching keycode
-func _unbind_input(selectedInput: ControlSetting) -> void:
+func _unbind_input(selected_input: ControlSetting) -> void:
 	# Check control list for matching items and unbind
-	var incomingInputPath: String = InputSprite.INPUT_ICONS.get(selectedInput.keycode)
-	for controlListIndex in self.controlList.item_count:
-		var iconPath: String = controlList.get_item_icon(controlListIndex).resource_path
-		if iconPath == incomingInputPath:
-			var inputDescription: String = self.controlList.get_item_text(controlListIndex)
-			Logger.debug(UNBIND_LOG, [inputDescription], self)
-			self._assign_blank_keycap(controlListIndex)
+	var incoming_input_path: String = InputSprite.INPUT_ICONS.get(selected_input.keycode)
+	for control_list_index in control_list.item_count:
+		var icon_path: String = control_list.get_item_icon(control_list_index).resource_path
+		if icon_path == incoming_input_path:
+			var input_description: String = control_list.get_item_text(control_list_index)
+			Logger.debug(_UNBIND_LOG, [input_description], self)
+			_assign_blank_keycap(control_list_index)
 
-# Applys blank keycap texture to the passed in index of ControlList
+# Applys blank keycap texture to the passed in index of control_list
 func _assign_blank_keycap(index: int) -> void:
-	self.controlList.set_item_icon(index, InputSprite.UNKNOWN_TEXTURE)
+	control_list.set_item_icon(index, InputSprite.UNKNOWN_TEXTURE)
 
 # Converts the itemText to its assoicated GLOBAL_SETTINGS input name
-func _get_constant_name(itemText: String) -> String:
-	var constantValue: String = CONSTANTS.INPUT_LABEL.get(itemText, "")
-	if constantValue == "":
-		Logger.error(self.MISSING_CONSTANT_LOG, [itemText], self)
-	return constantValue
+func _get_constant_name(item_text: String) -> String:
+	var constant_value: String = CONSTANTS.INPUT_LABEL.get(item_text, "")
+	if constant_value == "":
+		Logger.error(_MISSING_CONSTANT_LOG, [item_text, constant_value], self)
+	return constant_value
 
 # Checks control dictionaries for stored value of constantName
 # If not found returns UNKNOWN_KEY InputEvent
-func _get_constant_value(constantName: String) -> InputEvent:
+func _get_constant_value(constant_name: String) -> InputEvent:
 	# Check GlobalSettings for control constant with matching name
-	var mappedValue: InputEvent = GlobalSettings.CONTROLS.get(constantName, InputEventLibrary.UNKNOWN_KEY)
-	if mappedValue == InputEventLibrary.UNKNOWN_KEY:
+	var mapped_value: InputEvent = GlobalSettings.CONTROLS.get(constant_name, InputEventLibrary.UNKNOWN_KEY)
+	if mapped_value == InputEventLibrary.UNKNOWN_KEY:
 		# Log key is not bound and return UKNOWN value
-		Logger.debug(UNBOUND_INPUT_LOG, [constantName], self)
-	return mappedValue
+		Logger.debug(_UNBOUND_INPUT_LOG, [constant_name], self)
+	return mapped_value
 
 # Checks default control dictionaries for stored value of constantName
 # If not found returns UNKNOWN_KEY InputEvent
-func _get_default_value(constantName: String) -> InputEvent:
+func _get_default_value(constant_name: String) -> InputEvent:
 	# Check GlobalSettings for control constant with matching name
-	var mappedValue: InputEvent = GlobalSettings.CONTROL_DEFAULTS.get(constantName, InputEventLibrary.UNKNOWN_KEY)
-	if mappedValue == InputEventLibrary.UNKNOWN_KEY:
+	var mapped_value: InputEvent = GlobalSettings.CONTROL_DEFAULTS.get(constant_name, InputEventLibrary.UNKNOWN_KEY)
+	if mapped_value == InputEventLibrary.UNKNOWN_KEY:
 		# Log key is not bound and return UKNOWN value
-		Logger.debug(UNBOUND_INPUT_LOG, [constantName], self)
-	return mappedValue
+		Logger.debug(_UNBOUND_INPUT_LOG, [constant_name], self)
+	return mapped_value
 
-# Returns the index in ControlList for the provided GLOBAL_SETTINGS name
+# Returns the index in control_list for the provided GLOBAL_SETTINGS name
 # If not found returns INT32_MAX
-func _get_control_index(constantName: String) -> int:
-	var constantItemText: String = CONSTANTS.INPUT_LABEL.find_key(constantName)
-	for controlSetting in self.controlList.item_count:
-		var itemText: String = self.controlList.get_item_text(controlSetting)
-		if itemText == constantItemText:
-			return controlSetting
+func _get_control_index(constant_name: String) -> int:
+	var constant_item_text: String = CONSTANTS.INPUT_LABEL.find_key(constant_name)
+	for control_setting in control_list.item_count:
+		var item_text: String = control_list.get_item_text(control_setting)
+		if item_text == constant_item_text:
+			return control_setting
 	return CONSTANTS.INT32_MAX

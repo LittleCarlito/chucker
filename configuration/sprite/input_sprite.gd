@@ -82,7 +82,7 @@ const INPUT_ICONS: Dictionary = {
 }
 
 var UNKNOWN_PATH: String = "res://resources/Sprites/ControlIcons/Blank_Keycap.png"
-var UNKNOWN_TEXTURE: Texture2D = load(self.UNKNOWN_PATH)
+var UNKNOWN_TEXTURE: Texture2D = load(UNKNOWN_PATH)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -94,37 +94,37 @@ func _process(_delta: float) -> void:
 	pass
 
 func get_sprite(event: InputEvent) -> Texture2D:
-	var possibleInputs: Array = InputEventLibrary.ALL_INPUTS.values()
-	var matchedInputKeycode: int = KEY_UNKNOWN
-	var incomingKeycode: int = self.extract_keycode(event)
-	for possibleInput in possibleInputs:
-		var possibleKeyCode: int = self.extract_keycode(possibleInput)
-		if possibleKeyCode == incomingKeycode:
-			matchedInputKeycode = possibleKeyCode
-	if (incomingKeycode != KEY_UNKNOWN) && (matchedInputKeycode == KEY_UNKNOWN):
+	var possible_inputs: Array = InputEventLibrary.ALL_INPUTS.values()
+	var matched_input_keycode: int = KEY_UNKNOWN
+	var incoming_keycode: int = extract_keycode(event)
+	for possible_input in possible_inputs:
+		var possible_keycode: int = extract_keycode(possible_input)
+		if possible_keycode == incoming_keycode:
+			matched_input_keycode = possible_keycode
+	if (incoming_keycode != KEY_UNKNOWN) && (matched_input_keycode == KEY_UNKNOWN):
 		Logger.error(NO_MATCH_FOUND_LOG, [str(event)], self)
-	return load(self.INPUT_ICONS.get(matchedInputKeycode))
+	return load(INPUT_ICONS.get(matched_input_keycode))
 
 func extract_keycode(event: InputEvent) -> int:
-	var returnValue: int
+	var return_value: int
 	if event is InputEventMouseButton || event is InputEventJoypadButton:
-		returnValue = event.button_index
+		return_value = event.button_index
 	elif event is InputEventKey:
-		returnValue = event.physical_keycode
+		return_value = event.physical_keycode
 	else:
-		Logger.error(UNSUPPORTED_TYPE, [self._EXTRACT_KEYCODE_STRING, str(event)], self)
-		returnValue = KEY_UNKNOWN
-	return returnValue
+		Logger.error(UNSUPPORTED_TYPE, [_EXTRACT_KEYCODE_STRING, str(event)], self)
+		return_value = KEY_UNKNOWN
+	return return_value
 
 func extract_input_type(event: InputEvent) -> InputEventLibrary.INPUT_TYPE:
-	var returnType: InputEventLibrary.INPUT_TYPE
+	var return_type: InputEventLibrary.INPUT_TYPE
 	if event is InputEventMouseButton:
-		returnType = InputEventLibrary.INPUT_TYPE.MOUSE
+		return_type = InputEventLibrary.INPUT_TYPE.MOUSE
 	elif event is InputEventKey:
-		returnType = InputEventLibrary.INPUT_TYPE.KEYBOARD
+		return_type = InputEventLibrary.INPUT_TYPE.KEYBOARD
 	elif event is InputEventJoypadButton:
-		returnType = InputEventLibrary.INPUT_TYPE.JOYSTICK
+		return_type = InputEventLibrary.INPUT_TYPE.JOYSTICK
 	else:
-		Logger.error(UNSUPPORTED_TYPE, [self._EXTRACT_INPUT_TYPE_STRING, str(event)], self)
-		returnType = InputEventLibrary.INPUT_TYPE.UNKNOWN
-	return returnType
+		Logger.error(UNSUPPORTED_TYPE, [_EXTRACT_INPUT_TYPE_STRING, str(event)], self)
+		return_type = InputEventLibrary.INPUT_TYPE.UNKNOWN
+	return return_type

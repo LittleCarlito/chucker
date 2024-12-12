@@ -1,12 +1,12 @@
 extends Control
 class_name ChargeBar
 
-@onready var chargeAmount: Label = $ChargeBarParentContainer/ChargeAmount
-@onready var progressBar: ProgressBar = $ChargeBarParentContainer/ChargeBarContainer/ChargeBackground/ProgressBar
+@onready var charge_amount: Label = $ChargeBarParentContainer/ChargeAmount
+@onready var progress_bar: ProgressBar = $ChargeBarParentContainer/ChargeBarContainer/ChargeBackground/ProgressBar
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	progressBar.value = 0
+	progress_bar.value = 0
 	_updateVisuals()
 
 
@@ -15,9 +15,9 @@ func _process(_delta: float) -> void:
 	pass
 
 func set_progress(value: float) -> void:
-	progressBar.value = int(value)
+	progress_bar.value = int(value)
 	_updateVisuals()
 	
 
 func _updateVisuals() -> void:
-	chargeAmount.text = str(progressBar.value)
+	charge_amount.text = str(progress_bar.value)
