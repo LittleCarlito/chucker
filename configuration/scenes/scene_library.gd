@@ -1,7 +1,7 @@
 extends Node
 
 const DISK = {
-	"FORCE_SCENE": "res://assets/items/disks/ChuckDisk.tscn",
+	"FORCE_SCENE": "res://assets/items/disks/ForceDisk.tscn",
 	"PATH_SCENE": "res://assets/items/disks/PathDisk.tscn"
 }
 

@@ -61,12 +61,12 @@ func _handle_player_interact() -> void:
 		var colliding_count = front_detection.get_collision_count()
 		for n in colliding_count:
 			var colliding_object = front_detection.get_collider(0)
-			if colliding_object != null and colliding_object is ChuckDisk:
+			if colliding_object != null and colliding_object is ForceDisk:
 				match colliding_object.get_type():
 					CONSTANTS.DISK_TYPE.FORCE:
-						player_item = ChargeDisk.new_disk(CONSTANTS.DISK_TYPE.FORCE, self, player_camera)
+						player_item = ChargeDisk.new_object(CONSTANTS.DISK_TYPE.FORCE, self, player_camera)
 					CONSTANTS.DISK_TYPE.PATH:
-						player_item = PullDisk.new_disk(self, player_camera, CONSTANTS.DISK_TYPE.PATH)
+						player_item = PullDisk.new_object(self, player_camera, CONSTANTS.DISK_TYPE.PATH)
 						#playerDisk.prepare_item(newType, newThrower, newDiskCamera)
 					_:
 						Logger.error(_UKNOWN_OBJECT_LOG, [], self)

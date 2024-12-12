@@ -18,13 +18,14 @@ signal lose_focus
 var _item_owner: ChuckChucker
 var _fallback_camera: Camera3D = null
 var _focus_location: Vector3 = Vector3.INF
+var _focused: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	camera_timer.one_shot = true
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	camera_control.global_position.y = max(GlobalSettings.CAMERA.MIN_HEIGHT, camera_control.global_position.y)
 	if _focus_location != Vector3.INF:
 		focus_camera(_focus_location)
@@ -35,7 +36,9 @@ func prepare_item(fallback_camera: Camera3D, item_owner: ChuckChucker = null) ->
 	_item_owner = item_owner
 
 func new_object() -> CameraContainer:
-	return camera_scene.instantiate()
+	var new_camera: CameraContainer = camera_scene.instantiate()
+	new_camera.name = new_camera.name + "-" + str(new_camera.get_instance_id())
+	return new_camera
 
 func focus_camera(focus_location: Vector3) -> void:
 	if focus_location != Vector3.INF:
@@ -55,10 +58,15 @@ func horizontal_rotate(roation_amount: float, focus_location: Vector3 = Vector3.
 		Logger.error(_NO_FOCUS_LOG, [_HORIZONTAL_ROTATE], self)
 
 func start_focus() -> void:
+	_focused = true
 	camera_timer.start(GlobalSettings.CAMERA.SHOT_WATCH_TIME)
+
+func is_focused() -> bool:
+	return _focused
 
 func _on_camera_timer_timeout() -> void:
 	Logger.debug(_DISABLE_LOG, [], self)
+	_focused = false
 	internal_camera.current = false
 	if _fallback_camera != null:
 		_fallback_camera.current = true

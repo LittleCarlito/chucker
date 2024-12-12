@@ -48,6 +48,7 @@ func _process(delta: float) -> void:
 # Create a new path disk
 static func new_object() -> PathDisk:
 	var new_path_disk: PathDisk = disk_scene.instantiate()
+	new_path_disk.name = new_path_disk.name + "-" + str(new_path_disk.get_instance_id())
 	return new_path_disk
 
 func prepare_item(incomint_type: CONSTANTS.DISK_TYPE, incoming_owner: ChuckChucker = null, incoming_camera: Camera3D = null) -> void:
@@ -92,7 +93,7 @@ func _swap_disk() -> void:
 	# TODO Make shared code a method in Global DiskFactory script for generating Rigid3D disks
 #			Should then add the preparation and building of other disk types to the class
 	# Create a force disk
-	var new_disk = ChuckDisk.new_disk()
+	var new_disk = ForceDisk.new_object()
 	get_tree().root.add_child(new_disk)
 	var prepare_angle: float
 	if disk_mesh.collision_location == Vector3.INF:

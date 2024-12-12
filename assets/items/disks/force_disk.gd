@@ -1,7 +1,8 @@
 extends RigidBody3D
-class_name ChuckDisk
+class_name ForceDisk
 
 # TODO Continue from here
+# BUG Camera doesn't return after x period
 # TODO Override EquipableItem methods in DiskMesh
 # TODO Imeplment camera_container stuff in ChuckChucker as well
 
@@ -21,9 +22,9 @@ func _process(delta: float) -> void:
 	# Freeze the camera control when rigid body detects collision
 	if self.get_contact_count() > 0 and disk_mesh.camera_container.is_current():
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		if !disk_mesh.focused:
+		if !disk_mesh.camera_container.is_focused():
 			# Focus camera on collision location
-			disk_mesh.start_focus()
+			disk_mesh.camera_container.start_focus()
 			self.linear_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
 			self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
 		disk_mesh.idle_rotate(delta)
@@ -38,9 +39,10 @@ func prepare_item(incoming_type: CONSTANTS.DISK_TYPE, incoming_owner: ChuckChuck
 	set_disk_mesh(new_disk_mesh)
 	new_disk_mesh.prepare_item(incoming_type, incoming_owner, incoming_camera)
 
-static func new_disk() -> ChuckDisk:
-	var newDisk: ChuckDisk = disk_scene.instantiate()
-	return newDisk
+static func new_object() -> ForceDisk:
+	var new_disk: ForceDisk = disk_scene.instantiate()
+	new_disk.name = new_disk.name + "-" + str(new_disk.get_instance_id())
+	return new_disk
 
 ## Applies force to the disk and sets launch parameters
 ## If no path is given camera is not triggered

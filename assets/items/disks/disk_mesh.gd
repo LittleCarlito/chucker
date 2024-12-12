@@ -29,12 +29,14 @@ func _input(event: InputEvent) -> void:
 
 static func new_object() -> DiskMesh:
 	var new_mesh: DiskMesh = mesh_scene.instantiate()
+	new_mesh.name = new_mesh.name + "-" + str(new_mesh.get_instance_id())
 	return new_mesh
 
 func prepare_item(incoming_type: CONSTANTS.DISK_TYPE, incoming_owner: ChuckChucker = null, incoming_camera: Camera3D = null) -> void:
 	super(incoming_type, incoming_owner, incoming_camera)
 	var active_material: StandardMaterial3D = internal_mesh.get_active_material(0)
 	active_material.albedo_color = CONSTANTS.DISK_COLOR.get(incoming_type, GlobalSettings.COLOR_DEFAULTS.DISK)
+	camera_container.prepare_item(incoming_camera, incoming_owner)
 
 func _set_type(new_type: CONSTANTS.DISK_TYPE) -> void:
 	var disk_material: StandardMaterial3D = internal_mesh.get_active_material(0)
@@ -47,8 +49,20 @@ func _set_type(new_type: CONSTANTS.DISK_TYPE) -> void:
 			Logger.error(_UNSUPPORTED_TYPE_LOG, [str(new_type)], self)
 			disk_material.albedo_color = GlobalSettings.COLOR.FORCE
 
+func toggle_camera() -> void:
+	camera_container.toggle_camera()
+
+func _reset_zoom() -> void:
+	camera_container.get_camera().fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV)
+
+func _zoom_in() -> void:
+	camera_container.get_camera().fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV) - GlobalSettings.CAMERA.IN_ADJUST
+
+func _zoom_out() -> void:
+	camera_container.get_camera().fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV) + GlobalSettings.CAMERA.OUT_ADJUST
+
 func _on_lose_focus() -> void:
-	item_owner.disableMovement = false
+	item_owner.enable_movement()
 	fallback_camera.current = true
 	collision_location = Vector3.INF
 

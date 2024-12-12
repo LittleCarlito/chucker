@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://blwwfxseykyuy"]
+
+[ext_resource type="Script" path="res://assets/items/disks/force_disk.gd" id="1_13oos"]
+[ext_resource type="Shape3D" uid="uid://x6uh5gkdse8r" path="res://assets/items/disks/DiskCollision.tres" id="2_jcakk"]
+[ext_resource type="PackedScene" uid="uid://jvw5pa8yws2g" path="res://assets/items/disks/DiskMesh.tscn" id="3_jikxa"]
+
+[node name="ForceDisk" type="RigidBody3D"]
+collision_layer = 4
+collision_mask = 14
+contact_monitor = true
+max_contacts_reported = 1
+linear_damp_mode = 1
+angular_damp_mode = 1
+script = ExtResource("1_13oos")
+
+[node name="DiskCollision" type="CollisionShape3D" parent="."]
+physics_interpolation_mode = 2
+shape = ExtResource("2_jcakk")
+
+[node name="DiskMesh" parent="." instance=ExtResource("3_jikxa")]

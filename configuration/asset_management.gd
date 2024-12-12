@@ -4,7 +4,7 @@ const NO_MATCH_FOUND_LOG: String = "Matching icon for input \"%s\" could not be 
 const UNSUPPORTED_TYPE: String = "Event was unsupported type \"%s\""
 
 const DISK = {
-	"SCENE": "res://assets/items/ChuckDisk.tscn",
+	"SCENE": "res://assets/items/ForceDisk.tscn",
 	"PATH_SCENE": "res://assets/items/PathDisk.tscn"
 }
 

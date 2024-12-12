@@ -16,6 +16,7 @@ func _process(_delta: float) -> void:
 	pass
 
 func prepare_item(incoming_type: CONSTANTS.DISK_TYPE, incoming_owner: ChuckChucker = null, incoming_camera: Camera3D = null) -> void:
+	Logger.debug(CONSTANTS.ITEM_OWNER_LOG, [incoming_owner], self)
 	item_owner = incoming_owner
 	fallback_camera = incoming_camera
 	item_type = incoming_type

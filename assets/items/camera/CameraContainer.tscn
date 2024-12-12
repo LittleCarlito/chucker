@@ -13,3 +13,5 @@ fov = 90.0
 
 [node name="CameraTimer" type="Timer" parent="."]
 one_shot = true
+
+[connection signal="timeout" from="CameraTimer" to="." method="_on_camera_timer_timeout"]

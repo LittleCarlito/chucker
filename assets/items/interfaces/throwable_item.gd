@@ -90,7 +90,7 @@ func launch_disk() -> void:
 			# BUG Physics of disk seem off compared to previous working commit
 			# TODO Seems a bit repetitive; Should be simplified in the factory refactor
 			CONSTANTS.DISK_TYPE.FORCE:
-				var force_disk: ChuckDisk = ChuckDisk.new_disk()
+				var force_disk: ForceDisk = ForceDisk.new_object()
 				if item_owner != null:
 					item_owner.add_child(force_disk)
 				else:

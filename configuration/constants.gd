@@ -2,6 +2,7 @@ extends Node
 class_name CONSTANTS
 
 const METHOD_LOG: String = "\"%s\"; \"%s\""
+const ITEM_OWNER_LOG: String = "item_owner \"%s\""
 
 enum ITEM_TYPE {DISK, UNKNOWN}
 enum DISK_TYPE {FORCE, PATH, UNKOWN}
