@@ -2,7 +2,6 @@ extends RigidBody3D
 class_name ForceDisk
 
 # TODO Continue from here
-# BUG Camera doesn't return after x period
 # TODO Override EquipableItem methods in DiskMesh
 # TODO Imeplment camera_container stuff in ChuckChucker as well
 

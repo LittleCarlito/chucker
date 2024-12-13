@@ -30,6 +30,9 @@ func _process(_delta: float) -> void:
 	# Use ThrowableItem aim handling
 	handle_aiming()
 
+func _input(event: InputEvent) -> void:
+	handle_input(event)
+
 static func new_object(new_thrower: ChuckChucker, new_camera: Camera3D, new_type: CONSTANTS.DISK_TYPE) -> PullDisk:
 	var new_disk: PullDisk = disk_scene.instantiate()
 	new_disk.name = new_disk.name + "-" + str(new_disk.get_instance_id())

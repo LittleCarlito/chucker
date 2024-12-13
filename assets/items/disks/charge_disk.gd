@@ -25,6 +25,9 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	handle_aiming()
 
+func _input(event: InputEvent) -> void:
+	handle_input(event)
+
 static func new_object(incoming_type: CONSTANTS.DISK_TYPE, incoming_owner: ChuckChucker, incoming_camera: Camera3D) -> ChargeDisk:
 	var new_disk: ChargeDisk = disk_scene.instantiate()
 	new_disk.name = new_disk.name + "-" + str(new_disk.get_instance_id())

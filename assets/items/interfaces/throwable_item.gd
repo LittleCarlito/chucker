@@ -1,12 +1,9 @@
 extends EquipableItem
 class_name ThrowableItem
 
-signal rotate_parent(rotationAmount)
-
 # TODO Make the disks spin with passed in speed when launched
 #			Should be able to make it spin counter/clockwise depending on sign
 
-const _UNIMPLEMENTED_LOG: String = "UNIMPLEMENTED METHOD; All ThrowableItem Objects must implement \"%s\""
 const _HOLD_ACTION: String = "hold_action"
 const _RELEASE_ACTION: String = "release_action"
 const _NOT_LAUNCH_READY_LOG: String = "ThrowableItem has not had its launch parameters set and could not be thrown"
@@ -18,7 +15,6 @@ var launch_path: Array[Vector3] = []
 var launch_speed: float = 0.0
 var launch_angle: float = 0.0
 var launch_ready: bool = false
-var just_launched: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -29,47 +25,10 @@ func _process(_delta: float) -> void:
 	pass
 
 func hold_action(_delta: float) -> void:
-	Logger.error(_UNIMPLEMENTED_LOG, [_HOLD_ACTION], self)
+	Logger.error(CONSTANTS._UNIMPLEMENTED_LOG, [self.name, _HOLD_ACTION], self)
 
 func release_action() -> void:
-	Logger.error(_UNIMPLEMENTED_LOG, [_RELEASE_ACTION], self)
-
-func handle_aiming() -> void:
-	# Right click aiming
-	if Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-		if item_owner != null:
-			item_owner.disableMovement = true
-		if fallback_camera != null and fallback_camera.current:
-			_zoom_in()
-	if Input.is_action_just_released(CONSTANTS.USER_INPUT.SECONDARY):
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		_reset_zoom()
-		if item_owner != null:
-			item_owner.cameraController.basis = item_owner.global_basis
-			item_owner.disableMovement = false
-
-func _input(event: InputEvent) -> void:
-	# Look/Aim controls
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not just_launched:
-		if item_owner != null and event is InputEventMouseMotion:
-			# Inversion values are stored as booleans for UI purposes; Below is conversion to 1/-1
-			var h_inversion: int = 1
-			if GlobalSettings.CAMERA.get(CONSTANTS.INVERT_HORIZONTAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_HORIZONTAL):
-				h_inversion = -1
-			var v_inversion: int = -1
-			if GlobalSettings.CAMERA.get(CONSTANTS.INVERT_VERTICAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_VERTICAL):
-				v_inversion = 1
-			var v_sense: float = GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.VERTICAL_AIM_SENSITIVITY)
-			item_owner.rotation.y -= h_inversion * (event.relative.x / 1000 * v_sense)
-			var rotation_amount: float = v_inversion * (event.relative.y / 1000 * v_sense)
-			rotate_parent.emit(rotation_amount)
-	# Rotate input control
-	if event.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_UP) || event.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_DOWN):
-		var rotation_adjust: float = GlobalSettings.DISK.ROTATE_ADJUST
-		if event.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_DOWN):
-			rotation_adjust *= -1
-		rotate_parent.emit(rotation_adjust)
+	Logger.error(CONSTANTS._UNIMPLEMENTED_LOG, [self.name, _RELEASE_ACTION], self)
 
 func set_launch_parameters(incoming_path: Array[Vector3], incoming_speed: float, incoming_angle: float) -> void:
 	launch_path = incoming_path
@@ -112,12 +71,9 @@ func launch_disk() -> void:
 	else:
 		Logger.error(_NOT_LAUNCH_READY_LOG, [], self)
 	self.rotation.x = 0
-	just_launched = true
+	aim_disabled = true
 	item_owner.disable_movement()
 	item_owner.unequip_item()
-
-func set_just_launched(value: bool) -> void:
-	just_launched = value
 
 func draw_aim_line(multiplier: float, x_offset: float = 0) -> Array[Vector3]:
 	var gravity: float = abs(NodeUtil.get_gravity(self).y)

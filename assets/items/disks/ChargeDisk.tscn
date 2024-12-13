@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://cfb8nwjdbjdsi"]
 
-[ext_resource type="CylinderMesh" uid="uid://bwc6i6by0861c" path="res://assets/items/disks/DiskMesh.tres" id="1_sm6fq"]
+[ext_resource type="CylinderMesh" uid="uid://bwc6i6by0861c" path="res://assets/items/disks/common/DiskMesh.tres" id="1_sm6fq"]
 [ext_resource type="Script" path="res://assets/items/disks/charge_disk.gd" id="2_o74uw"]
 [ext_resource type="PackedScene" uid="uid://cfpse6r2su0ua" path="res://assets/ui/views/ChargeView.tscn" id="3_ag6h7"]
 

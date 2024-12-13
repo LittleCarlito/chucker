@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://blwwfxseykyuy"]
 
 [ext_resource type="Script" path="res://assets/items/disks/force_disk.gd" id="1_13oos"]
-[ext_resource type="Shape3D" uid="uid://x6uh5gkdse8r" path="res://assets/items/disks/DiskCollision.tres" id="2_jcakk"]
+[ext_resource type="Shape3D" uid="uid://x6uh5gkdse8r" path="res://assets/items/disks/common/DiskCollision.tres" id="2_jcakk"]
 [ext_resource type="PackedScene" uid="uid://jvw5pa8yws2g" path="res://assets/items/disks/DiskMesh.tscn" id="3_jikxa"]
 
 [node name="ForceDisk" type="RigidBody3D"]

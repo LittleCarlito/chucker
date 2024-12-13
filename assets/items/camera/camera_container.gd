@@ -89,9 +89,17 @@ func set_camera(new_camera: Camera3D) -> void:
 		old_camera.queue_free()
 	internal_camera = new_camera
 
-func toggle_camera() -> bool:
+func toggle_camera() -> void:
 	internal_camera.current = not internal_camera.current
-	return internal_camera.current
 
 func is_current() -> bool:
 	return internal_camera.current
+
+func reset_zoom() -> void:
+	internal_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV)
+
+func zoom_in() -> void:
+	internal_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV) - GlobalSettings.CAMERA.IN_ADJUST
+
+func zoom_out() -> void:
+	internal_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV) + GlobalSettings.CAMERA.OUT_ADJUST
