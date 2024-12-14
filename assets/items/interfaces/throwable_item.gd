@@ -54,6 +54,7 @@ func launch_disk() -> void:
 	item_owner.disable_movement()
 	item_owner.unequip_item()
 
+# TODO See about refactoring this to code only class within PullDraw or something
 func draw_aim_line(multiplier: float, x_offset: float = 0) -> Array[Vector3]:
 	var gravity: float = abs(NodeUtil.get_gravity(self).y)
 	var parent_rotation: float = NodeUtil.get_parent_x_rotation(self)

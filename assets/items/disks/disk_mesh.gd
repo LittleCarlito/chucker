@@ -73,3 +73,6 @@ func get_disk_camera() -> Camera3D:
 
 func set_disk_camera(new_camera: Camera3D) -> void:
 	camera_container.set_camera(new_camera)
+
+func is_current() -> bool:
+	return camera_container.is_current()

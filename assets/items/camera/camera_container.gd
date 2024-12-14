@@ -1,3 +1,4 @@
+# TODO Make this an EquipableItem
 extends Node3D
 class_name CameraContainer
 

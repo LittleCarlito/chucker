@@ -12,6 +12,7 @@ const _TOGGLE_CAMERA: String = "toggle_camera"
 const _RESET_ZOOM: String = "reset_zoom"
 const _ZOOM_IN: String = "zoom_in"
 const _ZOOM_OUT: String = "zoom_out"
+const _IS_CURRENT: String = "is_current"
 
 var item_owner: ChuckChucker
 var fallback_camera: Camera3D
@@ -55,6 +56,11 @@ func zoom_in() -> void:
 
 func zoom_out() -> void:
 	Logger.warn(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _ZOOM_OUT], self)
+
+func is_current() -> bool:
+	var formattedString: String = CONSTANTS.UNIMPLEMENTED_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+	Logger.warn(formattedString, [self.name, _IS_CURRENT], self)
+	return false
 
 func handle_aiming() -> void:
 	# Right click aiming

@@ -1,4 +1,4 @@
-# TODO See if this and pull disk really need to be of the same inheritance type; If they do make their scene structure similar to others
+# TODO Refactor this to be an actual ThrowableItem with an internal camera and functions
 extends ThrowableItem
 class_name ChargeDisk
 

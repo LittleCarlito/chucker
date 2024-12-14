@@ -30,6 +30,8 @@ func _ready() -> void:
 # BUG When path is short the disk travels too quickly
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if disk_mesh.camera_container.is_current() && !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if is_instance_valid(path_follow):
 		if launch_path.is_empty():
 			_swap_disk()
@@ -89,8 +91,11 @@ func _determine_speed() -> float:
 # Gets rid of PathDisk and spawns in a rigid disk in its place with force
 func _swap_disk() -> void:
 	# TODO Continue from here
-	# BUG PathDisk camera on collision doesn't rotate
-	# BUG PathDisk spawns disk in wrong location and with wrong directional force on swap_disk
+	# BUG PathDisk follow camera doesn't rotate with mouse
+	# TODO Make CameraContainer an EquipableItem
+	# TODO Refactor ChargeDisk to be EquipableItem; add scenes and proper structure to .tscn as well
+	# TODO Refactor PullDisk to be EquipableItem; add scenes and proper structure to .tscn as well
+	# BUG Not sure about swap disk force adding direction; make sure it is the disk facing direction and not true north
 	# TODO Swap out disk creation stuff in swap disk with DiskFactory usage
 	# TODO Imeplment camera_container stuff in ChuckChucker as well
 	# Create a force disk
@@ -122,3 +127,6 @@ func _swap_disk() -> void:
 
 func get_disk_camera() -> Camera3D:
 	return disk_mesh.get_disk_camera()
+
+func is_current() -> bool:
+	return disk_mesh.is_current()
