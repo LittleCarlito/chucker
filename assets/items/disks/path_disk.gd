@@ -64,8 +64,8 @@ func set_item_mesh(new_mesh: DiskMesh) -> void:
 		old_mesh.queue_free()
 	disk_mesh = new_mesh
 
-func set_launch_parameters(incoming_path: Array[Vector3], incoming_speed: float, incoming_angle: float) -> void:
-	super(incoming_path, incoming_speed, incoming_angle)
+func set_launch_parameters(incoming_path: Array[Vector3], incoming_speed: float, incoming_angle: float, is_focused: bool = false) -> void:
+	super(incoming_path, incoming_speed, incoming_angle, is_focused)
 	var throw_curve: Curve3D = Curve3D.new()
 	for throw_point in incoming_path:
 		throw_curve.add_point(to_local(throw_point))
@@ -113,7 +113,8 @@ func _swap_disk() -> void:
 		launch_speed = launch_speed * .5
 	new_disk.prepare_item(CONSTANTS.DISK_TYPE.PATH, item_owner, fallback_camera)
 	# Set momentum in direction of prepareAngle
-	new_disk.set_rigid_launch_parameters(launch_path, launch_speed, prepare_angle)
+	var swap_focus: bool = !launch_path.is_empty()
+	new_disk.set_launch_parameters(launch_path, launch_speed, prepare_angle, swap_focus)
 	# Tilt the disk to original launch angle to simulate regular rigid throw
 	new_disk.rotate_x(launch_angle)
 	# Get rid of Path3D and Mesh

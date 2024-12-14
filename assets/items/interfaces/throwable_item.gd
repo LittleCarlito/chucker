@@ -15,6 +15,7 @@ var launch_path: Array[Vector3] = []
 var launch_speed: float = 0.0
 var launch_angle: float = 0.0
 var launch_ready: bool = false
+var focus_on_launch = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -30,11 +31,12 @@ func hold_action(_delta: float) -> void:
 func release_action() -> void:
 	Logger.error(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _RELEASE_ACTION], self)
 
-func set_launch_parameters(incoming_path: Array[Vector3], incoming_speed: float, incoming_angle: float) -> void:
+func set_launch_parameters(incoming_path: Array[Vector3], incoming_speed: float, incoming_angle: float, is_focused:bool = false) -> void:
 	launch_path = incoming_path
 	launch_speed = incoming_speed
 	launch_angle = incoming_angle
 	launch_ready = true
+	focus_on_launch = is_focused
 
 func reset_launch_parameters() -> void:
 	launch_path = []

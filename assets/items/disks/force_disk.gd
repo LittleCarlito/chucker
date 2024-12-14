@@ -7,7 +7,6 @@ const disk_scene: PackedScene = preload(SceneLibrary.DISK.FORCE_SCENE)
 @onready var rigid_disk: RigidDisk = $RigidDisk
 
 var expected_path: Array[Vector3]
-var focus_on_launch = false
 
 func _ready() -> void:
 	disk_mesh.prepare_item(CONSTANTS.DISK_TYPE.FORCE)
@@ -38,14 +37,12 @@ static func new_object() -> ForceDisk:
 	new_disk.name = new_disk.name + "-" + str(new_disk.get_instance_id())
 	return new_disk
 
-## Applies force to the disk and sets launch parameters
-## If no path is given camera is not triggered
-func set_rigid_launch_parameters(incoming_path: Array[Vector3], multiplier: float, incoming_angle: float) -> void:
-	expected_path = incoming_path
-	launch_angle = incoming_angle
+## TODO See if this can just override set_launch_parameters now
+func set_launch_parameters(incoming_path: Array[Vector3], multiplier: float, incoming_angle: float, is_focused: bool = false) -> void:
+	super(incoming_path, multiplier, incoming_angle, is_focused)
 	launch_speed = GlobalSettings.DISK.LAUNCH_SPEED * multiplier
 	self.rotate_x(launch_angle)
-	rigid_disk.linear_velocity = -rigid_disk.global_transform.basis.z * launch_speed
+	rigid_disk.linear_velocity = -self.global_transform.basis.z * launch_speed
 	if focus_on_launch:
 		toggle_camera()
 

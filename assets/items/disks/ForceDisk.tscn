@@ -9,7 +9,7 @@
 script = ExtResource("1_13oos")
 
 [node name="RigidDisk" type="RigidBody3D" parent="."]
-collision_layer = 36
+collision_layer = 4
 collision_mask = 30
 contact_monitor = true
 max_contacts_reported = 1

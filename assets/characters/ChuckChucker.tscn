@@ -40,7 +40,7 @@ shape = SubResource("BoxShape3D_e7yjo")
 [node name="FrontDetect" type="ShapeCast3D" parent="."]
 transform = Transform3D(1, 2.00089e-10, 5.82077e-11, -4.46221e-11, 1, 0, -5.82077e-11, 1.45519e-11, 1, -5.82077e-11, 1, -1)
 shape = SubResource("BoxShape3D_3pknt")
-collision_mask = 7
+collision_mask = 4
 
 [node name="CameraController" type="Node3D" parent="."]
 top_level = true
