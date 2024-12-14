@@ -1,7 +1,7 @@
 extends Node
 
 const NO_MATCH_FOUND_LOG: String = "Matching icon for input \"%s\" could not be found"
-const UNSUPPORTED_TYPE: String = "Event was unsupported type \"%s\""
+const _EXTRACT_KEYCODE: String = "extract_keycode"
 
 const DISK = {
 	"SCENE": "res://assets/items/ForceDisk.tscn",
@@ -33,5 +33,5 @@ func extract_keycode(event: InputEvent) -> int:
 	elif event is InputEventKey:
 		return_value = event.physical_keycode
 	else:
-		Logger.error(UNSUPPORTED_TYPE, [str(event)], self)
+		Logger.error(CONSTANTS.UNSUPPORTED_TYPE_LOG, [_EXTRACT_KEYCODE, str(event)], self)
 	return return_value

@@ -25,10 +25,10 @@ func _process(_delta: float) -> void:
 	pass
 
 func hold_action(_delta: float) -> void:
-	Logger.error(CONSTANTS._UNIMPLEMENTED_LOG, [self.name, _HOLD_ACTION], self)
+	Logger.error(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _HOLD_ACTION], self)
 
 func release_action() -> void:
-	Logger.error(CONSTANTS._UNIMPLEMENTED_LOG, [self.name, _RELEASE_ACTION], self)
+	Logger.error(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _RELEASE_ACTION], self)
 
 func set_launch_parameters(incoming_path: Array[Vector3], incoming_speed: float, incoming_angle: float) -> void:
 	launch_path = incoming_path
@@ -44,30 +44,7 @@ func reset_launch_parameters() -> void:
 
 func launch_disk() -> void:
 	if launch_ready:
-		# TODO This is what the DiskFactory's main method should do; Take in a ThrowableItem and spawn something from it
-		match item_type:
-			# BUG Physics of disk seem off compared to previous working commit
-			# TODO Seems a bit repetitive; Should be simplified in the factory refactor
-			CONSTANTS.DISK_TYPE.FORCE:
-				var force_disk: ForceDisk = ForceDisk.new_object()
-				if item_owner != null:
-					item_owner.add_child(force_disk)
-				else:
-					get_tree().get_root().add_child(force_disk)
-				force_disk.prepare_item(item_type, item_owner, fallback_camera)
-				force_disk.global_position = self.global_position
-				force_disk.focus_on_launch = true
-				force_disk.set_rigid_launch_parameters(launch_path, launch_speed, launch_angle)
-			CONSTANTS.DISK_TYPE.PATH:
-				var new_disk = PathDisk.new_object()
-				if item_owner != null:
-					item_owner.add_child(new_disk)
-				else:
-					get_tree().get_root().add_child(new_disk)
-				new_disk.prepare_item(item_type, item_owner, fallback_camera)
-				new_disk.set_launch_parameters(launch_path, launch_speed, self.global_basis.get_euler().x)
-			_:
-				pass
+		DiskFactory.create_and_launch(self)
 	else:
 		Logger.error(_NOT_LAUNCH_READY_LOG, [], self)
 	self.rotation.x = 0
@@ -104,3 +81,12 @@ func draw_aim_line(multiplier: float, x_offset: float = 0) -> Array[Vector3]:
 	DrawUtil.point(aim_control_node.position, .05, Color.DEEP_PINK)
 	# Draw the curve
 	return DrawUtil.curve(self.global_position, launch_control_node.position, aim_control_node.position, aim_node.position)
+
+func get_launch_path() -> Array[Vector3]:
+	return launch_path
+
+func get_launch_speed() -> float:
+	return launch_speed
+
+func get_launch_angle() -> float:
+	return launch_angle

@@ -38,18 +38,17 @@ func activate_fallback() -> void:
 	deactivate.emit()
 
 func toggle_camera() -> void:
-	Logger.warn(CONSTANTS._UNIMPLEMENTED_LOG, [self.name, _TOGGLE_CAMERA], self)
+	Logger.warn(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _TOGGLE_CAMERA], self)
 
 func reset_zoom() -> void:
-	Logger.warn(CONSTANTS._UNIMPLEMENTED_LOG, [self.name, _RESET_ZOOM], self)
+	Logger.warn(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _RESET_ZOOM], self)
 
 func zoom_in() -> void:
-	Logger.warn(CONSTANTS._UNIMPLEMENTED_LOG, [self.name, _ZOOM_IN], self)
+	Logger.warn(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _ZOOM_IN], self)
 
 func zoom_out() -> void:
-	Logger.warn(CONSTANTS._UNIMPLEMENTED_LOG, [self.name, _ZOOM_OUT], self)
+	Logger.warn(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _ZOOM_OUT], self)
 
-# TODO handle_aiming and _input should be turned into methods, put into equipableItem and called from types that need it
 func handle_aiming() -> void:
 	# Right click aiming
 	if Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
@@ -86,6 +85,15 @@ func handle_input(event: InputEvent) -> void:
 		if event.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_DOWN):
 			rotation_adjust *= -1
 		rotate_parent.emit(rotation_adjust)
+
+func get_type() -> CONSTANTS.DISK_TYPE:
+	return item_type
+
+func get_item_owner() -> ChuckChucker:
+	return item_owner
+
+func get_fallback_camera() -> Camera3D:
+	return fallback_camera
 
 func enable_aim() -> void:
 	aim_disabled = false

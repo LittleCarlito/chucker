@@ -4,8 +4,8 @@ const MISSING_KEY_LOG: String = "Incoming Dictionary was missing key \"%s\"; Usi
 const NO_MATCHED_TYPE_LOG: String = "Incoming value \"%s\", to method \"%s\", could not be matched to an input type; Returning INPUT_TYPE.UNKNOWN"
 const _CONVERT_KEYCODE_STRING: String = "convert_keycode_to_input_type"
 const _CONVERT_INT_STRING: String = "convert_int_to_input_type"
-const UNSUPPORTED_TYPE_LOG: String = "ControlSetting couldn't be converted to an InputEvent as it is not of a supported type; \"%s\""
 const NO_MATCHING_EVENT_LOG: String = "Keycode \"%s\" did not have a match in ALL_INPUTS and could not be converted to an InputEvent"
+const _CONTROL_CONVERT: String = "convert_control_setting_to_input_event"
 
 const MOUSE_TYPE: String = "MOUSE"
 const KEYBOARD_TYPE: String = "KEYBOARD"
@@ -96,7 +96,7 @@ func convert_control_setting_to_input_event(control_setting: ControlSetting) -> 
 		INPUT_TYPE.KEYBOARD:
 			return_event = KEYBOARD_INPUTS.get(control_setting.keycode)
 		_:
-			Logger.error(UNSUPPORTED_TYPE_LOG, [str(control_setting)], self)
+			Logger.error(CONSTANTS.UNSUPPORTED_TYPE_LOG, [_CONTROL_CONVERT, str(control_setting)], self)
 			return_event = UNKNOWN_KEY
 	return return_event
 

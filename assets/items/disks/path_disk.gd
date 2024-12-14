@@ -87,11 +87,13 @@ func _determine_speed() -> float:
 	var ratio_adjustment:float = max(GlobalSettings.DISK.MAX_SPEED_REDUCE, calulated_ratio)
 	return ratio_adjustment * max_speed
 
-# BUG Force applied to swapped disk is not forward from disk but unrotated universal forward
 # Gets rid of PathDisk and spawns in a rigid disk in its place with force
 func _swap_disk() -> void:
-	# TODO Make shared code a method in Global DiskFactory script for generating Rigid3D disks
-#			Should then add the preparation and building of other disk types to the class
+	# TODO Continue from here
+	# BUG PathDisk camera on collision doesn't rotate
+	# BUG PathDisk spawns disk in wrong location and with wrong directional force on swap_disk
+	# TODO Swap out disk creation stuff in swap disk with DiskFactory usage
+	# TODO Imeplment camera_container stuff in ChuckChucker as well
 	# Create a force disk
 	var new_disk = ForceDisk.new_object()
 	get_tree().root.add_child(new_disk)

@@ -1,10 +1,9 @@
-# TODO Override the EquipableItem methods with ones using camera_container methods
 extends EquipableItem
 class_name DiskMesh
 
 const mesh_scene: PackedScene = preload(SceneLibrary.MESH.DISK_MESH)
 
-const _UNSUPPORTED_TYPE_LOG: String = "Given type \"%s\" is not supported"
+const _SET_TYPE: String = "_set_type"
 
 @onready var camera_container: CameraContainer = $CameraContainer
 @onready var internal_mesh: MeshInstance3D = $InternalMesh
@@ -46,19 +45,19 @@ func _set_type(new_type: CONSTANTS.DISK_TYPE) -> void:
 		CONSTANTS.DISK_TYPE.PATH:
 			disk_material.albedo_color = GlobalSettings.COLOR.PATH
 		_:
-			Logger.error(_UNSUPPORTED_TYPE_LOG, [str(new_type)], self)
+			Logger.error(CONSTANTS.UNSUPPORTED_TYPE_LOG, [_SET_TYPE, str(new_type)], self)
 			disk_material.albedo_color = GlobalSettings.COLOR.FORCE
 
 func toggle_camera() -> void:
 	camera_container.toggle_camera()
 
-func _reset_zoom() -> void:
+func reset_zoom() -> void:
 	camera_container.get_camera().fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV)
 
-func _zoom_in() -> void:
+func zoom_in() -> void:
 	camera_container.get_camera().fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV) - GlobalSettings.CAMERA.IN_ADJUST
 
-func _zoom_out() -> void:
+func zoom_out() -> void:
 	camera_container.get_camera().fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV) + GlobalSettings.CAMERA.OUT_ADJUST
 
 func _on_lose_focus() -> void:

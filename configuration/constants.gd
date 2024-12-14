@@ -3,7 +3,9 @@ class_name CONSTANTS
 
 const METHOD_LOG: String = "\"%s\"; \"%s\""
 const ITEM_OWNER_LOG: String = "item_owner \"%s\""
-const _UNIMPLEMENTED_LOG: String = "UNIMPLEMENTED METHOD; All %s Objects must implement \"%s\""
+const UNIMPLEMENTED_LOG: String = "UNIMPLEMENTED METHOD; All %s Objects must implement \"%s\""
+const UNSUPPORTED_TYPE_LOG: String = "%s recieved an unsupported type \"%s\""
+const RETURNING_NULL_LOG: String = "; Returning null"
 
 enum ITEM_TYPE {DISK, UNKNOWN}
 enum DISK_TYPE {FORCE, PATH, UNKOWN}

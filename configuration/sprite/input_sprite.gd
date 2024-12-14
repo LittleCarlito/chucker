@@ -1,7 +1,7 @@
 extends Node
 
 const NO_MATCH_FOUND_LOG: String = "Matching icon for input \"%s\" could not be found; Returning blank keycap"
-const UNSUPPORTED_TYPE: String = "%s recieved an unsupported event type \"%s\"; Returning value for Unknown"
+const _RETURNING_UNKNOWN_LOG: String = "; Returning value for Unknown"
 const _EXTRACT_KEYCODE_STRING: String = "extract_keycode"
 const _EXTRACT_INPUT_TYPE_STRING: String = "extract_input_type"
 
@@ -112,7 +112,7 @@ func extract_keycode(event: InputEvent) -> int:
 	elif event is InputEventKey:
 		return_value = event.physical_keycode
 	else:
-		Logger.error(UNSUPPORTED_TYPE, [_EXTRACT_KEYCODE_STRING, str(event)], self)
+		Logger.error(CONSTANTS.UNSUPPORTED_TYPE_LOG + _RETURNING_UNKNOWN_LOG, [_EXTRACT_KEYCODE_STRING, str(event)], self)
 		return_value = KEY_UNKNOWN
 	return return_value
 
@@ -125,6 +125,6 @@ func extract_input_type(event: InputEvent) -> InputEventLibrary.INPUT_TYPE:
 	elif event is InputEventJoypadButton:
 		return_type = InputEventLibrary.INPUT_TYPE.JOYSTICK
 	else:
-		Logger.error(UNSUPPORTED_TYPE, [_EXTRACT_INPUT_TYPE_STRING, str(event)], self)
+		Logger.error(CONSTANTS.UNSUPPORTED_TYPE_LOG + _RETURNING_UNKNOWN_LOG, [_EXTRACT_INPUT_TYPE_STRING, str(event)], self)
 		return_type = InputEventLibrary.INPUT_TYPE.UNKNOWN
 	return return_type

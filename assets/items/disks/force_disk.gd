@@ -1,10 +1,6 @@
 extends RigidBody3D
 class_name ForceDisk
 
-# TODO Continue from here
-# TODO Override EquipableItem methods in DiskMesh
-# TODO Imeplment camera_container stuff in ChuckChucker as well
-
 const disk_scene: PackedScene = preload(SceneLibrary.DISK.FORCE_SCENE)
 
 @onready var disk_mesh: DiskMesh = $DiskMesh
