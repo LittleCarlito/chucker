@@ -5,7 +5,10 @@ const METHOD_LOG: String = "\"%s\"; \"%s\""
 const ITEM_OWNER_LOG: String = "item_owner \"%s\""
 const UNIMPLEMENTED_LOG: String = "UNIMPLEMENTED METHOD; All %s Objects must implement \"%s\""
 const UNSUPPORTED_TYPE_LOG: String = "%s recieved an unsupported type \"%s\""
-const RETURNING_NULL_LOG: String = "; Returning null"
+const RETURNING_NULL_LOG: String = "Returning null"
+const PICKED_UP_LOG: String = "%s has been picked up"
+const DEACTIVATE_LOG: String = "%s is deactivating"
+const LOG_SEPARATOR: String = "; "
 
 enum ITEM_TYPE {DISK, UNKNOWN}
 enum DISK_TYPE {FORCE, PATH, UNKOWN}

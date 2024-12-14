@@ -61,20 +61,26 @@ func _handle_player_interact() -> void:
 		var colliding_count = front_detection.get_collision_count()
 		for n in colliding_count:
 			var colliding_object = front_detection.get_collider(0)
-			if colliding_object != null and colliding_object is ForceDisk:
-				match colliding_object.get_type():
-					CONSTANTS.DISK_TYPE.FORCE:
-						player_item = ChargeDisk.new_object(CONSTANTS.DISK_TYPE.FORCE, self, player_camera)
-					CONSTANTS.DISK_TYPE.PATH:
-						player_item = PullDisk.new_object(self, player_camera, CONSTANTS.DISK_TYPE.PATH)
-						#playerDisk.prepare_item(newType, newThrower, newDiskCamera)
-					_:
-						Logger.error(_UKNOWN_OBJECT_LOG, [], self)
-				# Connect the playerDisk rotation signal to chucker
-				if player_item != null:
-					player_item.rotate_parent.connect(_handle_rotation)
-					item_controller.add_child(player_item)
-				colliding_object.queue_free()
+			Logger.debug("%s", [str(colliding_object)], colliding_object)
+			if colliding_object != null:
+				if colliding_object is RigidDisk:
+					var rigid_disk: RigidDisk = colliding_object as RigidDisk
+					match rigid_disk.get_item_type():
+						CONSTANTS.DISK_TYPE.FORCE:
+							player_item = ChargeDisk.new_object(CONSTANTS.DISK_TYPE.FORCE, self, player_camera)
+						CONSTANTS.DISK_TYPE.PATH:
+							player_item = PullDisk.new_object(self, player_camera, CONSTANTS.DISK_TYPE.PATH)
+							#playerDisk.prepare_item(newType, newThrower, newDiskCamera)
+						_:
+							Logger.error(_UKNOWN_OBJECT_LOG, [], self)
+					# Connect the playerDisk rotation signal to chucker
+					if player_item != null:
+						player_item.rotate_parent.connect(_handle_rotation)
+						item_controller.add_child(player_item)
+					rigid_disk.pick_up()
+				else:
+					# TODO Should really figure out something else to do here
+					colliding_object.queue_free()
 
 # Handles rotation signals from held nodes
 func _handle_rotation(rotation_amount: float) -> void:

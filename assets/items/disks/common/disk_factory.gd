@@ -43,5 +43,6 @@ func create_and_launch(incoming_item: ThrowableItem) -> ThrowableItem:
 			new_disk.prepare_item(item_type, item_owner, fallback_camera)
 			new_disk.set_launch_parameters(launch_path, launch_speed, launch_angle)
 		_:
-			Logger.warn(CONSTANTS.UNSUPPORTED_TYPE_LOG + CONSTANTS.RETURNING_NULL_LOG, [_CREATE_AND_LAUNCH, str(item_type)], self)
+			var formattedString: String = CONSTANTS.UNSUPPORTED_TYPE_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
+			Logger.warn(formattedString, [_CREATE_AND_LAUNCH, str(item_type)], self)
 	return null

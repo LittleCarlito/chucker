@@ -100,3 +100,9 @@ func enable_aim() -> void:
 
 func disable_aim() -> void:
 	aim_disabled = true
+
+func pick_up() -> void:
+	var formattedString: String = CONSTANTS.PICKED_UP_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.DEACTIVATE_LOG
+	Logger.debug(formattedString, [self.name, self.name], self)
+	deactivate.emit()
+	self.queue_free()
