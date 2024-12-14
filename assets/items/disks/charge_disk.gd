@@ -28,10 +28,9 @@ func _process(_delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	handle_input(event)
 
-static func new_object(incoming_type: CONSTANTS.DISK_TYPE, incoming_owner: ChuckChucker, incoming_camera: Camera3D) -> ChargeDisk:
+static func new_object() -> ChargeDisk:
 	var new_disk: ChargeDisk = disk_scene.instantiate()
 	new_disk.name = new_disk.name + "-" + str(new_disk.get_instance_id())
-	new_disk.prepare_item(incoming_type, incoming_owner, incoming_camera)
 	return new_disk
 
 func hold_action(delta: float) -> void:

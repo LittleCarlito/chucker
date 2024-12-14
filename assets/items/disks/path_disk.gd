@@ -53,7 +53,6 @@ static func new_object() -> PathDisk:
 
 func prepare_item(incomint_type: CONSTANTS.DISK_TYPE, incoming_owner: ChuckChucker = null, incoming_camera: Camera3D = null) -> void:
 	super(incomint_type, incoming_owner, incoming_camera)
-	self.top_level = true
 	var new_disk_mesh: DiskMesh = DiskMesh.new_object()
 	set_item_mesh(new_disk_mesh)
 	new_disk_mesh.prepare_item(incomint_type, incoming_owner, incoming_camera)

@@ -67,14 +67,14 @@ func _handle_player_interact() -> void:
 					var rigid_disk: RigidDisk = colliding_object as RigidDisk
 					match rigid_disk.get_item_type():
 						CONSTANTS.DISK_TYPE.FORCE:
-							player_item = ChargeDisk.new_object(CONSTANTS.DISK_TYPE.FORCE, self, player_camera)
+							player_item = ChargeDisk.new_object()
 						CONSTANTS.DISK_TYPE.PATH:
-							player_item = PullDisk.new_object(self, player_camera, CONSTANTS.DISK_TYPE.PATH)
-							#playerDisk.prepare_item(newType, newThrower, newDiskCamera)
+							player_item = PullDisk.new_object()
 						_:
 							Logger.error(_UKNOWN_OBJECT_LOG, [], self)
 					# Connect the playerDisk rotation signal to chucker
 					if player_item != null:
+						player_item.prepare_item(rigid_disk.get_item_type(), self, player_camera)
 						player_item.rotate_parent.connect(_handle_rotation)
 						item_controller.add_child(player_item)
 					rigid_disk.pick_up()

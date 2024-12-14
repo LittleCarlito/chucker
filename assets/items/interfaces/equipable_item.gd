@@ -5,7 +5,9 @@ signal deactivate
 # TODO This got moved here; See about where it is connected
 signal rotate_parent(rotationAmount)
 
+const _CLASS_NAME: String = "ableItem"
 const _NULL_FALLBACK_LOG: String = "%s called but fallbackCamera is null"
+const _NEW_OBJECT: String = "new_object"
 const _TOGGLE_CAMERA: String = "toggle_camera"
 const _RESET_ZOOM: String = "reset_zoom"
 const _ZOOM_IN: String = "zoom_in"
@@ -23,6 +25,11 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
+
+static func new_object() -> EquipableItem:
+	var formattedString: String = CONSTANTS.UNIMPLEMENTED_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
+	Logger.warn(formattedString, [_CLASS_NAME, _NEW_OBJECT], null)
+	return null
 
 func prepare_item(incoming_type: CONSTANTS.DISK_TYPE, incoming_owner: ChuckChucker = null, incoming_camera: Camera3D = null) -> void:
 	Logger.debug(CONSTANTS.ITEM_OWNER_LOG, [incoming_owner], self)

@@ -28,11 +28,10 @@ func _process(delta: float) -> void:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func prepare_item(incoming_type: CONSTANTS.DISK_TYPE, incoming_owner: ChuckChucker = null, incoming_camera: Camera3D = null) -> void:
-	# TODO Mess with this and rigid_disk swapping
-	self.top_level = true
 	var new_disk_mesh: DiskMesh = DiskMesh.new_object()
 	set_disk_mesh(new_disk_mesh)
 	new_disk_mesh.prepare_item(incoming_type, incoming_owner, incoming_camera)
+	rigid_disk.set_type(incoming_type)
 
 static func new_object() -> ForceDisk:
 	var new_disk: ForceDisk = disk_scene.instantiate()
