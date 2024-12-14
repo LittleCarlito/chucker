@@ -91,10 +91,14 @@ func _determine_speed() -> float:
 # Gets rid of PathDisk and spawns in a rigid disk in its place with force
 func _swap_disk() -> void:
 	# TODO Continue from here
-	# BUG PathDisk follow camera doesn't rotate with mouse
-	# TODO Make CameraContainer an EquipableItem
-	# TODO Refactor ChargeDisk to be EquipableItem; add scenes and proper structure to .tscn as well
-	# TODO Refactor PullDisk to be EquipableItem; add scenes and proper structure to .tscn as well
+	# TODO Look into using Entity Component System (ECS) over OOP
+	#		How godot (and game dev in general) is done
+	#		Composition over inheritance
+	#		Want an equipable object? Have a node that makes things equipable and include that node in the one you want equipable
+	#		Want a throwable object? Have a node that makes things throwable and include that node in the one you want throwable
+	#		Want a disk looking object? Include the disk mesh scene in the one you want with that mesh
+	#		Want a disk collision box? Include that
+	#		The path disk would include above and the rigid disk would not include the disk mesh or collision box but instead the rigid disk scene
 	# BUG Not sure about swap disk force adding direction; make sure it is the disk facing direction and not true north
 	# TODO Swap out disk creation stuff in swap disk with DiskFactory usage
 	# TODO Imeplment camera_container stuff in ChuckChucker as well
