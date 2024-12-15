@@ -1,12 +1,19 @@
-[gd_scene load_steps=5 format=3 uid="uid://blwwfxseykyuy"]
+[gd_scene load_steps=7 format=3 uid="uid://blwwfxseykyuy"]
 
 [ext_resource type="Script" path="res://assets/items/disks/force_disk.gd" id="1_13oos"]
+[ext_resource type="Script" path="res://assets/items/data/item_type.gd" id="2_4rael"]
 [ext_resource type="Shape3D" uid="uid://x6uh5gkdse8r" path="res://assets/items/disks/common/DiskCollision.tres" id="2_jcakk"]
 [ext_resource type="Script" path="res://assets/items/disks/rigid_disk.gd" id="2_qixd2"]
 [ext_resource type="PackedScene" uid="uid://jvw5pa8yws2g" path="res://assets/items/disks/DiskMesh.tscn" id="3_jikxa"]
 
+[sub_resource type="Resource" id="Resource_n6gbg"]
+script = ExtResource("2_4rael")
+internal_type = 0
+creation_type = 0
+
 [node name="ForceDisk" type="Node3D"]
 script = ExtResource("1_13oos")
+temp_replacement_var = SubResource("Resource_n6gbg")
 
 [node name="RigidDisk" type="RigidBody3D" parent="."]
 collision_layer = 4

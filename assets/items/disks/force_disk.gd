@@ -6,6 +6,9 @@ const disk_scene: PackedScene = preload(SceneLibrary.DISK.FORCE_SCENE)
 @onready var disk_mesh: DiskMesh = $RigidDisk/DiskMesh
 @onready var rigid_disk: RigidDisk = $RigidDisk
 
+# TODO Refactor this class to be RigidDisk and have this be the GlobalSettings.default disk type value
+# Default rigid disk value is force
+@export var temp_replacement_var: ItemType
 var expected_path: Array[Vector3]
 
 func _ready() -> void:
