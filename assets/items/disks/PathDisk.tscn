@@ -1,11 +1,18 @@
-[gd_scene load_steps=4 format=3 uid="uid://mfc0kjgxpvtg"]
+[gd_scene load_steps=7 format=3 uid="uid://mfc0kjgxpvtg"]
 
 [ext_resource type="Script" path="res://assets/items/disks/path_disk.gd" id="1_3o2g5"]
-[ext_resource type="PackedScene" uid="uid://jvw5pa8yws2g" path="res://assets/items/disks/DiskMesh.tscn" id="2_ed5vx"]
+[ext_resource type="PackedScene" uid="uid://jvw5pa8yws2g" path="res://assets/items/disks/common/disk_mesh.tscn" id="2_ed5vx"]
+[ext_resource type="PackedScene" uid="uid://uyfdjyipfutg" path="res://assets/items/camera/CameraContainer.tscn" id="3_gxbhy"]
+[ext_resource type="PackedScene" uid="uid://b7qyj227lvqus" path="res://assets/items/disks/common/disk_collision.tscn" id="4_d36lp"]
 
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_rsnlq"]
-height = 0.25
-radius = 0.55
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6l2g0"]
+resource_local_to_scene = true
+albedo_color = Color(0.93, 0, 0, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ltbny"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_6l2g0")
+height = 0.1
 
 [node name="PathDisk" type="Node3D"]
 script = ExtResource("1_3o2g5")
@@ -16,10 +23,12 @@ script = ExtResource("1_3o2g5")
 loop = false
 
 [node name="DiskMesh" parent="Path3D/PathFollow3D" instance=ExtResource("2_ed5vx")]
+mesh = SubResource("CylinderMesh_ltbny")
+
+[node name="CameraContainer" parent="Path3D/PathFollow3D/DiskMesh" instance=ExtResource("3_gxbhy")]
 
 [node name="CollisionArea" type="Area3D" parent="Path3D/PathFollow3D"]
 
-[node name="CollisionShape" type="CollisionShape3D" parent="Path3D/PathFollow3D/CollisionArea"]
-shape = SubResource("CylinderShape3D_rsnlq")
+[node name="DiskCollision" parent="Path3D/PathFollow3D/CollisionArea" instance=ExtResource("4_d36lp")]
 
 [connection signal="body_shape_entered" from="Path3D/PathFollow3D/CollisionArea" to="." method="_body_enter"]

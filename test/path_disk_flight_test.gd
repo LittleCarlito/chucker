@@ -28,6 +28,6 @@ func _run_path_test() -> int:
 	var testPathDisk: PathDisk = PathDisk.new_object()
 	testPathDisk.global_transform = testTransform
 	get_tree().root.add_child(testPathDisk)
-	testPathDisk.prepare_item(CONSTANTS.DISK_TYPE.PATH)
+	testPathDisk.prepare_item(ItemData.TYPE)
 	testPathDisk.set_launch_parameters(testPath, testSpeed, testAngle)
 	return 1

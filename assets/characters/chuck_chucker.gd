@@ -63,12 +63,12 @@ func _handle_player_interact() -> void:
 			var colliding_object = front_detection.get_collider(0)
 			Logger.debug("%s", [str(colliding_object)], colliding_object)
 			if colliding_object != null:
-				if colliding_object is RigidDisk:
-					var rigid_disk: RigidDisk = colliding_object as RigidDisk
+				if colliding_object is ForceDisk:
+					var rigid_disk: ForceDisk = colliding_object as ForceDisk
 					match rigid_disk.get_item_type():
-						CONSTANTS.DISK_TYPE.FORCE:
+						ItemData.TYPE.FORCE:
 							player_item = ChargeDisk.new_object()
-						CONSTANTS.DISK_TYPE.PATH:
+						ItemData.TYPE.PATH:
 							player_item = PullDisk.new_object()
 						_:
 							Logger.error(_UKNOWN_OBJECT_LOG, [], self)
@@ -150,10 +150,21 @@ func is_equipped() -> bool:
 func get_height() -> float:
 	return height
 
+# TODO Should be connected to disks by factory creating them if set as owner_var
+func regain_focus() -> void:
+	enable_movement()
+	enable_camera()
+
 # TODO Replace all of below with calls to CameraContainer once it replaces internal camera in object
 #		Should be able to delete all these
 func get_camera() -> Camera3D:
 	return player_camera
+
+func enable_camera() -> void:
+	player_camera.current = true
+
+func disable_camera() -> void:
+	player_camera.current = false
 
 func _reset_zoom() -> void:
 	player_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV)

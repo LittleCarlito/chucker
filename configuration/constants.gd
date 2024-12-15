@@ -7,22 +7,21 @@ const UNIMPLEMENTED_LOG: String = "UNIMPLEMENTED METHOD; All %s Objects must imp
 const UNSUPPORTED_TYPE_LOG: String = "%s recieved an unsupported type \"%s\""
 const RETURNING_NULL_LOG: String = "Returning null"
 const RETURNING_FALSE_LOG: String = "Returning false"
+const NULL_CAMERA_LOG: String = "has no camera and cannot %s"
+const ALREADY_EXISTS_LOG: String = "%s already exists"
+const CAMERA_CONTAINER: String = "camera_container"
+const TOGGLE_CAMERA: String = "toggle_camera"
+const RESET_ZOOM: String = "reset_zoom"
+const ZOOM_IN: String = "zoom_in"
+const ZOOM_OUT: String = "zoom_out"
+const GET_CAMERA: String = "get_camera"
+const IS_CURRENT: String = "is_current"
+# TODO Refactor other users to use this instead
+const RETURNING_UNKNOWN_LOG: String = "Returning unknown"
 const PICKED_UP_LOG: String = "%s has been picked up"
 const DEACTIVATE_LOG: String = "%s is deactivating"
 const LOG_SEPARATOR: String = "; "
 
-enum ITEM_TYPE {DISK, UNKNOWN}
-enum DISK_TYPE {FORCE, PATH, UNKOWN}
-
-const ITEM_LIBRARY: Dictionary = {
-	ITEM_TYPE.DISK: DISK_TYPE
-}
-
-const DISK_COLOR: Dictionary = {
-	DISK_TYPE.FORCE: GlobalSettings.COLOR.FORCE,
-	DISK_TYPE.PATH: GlobalSettings.COLOR.PATH,
-	DISK_TYPE.UNKOWN: GlobalSettings.COLOR_DEFAULTS.DISK
-}
 
 const MENU: Dictionary = {
 	"SCORECARD": {

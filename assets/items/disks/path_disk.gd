@@ -20,17 +20,19 @@ const _BODY_EXIT: String = "body_exit"
 const _BODY_ENTER: String = "body_enter"
 
 @onready var disk_mesh: DiskMesh = $Path3D/PathFollow3D/DiskMesh
+@onready var disk_collision: DiskCollision = $Path3D/PathFollow3D/CollisionArea/DiskCollision
+@onready var camera_container: CameraContainer = $Path3D/PathFollow3D/DiskMesh/CameraContainer
 @onready var path_3d: Path3D = $Path3D
 @onready var path_follow: PathFollow3D = $Path3D/PathFollow3D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	disk_mesh.prepare_item(CONSTANTS.DISK_TYPE.PATH)
+	disk_mesh.set_type(ItemData.TYPE.PATH)
 
 # BUG When path is short the disk travels too quickly
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	if disk_mesh.camera_container.is_current() && !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
+	if (camera_container.has_camera() && camera_container.is_current()) && !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if is_instance_valid(path_follow):
 		if launch_path.is_empty():
@@ -53,11 +55,11 @@ static func new_object() -> PathDisk:
 	new_path_disk.name = new_path_disk.name + "-" + str(new_path_disk.get_instance_id())
 	return new_path_disk
 
-func prepare_item(incomint_type: CONSTANTS.DISK_TYPE, incoming_owner: ChuckChucker = null, incoming_camera: Camera3D = null) -> void:
-	super(incomint_type, incoming_owner, incoming_camera)
-	var new_disk_mesh: DiskMesh = DiskMesh.new_object()
+func prepare_item(incoming_type: ItemData.TYPE, incoming_owner: ChuckChucker = null, incoming_camera: Camera3D = null) -> void:
+	super(incoming_type, incoming_owner, incoming_camera)
+	var new_disk_mesh: DiskMesh = DiskMesh.new_mesh()
+	new_disk_mesh.set_type(incoming_type)
 	set_item_mesh(new_disk_mesh)
-	new_disk_mesh.prepare_item(incomint_type, incoming_owner, incoming_camera)
 
 func set_item_mesh(new_mesh: DiskMesh) -> void:
 	self.add_child(new_mesh)
@@ -72,7 +74,7 @@ func set_launch_parameters(incoming_path: Array[Vector3], incoming_speed: float,
 	for throw_point in incoming_path:
 		throw_curve.add_point(to_local(throw_point))
 	path_3d.curve = throw_curve
-	disk_mesh.camera_container.toggle_camera()
+	camera_container.toggle_camera()
 
 func _body_enter(body_rid: RID, _body: Node3D, _body_shape_index: int, _local_shape_index: int) -> void:
 	var owner_rid: RID
@@ -91,6 +93,14 @@ func _determine_speed() -> float:
 # Gets rid of PathDisk and spawns in a rigid disk in its place with force
 func _swap_disk() -> void:
 	# TODO Continue from here
+	# TODO Use groups instead of item_owner/fallback_camera setup
+	#			Each ChuckChucker has their own group created using their scene name
+	#				Make sure the new_object type method adds to the name like disk types
+	#			Each disk that is thrown is added to a group
+	#				If it was not thrown by a person there should be an evironment group it belongs to
+	#			Each disk type and ChuckChucker type should have a "item_lose_focus" method
+	#				Item one will set camera current to false and queue_free self
+	#				ChuckChucker type will enable camera and movement
 	# TODO Look into using Entity Component System (ECS) over OOP
 	#		How godot (and game dev in general) is done
 	#		Composition over inheritance
@@ -106,21 +116,18 @@ func _swap_disk() -> void:
 	var new_disk = ForceDisk.new_object()
 	get_tree().root.add_child(new_disk)
 	var prepare_angle: float
-	if disk_mesh.collision_location == Vector3.INF:
+	if disk_collision.get_collision_count() == 0:
 		new_disk.global_position = self.global_position
 		prepare_angle = launch_angle
 	else:
-		Logger.debug("newDisk current camera: %s", [str(new_disk.get_disk_camera())], self)
-		Logger.debug("pathDisk camera: %s", [str(get_disk_camera())], self)
 		var current_camera: Camera3D = get_disk_camera()
 		var new_location: Vector3 = disk_mesh.global_position
 		current_camera.reparent(get_tree().root, true)
 		current_camera.position = lerp(current_camera.position, new_disk.position, GlobalSettings.CAMERA.PAN_SPEED)
-		Logger.debug("newDisk current camera after set: %s", [str(new_disk.get_disk_camera())], self)
 		new_disk.global_position = new_location
 		prepare_angle = path_follow.global_rotation.x
 		launch_speed = launch_speed * .5
-	new_disk.prepare_item(CONSTANTS.DISK_TYPE.PATH, item_owner, fallback_camera)
+	new_disk.prepare_item(ItemData.TYPE.PATH)
 	# Set momentum in direction of prepareAngle
 	var swap_focus: bool = !launch_path.is_empty()
 	new_disk.set_launch_parameters(launch_path, launch_speed, prepare_angle, swap_focus)
@@ -130,7 +137,7 @@ func _swap_disk() -> void:
 	self.queue_free()
 
 func get_disk_camera() -> Camera3D:
-	return disk_mesh.get_disk_camera()
+	return camera_container.get_camera()
 
 func is_current() -> bool:
-	return disk_mesh.is_current()
+	return camera_container.is_current()

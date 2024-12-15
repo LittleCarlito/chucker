@@ -5,18 +5,13 @@ signal deactivate
 # TODO This got moved here; See about where it is connected
 signal rotate_parent(rotationAmount)
 
-const _CLASS_NAME: String = "ableItem"
+const _CLASS_NAME: String = "EquipableItem"
 const _NULL_FALLBACK_LOG: String = "%s called but fallbackCamera is null"
 const _NEW_OBJECT: String = "new_object"
-const _TOGGLE_CAMERA: String = "toggle_camera"
-const _RESET_ZOOM: String = "reset_zoom"
-const _ZOOM_IN: String = "zoom_in"
-const _ZOOM_OUT: String = "zoom_out"
 const _IS_CURRENT: String = "is_current"
-
 var item_owner: ChuckChucker
 var fallback_camera: Camera3D
-var item_type: CONSTANTS.DISK_TYPE
+var item_type: ItemData.TYPE
 var aim_disabled: bool = false
 
 # Called when the node enters the scene tree for the first time.
@@ -32,7 +27,7 @@ static func new_object() -> EquipableItem:
 	Logger.warn(formattedString, [_CLASS_NAME, _NEW_OBJECT], null)
 	return null
 
-func prepare_item(incoming_type: CONSTANTS.DISK_TYPE, incoming_owner: ChuckChucker = null, incoming_camera: Camera3D = null) -> void:
+func prepare_item(incoming_type: ItemData.TYPE, incoming_owner: ChuckChucker = null, incoming_camera: Camera3D = null) -> void:
 	Logger.debug(CONSTANTS.ITEM_OWNER_LOG, [incoming_owner], self)
 	item_owner = incoming_owner
 	fallback_camera = incoming_camera
@@ -46,16 +41,16 @@ func activate_fallback() -> void:
 	deactivate.emit()
 
 func toggle_camera() -> void:
-	Logger.warn(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _TOGGLE_CAMERA], self)
+	Logger.warn(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, CONSTANTS.TOGGLE_CAMERA], self)
 
 func reset_zoom() -> void:
-	Logger.warn(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _RESET_ZOOM], self)
+	Logger.warn(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, CONSTANTS.RESET_ZOOM], self)
 
 func zoom_in() -> void:
-	Logger.warn(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _ZOOM_IN], self)
+	Logger.warn(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, CONSTANTS.ZOOM_IN], self)
 
 func zoom_out() -> void:
-	Logger.warn(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _ZOOM_OUT], self)
+	Logger.warn(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, CONSTANTS.ZOOM_OUT], self)
 
 func is_current() -> bool:
 	var formattedString: String = CONSTANTS.UNIMPLEMENTED_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
@@ -99,7 +94,7 @@ func handle_input(event: InputEvent) -> void:
 			rotation_adjust *= -1
 		rotate_parent.emit(rotation_adjust)
 
-func get_type() -> CONSTANTS.DISK_TYPE:
+func get_type() -> ItemData.TYPE:
 	return item_type
 
 func get_item_owner() -> ChuckChucker:

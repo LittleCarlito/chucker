@@ -51,6 +51,9 @@ func release_action() -> void:
 	if not Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
 		charge_view.set_progress(-1)
 		var final_time: float = stopwatch.reset()
-		var final_speed: float = min(GlobalSettings.DISK.MAX_HOLD, final_time) * GlobalSettings.DISK.HOLD_MULTIPLIER
+		var speed_multiplier: float = min(GlobalSettings.DISK.MAX_HOLD, final_time) * GlobalSettings.DISK.HOLD_MULTIPLIER
+		# TODO Added this last multiplier bit in from force disks method (should be done by caller) don't know if its necessary though
+		#		If it is should be simplified into the calculation above instead of 2 separate lines
+		var final_speed: float = GlobalSettings.DISK.LAUNCH_SPEED * speed_multiplier
 		set_launch_parameters(launch_path, final_speed, self.global_basis.get_euler().x)
 		launch_disk()

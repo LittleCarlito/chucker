@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://b7qyj227lvqus"]
+
+[ext_resource type="Shape3D" uid="uid://x6uh5gkdse8r" path="res://assets/items/disks/common/DiskCollision.tres" id="1_dd3kx"]
+[ext_resource type="Script" path="res://assets/items/disks/common/disk_collision.gd" id="2_fm0bj"]
+
+[node name="DiskCollision" type="CollisionShape3D"]
+shape = ExtResource("1_dd3kx")
+script = ExtResource("2_fm0bj")

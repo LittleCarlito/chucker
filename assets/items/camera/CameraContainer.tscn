@@ -8,9 +8,6 @@ script = ExtResource("1_yhe62")
 [node name="CameraControl" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.940638, 0.339411, 0, -0.339411, 0.940638, 0, 3.67279, 7.8427)
 
-[node name="InternalCamera" type="Camera3D" parent="CameraControl"]
-fov = 90.0
-
 [node name="CameraTimer" type="Timer" parent="."]
 one_shot = true
 

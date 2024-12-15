@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://jvw5pa8yws2g"]
+
+[ext_resource type="CylinderMesh" uid="uid://bwc6i6by0861c" path="res://assets/items/disks/common/DiskMesh.tres" id="1_ccpxm"]
+[ext_resource type="Script" path="res://assets/items/disks/common/disk_mesh.gd" id="2_cdq54"]
+
+[node name="DiskMesh" type="MeshInstance3D"]
+mesh = ExtResource("1_ccpxm")
+script = ExtResource("2_cdq54")
