@@ -58,4 +58,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50.6695, -6.53482)
 
 [connection signal="apply_settings" from="ControlNode" to="." method="_apply_settings"]
 [connection signal="disable_movement" from="ControlNode" to="." method="_disable_character_movement"]
+[connection signal="disable_rotation" from="ControlNode" to="." method="_disable_character_rotation"]
 [connection signal="enable_movement" from="ControlNode" to="." method="_enable_character_movement"]
+[connection signal="enable_rotation" from="ControlNode" to="." method="_enable_character_rotation"]

@@ -1,6 +1,7 @@
 extends Node
 class_name CONSTANTS
 
+# TODO Refactor these out to Logger or a Log Constants file
 const METHOD_LOG: String = "\"%s\"; \"%s\""
 const ITEM_OWNER_LOG: String = "item_owner \"%s\""
 const UNIMPLEMENTED_LOG: String = "UNIMPLEMENTED METHOD; All %s Objects must implement \"%s\""
@@ -11,6 +12,8 @@ const NULL_CAMERA_LOG: String = "has no camera and cannot %s"
 const ALREADY_EXISTS_LOG: String = "%s already exists"
 const CAMERA_CONTAINER: String = "camera_container"
 const TOGGLE_CAMERA: String = "toggle_camera"
+const DISABLE_CAMERA: String = "disable_camera"
+const ENABLE_CAMERA: String = "enable_camera"
 const RESET_ZOOM: String = "reset_zoom"
 const ZOOM_IN: String = "zoom_in"
 const ZOOM_OUT: String = "zoom_out"
@@ -94,6 +97,10 @@ const VERTICAL_AIM_SENSITIVITY: String = "VERTICAL_AIM_SENSITIVITY"
 const VERTICAL_LOOK_SENSITIVITY: String = "VERTICAL_LOOK_SENSITIVITY"
 const INVERT_HORIZONTAL: String = "INVERT_HORIZONTAL"
 const INVERT_VERTICAL: String = "INVERT_VERTICAL"
+const MAX_HORIZONTAL_ROTATION: String = "MAX_HORIZONTAL_ROTATION"
+const MIN_HORIZONTAL_ROTATION: String = "MIN_HORIZONTAL_ROTATION"
+const MAX_VERTICAL_ROTATION: String = "MAX_VERTICAL_ROTATION"
+const MIN_VERTICAL_ROTATION: String = "MIN_VERTICAL_ROTATION"
 
 const Display: String = "Display"
 const PERFORMANCE: String = "PERFORMANCE"

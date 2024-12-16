@@ -10,6 +10,8 @@ const _UNEQUIP_ITEM: String = "unequip_item"
 const _GET_HEIGHT: String = "get_height"
 
 var disable_movement_var: bool = false
+# TODO Need to break apart disable_movement calls into specifying movement and/or rotation
+var disable_rotation_var: bool = false
 
 func _physics_process(delta: float) -> void:
 	_handle_camera_controls()
@@ -56,3 +58,18 @@ func enable_movement() -> void:
 
 func toggle_movement() -> void:
 	disable_movement_var = not disable_movement_var
+
+func is_rotation_enabled() -> bool:
+	return !disable_rotation_var
+
+func is_rotation_disabled() -> bool:
+	return disable_rotation_var
+
+func disable_rotation() -> void:
+	disable_rotation_var = true
+
+func enable_rotation() -> void:
+	disable_rotation_var = false
+
+func toggle_rotation() -> void:
+	disable_rotation_var = not disable_rotation_var

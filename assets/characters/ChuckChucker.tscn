@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://cdkknjflehfgx"]
+[gd_scene load_steps=9 format=3 uid="uid://cdkknjflehfgx"]
 
 [ext_resource type="Script" path="res://assets/characters/chuck_chucker.gd" id="1_hnkcf"]
+[ext_resource type="PackedScene" uid="uid://uyfdjyipfutg" path="res://assets/items/camera/CameraContainer.tscn" id="2_x3sxy"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h7ubf"]
 albedo_color = Color(0.41528, 0.3828, 0.87, 1)
@@ -42,13 +43,7 @@ transform = Transform3D(1, 2.00089e-10, 5.82077e-11, -4.46221e-11, 1, 0, -5.8207
 shape = SubResource("BoxShape3D_3pknt")
 collision_mask = 4
 
-[node name="CameraController" type="Node3D" parent="."]
-top_level = true
-
-[node name="CameraTarget" type="Node3D" parent="CameraController"]
-transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.86867, 4.35812)
-
-[node name="ChuckCamera" type="Camera3D" parent="CameraController/CameraTarget"]
+[node name="CameraContainer" parent="." instance=ExtResource("2_x3sxy")]
 
 [node name="ItemController" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.50122e-10, 0.744641, 0)

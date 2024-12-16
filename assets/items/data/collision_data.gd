@@ -1,4 +1,4 @@
-extends Resource
+extends LocalResource
 class_name CollisionData
 
 var owner_rid: RID
@@ -16,4 +16,5 @@ static func create_collision_data(incoming_rid: RID, incoming_colliding_rid: RID
 		return_data.owner_flight_data = incoming_flight_data
 	if incoming_item_data != null:
 		return_data.owner_item_data = incoming_item_data
+	return_data._setup_local_to_scene()
 	return return_data

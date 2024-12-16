@@ -38,6 +38,7 @@ func activate_fallback() -> void:
 		fallback_camera.current = true
 	if item_owner != null:
 		item_owner.enable_movement()
+		item_owner.enable_rotation()
 	deactivate.emit()
 
 func toggle_camera() -> void:
@@ -57,21 +58,7 @@ func is_current() -> bool:
 	Logger.warn(formattedString, [self.name, _IS_CURRENT], self)
 	return false
 
-func handle_aiming() -> void:
-	# Right click aiming
-	if Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-		if item_owner != null:
-			item_owner.disableMovement = true
-		if fallback_camera != null and fallback_camera.current:
-			zoom_in()
-	if Input.is_action_just_released(CONSTANTS.USER_INPUT.SECONDARY):
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		reset_zoom()
-		if item_owner != null:
-			item_owner.cameraController.basis = item_owner.global_basis
-			item_owner.disableMovement = false
-
+# TODO I think this is a good use of abstraction and EquipableItem class naming
 func handle_input(event: InputEvent) -> void:
 	# Look/Aim controls
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not aim_disabled:

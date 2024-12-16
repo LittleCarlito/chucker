@@ -1,12 +1,39 @@
-[gd_scene load_steps=4 format=3 uid="uid://cfb8nwjdbjdsi"]
+[gd_scene load_steps=10 format=3 uid="uid://cfb8nwjdbjdsi"]
 
-[ext_resource type="CylinderMesh" uid="uid://bwc6i6by0861c" path="res://assets/items/disks/common/DiskMesh.tres" id="1_sm6fq"]
 [ext_resource type="Script" path="res://assets/items/disks/charge_disk.gd" id="2_o74uw"]
+[ext_resource type="Script" path="res://assets/items/data/flight_data.gd" id="2_vyydj"]
 [ext_resource type="PackedScene" uid="uid://cfpse6r2su0ua" path="res://assets/ui/views/ChargeView.tscn" id="3_ag6h7"]
+[ext_resource type="PackedScene" uid="uid://jvw5pa8yws2g" path="res://assets/items/disks/common/disk_mesh.tscn" id="3_h4vod"]
+[ext_resource type="PackedScene" uid="uid://uyfdjyipfutg" path="res://assets/items/camera/CameraContainer.tscn" id="4_v6v7m"]
+[ext_resource type="PackedScene" uid="uid://ctgyvj14lfkpj" path="res://assets/items/common/aim_line.tscn" id="6_bvyjy"]
 
-[node name="ChargeDisk" type="MeshInstance3D"]
-mesh = ExtResource("1_sm6fq")
+[sub_resource type="Resource" id="Resource_6rxnd"]
+script = ExtResource("2_vyydj")
+flight_speed = 0.0
+flight_angle = 0.0
+flight_path = Array[Vector3]([])
+focus_flight = true
+flight_ready = false
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dv51d"]
+resource_local_to_scene = true
+albedo_color = Color(0.93, 0, 0, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_g710g"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_dv51d")
+height = 0.1
+
+[node name="ChargeDisk" type="Node3D"]
 script = ExtResource("2_o74uw")
+flight_data = SubResource("Resource_6rxnd")
 
 [node name="ChargeView" parent="." instance=ExtResource("3_ag6h7")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 1.16, 0.655, 0)
+
+[node name="DiskMesh" parent="." instance=ExtResource("3_h4vod")]
+mesh = SubResource("CylinderMesh_g710g")
+
+[node name="CameraContainer" parent="." instance=ExtResource("4_v6v7m")]
+
+[node name="AimLine" parent="." instance=ExtResource("6_bvyjy")]

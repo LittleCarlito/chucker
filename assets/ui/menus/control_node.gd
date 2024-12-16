@@ -20,7 +20,9 @@ const SAVE_FILE: String = SAVE_DIR + "user_settings.json"
 
 signal apply_settings
 signal disable_movement
+signal disable_rotation
 signal enable_movement
+signal enable_rotation
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -39,6 +41,7 @@ func _input(event: InputEvent) -> void:
 		self.set_process_input(false)
 	if event.is_action_pressed(CONSTANTS.USER_INPUT.SCORE):
 		disable_movement.emit()
+		disable_rotation.emit()
 		# Determine what camera is active so we know how big to make the scorecard
 		var current_camera: Camera3D = self.get_tree().root.get_camera_3d()
 		if(current_camera.name == CONSTANTS.TEE_CAMERA):
@@ -49,6 +52,7 @@ func _input(event: InputEvent) -> void:
 		self.get_viewport().get_camera_3d().look_at(scorecard.scorecardSprite.global_position)
 	if event.is_action_released(CONSTANTS.USER_INPUT.SCORE):
 		enable_movement.emit()
+		enable_rotation.emit()
 		scorecard.scorecardSprite.visible = false
 		self.get_viewport().get_camera_3d().rotation = Vector3.ZERO
 

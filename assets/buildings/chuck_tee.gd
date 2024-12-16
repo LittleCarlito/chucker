@@ -1,6 +1,7 @@
 extends StaticBody3D
 class_name ChuckTee
 
+# TODO Need to get tee_camera on CameraContainer so its controllable as well
 @onready var tee_camera: Camera3D = $CameraController/CameraTarget/TeeboxCamera
 
 const _CURRENT_CAMERA_LOG: String = "Current camera is %s"
@@ -19,11 +20,13 @@ func _on_tee_box_area_body_entered(body: Node3D) -> void:
 func _on_tee_box_area_body_exited(body: Node3D) -> void:
 	_handle_body(body, true)
 
-func _handle_body(body: Node3D, body_cam_current: bool) -> void:
+func _handle_body(body: Node3D, enable_body_cam: bool) -> void:
 	if body is ChuckChucker:
-		var body_camera: Camera3D = body.get_camera()
-		body_camera.current = body_cam_current
-		tee_camera.current = !body_cam_current
+		if enable_body_cam:
+			body.camera_container.enable_camera()
+		else:
+			body.camera_container.disable_camera()
+		tee_camera.current = !enable_body_cam
 		if(get_viewport().get_camera_3d() != null):
 			Logger.debug(_CURRENT_CAMERA_LOG, [get_viewport().get_camera_3d().name], self)
 

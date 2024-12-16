@@ -49,6 +49,12 @@ func _disable_character_movement() -> void:
 func _enable_character_movement() -> void:
 	chuck_chucker.enable_movement()
 
+func _disable_character_rotation() -> void:
+	chuck_chucker.disable_rotation()
+
+func _enable_character_rotation() -> void:
+	chuck_chucker.enable_rotation()
+
 func _apply_settings() -> void:
 	control_node.reload_project_settings()
 	chuck_chucker.load_settings()

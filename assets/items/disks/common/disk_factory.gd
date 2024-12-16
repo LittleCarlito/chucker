@@ -12,7 +12,7 @@ func _process(_delta: float) -> void:
 	pass
 	
 # TODO In ECS formatting this will (hopefully) become a resource that is added as a disk_launcher or something to objects that need the ability to spawn
-# TODO Maybe make ThrowableData the combination of ItemData and LaunchData as internal Resources that can then be passed in here
+# TODO Have FlightData and ItemData passed in here to create launch
 func create_and_launch(incoming_item: ThrowableItem) -> void:
 	var item_type: ItemData.TYPE = incoming_item.get_type()
 	var item_owner: ChuckChucker = incoming_item.get_item_owner()
@@ -22,7 +22,8 @@ func create_and_launch(incoming_item: ThrowableItem) -> void:
 	var launch_angle: float = incoming_item.get_launch_angle()
 	match item_type:
 		ItemData.TYPE.FORCE:
-			var force_disk: ForceDisk = ForceDisk.new_object()
+			# TODO For now making them all viewable; Need to make it so that isn't always the case
+			var force_disk: ForceDisk = ForceDisk.new_viewable_disk()
 			if item_owner != null:
 				item_owner.add_child(force_disk)
 				force_disk.connect("lose_focus", item_owner.regain_focus)
