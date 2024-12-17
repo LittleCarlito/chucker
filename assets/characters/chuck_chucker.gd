@@ -38,7 +38,7 @@ func _ready() -> void:
 	if item_data == null:
 		# BUG-CATCHER
 		item_data = ItemData.create_item_data(ItemData.TYPE.PLAYER)
-	_update_item_state()
+	_update_state()
 
 func _process(_delta: float) -> void:
 	pass
@@ -214,7 +214,7 @@ func _can_vertically_rotate(rotation_amount:float) -> bool:
 	var min_vertical_value: float = GlobalSettings.CAMERA.get(CONSTANTS.MIN_VERTICAL_ROTATION, GlobalSettings.CAMERA_DEFAULTS.MIN_VERTICAL_ROTATION)
 	return (potential_vertical_roation > min_vertical_value) and (potential_vertical_roation < max_vertical_value)
 
-func _update_item_state() -> void:
+func _update_state() -> void:
 	item_data.camera_state = ItemData.get_camera_state(camera_container)
 
 func hold_action(delta: float) -> void:
@@ -228,7 +228,7 @@ func release_action() -> void:
 	# TODO Expecting this will break; Doesn't lead to any code; Should probably be a call to item_container
 	unequip_item()
 	# TODO This should then update the status of the character if the item took the camera with it
-	_update_item_state()
+	_update_state()
 
 # TODO Some version of this should be implemented to handle when a deactivate_to_owner()
 #func activate_fallback() -> void:

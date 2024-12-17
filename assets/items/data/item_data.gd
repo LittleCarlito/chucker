@@ -3,7 +3,7 @@ class_name ItemData
 
 # Used for storing type property in Groups
 const TYPE_PROPERTY: String = "Type"
-enum TYPE{FORCE = 0, PATH = 1, LAUNCHER = 2, PLAYER = 3, UNKNOWN = 99}
+enum TYPE{FORCE = 0, PATH = 1, LAUNCHER = 2, PLAYER = 3, LEVEL = 4, UNKNOWN = 99}
 # Used for tracking items in Groups
 enum CAMERA_STATE{EXISTS = 0, TRACKABLE = 1, VIEWABLE = 2, ACTIVE = 3, UNKNOWN = 99}
 enum ITEM_STATE{DISABLED = 0, DEACTIVATED = 1, ACTIVATED = 2, UNKNOWN = 99}
@@ -22,7 +22,7 @@ const ITEM_COLOR: Dictionary = {
 
 ## Creates an ItemData rescource based off given parameters
 ## Defaults creation type to incoming_internal type if none or UNKNOWN given for creation_type
-static func create_item_data(incoming_internal: ItemData.TYPE, incoming_state: ItemData.ITEM_STATE = ItemData.ITEM_STATE.DISABLED, incoming_camera_state: ItemData.CAMERA_STATE = ItemData.CAMERA_STATE.EXISTS, incoming_group: String = GlobalSettings.DEFAULTS.GROUP, incoming_create: ItemData.TYPE = ItemData.TYPE.UNKNOWN) -> ItemData:
+static func create_item_data(incoming_internal: ItemData.TYPE, incoming_state: ItemData.ITEM_STATE = ItemData.ITEM_STATE.DISABLED, incoming_camera_state: ItemData.CAMERA_STATE = ItemData.CAMERA_STATE.EXISTS, incoming_create: ItemData.TYPE = ItemData.TYPE.UNKNOWN, incoming_group: String = GlobalSettings.DEFAULTS.GROUP) -> ItemData:
 	var new_data: ItemData = ItemData.new()
 	new_data.internal_type = incoming_internal
 	new_data.item_state = incoming_state

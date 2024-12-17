@@ -32,6 +32,7 @@ DiskFactory="*res://assets/items/disks/common/disk_factory.gd"
 Character="Playable characters"
 Disk="Disks of all types"
 General="General global group"
+Level="Scenes serving as levels"
 
 [improved_json]
 

@@ -38,6 +38,7 @@ const ENABLE_MOVEMENT: String = "enable_movement"
 const DISABLE_ROTATION: String = "disable_rotation"
 const ENABLE_ROTATION: String = "enable_rotation"
 const RELOAD_PROJECT_SETTINGS: String = "reload_project_settings"
+const UPDATE_STATE: String = "_update_state"
 
 const MENU: Dictionary = {
 	"SCORECARD": {

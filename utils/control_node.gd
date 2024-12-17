@@ -173,7 +173,7 @@ func load_default(settingName: String, settingCategory: String) -> void:
 			Logger.error(_NO_DEFAULT_LOG, [settingName, settingCategory], self)
 
 # Reloads Project input settings using GlobalSettings
-func reload_project_settings() -> void:
+func _update_state() -> void:
 	var userInputs: Array = GlobalSettings.CONTROLS.keys()
 	for userInput in userInputs:
 		var boundKey: InputEvent = GlobalSettings.CONTROLS.get(userInput)
@@ -182,6 +182,3 @@ func reload_project_settings() -> void:
 			InputMap.action_add_event(userInput, boundKey)
 		else:
 			Logger.error(_BAD_USER_INPUT_LOG, [userInput], self)
-
-func _apply_settings() -> void:
-	apply_settings.emit()

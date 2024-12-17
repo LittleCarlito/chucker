@@ -72,5 +72,6 @@ func equip_item(item_owner: ChuckChucker, incoming_item: ForceDisk) -> void:
 		#colliding_object.queue_free()
 
 # TODO Method to spawn given item data at given loction
+# TODO Use Passed in state stuff to determine what should be created within the object and what it should be set to
 func spawn_item(item_data: ItemData, global_location: Vector3 = Vector3(0, 1, 0)) -> void:
 	pass

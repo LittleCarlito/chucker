@@ -1,6 +1,7 @@
 extends Node3D
 
 @onready var control_node: ControlNode = $ControlNode
+@export var item_data: ItemData
 
 # TODO ChuckChucker and Disks need to be spawned in here programatically
 #		This is important because they will then be generated (hopefully) with appended names and groups assigned to them
@@ -38,14 +39,22 @@ extends Node3D
 #		Allow the bag to have 6 x 6 inventory where disks are stored and can be chosen/equipped
 
 # Called when the node enters the scene tree for the first time.
+# TODO Get DiskFactory refactored to ItemFactory
+# TODO Get ItemFactory spawn_item method working
 func _ready() -> void:
-	# TODO Chucks position: 0, 1, 0
-	var chuck_data: ItemData = ItemData.create_item_data(ItemData.TYPE.PLAYER, ItemData.ITEM_STATE.ACTIVATED)
+	# Spawn in Character
+	var chuck_data: ItemData = ItemData.create_item_data(ItemData.TYPE.PLAYER, ItemData.ITEM_STATE.ACTIVATED, ItemData.CAMERA_STATE.ACTIVE)
 	var chuck_location: Vector3 = Vector3(0, 1, 0)
 	DiskFactory.spawn_item(chuck_data, chuck_location)
-	# TODO PathDisk position: 
-	# TODO ForceDisk position:
-	_apply_settings()
+	# Spawn in PathDisk
+	var path_data: ItemData = ItemData.create_item_data(ItemData.TYPE.PATH, ItemData.ITEM_STATE.DEACTIVATED)
+	var path_location: Vector3 = Vector3(2, 4, -2)
+	DiskFactory.spawn_item(path_data, path_location)
+	# Spawn in ForceDisk
+	var force_data: ItemData = ItemData.create_item_data(ItemData.TYPE.FORCE, ItemData.ITEM_STATE.DEACTIVATED)
+	var force_location: Vector3 = Vector3(-2, 4, -2)
+	get_tree().call_group(CONSTANTS.GENERAL, CONSTANTS.UPDATE_STATE)
+	DiskFactory.spawn_item(force_data, force_location)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:

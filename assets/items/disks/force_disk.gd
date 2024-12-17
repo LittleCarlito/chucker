@@ -50,7 +50,7 @@ func _ready() -> void:
 	if item_data == null:
 		item_data = ItemData.create_item_data(GlobalSettings.DEFAULTS.ITEM as ItemData.TYPE)
 	disk_mesh.set_type(item_data.internal_type)
-	_update_item_state()
+	_update_state()
 
 func _process(_delta: float) -> void:
 	pass
@@ -99,7 +99,7 @@ func get_item_type() -> ItemData.TYPE:
 func toggle_camera() -> void:
 	if camera_container != null && camera_container.has_camera():
 		camera_container.toggle_camera()
-	_update_item_state()
+	_update_state()
 
 func get_mesh() -> DiskMesh:
 	return disk_mesh
@@ -128,7 +128,7 @@ func set_disk_camera(new_camera: Camera3D) -> void:
 		Logger.warn(formattedString, [_SET_DISK_CAMERA], self)
 	_create_camera_container()
 	camera_container.set_camera(new_camera)
-	_update_item_state()
+	_update_state()
 
 func _handle_collision(body_rid: RID, _body: Node, _body_shape_index: int, _local_shape_index: int) -> void:
 	disk_collision.store_collision(self.get_rid(), body_rid, self.global_position, flight_data, item_data)
@@ -162,5 +162,5 @@ func _create_camera_container() -> void:
 	else:
 		Logger.warn(CONSTANTS.ALREADY_EXISTS_LOG, [CONSTANTS.CAMERA_CONTAINER], self)
 
-func _update_item_state() -> void:
+func _update_state() -> void:
 	item_data.camera_state = ItemData.get_camera_state(camera_container)
