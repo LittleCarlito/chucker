@@ -59,7 +59,7 @@ func release_action() -> void:
 		flight_data = FlightData.create_flight_data(final_speed, self.global_basis.get_euler().x, flight_data.flight_path, flight_data.focus_flight)
 		# TODO Launcd disk needs to be refactored into this class
 		if flight_data.flight_ready:
-			DiskFactory.create_and_launch(flight_data, item_data)
+			ItemFactory.create_and_launch(flight_data, item_data)
 			#self.queue_free()
 		else:
 			Logger.error(FlightData.LAUNCH_NOT_READY_LOG, [], self)

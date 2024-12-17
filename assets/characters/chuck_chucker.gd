@@ -104,7 +104,7 @@ func _handle_player_interact() -> void:
 			var colliding_object = front_detection.get_collider(0)
 			Logger.debug("%s", [str(colliding_object)], colliding_object)
 			if colliding_object != null and colliding_object is ForceDisk:
-				DiskFactory.equip_item(self, colliding_object)
+				ItemFactory.equip_item(self, colliding_object)
 
 # TODO This should just be handled by this class without signals from below being needed
 #		Should be checking if equipped (if necessary what type; group check)
