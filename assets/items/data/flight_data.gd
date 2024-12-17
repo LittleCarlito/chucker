@@ -1,6 +1,8 @@
 extends LocalResource
 class_name FlightData
 
+const LAUNCH_NOT_READY_LOG: String = "Parameters have not been properly set for launch"
+
 @export var flight_speed: float
 @export var flight_angle: float
 @export var flight_path: Array[Vector3]

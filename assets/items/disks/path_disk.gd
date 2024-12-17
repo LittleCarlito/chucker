@@ -1,4 +1,4 @@
-extends ThrowableItem
+extends Node3D
 class_name PathDisk
 
 # TODO Refactor to use AimLine ItemData FlightData and DiskFactory
@@ -60,7 +60,6 @@ static func new_object() -> PathDisk:
 	return new_path_disk
 
 func prepare_item(incoming_type: ItemData.TYPE, incoming_owner: ChuckChucker = null, incoming_camera: Camera3D = null) -> void:
-	super(incoming_type, incoming_owner, incoming_camera)
 	var new_disk_mesh: DiskMesh = DiskMesh.new_mesh()
 	new_disk_mesh.set_type(incoming_type)
 	set_item_mesh(new_disk_mesh)
@@ -72,7 +71,7 @@ func set_item_mesh(new_mesh: DiskMesh) -> void:
 		old_mesh.queue_free()
 	disk_mesh = new_mesh
 
-func set_launch_parameters(incoming_path: Array[Vector3], incoming_speed: float, incoming_angle: float, is_focused: bool = false) -> void:
+func set_launch_parameters(incoming_data: FlightData) -> void:
 	#super(incoming_path, incoming_speed, incoming_angle, is_focused)
 	#var throw_curve: Curve3D = Curve3D.new()
 	#for throw_point in incoming_path:
@@ -82,12 +81,14 @@ func set_launch_parameters(incoming_path: Array[Vector3], incoming_speed: float,
 	pass
 
 func _body_enter(body_rid: RID, _body: Node3D, _body_shape_index: int, _local_shape_index: int) -> void:
-	var owner_rid: RID
-	if item_owner != null:
-		owner_rid = item_owner.get_rid()
-		if body_rid != owner_rid:
-			disk_mesh.collision_location = disk_mesh.global_position
-			_swap_disk()
+	pass
+	# TODO Refator to use ItemData or group method calls
+	#var owner_rid: RID
+	#if item_owner != null:
+		#owner_rid = item_owner.get_rid()
+		#if body_rid != owner_rid:
+			#disk_mesh.collision_location = disk_mesh.global_position
+			#_swap_disk()
 
 func _determine_speed() -> float:
 	return 0

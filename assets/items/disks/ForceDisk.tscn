@@ -13,7 +13,7 @@ resource_local_to_scene = true
 material = SubResource("StandardMaterial3D_g2ql2")
 height = 0.1
 
-[node name="ForceDisk" type="RigidBody3D"]
+[node name="ForceDisk" type="RigidBody3D" groups=["All", "Disk", "General"]]
 collision_layer = 4
 collision_mask = 30
 contact_monitor = true

@@ -1,13 +1,12 @@
-[gd_scene load_steps=11 format=3 uid="uid://0p7etoed8w0v"]
+[gd_scene load_steps=10 format=3 uid="uid://0p7etoed8w0v"]
 
 [ext_resource type="PackedScene" uid="uid://mfc0kjgxpvtg" path="res://assets/items/disks/PathDisk.tscn" id="1_7oa4i"]
 [ext_resource type="PackedScene" uid="uid://c3a3ygsd2ack" path="res://assets/buildings/ChuckTee.tscn" id="1_kikso"]
 [ext_resource type="Script" path="res://assets/scenes/salinas_flats.gd" id="1_nouo6"]
 [ext_resource type="PackedScene" uid="uid://blwwfxseykyuy" path="res://assets/items/disks/ForceDisk.tscn" id="2_0r0o2"]
-[ext_resource type="PackedScene" uid="uid://cdkknjflehfgx" path="res://assets/characters/ChuckChucker.tscn" id="3_wng2j"]
 [ext_resource type="PackedScene" uid="uid://bpn27qpg2rm8c" path="res://assets/buildings/ChuckHole.tscn" id="4_upk5s"]
 [ext_resource type="Environment" uid="uid://bm00mgoeg2ojv" path="res://resources/environment_default.tres" id="5_ll0n0"]
-[ext_resource type="PackedScene" uid="uid://dga2v203y41nq" path="res://assets/ui/menus/ControlNode.tscn" id="7_inl8g"]
+[ext_resource type="PackedScene" uid="uid://dga2v203y41nq" path="res://utils/ControlNode.tscn" id="7_inl8g"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_vba8s"]
 size = Vector3(50, 3, 200)
@@ -29,10 +28,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.48671, 4.48635, -2.45964)
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.719722, -0.202133, 0.664185, -0.671976, 0.0376311, 0.739617, -0.174495, -0.978635, -0.108745, 26.7919, 21.2915, -22.7111)
 shadow_enabled = true
-
-[node name="ChuckChucker" parent="." instance=ExtResource("3_wng2j")]
-process_priority = -1
-transform = Transform3D(0.999997, 0.00223599, -0.000878929, -0.00223614, 0.999997, -0.000169186, 0.000878546, 0.000171164, 1, 0, 0.972875, 0)
 
 [node name="ChuckHole" parent="." instance=ExtResource("4_upk5s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -80)
@@ -57,7 +52,3 @@ environment = ExtResource("5_ll0n0")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50.6695, -6.53482)
 
 [connection signal="apply_settings" from="ControlNode" to="." method="_apply_settings"]
-[connection signal="disable_movement" from="ControlNode" to="." method="_disable_character_movement"]
-[connection signal="disable_rotation" from="ControlNode" to="." method="_disable_character_rotation"]
-[connection signal="enable_movement" from="ControlNode" to="." method="_enable_character_movement"]
-[connection signal="enable_rotation" from="ControlNode" to="." method="_enable_character_rotation"]

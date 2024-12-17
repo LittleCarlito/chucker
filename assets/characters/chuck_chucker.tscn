@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://cdkknjflehfgx"]
+[gd_scene load_steps=10 format=3 uid="uid://cdkknjflehfgx"]
 
 [ext_resource type="Script" path="res://assets/characters/chuck_chucker.gd" id="1_hnkcf"]
 [ext_resource type="PackedScene" uid="uid://uyfdjyipfutg" path="res://assets/items/camera/CameraContainer.tscn" id="2_x3sxy"]
+[ext_resource type="PackedScene" uid="uid://71rhtkmuvxvf" path="res://assets/items/common/item_controller.tscn" id="3_40f1w"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h7ubf"]
 albedo_color = Color(0.41528, 0.3828, 0.87, 1)
@@ -24,7 +25,7 @@ rings = 13
 [sub_resource type="BoxShape3D" id="BoxShape3D_3pknt"]
 size = Vector3(1.2, 1.2, 1)
 
-[node name="ChuckChucker" type="CharacterBody3D"]
+[node name="ChuckChucker" type="CharacterBody3D" groups=["All", "Character", "General"]]
 collision_mask = 2
 script = ExtResource("1_hnkcf")
 
@@ -45,5 +46,4 @@ collision_mask = 4
 
 [node name="CameraContainer" parent="." instance=ExtResource("2_x3sxy")]
 
-[node name="ItemController" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.50122e-10, 0.744641, 0)
+[node name="ItemController" parent="." instance=ExtResource("3_40f1w")]

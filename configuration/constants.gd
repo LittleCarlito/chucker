@@ -25,6 +25,19 @@ const PICKED_UP_LOG: String = "%s has been picked up"
 const DEACTIVATE_LOG: String = "%s is deactivating"
 const LOG_SEPARATOR: String = "; "
 
+# Group names
+const ENVIRONMENT: String = "Environment"
+const CHARACTER: String = "Character"
+const DISK: String = "Disk"
+const GENERAL: String = "General"
+# Group methods
+const HOLD_ACTION: String = "hold_action"
+const RELEASE_ACTION: String = "release_action"
+const DISABLE_MOVEMENT: String = "disable_movement"
+const ENABLE_MOVEMENT: String = "enable_movement"
+const DISABLE_ROTATION: String = "disable_rotation"
+const ENABLE_ROTATION: String = "enable_rotation"
+const RELOAD_PROJECT_SETTINGS: String = "reload_project_settings"
 
 const MENU: Dictionary = {
 	"SCORECARD": {

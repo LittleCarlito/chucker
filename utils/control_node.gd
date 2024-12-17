@@ -17,7 +17,6 @@ const SAVE_FILE: String = SAVE_DIR + "user_settings.json"
 @onready var scorecard: ScorecardView = $ScorecardView
 @onready var pause_menu: PauseMenu = $PauseMenu
 
-
 signal apply_settings
 signal disable_movement
 signal disable_rotation

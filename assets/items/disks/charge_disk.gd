@@ -1,5 +1,5 @@
 # TODO Refactor this to use ECS structure instead of inheritance
-extends ThrowableItem
+extends Node3D
 class_name ChargeDisk
 
 const disk_scene: PackedScene = preload(SceneLibrary.MESH.CHARGE_SCENE)
@@ -10,6 +10,7 @@ const disk_scene: PackedScene = preload(SceneLibrary.MESH.CHARGE_SCENE)
 
 var stopwatch: Stopwatch = Stopwatch.new()
 @export var flight_data: FlightData
+@export var item_data: ItemData
 
 # TODO Have charge and line decrease after reaching max and increase after reaching min on long holds
 # TODO Add charge effects
@@ -43,7 +44,6 @@ func hold_action(delta: float) -> void:
 		var held_time: float = stopwatch.isHeld(delta)
 		charge_view.set_progress((held_time / GlobalSettings.DISK.MAX_HOLD) * 100)
 		var speed_multiplier: float = min(GlobalSettings.DISK.MAX_HOLD, held_time) * GlobalSettings.DISK.HOLD_MULTIPLIER
-		# TODO Need to get draw_aim_line functionality into global node or resource
 		flight_data.flight_path = aim_line.draw_aim_line(speed_multiplier)
 
 ## Launch disk and reset objects
@@ -58,7 +58,17 @@ func release_action() -> void:
 		var final_speed: float = GlobalSettings.DISK.LAUNCH_SPEED * speed_multiplier
 		flight_data = FlightData.create_flight_data(final_speed, self.global_basis.get_euler().x, flight_data.flight_path, flight_data.focus_flight)
 		# TODO Launcd disk needs to be refactored into this class
-		launch_disk()
+		if flight_data.flight_ready:
+			DiskFactory.create_and_launch(flight_data, item_data)
+			#self.queue_free()
+		else:
+			Logger.error(FlightData.LAUNCH_NOT_READY_LOG, [], self)
+		self.rotation.x = 0
+		# TODO this should be calling something within a group instead
+		#item_owner.disable_movement()
+		#item_owner.disable_rotation()
+		#item_owner.unequip_item()
+
 
 func reset_launch_parameters() -> void:
 	flight_data = null

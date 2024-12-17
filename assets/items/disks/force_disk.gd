@@ -48,7 +48,7 @@ var camera_container: CameraContainer
 
 func _ready() -> void:
 	if item_data == null:
-		item_data = ItemData.create_item_type(GlobalSettings.DEFAULTS.ITEM as ItemData.TYPE)
+		item_data = ItemData.create_item_data(GlobalSettings.DEFAULTS.ITEM as ItemData.TYPE)
 	disk_mesh.set_type(item_data.internal_type)
 	_update_item_state()
 
@@ -72,8 +72,8 @@ func set_internal_type(new_internal_type: ItemData.TYPE) -> void:
 func set_creation_type(new_creation_type: ItemData.TYPE) -> void:
 	item_data.creation_type = new_creation_type
 
-func set_launch_parameters(incoming_path: Array[Vector3], incoming_speed: float, incoming_angle: float, is_focused: bool = false) -> void:
-	flight_data = FlightData.create_flight_data(incoming_speed, incoming_angle, incoming_path, is_focused)
+func set_launch_parameters(incoming_data: FlightData) -> void:
+	flight_data = incoming_data
 
 func launch_disk() -> void:
 	if flight_data != null:
@@ -163,11 +163,4 @@ func _create_camera_container() -> void:
 		Logger.warn(CONSTANTS.ALREADY_EXISTS_LOG, [CONSTANTS.CAMERA_CONTAINER], self)
 
 func _update_item_state() -> void:
-	var updated_state: ItemData.STATE = ItemData.STATE.EXISTS
-	if camera_container != null:
-		updated_state = ItemData.STATE.TRACKABLE
-		if camera_container.has_camera():
-			updated_state = ItemData.STATE.VIEWABLE
-			if camera_container.is_current():
-				updated_state = ItemData.STATE.ACTIVE
-	item_data.item_state = updated_state
+	item_data.camera_state = ItemData.get_camera_state(camera_container)

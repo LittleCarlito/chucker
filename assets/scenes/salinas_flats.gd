@@ -1,8 +1,10 @@
 extends Node3D
 
 @onready var control_node: ControlNode = $ControlNode
-@onready var chuck_chucker: ChuckChucker = $ChuckChucker
 
+# TODO ChuckChucker and Disks need to be spawned in here programatically
+#		This is important because they will then be generated (hopefully) with appended names and groups assigned to them
+#		These groups are how everything is then controlled
 # TODO Make set controls work
 #			Create sub menu
 # TODO Add more button fuctionality to menus
@@ -37,6 +39,12 @@ extends Node3D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	# TODO Chucks position: 0, 1, 0
+	var chuck_data: ItemData = ItemData.create_item_data(ItemData.TYPE.PLAYER, ItemData.ITEM_STATE.ACTIVATED)
+	var chuck_location: Vector3 = Vector3(0, 1, 0)
+	DiskFactory.spawn_item(chuck_data, chuck_location)
+	# TODO PathDisk position: 
+	# TODO ForceDisk position:
 	_apply_settings()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -44,17 +52,16 @@ func _process(_delta: float) -> void:
 	pass
 
 func _disable_character_movement() -> void:
-	chuck_chucker.disable_movement()
+	get_tree().call_group(CONSTANTS.CHARACTER, CONSTANTS.DISABLE_MOVEMENT)
 
 func _enable_character_movement() -> void:
-	chuck_chucker.enable_movement()
+	get_tree().call_group(CONSTANTS.CHARACTER, CONSTANTS.ENABLE_MOVEMENT)
 
 func _disable_character_rotation() -> void:
-	chuck_chucker.disable_rotation()
+	get_tree().call_group(CONSTANTS.CHARACTER, CONSTANTS.DISABLE_ROTATION)
 
 func _enable_character_rotation() -> void:
-	chuck_chucker.enable_rotation()
+	get_tree().call_group(CONSTANTS.CHARACTER, CONSTANTS.ENABLE_ROTATION)
 
 func _apply_settings() -> void:
-	control_node.reload_project_settings()
-	chuck_chucker.load_settings()
+	get_tree().call_group(CONSTANTS.GENERAL, CONSTANTS.RELOAD_PROJECT_SETTINGS)

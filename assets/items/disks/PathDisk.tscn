@@ -14,7 +14,7 @@ resource_local_to_scene = true
 material = SubResource("StandardMaterial3D_6l2g0")
 height = 0.1
 
-[node name="PathDisk" type="Node3D"]
+[node name="PathDisk" type="Node3D" groups=["All", "Disk", "General"]]
 script = ExtResource("1_3o2g5")
 
 [node name="Path3D" type="Path3D" parent="."]

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://71rhtkmuvxvf"]
+
+[ext_resource type="Script" path="res://assets/items/common/item_controller.gd" id="1_uphlq"]
+
+[node name="ItemController" type="Node3D"]
+script = ExtResource("1_uphlq")

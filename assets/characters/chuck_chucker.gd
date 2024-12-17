@@ -1,27 +1,32 @@
 extends PlayableCharacter
 class_name ChuckChucker
 
+const character_scene: PackedScene = preload(SceneLibrary.CHARACTER.CHUCK)
+
 const _UKNOWN_OBJECT_LOG: String = "Tried to pick up UKNOWN object; Where did you get that?"
-const _UNEQUIP_MESSAGE_LOG: String = "unequip_item() called but no item is equiped"
 
 @onready var chuck_mesh: MeshInstance3D = $ChuckMesh
 @onready var front_detection: ShapeCast3D = $FrontDetect
 @onready var camera_container: CameraContainer = $CameraContainer
-@onready var item_controller: Node3D = $ItemController
+@onready var item_controller: ItemController = $ItemController
 
-var player_item: ThrowableItem
-var item_data: ItemData
+# TODO Time for Groups
+# 		Use of disks should be done through group method calls
+#		This as the owner can call to prepare_launcher(flight_data)
+#		Disks as members of the group should check their type
+#			If LAUNCHER react to the signal/method call by preparing launcher
+#		This as the owner can call to fire_launcher()
+#		Disks as member of the group should check their type
+#			If LAUNCHER reach to the signal/method by sending set flight_data and item_data to the factory
+@export var item_data: ItemData
 var stopwatch: Stopwatch = Stopwatch.new()
 var height: float
 
-# TODO Rework CameraContainer to be FocusContainer
-#		Each item and Character will have states
-#			EXISTS, TRACKABLE, VIEWABLE
-#			EXISTS - No internal containers; just the object
-#			TRACKABLE - FocusContainer exists within it
-#			VIEWABLE - Has a Camera3D within its FocusControl
-# TODO Need to rework how CameraContainer follows and sets focus now that it isn't internal camera
-#			CameraContainer also has its own input handling that might be doubling up movements and such
+# TODO Make sure states are properly set by objects at each state changing event
+#		EXISTS, TRACKABLE, VIEWABLE
+#		EXISTS - No internal containers; just the object
+#		TRACKABLE - FocusContainer exists within it
+#		VIEWABLE - Has a Camera3D within its FocusControl
 # TODO Get ChuckChucker, mesh, and collision into a scene as BaseCharacter
 #		Then make another scene off that one with controls in the script and a camera at creation called ControllableCharacter
 # BUG After throwing the disk a second time mesh was spun sidways but controls remained normal (cube rotated on y axis)
@@ -31,8 +36,25 @@ func _ready() -> void:
 	height = chuck_mesh.get_aabb().size.y
 	camera_container.populate_camera_control()
 	if item_data == null:
-		item_data = ItemData.create_item_type(ItemData.TYPE.PLAYER)
+		# BUG-CATCHER
+		item_data = ItemData.create_item_data(ItemData.TYPE.PLAYER)
 	_update_item_state()
+
+func _process(_delta: float) -> void:
+	pass
+
+func new_character() -> ChuckChucker:
+	var new_chuck: ChuckChucker = character_scene.instantiate()
+	new_chuck.name = new_chuck.name + "-" + str(new_chuck.get_instance_id())
+	# TODO See to it that these are scene specific groups
+	get_tree().set_group(new_chuck.name, ItemData.TYPE_PROPERTY, ItemData.TYPE.PLAYER)
+	return new_chuck
+
+func _physics_process(delta: float) -> void:
+	_handle_camera_controls()
+	_handle_player_action(delta)
+	_handle_player_interact()
+	_handle_movement(delta)
 
 func _input(event: InputEvent) -> void:
 	_handle_looking(event)
@@ -42,12 +64,6 @@ func _input(event: InputEvent) -> void:
 		if event.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_DOWN):
 			rotation_adjust *= -1
 		_handle_rotation(rotation_adjust)
-
-func _physics_process(delta: float) -> void:
-	_handle_camera_controls()
-	_handle_player_action(delta)
-	_handle_player_interact()
-	_handle_movement(delta)
 
 ## Actions to be performed when MOVE_JUMP is pressed
 func _handle_jump(delta: float) -> void:
@@ -71,11 +87,12 @@ func _handle_camera_controls() -> void:
 
 ## Actions when disk is thrown
 func _handle_player_action(delta: float) -> void:
-	if player_item != null:
+	if item_controller.is_equipped():
+		# TODO Need to make sure disks that are capable of launching have these methods implemented
 		if Input.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY):
-			player_item.hold_action(delta)
+			get_tree().call_group(self.name, CONSTANTS.HOLD_ACTION, delta)
 		if Input.is_action_just_released(CONSTANTS.USER_INPUT.PRIMARY):
-			player_item.release_action()
+			get_tree().call_group(self.name, CONSTANTS.RELEASE_ACTION)
 
 # TODO FrontDetect should be made its own scene with this in its script
 ## Handle player pressing interact button
@@ -86,26 +103,8 @@ func _handle_player_interact() -> void:
 		for n in colliding_count:
 			var colliding_object = front_detection.get_collider(0)
 			Logger.debug("%s", [str(colliding_object)], colliding_object)
-			if colliding_object != null:
-				if colliding_object is ForceDisk:
-					var rigid_disk: ForceDisk = colliding_object as ForceDisk
-					match rigid_disk.get_item_type():
-						ItemData.TYPE.FORCE:
-							player_item = ChargeDisk.new_object()
-						ItemData.TYPE.PATH:
-							player_item = PullDisk.new_object()
-						_:
-							Logger.error(_UKNOWN_OBJECT_LOG, [], self)
-					# Connect the playerDisk rotation signal to chucker
-					if player_item != null:
-						# TODO Need to update the methods taking the camera in to reparent it to the object receiving it
-						player_item.prepare_item(rigid_disk.get_item_type(), self, camera_container.get_camera())
-						player_item.rotate_parent.connect(_handle_rotation)
-						item_controller.add_child(player_item)
-					rigid_disk.pick_up()
-				else:
-					# TODO Should really figure out something else to do here
-					colliding_object.queue_free()
+			if colliding_object != null and colliding_object is ForceDisk:
+				DiskFactory.equip_item(self, colliding_object)
 
 # TODO This should just be handled by this class without signals from below being needed
 #		Should be checking if equipped (if necessary what type; group check)
@@ -140,7 +139,7 @@ func _handle_movement(delta: float) -> void:
 	if(is_on_floor()):
 		var direction = (self.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		if direction:
-			if is_equipped() || is_movement_disabled():
+			if item_controller.is_equipped() || is_movement_disabled():
 				velocity.x = 0
 				velocity.z = 0
 			else:
@@ -160,36 +159,18 @@ func _handle_movement(delta: float) -> void:
 	# Keep camera up
 	#camera_container.position = lerp(camera_container.position, position, GlobalSettings.CAMERA.PAN_SPEED)
 
-## Toggles the visibility logic when character has item equiped
-func unequip_item() -> void:
-	if player_item != null:
-		player_item.rotate_parent.disconnect(_handle_rotation)
-		player_item.queue_free()
-	else:
-		Logger.warn(_UNEQUIP_MESSAGE_LOG, [], self)
-	# Reset item controller rotation
-	item_controller.rotation_degrees.x = 0
-
-## Returns if character has item equipped
-func is_equipped() -> bool:
-	return player_item != null
-
-func is_unequipped() -> bool:
-	return player_item == null
-
 ## Returns the height of Chuck
 func get_height() -> float:
 	return height
 
-# TODO Should be connected to disks by factory creating them if set as owner_var
+# TODO Not currently used; Should end up being used by Groups to regain control
 func regain_focus() -> void:
 	enable_movement()
 	camera_container.enable_camera()
 
-func load_settings() -> void:
+func reload_project_settings() -> void:
 	camera_container.reset_zoom()
 
-# TODO This should probably be in CameraContainer; It gives things the ability to aim
 func _handle_looking(event: InputEvent) -> void:
 	if event.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -207,17 +188,17 @@ func _handle_looking(event: InputEvent) -> void:
 			camera_container.horizontal_rotate(h_rotation_amount)
 		if _can_vertically_rotate(v_rotation_amount):
 			camera_container.veritcal_rotate(v_rotation_amount)
-		if is_equipped():
+		if item_controller.is_equipped():
 			_handle_rotation(v_rotation_amount)
 	# Third person viewing self
 	# Only occurs when unequipped and primary is held
-	elif event.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY) and is_unequipped():
+	elif event.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY) and item_controller.is_unequipped():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	elif event is InputEventMouseMotion and (Input.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY) and is_unequipped()):
+	elif event is InputEventMouseMotion and (Input.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY) and item_controller.is_unequipped()):
 		## Determine amount to rotate camera
 		var horizontal_rotate_amount: float = deg_to_rad(event.relative.x) * GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
 		camera_container.horizontal_pan(horizontal_rotate_amount, self.global_position)
-	elif event.is_action_released(CONSTANTS.USER_INPUT.PRIMARY) and is_unequipped():
+	elif event.is_action_released(CONSTANTS.USER_INPUT.PRIMARY) and item_controller.is_unequipped():
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		camera_container.snap_back(self.global_basis, self.global_position)
 
@@ -225,27 +206,35 @@ func _can_horizontally_rotate(rotation_amount:float) -> bool:
 	var potential_horizontal_roation: float = camera_container.get_horizontal_rotation() + rotation_amount
 	var max_horizontal_value: float = GlobalSettings.CAMERA.get(CONSTANTS.MAX_HORIZONTAL_ROTATION, GlobalSettings.CAMERA_DEFAULTS.MAX_HORIZONTAL_ROTATION)
 	var min_horizontal_value: float = GlobalSettings.CAMERA.get(CONSTANTS.MIN_HORIZONTAL_ROTATION, GlobalSettings.CAMERA_DEFAULTS.MIN_HORIZONTAL_ROTATION)
-	# TODO Determine if within bounds
 	return (potential_horizontal_roation > min_horizontal_value) and (potential_horizontal_roation < max_horizontal_value)
 
 func _can_vertically_rotate(rotation_amount:float) -> bool:
 	var potential_vertical_roation: float = camera_container.get_vertical_rotation() + rotation_amount
 	var max_vertical_value: float = GlobalSettings.CAMERA.get(CONSTANTS.MAX_VERTICAL_ROTATION, GlobalSettings.CAMERA_DEFAULTS.MAX_VERTICAL_ROTATION)
 	var min_vertical_value: float = GlobalSettings.CAMERA.get(CONSTANTS.MIN_VERTICAL_ROTATION, GlobalSettings.CAMERA_DEFAULTS.MIN_VERTICAL_ROTATION)
-	# TODO Determine if within bounds
 	return (potential_vertical_roation > min_vertical_value) and (potential_vertical_roation < max_vertical_value)
 
-## TODO Duplicate code
 func _update_item_state() -> void:
-	var updated_state: ItemData.STATE = ItemData.STATE.EXISTS
-	if camera_container != null:
-		updated_state = ItemData.STATE.TRACKABLE
-		if camera_container.has_camera():
-			updated_state = ItemData.STATE.VIEWABLE
-			if camera_container.is_current():
-				updated_state = ItemData.STATE.ACTIVE
-	item_data.item_state = updated_state
+	item_data.camera_state = ItemData.get_camera_state(camera_container)
 
-# Handles signals from connected cameras to reparent them
-func _release_camera(new_parent: Node = get_tree().root) -> void:
-	camera_container.reparent_camera(new_parent)
+func hold_action(delta: float) -> void:
+	Logger.info("I'm gonna chuck", [], self)
+
+func release_action() -> void:
+	# TODO Should probably be doing something with the unequip_item() where camera is offered up to the item_container
+	#		If something spawns it will need to grab and reparent the camera
+	disable_movement()
+	disable_rotation()
+	# TODO Expecting this will break; Doesn't lead to any code; Should probably be a call to item_container
+	unequip_item()
+	# TODO This should then update the status of the character if the item took the camera with it
+	_update_item_state()
+
+# TODO Some version of this should be implemented to handle when a deactivate_to_owner()
+#func activate_fallback() -> void:
+	#if fallback_camera != null:
+		#fallback_camera.current = true
+	#if item_owner != null:
+		#item_owner.enable_movement()
+		#item_owner.enable_rotation()
+	#deactivate.emit()

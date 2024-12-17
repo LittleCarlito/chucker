@@ -15,3 +15,7 @@ const CAMERA = {
 	"CONTAINER_SCENE": "res://assets/items/camera/CameraContainer.tscn",
 	"STANDARD_SCENE": "res://assets/items/camera/standard_camera.tscn"
 }
+
+const CHARACTER = {
+	"CHUCK": "res://assets/characters/chuck_chucker.tscn"
+}

@@ -27,6 +27,12 @@ SceneLibrary="*res://configuration/scenes/scene_library.gd"
 GlobalSettings="*res://configuration/global_settings.gd"
 DiskFactory="*res://assets/items/disks/common/disk_factory.gd"
 
+[global_group]
+
+Character="Playable characters"
+Disk="Disks of all types"
+General="General global group"
+
 [improved_json]
 
 config/json_object_config_registry="res://utils/JSONObjectConfigRegistry.tres"
