@@ -49,9 +49,6 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	# TODO May want to add something like this more statebased in the future
-	#		Don't want cameras to always be locked down
-	#camera_control.global_position.y = max(GlobalSettings.CAMERA.MIN_HEIGHT, camera_control.global_position.y)
 	if _idle_rotate:
 		idle_rotate(_delta)
 	elif _focus_location != Vector3.INF and _focused:
@@ -113,7 +110,6 @@ func veritcal_rotate(rotation_amount: float) -> void:
 func get_vertical_rotation() -> float:
 	return camera_control.rotation.x
 
-# TODO Current parameters don't meet current needs; Look at callers and see how original basis can be given
 func snap_back(new_basis: Basis, focus_position: Vector3 = Vector3.INF) -> void:
 	self.global_basis = new_basis
 	camera_control.global_basis = self.global_basis

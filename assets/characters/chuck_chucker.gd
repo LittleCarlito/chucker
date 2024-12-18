@@ -33,8 +33,7 @@ func _ready() -> void:
 	get_tree().set_group(self.name, AssetData.TYPE_PROPERTY, AssetData.TYPE.PLAYER)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	height = chuck_mesh.get_aabb().size.y
-	var focus_point: Vector3 = self.global_position + GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOCUS_OFFSET, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOCUS_OFFSET)
-	camera_container.populate_camera_control(focus_point)
+	camera_container.populate_camera_control(_get_focus_point())
 	if item_data == null:
 		item_data = AssetData.create_item_data(AssetData.TYPE.PLAYER)
 	_update_state()
@@ -171,8 +170,7 @@ func _handle_looking(event: InputEvent) -> void:
 			camera_container.zoom_in()
 	elif event.is_action_released(CONSTANTS.USER_INPUT.SECONDARY):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		# TODO This ends up looking at a different location; Need to change parameters
-		camera_container.snap_back(self.global_basis, self.global_position)
+		camera_container.snap_back(self.global_basis)
 		enable_movement()
 	elif event is InputEventMouseMotion and Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
 		var v_rotation_amount: float = NodeUtil.get_vertical_rotation_amount(event)
@@ -193,7 +191,7 @@ func _handle_looking(event: InputEvent) -> void:
 		camera_container.horizontal_pan(horizontal_rotate_amount, self.global_position)
 	elif event.is_action_released(CONSTANTS.USER_INPUT.PRIMARY) and item_container.is_unequipped():
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		camera_container.snap_back(self.global_basis, self.global_position)
+		camera_container.snap_back(self.global_basis)
 
 func _can_horizontally_rotate(rotation_amount:float) -> bool:
 	var potential_horizontal_roation: float = camera_container.get_horizontal_rotation() + rotation_amount
@@ -231,3 +229,7 @@ func release_action() -> void:
 		#item_owner.enable_movement()
 		#item_owner.enable_rotation()
 	#deactivate.emit()
+
+func _get_focus_point() -> Vector3:
+	var focus_point: Vector3 = self.position + GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOCUS_OFFSET, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOCUS_OFFSET)
+	return focus_point
