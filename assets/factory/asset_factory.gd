@@ -92,10 +92,11 @@ func equip_item(item_owner: ChuckChucker, incoming_item: ForceDisk) -> void:
 		## TODO Should really figure out something else to do here
 		#colliding_object.queue_free()
 
-# TODO This doesn't seem to be working
-# TODO Switch to making this a method that takes in same shit but just gives Node3D back to the caller and they put it in the tree
-#			Maybe mess with this more and see if because it is a global and not within the tree directly it can't add things/manipulate them in space
-# TODO Use Passed in state stuff to determine what should be created within the object and what it should be set to
+func spawn_asset(item_data: AssetData, spawn_parent: Node3D, spawn_location: Vector3 = Vector3(0, 1, 0)) -> void:
+	var created_node: Node3D = create_asset(item_data)
+	spawn_parent.add_child(created_node)
+	created_node.global_position = spawn_location
+
 func create_asset(item_data: AssetData) -> Node3D:
 	var internal_type: AssetData.TYPE = item_data.internal_type
 	var new_packed_scene: PackedScene = scene_library.get(internal_type, null)

@@ -43,28 +43,16 @@ extends Node3D
 func _ready() -> void:
 	# Spawn in Character
 	var chuck_data: AssetData = AssetData.create_item_data(AssetData.TYPE.PLAYER, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
-	var created_character: ChuckChucker = AssetFactory.create_asset(chuck_data)
-	self.add_child(created_character)
-	Logger.debug(CONSTANTS.LOCATION_LOG, [str(created_character), str(created_character.global_position)], self)
 	var chuck_location: Vector3 = Vector3(0, 1, 0)
-	created_character.global_position = chuck_location
-	Logger.debug(CONSTANTS.LOCATION_LOG, [str(created_character), str(created_character.global_position)], self)
-	# Spawn in PathDisk
+	AssetFactory.spawn_asset(chuck_data, self, chuck_location)
+	# Spawn Path disk
 	var path_data: AssetData = AssetData.create_item_data(AssetData.TYPE.PATH, AssetData.ITEM_STATE.DEACTIVATED)
-	var created_path_disk: PathDisk = AssetFactory.create_asset(path_data)
-	self.add_child(created_path_disk)
-	Logger.debug(CONSTANTS.LOCATION_LOG, [str(created_path_disk), str(created_path_disk.global_position)], self)
 	var path_location: Vector3 = Vector3(2, 4, -2)
-	created_path_disk.global_position = path_location
-	Logger.debug(CONSTANTS.LOCATION_LOG, [str(created_path_disk), str(created_path_disk.global_position)], self)
+	AssetFactory.spawn_asset(path_data, self, path_location)
 	# Spawn in ForceDisk
 	var force_data: AssetData = AssetData.create_item_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED)
-	var created_force_disk: ForceDisk = AssetFactory.create_asset(force_data)
-	self.add_child(created_force_disk)
-	Logger.debug(CONSTANTS.LOCATION_LOG, [str(created_force_disk), str(created_force_disk.global_position)], self)
 	var force_location: Vector3 = Vector3(-2, 4, -2)
-	created_force_disk.global_position = force_location
-	Logger.debug(CONSTANTS.LOCATION_LOG, [str(created_force_disk), str(created_force_disk.global_position)], self)
+	AssetFactory.spawn_asset(force_data, self, force_location)
 	# Update all settings
 	get_tree().call_group(CONSTANTS.GENERAL, CONSTANTS.UPDATE_STATE)
 
