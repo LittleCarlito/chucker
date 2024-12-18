@@ -49,7 +49,9 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	camera_control.global_position.y = max(GlobalSettings.CAMERA.MIN_HEIGHT, camera_control.global_position.y)
+	# TODO May want to add something like this more statebased in the future
+	#		Don't want cameras to always be locked down
+	#camera_control.global_position.y = max(GlobalSettings.CAMERA.MIN_HEIGHT, camera_control.global_position.y)
 	if _idle_rotate:
 		idle_rotate(_delta)
 	elif _focus_location != Vector3.INF and _focused:
@@ -177,7 +179,7 @@ func disable_camera() -> void:
 func enable_camera() -> void:
 	if internal_camera != null:
 		internal_camera.current = true
-		Logger.debug(CONSTANTS.LOCATION_LOG, [str(self), str(self.global_position)], self)
+		Logger.debug(CONSTANTS.LOCATION_LOG, [str(camera_control), str(camera_control.global_position)], self)
 		Logger.debug(CONSTANTS.LOCATION_LOG, [str(internal_camera), str(internal_camera.global_position)], self)
 	else:
 		Logger.error(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.ENABLE_CAMERA], self)

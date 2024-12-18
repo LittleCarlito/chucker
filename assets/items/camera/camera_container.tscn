@@ -6,7 +6,7 @@
 script = ExtResource("1_yhe62")
 
 [node name="CameraControl" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.940638, 0.339411, 0, -0.339411, 0.940638, 0, 3.67279, 7.8427)
+transform = Transform3D(1, 0, 0, 0, 0.940638, 0.339411, 0, -0.339411, 0.940638, 0, 2.47717, 4.22782)
 
 [node name="CameraTimer" type="Timer" parent="."]
 one_shot = true

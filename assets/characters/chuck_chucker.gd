@@ -36,7 +36,6 @@ func _ready() -> void:
 	var focus_point: Vector3 = self.global_position + GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOCUS_OFFSET, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOCUS_OFFSET)
 	camera_container.populate_camera_control(focus_point)
 	if item_data == null:
-		# BUG-CATCHER
 		item_data = AssetData.create_item_data(AssetData.TYPE.PLAYER)
 	_update_state()
 
