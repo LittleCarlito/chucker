@@ -48,7 +48,7 @@ func _ready() -> void:
 func initialize_ui() -> void:
 	control_select_menu.visible = false
 	load_settings.emit()
-	fov_slider.value = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV)
+	fov_slider.value = GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOV, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOV)
 	fov_value.text = str(fov_slider.value)
 	horizontal_aim_sensitivity_slider.value = GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_AIM_SENSITIVITY)
 	horizontal_aim_sensitivity_value.text = str(horizontal_aim_sensitivity_slider.value)
@@ -89,11 +89,11 @@ func _on_back_menu() -> void:
 func _on_save_menu() -> void:
 	_save_controls()
 	if not control_settings.is_empty():
-		save_settings_dictionary.get_or_add(CONSTANTS.Controls, control_settings)
+		save_settings_dictionary[CONSTANTS.Controls] = control_settings
 	if not camera_settings.is_empty():
-		save_settings_dictionary.get_or_add(CONSTANTS.Camera, camera_settings)
+		save_settings_dictionary[CONSTANTS.Camera] = camera_settings
 	if not display_settings.is_empty():
-		save_settings_dictionary.get_or_add(CONSTANTS.Display, display_settings)
+		save_settings_dictionary[CONSTANTS.Display] = display_settings
 	# Always emit saveSettings even if empty; Returns to defaults then
 	save_settings.emit(save_settings_dictionary)
 	apply_settings.emit()
@@ -112,8 +112,8 @@ func _save_controls() -> void:
 				var mapped_event: InputEvent = InputEventLibrary.convert_keycode_to_input_event(mapped_keycode)
 				var control_setting: ControlSetting = InputEventLibrary.convert_event_to_control_setting(mapped_event)
 				var control_dictionary: Dictionary = InputEventLibrary.convert_controlsetting_to_dictionary(control_setting)
-				control_settings.get_or_add(constant_name, control_dictionary)
-				Logger.debug(_CONTROL_REMAPPED_LOG, [constant_name, constant_value.as_text(), control_setting.inputDescription], self)
+				control_settings[constant_name] = control_dictionary
+				Logger.debug(_CONTROL_REMAPPED_LOG, [constant_name, constant_value.as_text(), control_setting.input_description], self)
 			else:
 				Logger.error(_NO_KEYCODE_ICON_STRING, [icon_path], self)
 
@@ -129,47 +129,47 @@ func _reset_variables(active_tab: int) -> void:
 
 func _on_fov_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		camera_settings.get_or_add(CONSTANTS.FOV, fov_slider.value)
+		camera_settings[CONSTANTS.PLAYER_FOV] = fov_slider.value
 
 func _on_fov_slider_value_changed(value: float) -> void:
 	fov_value.text = str(value)
 
 func _on_v_inversion_toggle_toggled(toggled_on: bool) -> void:
-	camera_settings.get_or_add(CONSTANTS.INVERT_VERTICAL, toggled_on)
+	camera_settings[CONSTANTS.INVERT_VERTICAL] = toggled_on
 
 func _on_h_inversion_toggle_toggled(toggled_on: bool) -> void:
-	camera_settings.get_or_add(CONSTANTS.INVERT_HORIZONTAL, toggled_on)
+	camera_settings[CONSTANTS.INVERT_HORIZONTAL] = toggled_on
 
 func _on_performance_display_check_toggled(toggled_on: bool) -> void:
-	display_settings.get_or_add(CONSTANTS.PERFORMANCE, toggled_on)
+	display_settings[CONSTANTS.PERFORMANCE] = toggled_on
 
 func _on_vertical_aim_sensitivity_slider_value_changed(value: float) -> void:
 	vertical_aim_sensitivity_value.text = str(value)
 
 func _on_vertical_aim_sensitivity_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		camera_settings.get_or_add(CONSTANTS.VERTICAL_AIM_SENSITIVITY, vertical_aim_sensitivity_slider.value)
+		camera_settings[CONSTANTS.VERTICAL_AIM_SENSITIVITY] = vertical_aim_sensitivity_slider.value
 
 func _on_horizontal_aim_sensitivity_slider_value_changed(value: float) -> void:
 	horizontal_aim_sensitivity_value.text = str(value)
 
 func _on_horizontal_aim_sensitivity_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		camera_settings.get_or_add(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, horizontal_aim_sensitivity_slider.value)
+		camera_settings[CONSTANTS.HORIZONTAL_AIM_SENSITIVITY] = horizontal_aim_sensitivity_slider.value
 
 func _on_vertical_look_sensitivity_slider_value_changed(value: float) -> void:
 	vertical_look_sensitivity_value.text = str(value)
 
 func _on_vertical_look_sensitivity_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		camera_settings.get_or_add(CONSTANTS.VERTICAL_LOOK_SENSITIVITY, vertical_look_sensitivity_slider.value)
+		camera_settings[CONSTANTS.VERTICAL_LOOK_SENSITIVITY] = vertical_look_sensitivity_slider.value
 
 func _on_horizontal_look_sensitivity_slider_value_changed(value: float) -> void:
 	horizontal_look_sensitivity_value.text = str(value)
 
 func _on_horizontal_look_sensitivity_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		camera_settings.get_or_add(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, horizontal_look_sensitivity_slider.value)
+		camera_settings[CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY] = horizontal_look_sensitivity_slider.value
 
 func _open_control_select_menu(index: int, _click_position: Vector2, mouse_button_index: int) -> void:
 	if mouse_button_index == MOUSE_BUTTON_LEFT:
@@ -181,7 +181,7 @@ func _control_select_closed() -> void:
 
 func _control_select_set(control_to_update: String, selected_input: ControlSetting) -> void:
 	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
-	Logger.debug(_UPDATE_CONTROL_LOG, [control_to_update, selected_input.inputDescription], self)
+	Logger.debug(_UPDATE_CONTROL_LOG, [control_to_update, selected_input.input_description], self)
 	var new_texture: Texture2D = load(InputSprite.INPUT_ICONS.get(selected_input.keycode, InputSprite.UNKNOWN_PATH))
 	if new_texture != InputSprite.UNKNOWN_TEXTURE:
 		var selected_icons: PackedInt32Array = control_list.get_selected_items()

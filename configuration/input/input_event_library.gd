@@ -82,15 +82,15 @@ func convert_dictionary_to_control_setting(incoming_dictionary: Dictionary) -> C
 
 func convert_controlsetting_to_dictionary(control_setting: ControlSetting) -> Dictionary:
 	var return_dictionary = {}
-	return_dictionary.get_or_add(CONSTANTS.KEYCODE_STRING, control_setting.keycode)
-	return_dictionary.get_or_add(CONSTANTS.INPUT_TYPE_STRING, str(control_setting.inputType))
-	return_dictionary.get_or_add(CONSTANTS.INPUT_DESCRIPTION_STRING, control_setting.inputDescription)
+	return_dictionary[CONSTANTS.KEYCODE_STRING] = control_setting.keycode
+	return_dictionary[CONSTANTS.INPUT_TYPE_STRING] = str(control_setting.input_type)
+	return_dictionary[CONSTANTS.INPUT_DESCRIPTION_STRING] = control_setting.input_description
 	return return_dictionary
 
 # InputEvent conversions
 func convert_control_setting_to_input_event(control_setting: ControlSetting) -> InputEvent:
 	var return_event: InputEvent
-	match control_setting.inputType:
+	match control_setting.input_type:
 		INPUT_TYPE.MOUSE:
 			return_event = MOUSE_BUTTON_INPUTS.get(control_setting.keycode)
 		INPUT_TYPE.KEYBOARD:

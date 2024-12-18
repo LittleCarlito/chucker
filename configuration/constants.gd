@@ -1,13 +1,16 @@
 extends Node
 class_name CONSTANTS
 
+const BLOCKING_VALUE: String = "BLOCKING"
 # TODO Refactor these out to Logger or a Log Constants file
 const METHOD_LOG: String = "\"%s\"; \"%s\""
+const NULL_LOG: String = "\"%s\" is null"
 const ITEM_OWNER_LOG: String = "item_owner \"%s\""
 const UNIMPLEMENTED_LOG: String = "UNIMPLEMENTED METHOD; All %s Objects must implement \"%s\""
 const UNSUPPORTED_TYPE_LOG: String = "%s recieved an unsupported type \"%s\""
 const RETURNING_NULL_LOG: String = "Returning null"
 const RETURNING_FALSE_LOG: String = "Returning false"
+const RETURNING_ZERO_LOG: String = "Returning 0"
 const NULL_CAMERA_LOG: String = "has no camera and cannot %s"
 const ALREADY_EXISTS_LOG: String = "%s already exists"
 const CAMERA_CONTAINER: String = "camera_container"
@@ -101,7 +104,8 @@ const INPUT_DESCRIPTION_STRING: String = "input_description"
 
 const TEE_CAMERA: String = "TeeboxCamera"
 const Camera: String = "Camera"
-const FOV: String = "FOV"
+const PLAYER_FOV: String = "PLAYER_FOV"
+const STATIONARY_FOV: String = "STATIONARY_FOV"
 const IN_ADJUST: String = "IN_ADJUST"
 const OUT_ADJUST: String = "OUT_ADJUST"
 const PLAYER_FOCUS_OFFSET: String = "PLAYER_FOCUS_OFFSET"

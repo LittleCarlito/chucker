@@ -39,7 +39,7 @@ extends Node3D
 #		Allow the bag to have 6 x 6 inventory where disks are stored and can be chosen/equipped
 
 # Called when the node enters the scene tree for the first time.
-# TODO Get AssetFactory spawn_item method working
+# TODO Switch this to loading assets from file for the map
 func _ready() -> void:
 	# Spawn in Character
 	var chuck_data: AssetData = AssetData.create_item_data(AssetData.TYPE.PLAYER, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
@@ -53,6 +53,10 @@ func _ready() -> void:
 	var force_data: AssetData = AssetData.create_item_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED)
 	var force_location: Vector3 = Vector3(-2, 4, -2)
 	AssetFactory.spawn_asset(force_data, self, force_location)
+	# TODO Spawn in holes
+	# 		First Hole location:
+	# TODO Spawn in teeboxes
+	#		First Teebox location:
 	# Update all settings
 	get_tree().call_group(CONSTANTS.GENERAL, CONSTANTS.UPDATE_STATE)
 

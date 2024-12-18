@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://c3a3ygsd2ack"]
+[gd_scene load_steps=8 format=3 uid="uid://c3a3ygsd2ack"]
 
-[ext_resource type="Script" path="res://assets/buildings/chuck_tee.gd" id="1_srenv"]
-[ext_resource type="PackedScene" uid="uid://btbtiiilcdji5" path="res://assets/ui/views/ScorecardView.tscn" id="2_tncc4"]
+[ext_resource type="Script" path="res://assets/buildings/course/chuck_tee.gd" id="1_tarkx"]
+[ext_resource type="PackedScene" uid="uid://btbtiiilcdji5" path="res://assets/ui/views/ScorecardView.tscn" id="2_2voba"]
+[ext_resource type="PackedScene" uid="uid://uyfdjyipfutg" path="res://assets/common/camera/camera_container.tscn" id="2_ofn0f"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_521vg"]
 albedo_color = Color(0.101961, 0.270588, 0.0745098, 1)
@@ -16,10 +17,10 @@ size = Vector3(10, 0.2, 10)
 [sub_resource type="BoxShape3D" id="BoxShape3D_n4t14"]
 size = Vector3(10, 10, 10)
 
-[node name="ChuckTee" type="StaticBody3D"]
+[node name="ChuckTee" type="StaticBody3D" groups=["TeeBox"]]
 collision_layer = 16
 collision_mask = 5
-script = ExtResource("1_srenv")
+script = ExtResource("1_tarkx")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
@@ -35,15 +36,10 @@ shape = SubResource("BoxShape3D_i0mha")
 transform = Transform3D(1, 0.000827476, 0.000366273, -0.000826948, 0.999999, -0.00141029, -0.000367462, 0.00140998, 0.999999, 0, 4.8, 0)
 shape = SubResource("BoxShape3D_n4t14")
 
-[node name="CameraController" type="Node3D" parent="."]
-transform = Transform3D(1, 0.000518124, -0.000638299, -0.000516965, 0.999998, 0.00179287, 0.000639237, -0.00179253, 0.999998, 0, 0, 0)
+[node name="CameraContainer" parent="." instance=ExtResource("2_ofn0f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.90325, 5.34535)
 
-[node name="CameraTarget" type="Node3D" parent="CameraController"]
-transform = Transform3D(1, -0.000147548, -0.00015585, 0.000182858, 0.965926, 0.258819, 0.000112351, -0.258818, 0.965924, 0.00172521, 6.56599, 10.5974)
-
-[node name="TeeboxCamera" type="Camera3D" parent="CameraController/CameraTarget"]
-
-[node name="ScorecardView" parent="." instance=ExtResource("2_tncc4")]
+[node name="ScorecardView" parent="." instance=ExtResource("2_2voba")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 27, 0)
 
 [connection signal="body_entered" from="TeeBoxArea" to="." method="_on_tee_box_area_body_entered"]

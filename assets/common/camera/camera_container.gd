@@ -166,17 +166,17 @@ func toggle_camera() -> void:
 	else:
 		Logger.error(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.TOGGLE_CAMERA], self)
 
+# TODO In disable and enable camera are where signals or group method calls need to be sent to update asset status
 func disable_camera() -> void:
 	if internal_camera != null:
 		internal_camera.current = false
 	else:
 		Logger.error(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.DISABLE_CAMERA], self)
 
+# TODO In disable and enable camera are where signals or group method calls need to be sent to update asset status
 func enable_camera() -> void:
 	if internal_camera != null:
 		internal_camera.current = true
-		Logger.debug(CONSTANTS.LOCATION_LOG, [str(camera_control), str(camera_control.global_position)], self)
-		Logger.debug(CONSTANTS.LOCATION_LOG, [str(internal_camera), str(internal_camera.global_position)], self)
 	else:
 		Logger.error(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.ENABLE_CAMERA], self)
 
@@ -190,21 +190,24 @@ func is_current() -> bool:
 
 func reset_zoom() -> void:
 	if internal_camera != null:
-		internal_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV)
+		internal_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOV, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOV)
 	else:
 		Logger.error(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.RESET_ZOOM], self)
 
 func zoom_in() -> void:
 	if internal_camera != null:
-		internal_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV) - GlobalSettings.CAMERA.IN_ADJUST
+		internal_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOV, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOV) - GlobalSettings.CAMERA.IN_ADJUST
 	else:
 		Logger.error(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.ZOOM_IN], self)
 
 func zoom_out() -> void:
 	if internal_camera != null:
-		internal_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.FOV, GlobalSettings.CAMERA_DEFAULTS.FOV) + GlobalSettings.CAMERA.OUT_ADJUST
+		internal_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOV, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOV) + GlobalSettings.CAMERA.OUT_ADJUST
 	else:
 		Logger.error(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.ZOOM_OUT], self)
+
+func set_fov(incoming_fov: float) -> void:
+	internal_camera.fov = incoming_fov
 
 func reparent_camera(new_parent: Node) -> void:
 	if internal_camera != null:

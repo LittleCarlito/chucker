@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://bpn27qpg2rm8c"]
 
-[ext_resource type="Script" path="res://assets/buildings/chuck_hole.gd" id="1_b7aec"]
+[ext_resource type="Script" path="res://assets/buildings/course/chuck_hole.gd" id="1_2rbiy"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sj51i"]
 albedo_color = Color(0.8, 0.693333, 0, 1)
@@ -15,7 +15,7 @@ height = 10.0
 [node name="ChuckHole" type="Area3D"]
 collision_layer = 8
 collision_mask = 4
-script = ExtResource("1_b7aec")
+script = ExtResource("1_2rbiy")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CylinderMesh_e351p")

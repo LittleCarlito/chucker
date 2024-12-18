@@ -24,7 +24,7 @@ Logger="*res://utils/logger.gd"
 InputEventLibrary="*res://configuration/input/input_event_library.gd"
 InputSprite="*res://configuration/sprite/input_sprite.gd"
 GlobalSettings="*res://configuration/global_settings.gd"
-AssetFactory="*res://assets/factory/asset_factory.gd"
+AssetFactory="*res://assets/common/factory/asset_factory.gd"
 
 [global_group]
 
@@ -32,6 +32,7 @@ Disk="Disks of all types"
 General="General global group"
 Level="Scenes serving as levels"
 Player="Playable characters"
+TeeBox="Nodes serving as hole starting locations"
 
 [improved_json]
 

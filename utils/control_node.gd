@@ -102,7 +102,7 @@ func load_settings() -> void:
 						var control_input: InputEvent = InputEventLibrary.convert_control_setting_to_input_event(control_setting)
 						var global_category: Dictionary = GlobalSettings.get_category(setting_category)
 						global_category.erase(user_setting)
-						global_category.get_or_add(user_setting, control_input)
+						global_category[user_setting] = control_input
 					else:
 						load_default(user_setting, setting_category)
 				else:
@@ -111,7 +111,7 @@ func load_settings() -> void:
 						var setting_value = recieved_category.get(user_setting)
 						var global_category: Dictionary = GlobalSettings.get_category(setting_category)
 						global_category.erase(user_setting)
-						global_category.get_or_add(user_setting, setting_value)
+						global_category[user_setting] = setting_value
 					else:
 						load_default(user_setting, setting_category)
 			else:
@@ -138,12 +138,12 @@ func _get_settings_dictionary() -> Dictionary:
 					var controlKeys: Array = incomingControlSettings.keys()
 					for controlKey in controlKeys:
 						var convertedSetting: ControlSetting = InputEventLibrary.convert_dictionary_to_control_setting(incomingControlSettings.get(controlKey))
-						controlSettings.get_or_add(controlKey, convertedSetting)
-					returnDictionary.get_or_add(CONSTANTS.Controls, controlSettings)
+						controlSettings[controlKey] = convertedSetting
+					returnDictionary[CONSTANTS.Controls] = controlSettings
 				if !incomingCameraSettings.is_empty():
-					returnDictionary.get_or_add(CONSTANTS.Camera, incomingCameraSettings)
+					returnDictionary[CONSTANTS.Camera] = incomingCameraSettings
 				if !incomingDisplaySettings.is_empty():
-					returnDictionary.get_or_add(CONSTANTS.Display, incomingDisplaySettings)
+					returnDictionary[CONSTANTS.Display] = incomingDisplaySettings
 			else:
 				Logger.error(_UNEXPTECTED_TYPE_LOG, [], self)
 	# 7 is could not open error
@@ -160,7 +160,7 @@ func load_default(settingName: String, settingCategory: String) -> void:
 		if defaultSetting != null:
 			var globalCategory: Dictionary = GlobalSettings.get_category(settingCategory)
 			globalCategory.erase(settingName)
-			globalCategory.get_or_add(settingName, defaultSetting)
+			globalCategory[settingName] = defaultSetting
 		else:
 			Logger.error(_NO_DEFAULT_LOG, [settingName, settingCategory], self)
 	else:
@@ -168,7 +168,7 @@ func load_default(settingName: String, settingCategory: String) -> void:
 		if defaultValue != null:
 			var globalCategory: Dictionary = GlobalSettings.get_category(settingCategory)
 			globalCategory.erase(settingName)
-			globalCategory.get_or_add(settingName, defaultValue)
+			globalCategory[settingName] = defaultValue
 		else:
 			Logger.error(_NO_DEFAULT_LOG, [settingName, settingCategory], self)
 
