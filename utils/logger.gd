@@ -28,6 +28,8 @@ func error(error_log: String, params: Array, caller: Object) -> void:
 	if log_level <= LEVEL.ERROR:
 		_print(error_log, params, caller, LEVEL.ERROR)
 
+# TODO Run some bad logs through and see how catching their errors goes
+#			Then print what you can about missing parameters or whatever for why blank logs
 func _print(print_log: String, params: Array, caller: Object, incoming_log_level: LEVEL) -> void:
 	var time_stamp: String = Time.get_datetime_string_from_system()
 	var log_string: String = print_log % params

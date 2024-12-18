@@ -82,7 +82,7 @@ const COLOR: Dictionary = {
 # TODO Refactor these to be to an enum
 const DEFAULTS: Dictionary = {
 	"COLOR": Color.CHARTREUSE,
-	"ITEM": ItemData.TYPE.FORCE,
+	"ITEM": AssetData.TYPE.FORCE,
 	"GROUP": CONSTANTS.ENVIRONMENT
 }
 

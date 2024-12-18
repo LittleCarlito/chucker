@@ -12,7 +12,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	pass
 
-func store_collision(incoming_owner_rid: RID, incoming_collider_rid: RID, incoming_collision_location: Vector3, incoming_flight_data: FlightData = null, incoming_item_data: ItemData = null) -> void:
+func store_collision(incoming_owner_rid: RID, incoming_collider_rid: RID, incoming_collision_location: Vector3, incoming_flight_data: FlightData = null, incoming_item_data: AssetData = null) -> void:
 	# TODO Create CollisionData and store it in the array
 	var new_collision_data: CollisionData = CollisionData.create_collision_data(incoming_owner_rid, incoming_collider_rid, incoming_collision_location, incoming_flight_data, incoming_item_data)
 	collision_data.append(new_collision_data)

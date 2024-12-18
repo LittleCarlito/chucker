@@ -19,9 +19,6 @@ class_name CameraContainer
 # TODO Add methods to allow creation of camera containers without cameras
 #		These can then be holders for passed around cameras originally from characterbody scenes
 
-const container_scene: PackedScene = preload(SceneLibrary.CAMERA.CONTAINER_SCENE)
-const camera_scene: PackedScene = preload(SceneLibrary.CAMERA.STANDARD_SCENE)
-
 const _INF_FOCUS_LOG: String = "Infinite position given to camera focus; Defaulting to stored _focus_location \"%s\""
 const _NO_FOCUS_LOG: String = "Camera \"%s\" with no focus set"
 const _CAMERA_ALREADY_EXISTS: String = "Camera already exists cannot populate with new instance"
@@ -40,6 +37,11 @@ signal lose_focus
 var _focus_location: Vector3 = Vector3.INF
 var _focused: bool = false
 var _idle_rotate: bool = false
+
+const CAMERA = {
+	# This needs to match the camera node name in ChuckTee scene
+	"TEE_CAMERA": "TeeboxCamera"
+}
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -66,25 +68,15 @@ func _process(_delta: float) -> void:
 		#var horizontal_pan_amount: float = deg_to_rad(event.relative.x) * GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
 		#horizontal_pan(horizontal_pan_amount)
 
-static func new_container() -> CameraContainer:
-	var new_camera_container: CameraContainer = container_scene.instantiate()
-	new_camera_container.name = new_camera_container.name + "-" + str(new_camera_container.get_instance_id())
-	return new_camera_container
-
-static func new_camera() -> Camera3D:
-	var new_scene_camera: Camera3D = camera_scene.instantiate()
-	new_scene_camera.name = new_scene_camera.name + "-" + str(new_scene_camera.get_instance_id())
-	return new_scene_camera
-
 static func new_container_with_camera() -> CameraContainer:
-	var new_camera_container: CameraContainer = new_container()
-	var new_scene_camera: Camera3D = new_camera()
+	var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
+	var new_scene_camera: Camera3D = AssetFactory.new_camera()
 	new_camera_container.set_camera(new_scene_camera)
 	return new_camera_container
 
 func populate_camera_control() -> void:
 	if internal_camera == null:
-		var new_scene_camera: Camera3D = new_camera()
+		var new_scene_camera: Camera3D = AssetFactory.new_camera()
 		set_camera(new_scene_camera)
 	else:
 		Logger.warn(_CAMERA_ALREADY_EXISTS, [], self)
@@ -159,7 +151,7 @@ func get_camera() -> Camera3D:
 		return null
 
 func set_camera(incoming_camera: Camera3D) -> void:
-	new_camera().global_transform = camera_control.global_transform
+	incoming_camera.global_transform = camera_control.global_transform
 	camera_control.add_child(incoming_camera)
 	var old_camera: Camera3D = internal_camera
 	if is_instance_valid(old_camera):

@@ -1,11 +1,11 @@
 [gd_scene load_steps=12 format=3 uid="uid://cfb8nwjdbjdsi"]
 
 [ext_resource type="Script" path="res://assets/items/disks/charge_disk.gd" id="2_o74uw"]
-[ext_resource type="Script" path="res://assets/items/data/flight_data.gd" id="2_vyydj"]
+[ext_resource type="Script" path="res://assets/items/common/flight_data.gd" id="2_vyydj"]
 [ext_resource type="PackedScene" uid="uid://cfpse6r2su0ua" path="res://assets/ui/views/ChargeView.tscn" id="3_ag6h7"]
-[ext_resource type="Script" path="res://assets/items/data/item_data.gd" id="3_gcqdw"]
+[ext_resource type="Script" path="res://assets/factory/asset_data.gd" id="3_gcqdw"]
 [ext_resource type="PackedScene" uid="uid://jvw5pa8yws2g" path="res://assets/items/disks/common/disk_mesh.tscn" id="3_h4vod"]
-[ext_resource type="PackedScene" uid="uid://uyfdjyipfutg" path="res://assets/items/camera/CameraContainer.tscn" id="4_v6v7m"]
+[ext_resource type="PackedScene" uid="uid://uyfdjyipfutg" path="res://assets/items/camera/camera_container.tscn" id="4_v6v7m"]
 [ext_resource type="PackedScene" uid="uid://ctgyvj14lfkpj" path="res://assets/items/common/aim_line.tscn" id="6_bvyjy"]
 
 [sub_resource type="Resource" id="Resource_6rxnd"]

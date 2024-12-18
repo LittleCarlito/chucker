@@ -1,14 +1,12 @@
 extends PlayableCharacter
 class_name ChuckChucker
 
-const character_scene: PackedScene = preload(SceneLibrary.CHARACTER.CHUCK)
-
 const _UKNOWN_OBJECT_LOG: String = "Tried to pick up UKNOWN object; Where did you get that?"
 
 @onready var chuck_mesh: MeshInstance3D = $ChuckMesh
 @onready var front_detection: ShapeCast3D = $FrontDetect
 @onready var camera_container: CameraContainer = $CameraContainer
-@onready var item_controller: ItemController = $ItemController
+@onready var item_container: ItemContainer = $ItemContainer
 
 # TODO Time for Groups
 # 		Use of disks should be done through group method calls
@@ -18,7 +16,7 @@ const _UKNOWN_OBJECT_LOG: String = "Tried to pick up UKNOWN object; Where did yo
 #		This as the owner can call to fire_launcher()
 #		Disks as member of the group should check their type
 #			If LAUNCHER reach to the signal/method by sending set flight_data and item_data to the factory
-@export var item_data: ItemData
+@export var item_data: AssetData
 var stopwatch: Stopwatch = Stopwatch.new()
 var height: float
 
@@ -32,23 +30,17 @@ var height: float
 # BUG After throwing the disk a second time mesh was spun sidways but controls remained normal (cube rotated on y axis)
 
 func _ready() -> void:
+	get_tree().set_group(self.name, AssetData.TYPE_PROPERTY, AssetData.TYPE.PLAYER)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	height = chuck_mesh.get_aabb().size.y
 	camera_container.populate_camera_control()
 	if item_data == null:
 		# BUG-CATCHER
-		item_data = ItemData.create_item_data(ItemData.TYPE.PLAYER)
+		item_data = AssetData.create_item_data(AssetData.TYPE.PLAYER)
 	_update_state()
 
 func _process(_delta: float) -> void:
 	pass
-
-func new_character() -> ChuckChucker:
-	var new_chuck: ChuckChucker = character_scene.instantiate()
-	new_chuck.name = new_chuck.name + "-" + str(new_chuck.get_instance_id())
-	# TODO See to it that these are scene specific groups
-	get_tree().set_group(new_chuck.name, ItemData.TYPE_PROPERTY, ItemData.TYPE.PLAYER)
-	return new_chuck
 
 func _physics_process(delta: float) -> void:
 	_handle_camera_controls()
@@ -87,7 +79,7 @@ func _handle_camera_controls() -> void:
 
 ## Actions when disk is thrown
 func _handle_player_action(delta: float) -> void:
-	if item_controller.is_equipped():
+	if item_container.is_equipped():
 		# TODO Need to make sure disks that are capable of launching have these methods implemented
 		if Input.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY):
 			get_tree().call_group(self.name, CONSTANTS.HOLD_ACTION, delta)
@@ -104,29 +96,29 @@ func _handle_player_interact() -> void:
 			var colliding_object = front_detection.get_collider(0)
 			Logger.debug("%s", [str(colliding_object)], colliding_object)
 			if colliding_object != null and colliding_object is ForceDisk:
-				ItemFactory.equip_item(self, colliding_object)
+				AssetFactory.equip_item(self, colliding_object)
 
 # TODO This should just be handled by this class without signals from below being needed
 #		Should be checking if equipped (if necessary what type; group check)
 #			Then handling rotation event and calling this method internally not from a signal
 # Handles rotation signals from held nodes
 func _handle_rotation(rotation_amount: float) -> void:
-	var is_min_rotate: bool = rotation_amount > 0 and item_controller.rotation_degrees.x < GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION
-	var is_max_rotate: bool = rotation_amount < 0 and item_controller.rotation_degrees.x > GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION
+	var is_min_rotate: bool = rotation_amount > 0 and item_container.rotation_degrees.x < GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION
+	var is_max_rotate: bool = rotation_amount < 0 and item_container.rotation_degrees.x > GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION
 	if is_min_rotate or is_max_rotate:
 		var projected_rotation: float
 		if rotation_amount > 0:
-			projected_rotation = rad_to_deg(rotation_amount + item_controller.rotation.x)
+			projected_rotation = rad_to_deg(rotation_amount + item_container.rotation.x)
 			if projected_rotation > GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION:
-				item_controller.rotation_degrees.x = GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION
+				item_container.rotation_degrees.x = GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION
 			else:
-				item_controller.rotate_x(rotation_amount)
+				item_container.rotate_x(rotation_amount)
 		else:
-			projected_rotation = rad_to_deg(rotation_amount + item_controller.rotation.x)
+			projected_rotation = rad_to_deg(rotation_amount + item_container.rotation.x)
 			if projected_rotation < GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION:
-				item_controller.rotation_degrees.x = GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION
+				item_container.rotation_degrees.x = GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION
 			else:
-				item_controller.rotate_x(rotation_amount)
+				item_container.rotate_x(rotation_amount)
 
 ## Detects and executes movements
 func _handle_movement(delta: float) -> void:
@@ -139,7 +131,7 @@ func _handle_movement(delta: float) -> void:
 	if(is_on_floor()):
 		var direction = (self.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		if direction:
-			if item_controller.is_equipped() || is_movement_disabled():
+			if item_container.is_equipped() || is_movement_disabled():
 				velocity.x = 0
 				velocity.z = 0
 			else:
@@ -188,17 +180,17 @@ func _handle_looking(event: InputEvent) -> void:
 			camera_container.horizontal_rotate(h_rotation_amount)
 		if _can_vertically_rotate(v_rotation_amount):
 			camera_container.veritcal_rotate(v_rotation_amount)
-		if item_controller.is_equipped():
+		if item_container.is_equipped():
 			_handle_rotation(v_rotation_amount)
 	# Third person viewing self
 	# Only occurs when unequipped and primary is held
-	elif event.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY) and item_controller.is_unequipped():
+	elif event.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY) and item_container.is_unequipped():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	elif event is InputEventMouseMotion and (Input.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY) and item_controller.is_unequipped()):
+	elif event is InputEventMouseMotion and (Input.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY) and item_container.is_unequipped()):
 		## Determine amount to rotate camera
 		var horizontal_rotate_amount: float = deg_to_rad(event.relative.x) * GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
 		camera_container.horizontal_pan(horizontal_rotate_amount, self.global_position)
-	elif event.is_action_released(CONSTANTS.USER_INPUT.PRIMARY) and item_controller.is_unequipped():
+	elif event.is_action_released(CONSTANTS.USER_INPUT.PRIMARY) and item_container.is_unequipped():
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		camera_container.snap_back(self.global_basis, self.global_position)
 
@@ -215,7 +207,7 @@ func _can_vertically_rotate(rotation_amount:float) -> bool:
 	return (potential_vertical_roation > min_vertical_value) and (potential_vertical_roation < max_vertical_value)
 
 func _update_state() -> void:
-	item_data.camera_state = ItemData.get_camera_state(camera_container)
+	item_data.camera_state = AssetData.get_camera_state(camera_container)
 
 func hold_action(delta: float) -> void:
 	Logger.info("I'm gonna chuck", [], self)

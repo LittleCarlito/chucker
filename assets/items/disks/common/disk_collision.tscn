@@ -6,3 +6,4 @@
 [node name="DiskCollision" type="CollisionShape3D"]
 shape = ExtResource("1_dd3kx")
 script = ExtResource("2_fm0bj")
+collision_data = null

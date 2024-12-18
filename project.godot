@@ -23,9 +23,8 @@ NodeUtil="*res://utils/node_util.gd"
 Logger="*res://utils/logger.gd"
 InputEventLibrary="*res://configuration/input/input_event_library.gd"
 InputSprite="*res://configuration/sprite/input_sprite.gd"
-SceneLibrary="*res://configuration/scenes/scene_library.gd"
 GlobalSettings="*res://configuration/global_settings.gd"
-ItemFactory="*res://assets/items/common/item_factory.gd"
+AssetFactory="*res://assets/factory/asset_factory.gd"
 
 [global_group]
 

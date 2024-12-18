@@ -1,7 +1,7 @@
 extends Node3D
 
 @onready var control_node: ControlNode = $ControlNode
-@export var item_data: ItemData
+@export var item_data: AssetData
 
 # TODO ChuckChucker and Disks need to be spawned in here programatically
 #		This is important because they will then be generated (hopefully) with appended names and groups assigned to them
@@ -39,22 +39,34 @@ extends Node3D
 #		Allow the bag to have 6 x 6 inventory where disks are stored and can be chosen/equipped
 
 # Called when the node enters the scene tree for the first time.
-# TODO Get DiskFactory refactored to ItemFactory
-# TODO Get ItemFactory spawn_item method working
+# TODO Get AssetFactory spawn_item method working
 func _ready() -> void:
 	# Spawn in Character
-	var chuck_data: ItemData = ItemData.create_item_data(ItemData.TYPE.PLAYER, ItemData.ITEM_STATE.ACTIVATED, ItemData.CAMERA_STATE.ACTIVE)
+	var chuck_data: AssetData = AssetData.create_item_data(AssetData.TYPE.PLAYER, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
+	var created_character: ChuckChucker = AssetFactory.create_asset(chuck_data)
+	self.add_child(created_character)
+	Logger.debug(CONSTANTS.LOCATION_LOG, [str(created_character), str(created_character.global_position)], self)
 	var chuck_location: Vector3 = Vector3(0, 1, 0)
-	ItemFactory.spawn_item(chuck_data, chuck_location)
+	created_character.global_position = chuck_location
+	Logger.debug(CONSTANTS.LOCATION_LOG, [str(created_character), str(created_character.global_position)], self)
 	# Spawn in PathDisk
-	var path_data: ItemData = ItemData.create_item_data(ItemData.TYPE.PATH, ItemData.ITEM_STATE.DEACTIVATED)
+	var path_data: AssetData = AssetData.create_item_data(AssetData.TYPE.PATH, AssetData.ITEM_STATE.DEACTIVATED)
+	var created_path_disk: PathDisk = AssetFactory.create_asset(path_data)
+	self.add_child(created_path_disk)
+	Logger.debug(CONSTANTS.LOCATION_LOG, [str(created_path_disk), str(created_path_disk.global_position)], self)
 	var path_location: Vector3 = Vector3(2, 4, -2)
-	ItemFactory.spawn_item(path_data, path_location)
+	created_path_disk.global_position = path_location
+	Logger.debug(CONSTANTS.LOCATION_LOG, [str(created_path_disk), str(created_path_disk.global_position)], self)
 	# Spawn in ForceDisk
-	var force_data: ItemData = ItemData.create_item_data(ItemData.TYPE.FORCE, ItemData.ITEM_STATE.DEACTIVATED)
+	var force_data: AssetData = AssetData.create_item_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED)
+	var created_force_disk: ForceDisk = AssetFactory.create_asset(force_data)
+	self.add_child(created_force_disk)
+	Logger.debug(CONSTANTS.LOCATION_LOG, [str(created_force_disk), str(created_force_disk.global_position)], self)
 	var force_location: Vector3 = Vector3(-2, 4, -2)
+	created_force_disk.global_position = force_location
+	Logger.debug(CONSTANTS.LOCATION_LOG, [str(created_force_disk), str(created_force_disk.global_position)], self)
+	# Update all settings
 	get_tree().call_group(CONSTANTS.GENERAL, CONSTANTS.UPDATE_STATE)
-	ItemFactory.spawn_item(force_data, force_location)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:

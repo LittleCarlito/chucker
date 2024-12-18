@@ -19,6 +19,7 @@ const ZOOM_IN: String = "zoom_in"
 const ZOOM_OUT: String = "zoom_out"
 const GET_CAMERA: String = "get_camera"
 const IS_CURRENT: String = "is_current"
+const LOCATION_LOG: String = "\"%s\" global position \"%s\""
 # TODO Refactor other users to use this instead
 const RETURNING_UNKNOWN_LOG: String = "Returning unknown"
 const PICKED_UP_LOG: String = "%s has been picked up"

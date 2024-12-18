@@ -7,11 +7,9 @@ class_name PullDisk
 #		Probably make that part of ThrowableItem and not have it in both
 #		Make it shake the disk as timer gets closer until it finally just inaccurately launches
 
-const disk_scene: PackedScene = preload(SceneLibrary.MESH.PULL_SCENE)
-
 @onready var pull_draw: PullDraw = $PullDraw
 @onready var charge_view: ChargeView = $ChargeView
-@onready var item_data: ItemData
+@onready var item_data: AssetData
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -32,11 +30,6 @@ func _process(_delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	#handle_input(event)
 	pass
-
-static func new_object() -> PullDisk:
-	var new_disk: PullDisk = disk_scene.instantiate()
-	new_disk.name = new_disk.name + "-" + str(new_disk.get_instance_id())
-	return new_disk
 
 # TODO Need to refactor to use AimLine and not extend anything
 func hold_action(_delta: float) -> void:

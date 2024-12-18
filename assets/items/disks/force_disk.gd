@@ -31,9 +31,8 @@ class_name ForceDisk
 	# TODO Swap out disk creation stuff in swap disk with DiskFactory usage
 	# TODO See about slowing (maybe clamping) values as bounds get closer to make it feel like resistance
 
-const disk_scene: PackedScene = preload(SceneLibrary.DISK.FORCE_SCENE)
 const _MISSING_FLIGHT_DATA_LOG: String = "Launch parameters must be set before item can be launched"
-const _NO_ITEM_DATA_LOG: String = "ItemData has not been initialized for this node"
+const _NO_ITEM_DATA_LOG: String = "AssetData has not been initialized for this node"
 const _CREATING_CAMERA_LOG: String = "Creating camera container"
 const _SET_DISK_CAMERA: String = "set_disk_camera"
 const _GET_DISK_CAMERA: String = "get_disk_camera"
@@ -42,34 +41,24 @@ signal lose_focus
 
 @onready var disk_mesh: DiskMesh = $DiskMesh
 @onready var disk_collision: DiskCollision = $DiskCollision
-@export var item_data: ItemData
+@export var item_data: AssetData
 @export var flight_data: FlightData
 var camera_container: CameraContainer
 
 func _ready() -> void:
 	if item_data == null:
-		item_data = ItemData.create_item_data(GlobalSettings.DEFAULTS.ITEM as ItemData.TYPE)
+		item_data = AssetData.create_item_data(GlobalSettings.DEFAULTS.ITEM as AssetData.TYPE)
 	disk_mesh.set_type(item_data.internal_type)
 	_update_state()
 
 func _process(_delta: float) -> void:
 	pass
 
-static func new_disk() -> ForceDisk:
-	var new_force_disk: ForceDisk = disk_scene.instantiate()
-	new_force_disk.name = new_force_disk.name + "-" + str(new_force_disk.get_instance_id())
-	return new_force_disk
-
-static func new_viewable_disk() -> ForceDisk:
-	var new_force_disk: ForceDisk = ForceDisk.new_disk()
-	new_force_disk._create_camera_container()
-	return new_force_disk
-
-func set_internal_type(new_internal_type: ItemData.TYPE) -> void:
+func set_internal_type(new_internal_type: AssetData.TYPE) -> void:
 	item_data.internal_type = new_internal_type
 	disk_mesh.set_type(item_data.internal_type)
 
-func set_creation_type(new_creation_type: ItemData.TYPE) -> void:
+func set_creation_type(new_creation_type: AssetData.TYPE) -> void:
 	item_data.creation_type = new_creation_type
 
 func set_launch_parameters(incoming_data: FlightData) -> void:
@@ -87,13 +76,13 @@ func launch_disk() -> void:
 	else:
 		Logger.warn(_MISSING_FLIGHT_DATA_LOG, [], self)
 
-func get_item_type() -> ItemData.TYPE:
+func get_item_type() -> AssetData.TYPE:
 	if item_data != null:
 		return item_data.internal_type
 	else:
 		var formattedString: String = _NO_ITEM_DATA_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_UNKNOWN_LOG
 		Logger.warn(formattedString, [], self)
-		return ItemData.TYPE.UNKNOWN
+		return AssetData.TYPE.UNKNOWN
 
 # TODO This should be changed to transfer camera or something along those lines
 func toggle_camera() -> void:
@@ -156,11 +145,11 @@ func pick_up() -> void:
 ## Should only be called intnernally
 func _create_camera_container() -> void:
 	if camera_container == null:
-		var new_camera_container: CameraContainer = CameraContainer.new_container()
+		var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
 		self.add_child(new_camera_container)
 		camera_container = new_camera_container
 	else:
 		Logger.warn(CONSTANTS.ALREADY_EXISTS_LOG, [CONSTANTS.CAMERA_CONTAINER], self)
 
 func _update_state() -> void:
-	item_data.camera_state = ItemData.get_camera_state(camera_container)
+	item_data.camera_state = AssetData.get_camera_state(camera_container)

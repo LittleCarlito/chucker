@@ -1,5 +1,5 @@
 extends Node3D
-class_name ItemController
+class_name ItemContainer
 
 const _UNEQUIP_MESSAGE_LOG: String = "unequip_item() called but no item is equiped"
 

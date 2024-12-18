@@ -5,9 +5,9 @@ var owner_rid: RID
 var colliding_object_rid: RID
 var collision_global_location: Vector3
 var owner_flight_data: FlightData
-var owner_item_data: ItemData
+var owner_item_data: AssetData
 
-static func create_collision_data(incoming_rid: RID, incoming_colliding_rid: RID, incoming_global_location: Vector3, incoming_flight_data: FlightData = null, incoming_item_data: ItemData = null) -> CollisionData:
+static func create_collision_data(incoming_rid: RID, incoming_colliding_rid: RID, incoming_global_location: Vector3, incoming_flight_data: FlightData = null, incoming_item_data: AssetData = null) -> CollisionData:
 	var return_data: CollisionData = CollisionData.new()
 	return_data.owner_rid = incoming_rid
 	return_data.colliding_object_rid = incoming_colliding_rid

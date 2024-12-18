@@ -2,15 +2,13 @@
 extends Node3D
 class_name ChargeDisk
 
-const disk_scene: PackedScene = preload(SceneLibrary.MESH.CHARGE_SCENE)
-
 @onready var charge_view: ChargeView = $ChargeView
 @onready var camera_container: CameraContainer = $CameraContainer
 @onready var aim_line: AimLine = $AimLine
 
 var stopwatch: Stopwatch = Stopwatch.new()
 @export var flight_data: FlightData
-@export var item_data: ItemData
+@export var item_data: AssetData
 
 # TODO Have charge and line decrease after reaching max and increase after reaching min on long holds
 # TODO Add charge effects
@@ -27,11 +25,6 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
-
-static func new_object() -> ChargeDisk:
-	var new_disk: ChargeDisk = disk_scene.instantiate()
-	new_disk.name = new_disk.name + "-" + str(new_disk.get_instance_id())
-	return new_disk
 
 func hold_action(delta: float) -> void:
 	# If right click is pressed while holding left reset throw
@@ -59,7 +52,7 @@ func release_action() -> void:
 		flight_data = FlightData.create_flight_data(final_speed, self.global_basis.get_euler().x, flight_data.flight_path, flight_data.focus_flight)
 		# TODO Launcd disk needs to be refactored into this class
 		if flight_data.flight_ready:
-			ItemFactory.create_and_launch(flight_data, item_data)
+			AssetFactory.create_and_launch(flight_data, item_data)
 			#self.queue_free()
 		else:
 			Logger.error(FlightData.LAUNCH_NOT_READY_LOG, [], self)

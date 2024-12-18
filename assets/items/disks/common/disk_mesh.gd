@@ -1,8 +1,6 @@
 extends MeshInstance3D
 class_name DiskMesh
 
-const mesh_scene: PackedScene = preload(SceneLibrary.MESH.DISK_MESH)
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.
@@ -27,11 +25,6 @@ func _process(_delta: float) -> void:
 	#fallback_camera.current = true
 	#collision_location = Vector3.INF
 
-static func new_mesh() -> DiskMesh:
-	var new_disk_mesh: DiskMesh = mesh_scene.instantiate()
-	new_disk_mesh.name = new_disk_mesh.name + "-" + str(new_disk_mesh.get_instance_id())
-	return new_disk_mesh
-
-func set_type(new_type: ItemData.TYPE) -> void:
+func set_type(new_type: AssetData.TYPE) -> void:
 	var disk_material: StandardMaterial3D = self.get_active_material(0)
-	disk_material.albedo_color = ItemData.get_item_color(new_type)
+	disk_material.albedo_color = AssetData.get_item_color(new_type)

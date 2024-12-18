@@ -1,7 +1,7 @@
 extends Node3D
 class_name PathDisk
 
-# TODO Refactor to use AimLine ItemData FlightData and DiskFactory
+# TODO Refactor to use AimLine AssetData FlightData and DiskFactory
 # BUG Can steal mouse if thrown over the edge
 # TODO Flickering when swapdisk disk switch happens
 #		Should just give the camera object to the swapped disk instead of activating the new one
@@ -15,8 +15,6 @@ class_name PathDisk
 # TODO Add original launch velocity on z axis to disk when collision is detected
 #		Need to make collision with ground more realistic
 
-const disk_scene: PackedScene = preload(SceneLibrary.DISK.PATH_SCENE)
-
 const _BODY_EXIT: String = "body_exit"
 const _BODY_ENTER: String = "body_enter"
 
@@ -26,11 +24,11 @@ const _BODY_ENTER: String = "body_enter"
 @onready var path_3d: Path3D = $Path3D
 @onready var path_follow: PathFollow3D = $Path3D/PathFollow3D
 @export var flight_data: FlightData
-@export var item_data: ItemData
+@export var item_data: AssetData
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	disk_mesh.set_type(ItemData.TYPE.PATH)
+	disk_mesh.set_type(AssetData.TYPE.PATH)
 
 # BUG When path is short the disk travels too quickly
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -53,17 +51,6 @@ func _process(delta: float) -> void:
 			#disk_mesh.collision_location = disk_mesh.global_position
 			#_swap_disk()
 
-# Create a new path disk
-static func new_object() -> PathDisk:
-	var new_path_disk: PathDisk = disk_scene.instantiate()
-	new_path_disk.name = new_path_disk.name + "-" + str(new_path_disk.get_instance_id())
-	return new_path_disk
-
-func prepare_item(incoming_type: ItemData.TYPE, incoming_owner: ChuckChucker = null, incoming_camera: Camera3D = null) -> void:
-	var new_disk_mesh: DiskMesh = DiskMesh.new_mesh()
-	new_disk_mesh.set_type(incoming_type)
-	set_item_mesh(new_disk_mesh)
-
 func set_item_mesh(new_mesh: DiskMesh) -> void:
 	self.add_child(new_mesh)
 	var old_mesh: DiskMesh = disk_mesh
@@ -82,7 +69,7 @@ func set_launch_parameters(incoming_data: FlightData) -> void:
 
 func _body_enter(body_rid: RID, _body: Node3D, _body_shape_index: int, _local_shape_index: int) -> void:
 	pass
-	# TODO Refator to use ItemData or group method calls
+	# TODO Refator to use AssetData or group method calls
 	#var owner_rid: RID
 	#if item_owner != null:
 		#owner_rid = item_owner.get_rid()
@@ -115,8 +102,8 @@ func _swap_disk() -> void:
 		#new_disk.global_position = new_location
 		#prepare_angle = path_follow.global_rotation.x
 		#launch_speed = launch_speed * .5
-	#new_disk.set_internal_type(ItemData.TYPE.PATH)
-	#new_disk.set_creation_type(ItemData.TYPE.PATH)
+	#new_disk.set_internal_type(AssetData.TYPE.PATH)
+	#new_disk.set_creation_type(AssetData.TYPE.PATH)
 	## Set momentum in direction of prepareAngle
 	#var swap_focus: bool = !launch_path.is_empty()
 	#new_disk.set_launch_parameters(launch_path, launch_speed, prepare_angle, swap_focus)
