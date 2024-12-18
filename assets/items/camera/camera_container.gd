@@ -74,10 +74,10 @@ static func new_container_with_camera() -> CameraContainer:
 	new_camera_container.set_camera(new_scene_camera)
 	return new_camera_container
 
-func populate_camera_control() -> void:
+func populate_camera_control(incoming_focus: Vector3 = Vector3.INF) -> void:
 	if internal_camera == null:
 		var new_scene_camera: Camera3D = AssetFactory.new_camera()
-		set_camera(new_scene_camera)
+		set_camera(new_scene_camera, incoming_focus)
 	else:
 		Logger.warn(_CAMERA_ALREADY_EXISTS, [], self)
 
@@ -111,6 +111,7 @@ func veritcal_rotate(rotation_amount: float) -> void:
 func get_vertical_rotation() -> float:
 	return camera_control.rotation.x
 
+# TODO Current parameters don't meet current needs; Look at callers and see how original basis can be given
 func snap_back(new_basis: Basis, focus_position: Vector3 = Vector3.INF) -> void:
 	self.global_basis = new_basis
 	camera_control.global_basis = self.global_basis
@@ -150,9 +151,12 @@ func get_camera() -> Camera3D:
 		Logger.error(formattedString, [CONSTANTS.GET_CAMERA], self)
 		return null
 
-func set_camera(incoming_camera: Camera3D) -> void:
+func set_camera(incoming_camera: Camera3D, incoming_focus: Vector3 = Vector3.INF) -> void:
 	incoming_camera.global_transform = camera_control.global_transform
 	camera_control.add_child(incoming_camera)
+	incoming_camera.global_position = camera_control.global_position
+	if incoming_focus != Vector3.INF:
+		focus_camera_control(incoming_focus)
 	var old_camera: Camera3D = internal_camera
 	if is_instance_valid(old_camera):
 		old_camera.queue_free()
@@ -173,6 +177,8 @@ func disable_camera() -> void:
 func enable_camera() -> void:
 	if internal_camera != null:
 		internal_camera.current = true
+		Logger.debug(CONSTANTS.LOCATION_LOG, [str(self), str(self.global_position)], self)
+		Logger.debug(CONSTANTS.LOCATION_LOG, [str(internal_camera), str(internal_camera.global_position)], self)
 	else:
 		Logger.error(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.ENABLE_CAMERA], self)
 

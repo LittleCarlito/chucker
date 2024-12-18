@@ -33,7 +33,8 @@ func _ready() -> void:
 	get_tree().set_group(self.name, AssetData.TYPE_PROPERTY, AssetData.TYPE.PLAYER)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	height = chuck_mesh.get_aabb().size.y
-	camera_container.populate_camera_control()
+	var focus_point: Vector3 = self.global_position + GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOCUS_OFFSET, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOCUS_OFFSET)
+	camera_container.populate_camera_control(focus_point)
 	if item_data == null:
 		# BUG-CATCHER
 		item_data = AssetData.create_item_data(AssetData.TYPE.PLAYER)
@@ -171,6 +172,7 @@ func _handle_looking(event: InputEvent) -> void:
 			camera_container.zoom_in()
 	elif event.is_action_released(CONSTANTS.USER_INPUT.SECONDARY):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		# TODO This ends up looking at a different location; Need to change parameters
 		camera_container.snap_back(self.global_basis, self.global_position)
 		enable_movement()
 	elif event is InputEventMouseMotion and Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):

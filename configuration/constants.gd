@@ -104,6 +104,7 @@ const Camera: String = "Camera"
 const FOV: String = "FOV"
 const IN_ADJUST: String = "IN_ADJUST"
 const OUT_ADJUST: String = "OUT_ADJUST"
+const PLAYER_FOCUS_OFFSET: String = "PLAYER_FOCUS_OFFSET"
 
 const Controls: String = "Controls"
 const HORIZONTAL_AIM_SENSITIVITY: String = "HORIZONTAL_AIM_SENSITIVITY"

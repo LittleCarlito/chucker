@@ -30,6 +30,8 @@ func error(error_log: String, params: Array, caller: Object) -> void:
 
 # TODO Run some bad logs through and see how catching their errors goes
 #			Then print what you can about missing parameters or whatever for why blank logs
+# TODO Need to add logging statements to all GlobalSetting.get()s that can use default values
+#			Need to add warning when default is used to it can at leaste be looked at
 func _print(print_log: String, params: Array, caller: Object, incoming_log_level: LEVEL) -> void:
 	var time_stamp: String = Time.get_datetime_string_from_system()
 	var log_string: String = print_log % params
