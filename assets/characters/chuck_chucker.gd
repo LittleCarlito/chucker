@@ -30,7 +30,7 @@ var height: float
 # BUG After throwing the disk a second time mesh was spun sidways but controls remained normal (cube rotated on y axis)
 
 func _ready() -> void:
-	get_tree().set_group(self.name, AssetData.TYPE_PROPERTY, AssetData.TYPE.PLAYER)
+	self.add_to_group(self.name)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	height = chuck_mesh.get_aabb().size.y
 	camera_container.populate_camera_control(_get_focus_point())

@@ -69,8 +69,7 @@ func create_and_launch(flight_data: FlightData, item_data: AssetData) -> void:
 
 func equip_item(item_owner: ChuckChucker, incoming_item: ForceDisk) -> void:
 	pass
-	# TODO ACTUAL CONTINUE: Move this logic to factory; Have it take in ChuckChucker and ForceDisk that was picked up
-	#		Should create the ChargeDisk and add it to the group for the passed in Chuck
+	# TODO Should create the ChargeDisk and add it to the group for the passed in Chuck
 	#		Should add the new disk as a child to ChuckChucker
 	#			Should have method in ChuckChucker to set holdItem or something
 		#var rigid_disk: ForceDisk = colliding_object as ForceDisk

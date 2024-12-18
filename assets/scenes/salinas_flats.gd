@@ -61,16 +61,16 @@ func _process(_delta: float) -> void:
 	pass
 
 func _disable_character_movement() -> void:
-	get_tree().call_group(CONSTANTS.CHARACTER, CONSTANTS.DISABLE_MOVEMENT)
+	get_tree().call_group(CONSTANTS.PLAYER, CONSTANTS.DISABLE_MOVEMENT)
 
 func _enable_character_movement() -> void:
-	get_tree().call_group(CONSTANTS.CHARACTER, CONSTANTS.ENABLE_MOVEMENT)
+	get_tree().call_group(CONSTANTS.PLAYER, CONSTANTS.ENABLE_MOVEMENT)
 
 func _disable_character_rotation() -> void:
-	get_tree().call_group(CONSTANTS.CHARACTER, CONSTANTS.DISABLE_ROTATION)
+	get_tree().call_group(CONSTANTS.PLAYER, CONSTANTS.DISABLE_ROTATION)
 
 func _enable_character_rotation() -> void:
-	get_tree().call_group(CONSTANTS.CHARACTER, CONSTANTS.ENABLE_ROTATION)
+	get_tree().call_group(CONSTANTS.PLAYER, CONSTANTS.ENABLE_ROTATION)
 
 func _apply_settings() -> void:
 	get_tree().call_group(CONSTANTS.GENERAL, CONSTANTS.RELOAD_PROJECT_SETTINGS)

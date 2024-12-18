@@ -28,7 +28,7 @@ const LOG_SEPARATOR: String = "; "
 
 # Group names
 const ENVIRONMENT: String = "Environment"
-const CHARACTER: String = "Character"
+const PLAYER: String = "Player"
 const DISK: String = "Disk"
 const GENERAL: String = "General"
 # Group methods
