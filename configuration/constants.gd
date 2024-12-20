@@ -7,6 +7,8 @@ const LOWER: String = "lower"
 const INCREASE: String = "increase"
 const DECREASE: String = "decrease"
 # TODO Refactor these out to Logger or a Log Constants file
+const ILLEGAL_STATE_STRING: String = "Illegal state has been reached %s"
+const EXISTING_DATA_MISSING: String = "%s \"%s\" was expected to exist but returned null from %s"
 const FOR_METHOD_LOG: String = "For method %s"
 const METHOD_LOG: String = "\"%s\"; \"%s\""
 const NULL_LOG: String = "\"%s\" is null"
@@ -53,6 +55,10 @@ const DISABLE_ROTATION: String = "disable_rotation"
 const ENABLE_ROTATION: String = "enable_rotation"
 const RELOAD_PROJECT_SETTINGS: String = "reload_project_settings"
 const UPDATE_STATE: String = "_update_state"
+# TODO Rework these to be ALTER_HOLE_NUMBER and ALTER_HOLE_NODE_NUMBER; These should only be on TeeBox assets
+const ALTER_HOLE_NODE_NUMBERS: String = "_alter_hole_node_numbers" # (hole_number: int, update_data: Dictionary[old_value[int], new_value[int])
+const ALTER_HOLE_NUMBERS: String = "_alter_hole_numbers" # (update_data: Dictionary[old_value[int], new_value[int])
+const RELOAD_COURSE_DATA: String = "_reload_course_data" # (hole_number: int = CONSTANTS.INT64_MAX)
 # TODO Rework COURSE group members to not implement this; Will be handled through TeeBox
 const INCREASE_NODE_NUMBER: String = "_increase_node_number"
 # TODO Implement this in TEEBOX assets

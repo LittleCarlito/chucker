@@ -111,3 +111,18 @@ func get_nearest_greater_index(desired_value: int, search_array: Array[int]) -> 
 		if existing_number > desired_value and start_value == CONSTANTS.INT64_MAX:
 			start_value = search_array.find(existing_number)
 	return start_value
+
+## Determines if given array of ints is sequential
+func is_sequential(incoming_data: Array[int]) -> bool:
+	var non_sequential_index: int = get_first_non_sequential_index(incoming_data)
+	return true if non_sequential_index != CONSTANTS.INT64_MAX else false
+
+## Returns the first non sequential index in the array
+## Values are expected to be +1 their index (no 0 references allowed)
+## If whole array is sequential returns INT64_MAX
+func get_first_non_sequential_index(incoming_data: Array[int]) -> int:
+	var return_index: int = CONSTANTS.INT64_MAX
+	for i in incoming_data.size():
+		if i + 1 != incoming_data[i]:
+			return_index = i
+	return return_index

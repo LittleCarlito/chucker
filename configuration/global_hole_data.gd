@@ -18,18 +18,22 @@ const _HOLE_NUMBER_STRING: String = "hole number %s"
 const _HOLE_NODE_NOT_GIVEN_STRING: String = "Hole node not given or was equal to default value; Returning hole_data \"%s\" calculated value of %s"
 const _BASE_CREATION_FAILURE: String = "Creation of base node failed; Data could not be added for hole \"%s\", node number \"%s\""
 const _HOLE_NODE_NUMBER_STRING: String = "hole node number %s for %s"
+const _NO_NON_SEQUENTIAL_FOUND: String = "No non sequential %s founds for \"%s\""
 const _NOT_ADDING_DATA: String = "Not adding data"
 const _BASE_CREATION_ATTEMPT_STRING: String = "Attempting to create a base node for the hole"
 const _NOT_BASE_CREATION_NODE: String = "Not node_number 1; Holes can only be started with node_number 1 assets"
-const _CANNOT_INCREASE_RELOAD: String = "Cannot increase node numbers starting at \"%s\""
 const _NO_NODE_AT_OR_GREATER: String = "No node of value \"%s\" or higher for hole \"%s\" could be found"
 const _NO_HOLE_OR_GREATER: String = "No hole of value \"%s\" or higher could be found"
 const _HOLE_DATA_ADD_FAIL: String = "Data for hole number %s can't be added; Data \"%s\""
 const _NO_ACTION_RELOAD: String = "No %s and reload"
+const _PROCEEDING_WITH_RELOAD: String = "Proceeding with reload"
+const _NOT_RE_ORDERING: String = "Not reordering any data"
+const _NO_DATA: String = "No data in storage"
 const _REMOVE_DATA_LOG: String = "Cannot remove data"
 const _ADD_NODE_DATA: String = "add_node_data"
 const _HOLE_NODE_DATA: String = "HoleNodeData"
 const _HOLE_DATA: String = "HoleData"
+const _GLOBAL_HOLE_DATA: String = "GlobalHoleData"
 const _SEQUENTIAL_ORDER: String = "sequential_order"
 
 ## With the logic hopefully acts as a set for hole data
@@ -58,7 +62,7 @@ func simple_add_hole_data(incoming_hole_number: int, incoming_data: HoleNodeData
 	if _verify_incoming_values(incoming_hole_number):
 		if !hole_data.has(incoming_hole_number):
 			if _is_base_node(incoming_data):
-				if(_create_base_node(incoming_hole_number, incoming_data)):
+				if(_create_base_hole(incoming_hole_number, incoming_data)):
 					data_added = true
 				else:
 					var formatted_string: String = _BASE_CREATION_FAILURE + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
@@ -147,15 +151,13 @@ func simple_add_node_data(hole_number: int, incoming_data: HoleNodeData) -> bool
 		else:
 			var base_creation_debug_log: String = _HOLE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + _BASE_CREATION_ATTEMPT_STRING
 			Logger.debug(base_creation_debug_log, [str(hole_number)], self)
-			if(_create_base_node(hole_number, incoming_data)):
+			if(_create_base_hole(hole_number, incoming_data)):
 				data_updated = true
 			else:
 				var formatted_string: String = _BASE_CREATION_FAILURE + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
 				Logger.debug(formatted_string, [str(hole_number), str(incoming_data.node_number)], self)
 	return data_updated
 
-# TODO Continuing from here for Data things
-# TODO Refactor this method to use the simple one and be shorter
 ## Adds the data to data storage
 ## If node is conflicting with existing node will move nodes up by one and insert
 func dyanmic_add_node_data(hole_number: int, incoming_hole_node_data: HoleNodeData) -> bool:
@@ -163,30 +165,17 @@ func dyanmic_add_node_data(hole_number: int, incoming_hole_node_data: HoleNodeDa
 	if _verify_incoming_values(hole_number, incoming_hole_node_data.node_number):
 		if _contains_data(hole_number):
 			var existing_hole_data: Dictionary = hole_data.get(hole_number) as Dictionary
-			var next_expected_node_number: int = get_next_node_number_for_hole(hole_number)
-			# If there is an already existing node at the given node_number; Increase nodes at and after node_number by 1 and insert new record
-			if existing_hole_data.has(incoming_hole_node_data.node_number):
+			if _contains_data(hole_number, incoming_hole_node_data.node_number):
 				_alter_hole_node_number(1, hole_number, incoming_hole_node_data.node_number)
 				existing_hole_data[incoming_hole_node_data.node_number] = incoming_hole_node_data
 				data_updated = true
-			# If no entry exists and the node number is expected number add it to data storage
-			elif next_expected_node_number == incoming_hole_node_data.node_number:
-				existing_hole_data[next_expected_node_number] = incoming_hole_node_data
-				data_updated = true
-			# If given node_number is greater than expected; Log it and store the data
-			## This will lead to unused node_numbers unless careful in manual controlling
-			elif incoming_hole_node_data.node_number > next_expected_node_number:
-				Logger.debug(_UNEXPECTED_NODE_VALUE, [str(incoming_hole_node_data.node_number), CONSTANTS.HIGHER], self)
-				existing_hole_data[next_expected_node_number] = incoming_hole_node_data
-				data_updated = true
-			# If given node_number is less than expected; Log it and store the data
-			## This will lead to unused node_numbers unless careful in manual controlling
 			else:
-				Logger.debug(_UNEXPECTED_NODE_VALUE, [str(incoming_hole_node_data.node_number), CONSTANTS.LOWER], self)
-				existing_hole_data[next_expected_node_number] = incoming_hole_node_data
+				# If Hole data exists but hole node doesn't add the node
+				existing_hole_data[incoming_hole_node_data.node_number] = incoming_hole_node_data
+				data_updated = true
 		# If no hole data exists this is the first entry
 		else:
-			if(_create_base_node(hole_number, incoming_hole_node_data)):
+			if(_create_base_hole(hole_number, incoming_hole_node_data)):
 				data_updated = true
 			else:
 				var formatted_string: String = _BASE_CREATION_FAILURE + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
@@ -271,17 +260,21 @@ func _is_base_node(incoming_data: HoleNodeData) -> bool:
 	return false
 
 ## Creates the base entry for a new hole; Checking first if it is node_number 0 then making the entries in data storage
-func _create_base_node(hole_number: int, incoming_data: HoleNodeData) -> bool:
+func _create_base_hole(hole_number: int, incoming_data: HoleNodeData) -> bool:
 	var node_added: bool = false
-	if _is_base_node(incoming_data):
-		# TODO Need to add a check to make sure hole_data doesn't already contain data at hole_node
-		#		If non checking method type is needed for speed can be made later
-		var hole_node_dictionary: Dictionary = {incoming_data.node_number: incoming_data}
-		hole_data[hole_number] = hole_node_dictionary
-		node_added = true
+	# Specific existing check in this method as blank entries should always be allowed to have base nodes created
+	var existing_data: Dictionary = hole_data.get(hole_number) as Dictionary
+	if existing_data == null or existing_data.is_empty():
+		if _is_base_node(incoming_data):
+			var hole_node_dictionary: Dictionary = {incoming_data.node_number: incoming_data}
+			hole_data[hole_number] = hole_node_dictionary
+			node_added = true
+		else:
+			var formatted_string: String = _NOT_BASE_CREATION_NODE + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+			Logger.warn(formatted_string, [], self)
 	else:
-		var formatted_string: String = _NOT_BASE_CREATION_NODE + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
-		Logger.warn(formatted_string, [], self)
+		var formatted_string: String = _HOLE_ALREADY_EXISTS + CONSTANTS.LOG_SEPARATOR + _NOT_ADDING_DATA
+		Logger.debug(formatted_string, [str(hole_number)], self)
 	return node_added
 
 ## Alters hole node numbers for the given hole by the alter value given
@@ -312,9 +305,9 @@ func _alter_hole_node_number(alter_value:int, hole_number: int, start_value: int
 			var action_type: String = CONSTANTS.INCREASE if alter_value > 0 else CONSTANTS.DECREASE
 			Logger.debug(formatted_string, [str(start_value), str(hole_number), action_type], self)
 	else:
-		# TODO Refactor to be generic to alter_hole_node_number and not increase/decrease wording
-		var formatted_string: String = _HOLE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + _CANNOT_INCREASE_RELOAD
-		Logger.debug(formatted_string, [str(hole_number), str(start_value)], self)
+		var formatted_string: String = _HOLE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + _NO_ACTION_RELOAD
+		var action_type: String = CONSTANTS.INCREASE if alter_value > 0 else CONSTANTS.DECREASE
+		Logger.debug(formatted_string, [str(hole_number), str(start_value), action_type], self)
 
 ## Alters hole number stored for each key in data storage by the value given
 ## If start_value given values starting from and greater than that value will be altered
@@ -336,21 +329,97 @@ func _alter_hole_number(alter_value: int, start_value: int = 0) -> void:
 			hole_data[existing_hole + alter_value] = removed_hole_data.get(existing_hole)
 		get_tree().call_group(CONSTANTS.TEE_BOX, CONSTANTS.INCREASE_HOLE_NUMBER, start_value)
 	else:
-		var formatted_string: String = _NO_HOLE_OR_GREATER + CONSTANTS.LOG_SEPARATOR + _CANNOT_INCREASE_RELOAD
-		Logger.debug(formatted_string, [start_value], self)
+		var formatted_string: String = _NO_HOLE_OR_GREATER + CONSTANTS.LOG_SEPARATOR + _NO_ACTION_RELOAD
+		var action_type: String = CONSTANTS.INCREASE if alter_value > 0 else CONSTANTS.DECREASE
+		Logger.debug(formatted_string, [start_value, action_type], self)
 
-# TODO Create sequential checking method
+## Checks if hole numbers or node numbers for a specific hole are sequential based off given parameters
+## If nothing given for node number hole numbers will be checked
+func _is_data_sequential(hole_number: int = CONSTANTS.INT64_MAX) -> bool:
+	var is_sequential: bool = true
+	var existing_values: Array[int]
+	if hole_number != CONSTANTS.INT64_MAX:
+		if _contains_data(hole_number):
+			var existing_hole_node_data: Dictionary = hole_data.get(hole_number) as Dictionary
+			existing_values = existing_hole_node_data.keys()
+			is_sequential = NodeUtil.is_sequential(existing_values)
+		else:
+			var formatted_string: String = _HOLE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+			Logger.debug(formatted_string, [str(hole_number)], self)
+			is_sequential = false
+	else:
+		if !hole_data.is_empty():
+			existing_values = hole_data.keys()
+			is_sequential = NodeUtil.is_sequential(existing_values)
+		else:
+			var formatted_string: String = _NO_DATA + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+			is_sequential = false
+	return is_sequential
 
-# TODO Create change to sequential method
-#		Optional parameters to make holes sequential or node nodes sequential for given hole
+## Sets the given hole or hole numbers to be sequential in order, getting rid of empty values
+## If hole number is given makes nodes for that hole sequential, if no hole number is given makes hole numbers sequential
+func _set_data_sequential(hole_number: int = CONSTANTS.INT64_MAX) -> void:
+	if hole_number != CONSTANTS.INT64_MAX:
+		if _contains_data(hole_number):
+			var updated_nodes: Dictionary = {}
+			var existing_hole_node_data: Dictionary = hole_data.get(hole_number) as Dictionary
+			var existing_node_numbers: Array[int] = existing_hole_node_data.keys()
+			existing_node_numbers.sort()
+			var first_bad_index = NodeUtil.get_first_non_sequential_index(existing_node_numbers)
+			# Iterate through the index starting from first out of order node working to the end putting their node_number back in order
+			for i in range(first_bad_index, existing_node_numbers.size()):
+				var non_sequential_value: int = existing_node_numbers[i]
+				var non_sequential_data: HoleNodeData = simple_remove_hole_node_data(hole_number, non_sequential_value)
+				if non_sequential_data != null:
+					var new_node_number: int = non_sequential_data.node_number + 1
+					updated_nodes[non_sequential_data.node_number] = new_node_number
+					non_sequential_data.node_number = new_node_number
+					existing_hole_node_data[non_sequential_data.node_number] = non_sequential_data
+				else:
+					var formatted_string: String = CONSTANTS.ILLEGAL_STATE_STRING + CONSTANTS.LOG_SEPARATOR + CONSTANTS.EXISTING_DATA_MISSING
+					Logger.error(formatted_string, [_HOLE_NODE_DATA, str(non_sequential_value)], self)
+			if !updated_nodes.is_empty():
+				get_tree().call_group(CONSTANTS.TEE_BOX, CONSTANTS.ALTER_HOLE_NODE_NUMBERS 	, hole_number, updated_nodes)
+			else:
+				var formatted_string: String = _NO_NON_SEQUENTIAL_FOUND + CONSTANTS.LOG_SEPARATOR + _NOT_RE_ORDERING
+				Logger.debug(formatted_string, [_HOLE_NODE_DATA, str(hole_number)], self)
+		else:
+			var formatted_string: String = _HOLE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + _NOT_RE_ORDERING
+			Logger.debug(formatted_string, [str(hole_number)], self)
+	else:
+		var updated_holes: Dictionary = {}
+		var existing_hole_numbers: Array[int] = hole_data.keys()
+		existing_hole_numbers.sort()
+		var first_bad_index: int = NodeUtil.get_first_non_sequential_index(existing_hole_numbers)
+		for n in range(first_bad_index, existing_hole_numbers.size()):
+			var non_sequential_value: int = existing_hole_numbers[n]
+			var non_sequential_data: Dictionary = simple_remove_hole_data(non_sequential_value)
+			if non_sequential_data != null:
+				updated_holes[non_sequential_value] = n + 1
+				hole_data[n + 1] = non_sequential_data
+			else:
+				var formatted_string: String = CONSTANTS.ILLEGAL_STATE_STRING + CONSTANTS.LOG_SEPARATOR + CONSTANTS.EXISTING_DATA_MISSING
+				Logger.error(formatted_string, [_HOLE_DATA, str(non_sequential_value)], self)
+		if !updated_holes.is_empty():
+			get_tree().call_group(CONSTANTS.TEE_BOX, CONSTANTS.ALTER_HOLE_NUMBERS, updated_holes)
+		else:
+			var formatted_string: String = _NO_NON_SEQUENTIAL_FOUND + CONSTANTS.LOG_SEPARATOR + _NOT_RE_ORDERING
+			Logger.debug(formatted_string, [_HOLE_DATA, _GLOBAL_HOLE_DATA], self)
 
-## TODO Method to purge data storage and tell assets to re calculate and upload their course data
+## Purges data storage and tell assets to re calculate and upload their course data
 ## If hole_number if provided; does it just for that specific hole otherwise reloads all course data
 func reload_course_data(hole_number: int = CONSTANTS.INT64_MAX) -> void:
-# TODO Call to TeeBox group to have them get all their children node to update their stats
-#			TeeBox objects should then be aggregating those stats into their HoleData objects
-#			That data should then be uploaded here to global hole data
-	pass
+	if hole_number != CONSTANTS.INT64_MAX:
+		# Using contains data instead of relying on remove return because dictionary can have empty value
+		if _contains_data(hole_number):
+			# Not adjusting hole numbers; If removed hole number changed will cause conflicts/changes depending on reupload method
+			var deleted_data: Dictionary = simple_remove_hole_data(hole_number)
+		else:
+			var formatted_string: String = _HOLE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + _PROCEEDING_WITH_RELOAD
+			Logger.debug(formatted_string, [str(hole_number)], self)
+	else:
+		_clear_all_data()
+	get_tree().call_group(CONSTANTS.TEE_BOX, CONSTANTS.RELOAD_COURSE_DATA, hole_number)
 
 ## Clears all entries in data storage
 func _clear_all_data() -> void:
