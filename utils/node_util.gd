@@ -102,3 +102,12 @@ func get_vertical_rotation_amount(event: InputEvent) -> float:
 	var v_sense: float = GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.VERTICAL_AIM_SENSITIVITY)
 	var v_rotation_amount: float = v_inversion * (event.relative.y / 1000 * v_sense)
 	return v_rotation_amount
+
+## Gets the index of the nearest value greater than the desired value
+## Returns found index or INT64_MAX
+func get_nearest_greater_index(desired_value: int, search_array: Array[int]) -> int:
+	var start_value: int = CONSTANTS.INT64_MAX
+	for existing_number in search_array:
+		if existing_number > desired_value and start_value == CONSTANTS.INT64_MAX:
+			start_value = search_array.find(existing_number)
+	return start_value

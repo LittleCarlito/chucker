@@ -12,7 +12,7 @@ height = 10.0
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_rb43f"]
 height = 10.0
 
-[node name="ChuckHole" type="Area3D"]
+[node name="ChuckHole" type="Area3D" groups=["Course", "Hole"]]
 collision_layer = 8
 collision_mask = 4
 script = ExtResource("1_2rbiy")

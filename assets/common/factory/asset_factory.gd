@@ -64,8 +64,8 @@ func create_and_launch(flight_data: FlightData, item_data: AssetData) -> void:
 			path_disk.global_position = flight_data.flight_path[0]
 			path_disk.set_launch_parameters(flight_data)
 		_:
-			var formattedString: String = CONSTANTS.UNSUPPORTED_TYPE_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
-			Logger.warn(formattedString, [_CREATE_AND_LAUNCH, str(item_type)], self)
+			var formatted_string: String = CONSTANTS.UNSUPPORTED_TYPE_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
+			Logger.warn(formatted_string, [_CREATE_AND_LAUNCH, str(item_type)], self)
 
 func equip_item(item_owner: ChuckChucker, incoming_item: ForceDisk) -> void:
 	pass

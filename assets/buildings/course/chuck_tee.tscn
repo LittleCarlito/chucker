@@ -17,7 +17,7 @@ size = Vector3(10, 0.2, 10)
 [sub_resource type="BoxShape3D" id="BoxShape3D_n4t14"]
 size = Vector3(10, 10, 10)
 
-[node name="ChuckTee" type="StaticBody3D" groups=["TeeBox"]]
+[node name="ChuckTee" type="StaticBody3D" groups=["Course", "TeeBox"]]
 collision_layer = 16
 collision_mask = 5
 script = ExtResource("1_tarkx")

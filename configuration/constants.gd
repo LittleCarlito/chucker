@@ -2,7 +2,12 @@ extends Node
 class_name CONSTANTS
 
 const BLOCKING_VALUE: String = "BLOCKING"
+const HIGHER: String = "higher"
+const LOWER: String = "lower"
+const INCREASE: String = "increase"
+const DECREASE: String = "decrease"
 # TODO Refactor these out to Logger or a Log Constants file
+const FOR_METHOD_LOG: String = "For method %s"
 const METHOD_LOG: String = "\"%s\"; \"%s\""
 const NULL_LOG: String = "\"%s\" is null"
 const ITEM_OWNER_LOG: String = "item_owner \"%s\""
@@ -13,6 +18,8 @@ const RETURNING_FALSE_LOG: String = "Returning false"
 const RETURNING_ZERO_LOG: String = "Returning 0"
 const NULL_CAMERA_LOG: String = "has no camera and cannot %s"
 const ALREADY_EXISTS_LOG: String = "%s already exists"
+const NOT_FOUND_LOG: String = "No %s could be found"
+const HOLE_NODE_DATA: String = "HoleNodeData"
 const CAMERA_CONTAINER: String = "camera_container"
 const TOGGLE_CAMERA: String = "toggle_camera"
 const DISABLE_CAMERA: String = "disable_camera"
@@ -28,12 +35,15 @@ const RETURNING_UNKNOWN_LOG: String = "Returning unknown"
 const PICKED_UP_LOG: String = "%s has been picked up"
 const DEACTIVATE_LOG: String = "%s is deactivating"
 const LOG_SEPARATOR: String = "; "
+const OR_SEPARATOR: String = " OR "
 
 # Group names
 const ENVIRONMENT: String = "Environment"
 const PLAYER: String = "Player"
 const DISK: String = "Disk"
 const GENERAL: String = "General"
+const COURSE: String = "Course"
+const TEE_BOX: String = "TeeBox"
 # Group methods
 const HOLD_ACTION: String = "hold_action"
 const RELEASE_ACTION: String = "release_action"
@@ -43,6 +53,12 @@ const DISABLE_ROTATION: String = "disable_rotation"
 const ENABLE_ROTATION: String = "enable_rotation"
 const RELOAD_PROJECT_SETTINGS: String = "reload_project_settings"
 const UPDATE_STATE: String = "_update_state"
+# TODO Rework COURSE group members to not implement this; Will be handled through TeeBox
+const INCREASE_NODE_NUMBER: String = "_increase_node_number"
+# TODO Implement this in TEEBOX assets
+const DECREASE_NODE_NUMBER: String = "_decrease_node_number"
+# TODO Implement this in TEEBOX assets
+const INCREASE_HOLE_NUMBER: String = "_increase_hole_number"
 
 const MENU: Dictionary = {
 	"SCORECARD": {

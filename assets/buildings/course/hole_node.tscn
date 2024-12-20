@@ -1,3 +1,6 @@
-[gd_scene format=3 uid="uid://px8lbgeugixm"]
+[gd_scene load_steps=2 format=3 uid="uid://px8lbgeugixm"]
 
-[node name="HoleNode" type="Node3D" groups=["General"]]
+[ext_resource type="Script" path="res://assets/buildings/course/hole_node.gd" id="1_46ltn"]
+
+[node name="HoleNode" type="Node3D" groups=["Course", "General"]]
+script = ExtResource("1_46ltn")

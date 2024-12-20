@@ -5,6 +5,12 @@ class_name ChuckTee
 # TODO Need to get tee_camera on CameraContainer so its controllable as well
 @onready var camera_container: CameraContainer = $CameraContainer
 @export var hole_data: HoleData
+@export var hole_node_data: HoleNodeData
+# TODO This should be the parent class of all created hole nodes for the associtead hole
+#		Then group method call from Global Hole Data can be simplified to just a Group call on the TeeBox group
+#			TeeBox group method then makes all its node_numbers sequential inside itself
+#			TeeBox group method then calculates all the distances between the one node and the next
+#			After all Nodes in the array have had their stats updated
 var hole_nodes: Array[HoleNode] = []
 
 const _CURRENT_CAMERA_LOG: String = "Current camera is %s"
@@ -25,7 +31,7 @@ func _ready() -> void:
 	# TODO Create a new method in the AssetFactory to create next in line tee box HoleData
 	#		Method should use data in Global Hole Data to figure out next available hole number
 	# TODO If hole_data is null use the AssetFactory method to create the next in line HoleData for this tee box
-	if hole_data == null:
+	if hole_node_data == null:
 		pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -52,3 +58,19 @@ func _handle_body(body: Node3D, enable_body_cam: bool) -> void:
 
 func get_camera() -> Camera3D:
 	return camera_container.get_camera()
+
+func _increase_node_number(hole_number: int, incoming_node_number: int) -> void:
+	if hole_node_data != null:
+		if hole_node_data.hole_data.hole_number == hole_number and hole_node_data.node_number > incoming_node_number:
+			hole_node_data.node_number = hole_node_data.node_number + 1
+	else:
+		var formatted_string: String = CONSTANTS.NOT_FOUND_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.FOR_METHOD_LOG
+		Logger.error(formatted_string, [CONSTANTS.HOLE_NODE_DATA, CONSTANTS.INCREASE_NODE_NUMBER], self)
+
+func _decrease_node_number(hole_number: int, incoming_node_number: int) -> void:
+	if hole_node_data != null:
+		if hole_node_data.hole_data.hole_number == hole_number and hole_node_data.node_number > incoming_node_number:
+			hole_node_data.node_number = hole_node_data.node_number - 1
+	else:
+		var formatted_string: String = CONSTANTS.NOT_FOUND_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.FOR_METHOD_LOG
+		Logger.error(formatted_string, [CONSTANTS.HOLE_NODE_DATA, CONSTANTS.DECREASE_NODE_NUMBER], self)

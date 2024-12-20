@@ -80,8 +80,8 @@ func get_item_type() -> AssetData.TYPE:
 	if item_data != null:
 		return item_data.internal_type
 	else:
-		var formattedString: String = _NO_ITEM_DATA_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_UNKNOWN_LOG
-		Logger.warn(formattedString, [], self)
+		var formatted_string: String = _NO_ITEM_DATA_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_UNKNOWN_LOG
+		Logger.warn(formatted_string, [], self)
 		return AssetData.TYPE.UNKNOWN
 
 # TODO This should be changed to transfer camera or something along those lines
@@ -107,14 +107,14 @@ func get_disk_camera() -> Camera3D:
 	if camera_container != null:
 		return_camera = camera_container.get_camera()
 	else:
-		var formattedString: String = CONSTANTS.NULL_CAMERA_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
-		Logger.error(formattedString, [_GET_DISK_CAMERA], self)
+		var formatted_string: String = CONSTANTS.NULL_CAMERA_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
+		Logger.error(formatted_string, [_GET_DISK_CAMERA], self)
 	return return_camera
 
 func set_disk_camera(new_camera: Camera3D) -> void:
 	if camera_container == null:
-		var formattedString: String = CONSTANTS.NULL_CAMERA_LOG + CONSTANTS.LOG_SEPARATOR + _CREATING_CAMERA_LOG
-		Logger.warn(formattedString, [_SET_DISK_CAMERA], self)
+		var formatted_string: String = CONSTANTS.NULL_CAMERA_LOG + CONSTANTS.LOG_SEPARATOR + _CREATING_CAMERA_LOG
+		Logger.warn(formatted_string, [_SET_DISK_CAMERA], self)
 	_create_camera_container()
 	camera_container.set_camera(new_camera)
 	_update_state()

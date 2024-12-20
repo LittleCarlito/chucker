@@ -145,8 +145,8 @@ func get_camera() -> Camera3D:
 	if internal_camera != null:
 		return internal_camera
 	else:
-		var formattedString: String = CONSTANTS.NULL_CAMERA_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
-		Logger.error(formattedString, [CONSTANTS.GET_CAMERA], self)
+		var formatted_string: String = CONSTANTS.NULL_CAMERA_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
+		Logger.error(formatted_string, [CONSTANTS.GET_CAMERA], self)
 		return null
 
 func set_camera(incoming_camera: Camera3D, incoming_focus: Vector3 = Vector3.INF) -> void:
@@ -184,8 +184,8 @@ func is_current() -> bool:
 	if internal_camera != null:
 		return internal_camera.current
 	else:
-		var formattedString: String = CONSTANTS.NULL_CAMERA_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
-		Logger.debug(formattedString, [CONSTANTS.IS_CURRENT], self)
+		var formatted_string: String = CONSTANTS.NULL_CAMERA_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+		Logger.debug(formatted_string, [CONSTANTS.IS_CURRENT], self)
 		return false
 
 func reset_zoom() -> void:
