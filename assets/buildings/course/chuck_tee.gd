@@ -17,7 +17,7 @@ const _CURRENT_CAMERA_LOG: String = "Current camera is %s"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	camera_container.populate_camera_control()
+	camera_container.populate_camera_control(_get_focus_point())
 	Logger.debug("FOV before setting %s", [str(camera_container.get_camera().fov)], self)
 	camera_container.set_fov(GlobalSettings.CAMERA.get(CONSTANTS.STATIONARY_FOV, GlobalSettings.CAMERA_DEFAULTS.STATIONARY_FOV))
 	Logger.debug("FOV after setting %s", [str(camera_container.get_camera().fov)], self)
@@ -74,3 +74,10 @@ func _decrease_node_number(hole_number: int, incoming_node_number: int) -> void:
 	else:
 		var formatted_string: String = CONSTANTS.NOT_FOUND_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.FOR_METHOD_LOG
 		Logger.error(formatted_string, [CONSTANTS.HOLE_NODE_DATA, CONSTANTS.DECREASE_NODE_NUMBER], self)
+
+func _get_focus_point() -> Vector3:
+	var focus_point: Vector3 = self.position + GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOCUS_OFFSET, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOCUS_OFFSET)
+	if !hole_nodes.is_empty():
+		# TODO Need to get HoleNodes integrated and have this look to its next hole node
+		pass
+	return focus_point

@@ -2,7 +2,11 @@ extends RigidBody3D
 class_name ForceDisk
 
 	# TODO Continue from here
+	# TODO Get ChuckTee camera looking correctly
 	# TODO Get aiming from CameraContainer working properly in ChargeDisk
+	# TODO Throw a ChargeDisk and have it land/collide properly
+	# TODO Get TeeBox HoleNode and ChuckHole spawned in through asset factory
+	#			Have their data integrated to Global Hole Data
 	# TODO Get looking/rotation/idling from CameraContainer working properly ForceDisk
 	# TODO Shouldn't have to add special input handling
 	#		As long as camera_container exists and its conditionals are met its handling should take effect

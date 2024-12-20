@@ -379,7 +379,7 @@ func _set_data_sequential(hole_number: int = CONSTANTS.INT64_MAX) -> void:
 					var formatted_string: String = CONSTANTS.ILLEGAL_STATE_STRING + CONSTANTS.LOG_SEPARATOR + CONSTANTS.EXISTING_DATA_MISSING
 					Logger.error(formatted_string, [_HOLE_NODE_DATA, str(non_sequential_value)], self)
 			if !updated_nodes.is_empty():
-				get_tree().call_group(CONSTANTS.TEE_BOX, CONSTANTS.ALTER_HOLE_NODE_NUMBERS 	, hole_number, updated_nodes)
+				get_tree().call_group(CONSTANTS.TEE_BOX, CONSTANTS.ALTER_HOLE_NODE_NUMBERS , hole_number, updated_nodes)
 			else:
 				var formatted_string: String = _NO_NON_SEQUENTIAL_FOUND + CONSTANTS.LOG_SEPARATOR + _NOT_RE_ORDERING
 				Logger.debug(formatted_string, [_HOLE_NODE_DATA, str(hole_number)], self)
