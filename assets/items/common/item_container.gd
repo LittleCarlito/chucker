@@ -13,6 +13,21 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
+## Equips given item as a child inside the item container
+## If an item is already contained will return the contained item and replace it
+
+func equip_item(new_item: Node3D) -> Node3D:
+	var existing_item: Node3D = null
+	if is_equipped():
+		existing_item = equipped_item
+		equipped_item = null
+		existing_item.reparent(get_tree().root)
+	add_child(new_item)
+	equipped_item = new_item
+	equipped_item.global_position = self.global_position
+	equipped_item.global_transform = self.global_transform
+	return existing_item
+
 func unequip_item() -> void:
 	if equipped_item != null:
 		equipped_item.queue_free()

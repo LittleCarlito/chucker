@@ -19,6 +19,12 @@ class_name CameraContainer
 # TODO Add methods to allow creation of camera containers without cameras
 #		These can then be holders for passed around cameras originally from characterbody scenes
 
+const _BAD_CLAIM_LOG: String = "New parent \"%s\" claimed it could provide a camera container but returned null"
+const _TRANSFER_SUCCESSFUL: String = "%s has been successfully transferred to \"%s\""
+const _TRANSFER_FAILED: String = "Transfer of %s to new owner \"%s\" failed"
+const _ALREADY_HAS_CAMERA: String = "Incoming owner \"%s\" already has a camera; A new one can't be given to it"
+const _BAD_HOLDER_LOG: String = "Incoming holder \"%s\" doesn't have necessary recieve camera \"%s\" and/or has camera \"%s\" methods to recieve a camera transfer"
+const _NO_INTERNAL_CAMERA: String = "No internal camera to hand off to new owner \"%s\""
 const _INF_FOCUS_LOG: String = "Infinite position given to camera focus; Defaulting to stored _focus_location \"%s\""
 const _NO_FOCUS_LOG: String = "Camera \"%s\" with no focus set"
 const _CAMERA_ALREADY_EXISTS: String = "Camera already exists cannot populate with new instance"
@@ -149,16 +155,49 @@ func get_camera() -> Camera3D:
 		Logger.error(formatted_string, [CONSTANTS.GET_CAMERA], self)
 		return null
 
-func set_camera(incoming_camera: Camera3D, incoming_focus: Vector3 = Vector3.INF) -> void:
-	incoming_camera.global_transform = camera_control.global_transform
-	camera_control.add_child(incoming_camera)
-	incoming_camera.global_position = camera_control.global_position
-	if incoming_focus != Vector3.INF:
-		focus_camera_control(incoming_focus)
-	var old_camera: Camera3D = internal_camera
-	if is_instance_valid(old_camera):
-		old_camera.queue_free()
-	internal_camera = incoming_camera
+## Determines if the incoming holder can hold the camera and transferrs it if possible
+## Returns false if no camera is contained, incoming item can't take a camera, or incoming item already contains a camera
+func give_camera(incoming_holder: Node3D) -> bool:
+	var camera_transferred: bool = false
+	var has_required_methods: bool = incoming_holder.has_method(CONSTANTS.SET_CAMERA) and incoming_holder.has_method(CONSTANTS.HAS_CAMERA)
+	if internal_camera != null and has_required_methods:
+		var incoming_has_camera: bool = incoming_holder.call(CONSTANTS.HAS_CAMERA)
+		if !incoming_has_camera:
+			if incoming_holder.call(CONSTANTS.SET_CAMERA, internal_camera):
+				camera_transferred = true
+				Logger.info(_TRANSFER_SUCCESSFUL, [CONSTANTS.Camera, str(incoming_holder)], self)
+			else:
+				var formatted_string: String = _TRANSFER_FAILED + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+				Logger.debug(formatted_string, [CONSTANTS.Camera, str(incoming_holder)], self)
+		else:
+			var formatted_string: String = _ALREADY_HAS_CAMERA + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+			Logger.debug(formatted_string, [str(incoming_holder)], self)
+	else:
+		if !has_required_methods:
+			var formatted_string: String = _BAD_HOLDER_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+			Logger.debug(formatted_string, [str(incoming_holder), str(incoming_holder.has_method(CONSTANTS.SET_CAMERA)), str(incoming_holder.has_method(CONSTANTS.HAS_CAMERA))], self)
+		else:
+			Logger.debug(_NO_INTERNAL_CAMERA, [str(incoming_holder)], self)
+	return camera_transferred
+
+func set_camera(incoming_camera: Camera3D, incoming_focus: Vector3 = Vector3.INF) -> bool:
+	var camera_set: bool = false
+	if !has_camera():
+		incoming_camera.global_transform = camera_control.global_transform
+		camera_control.add_child(incoming_camera)
+		incoming_camera.global_position = camera_control.global_position
+		if incoming_focus != Vector3.INF:
+			focus_camera_control(incoming_focus)
+		var old_camera: Camera3D = internal_camera
+		if is_instance_valid(old_camera):
+			old_camera.queue_free()
+		internal_camera = incoming_camera
+		camera_set = true
+	else:
+		var formatted_string: String = _CAMERA_ALREADY_EXISTS + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+		Logger.debug(formatted_string, [], self)
+		camera_set = false
+	return camera_set
 
 func toggle_camera() -> void:
 	if internal_camera != null:
@@ -209,8 +248,27 @@ func zoom_out() -> void:
 func set_fov(incoming_fov: float) -> void:
 	internal_camera.fov = incoming_fov
 
-func reparent_camera(new_parent: Node) -> void:
+# TODO Will need to update this in the future to
+#			Check if the requestor already has a camera
+#			Have the method ask for specific camera RIDs
+func _request_camera(new_parent: Node3D) -> bool:
+	var parent_swapped: bool = false
 	if internal_camera != null:
-		internal_camera.reparent(new_parent)
+		var parent_camera_container: CameraContainer
+		if new_parent is CameraContainer:
+			parent_camera_container = new_parent as CameraContainer
+		elif new_parent.has_method(CONSTANTS.GET_CAMERA_CONTAINER):
+			parent_camera_container = new_parent.call(CONSTANTS.GET_CAMERA_CONTAINER, self) as CameraContainer
+		if parent_camera_container != null:
+			# False is for keep global tranform
+			internal_camera.reparent(parent_camera_container.camera_control, false)
+			internal_camera = null
+			parent_swapped = true
+		else:
+			var formatted_string: String = _BAD_CLAIM_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.KEEPING_CAMERA
+			Logger.debug(formatted_string, [str(new_parent)], self)
 	else:
-		Logger.error(CONSTANTS.NULL_CAMERA_LOG, [_REPARENT_CAMERA], self)
+		# This log is probably gonna be way too loud
+		var formatted_string: String = _NO_INTERNAL_CAMERA + CONSTANTS.LOG_SEPARATOR + CONSTANTS.KEEPING_CAMERA
+		Logger.debug(_NO_INTERNAL_CAMERA, [str(new_parent)], self)
+	return parent_swapped

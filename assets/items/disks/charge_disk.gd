@@ -3,7 +3,6 @@ extends Node3D
 class_name ChargeDisk
 
 @onready var charge_view: ChargeView = $ChargeView
-@onready var camera_container: CameraContainer = $CameraContainer
 @onready var aim_line: AimLine = $AimLine
 
 var stopwatch: Stopwatch = Stopwatch.new()
@@ -52,6 +51,7 @@ func release_action() -> void:
 		flight_data = FlightData.create_flight_data(final_speed, self.global_basis.get_euler().x, flight_data.flight_path, flight_data.focus_flight)
 		# TODO Launcd disk needs to be refactored into this class
 		if flight_data.flight_ready:
+			# TODO Make sure that item_data contains the group_name of the entity throwing it
 			AssetFactory.create_and_launch(flight_data, item_data)
 			#self.queue_free()
 		else:

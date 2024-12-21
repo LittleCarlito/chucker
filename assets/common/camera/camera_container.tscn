@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://assets/common/camera/camera_container.gd" id="1_yhe62"]
 
-[node name="CameraContainer" type="Node3D"]
+[node name="CameraContainer" type="Node3D" groups=["CameraContainer"]]
 script = ExtResource("1_yhe62")
 
 [node name="CameraControl" type="Node3D" parent="."]

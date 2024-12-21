@@ -2,6 +2,8 @@ extends PlayableCharacter
 class_name ChuckChucker
 
 const _UKNOWN_OBJECT_LOG: String = "Tried to pick up UKNOWN object; Where did you get that?"
+const _NO_CAMERA_CONTAINER_LOG: String = "New item \"%s\" doesn't have the ability to hold a camera"
+const _EMPTY_CAMERA_CONTAINER: String = "CameraContainer from \"%s\" returned null"
 
 @onready var chuck_mesh: MeshInstance3D = $ChuckMesh
 @onready var front_detection: ShapeCast3D = $FrontDetect
@@ -36,6 +38,7 @@ func _ready() -> void:
 	camera_container.populate_camera_control(_get_focus_point())
 	if item_data == null:
 		item_data = AssetData.create_item_data(AssetData.TYPE.PLAYER)
+	item_data.group_name = self.name
 	_update_state()
 
 func _process(_delta: float) -> void:
@@ -95,7 +98,7 @@ func _handle_player_interact() -> void:
 			var colliding_object = front_detection.get_collider(0)
 			Logger.debug("%s", [str(colliding_object)], colliding_object)
 			if colliding_object != null and colliding_object is ForceDisk:
-				AssetFactory.equip_item(self, colliding_object)
+				AssetFactory.create_and_give_item(self, colliding_object)
 
 # TODO This should just be handled by this class without signals from below being needed
 #		Should be checking if equipped (if necessary what type; group check)
@@ -209,7 +212,7 @@ func _update_state() -> void:
 	item_data.camera_state = AssetData.get_camera_state(camera_container)
 
 func hold_action(delta: float) -> void:
-	Logger.info("I'm gonna chuck", [], self)
+	Logger.debug("I'm gonna chuck", [], self)
 
 func release_action() -> void:
 	# TODO Should probably be doing something with the unequip_item() where camera is offered up to the item_container
@@ -217,9 +220,38 @@ func release_action() -> void:
 	disable_movement()
 	disable_rotation()
 	# TODO Expecting this will break; Doesn't lead to any code; Should probably be a call to item_container
-	unequip_item()
+	item_container.unequip_item()
 	# TODO This should then update the status of the character if the item took the camera with it
 	_update_state()
+
+## Stores new_item internally and attempts to give it internal camera if possible
+## Returns item that was equipped if one was previously
+func equip_item(new_item: Node3D) -> Node3D:
+	var displaced_item: Node3D = null
+	_give_camera(new_item)
+	# Returns the equipped item if there was one
+	displaced_item = item_container.equip_item(new_item)
+	_update_state()
+	return displaced_item
+
+func _give_camera(new_item: Node3D) -> void:
+	if new_item is CameraContainer or new_item.has_method(CONSTANTS.GET_CAMERA_CONTAINER):
+		var pulled_camera_container: CameraContainer
+		if new_item is not CameraContainer:
+			# TODO Implement _get_camera_container on assets that you would want to ahve the camera while equipped (might be none, maybe do one for fun)
+			pulled_camera_container = new_item.call(CONSTANTS.GET_CAMERA_CONTAINER)
+			if pulled_camera_container == null:
+				Logger.debug(_EMPTY_CAMERA_CONTAINER, [str(new_item)], self) 
+		else:
+			pulled_camera_container = new_item as CameraContainer
+		if pulled_camera_container != null:
+			camera_container.give_camera(pulled_camera_container)
+		else:
+			var formatted_string: String = _NO_CAMERA_CONTAINER_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.KEEPING_CAMERA
+			Logger.debug(formatted_string, [str(new_item)], self)
+	else:
+		var formatted_string: String = _NO_CAMERA_CONTAINER_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.KEEPING_CAMERA
+		Logger.debug(formatted_string, [str(new_item)], self)
 
 # TODO Some version of this should be implemented to handle when a deactivate_to_owner()
 #func activate_fallback() -> void:

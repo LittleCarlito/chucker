@@ -35,6 +35,7 @@ Player="Playable characters"
 TeeBox="Nodes serving as hole starting locations"
 Course="Hole nodes that compose the course"
 Hole="Objects that mark the end of a hole"
+CameraContainer="Contains all CameraContainer nodes"
 
 [improved_json]
 

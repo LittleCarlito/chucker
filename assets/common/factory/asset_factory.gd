@@ -22,89 +22,146 @@ var scene_library: Dictionary = {
 
 const _NO_MATCH_LOG: String = "No match for incoming creation type \"%s\" could be found in the scene library; Nothing will be spawned"
 const _CREATE_AND_LAUNCH: String = "create_and_launch"
+const _INSTANTIATE_PACKED_SCENE: String = "_instantiate_packed_scene"
+const _INVALID_INCOMING_ITEM: String = "Incoming item \"%s\" is invalid for asset creation and could not be equipped"
+const _NO_GROUP_PROVIDED: String = "No group_name provided with item_data; Launching item under \"%s\" Group"
+const _LAUNCH_NOT_SET: String = "Launch parameters coulnd't be set on \"%s\"; Will not be launching"
+const _LAUNCH_RESULT_STRING: String = "Launch for \"%s\" was %s"
+const _EMPTY_FLIGHT_PATH: String = "Flight data had an empty flight path; Flight data: \"%s\""
+const _REQUIRES_ONE_VECTOR: String = "Requires at least one Vector3"
+const _ASSET_MISSING_METHOD: String = "New_asset \"%s\" doesn't have method %s: \"%s\""
+const _FOCUSED_FLIGHT: String = "Focused flight: \"%s\""
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.
 
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
-	
-# TODO Make a DiskFactory
-#		AssetFactory still recieves the calls it just routes it to the correct subfactory
-# TODO Need to use group_name from AssetData and put the disk in that group as the correct type in the correct states
+
+# TODO Should rework this and the equip methods into a different class and leave this as a pure factory
+#		Called AssetDelivery
+## Creates new item based off incoming item data
+## New item has its physical parameters set to follow the flight_data given
 func create_and_launch(flight_data: FlightData, item_data: AssetData) -> void:
 	var item_type: AssetData.TYPE = item_data.creation_type
 	if item_type == AssetData.TYPE.UNKNOWN:
 		item_type = item_data.internal_type
-	# TODO item_owner and fallback things are going to be handled by throwers via group methods or signal bus
-	#var item_owner: ChuckChucker = incoming_item.get_item_owner()
-	#var fallback_camera: Camera3D = incoming_item.get_fallback_camera()
-	# TODO Continuing from here
-	match item_type:
-		AssetData.TYPE.FORCE:
-			# TODO For now making them all viewable; Need to make it so that isn't always the case
-			var force_disk: ForceDisk = new_force_disk()
-			force_disk._create_camera_container()
-			# TODO here use group id to have it added to the owner of that group as a child and set as top level
-			#groupCaller.methodname(true for setting top leve)
-			get_tree().get_root().add_child(force_disk)
-			force_disk.prepare_item(item_type)
-			# TODO I think here when facing not forward disks will still launch forward
-			force_disk.global_position = flight_data.flight_path[0]
-			force_disk.set_launch_parameters(flight_data)
-			force_disk.launch_disk()
-		AssetData.TYPE.PATH:
-			var path_disk: PathDisk = AssetFactory.new_path_disk()
-			# TODO here use group id to have it added to the owner of that group as a child and set as top level
-			#groupCaller.methodname(true for setting top leve)
-			get_tree().get_root().add_child(path_disk)
-			path_disk.global_position = flight_data.flight_path[0]
-			path_disk.set_launch_parameters(flight_data)
-		_:
-			var formatted_string: String = CONSTANTS.UNSUPPORTED_TYPE_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
-			Logger.warn(formatted_string, [_CREATE_AND_LAUNCH, str(item_type)], self)
+	var group_name: String = item_data.group_name
+	if group_name == null || group_name.is_empty():
+		group_name = GlobalSettings.DEFAULTS.GROUP
+		Logger.debug(_NO_GROUP_PROVIDED, [group_name], self)
+	var associated_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(item_data.creation_type, item_data.internal_type)
+	var new_asset_data: AssetData = AssetData.create_item_data(item_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, associated_creation_type, group_name)
+	var new_asset: Node3D = create_asset(new_asset_data.internal_type)
+	if new_asset != null:
+		_set_asset_data(new_asset, new_asset_data)
+		get_tree().get_root().add_child(new_asset)
+		# Might need a check to ensure flight_path is populated first
+		if !flight_data.flight_path.is_empty():
+			new_asset.global_position = flight_data.flight_path[0]
+			if(_set_launch_parameters(new_asset, flight_data)):
+				if(_launch_asset(new_asset)):
+					var has_camera_container_method: bool = new_asset.has_method(CONSTANTS.GET_CAMERA_CONTAINER)
+					if has_camera_container_method and flight_data.focus_flight:
+						get_tree().call_group(CONSTANTS.CAMERA_CONTAINER, CONSTANTS.REQUEST_CAMERA, new_asset)
+					else:
+						var formatted_string: String = CONSTANTS.EITHER_STARTER + _ASSET_MISSING_METHOD + CONSTANTS.OR_SEPARATOR + _FOCUSED_FLIGHT + CONSTANTS.KEEPING_CAMERA
+						Logger.debug(formatted_string, [str(new_asset), CONSTANTS.GET_CAMERA_CONTAINER, str(has_camera_container_method), str(flight_data.focus_flight)], self)
+					Logger.debug(_LAUNCH_RESULT_STRING, [str(new_asset), CONSTANTS.SUCCESSFUL], self)
+				else:
+					Logger.debug(_LAUNCH_RESULT_STRING, [str(new_asset), CONSTANTS.FAILURE], self)
+				# Regardless of flight result have the items in th given data group update their status data
+				if item_data.group_name != null:
+					get_tree().call_group(item_data.group_name, CONSTANTS.UPDATE_STATE)
+			else:
+				Logger.debug(_LAUNCH_NOT_SET, [str(new_asset)], self)
+		else:
+			var formatted_string: String = _EMPTY_FLIGHT_PATH + CONSTANTS.LOG_SEPARATOR + _REQUIRES_ONE_VECTOR
+			Logger.debug(formatted_string, [str(flight_data)], self)
+			pass
+	else:
+		Logger.debug(_INVALID_INCOMING_ITEM, [str(item_data)], self)
 
-func equip_item(item_owner: ChuckChucker, incoming_item: ForceDisk) -> void:
-	pass
+## TODO Equips incoming owner with internal type found inside given item
+func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) -> void:
 	# TODO Should create the ChargeDisk and add it to the group for the passed in Chuck
 	#		Should add the new disk as a child to ChuckChucker
 	#			Should have method in ChuckChucker to set holdItem or something
-		#var rigid_disk: ForceDisk = colliding_object as ForceDisk
-		#match rigid_disk.get_item_type():
-			#AssetData.TYPE.FORCE:
-				#player_item = ChargeDisk.new_object()
-			#AssetData.TYPE.PATH:
-				#player_item = PullDisk.new_object()
-			#_:
-				#Logger.error(_UKNOWN_OBJECT_LOG, [], self)
-		## Connect the playerDisk rotation signal to chucker
-		#if player_item != null:
-			## TODO Need to update the methods taking the camera in to reparent it to the object receiving it
-			#player_item.prepare_item(rigid_disk.get_item_type(), self, camera_container.get_camera())
-			#player_item.rotate_parent.connect(_handle_rotation)
-			#item_controller.add_child(player_item)
-		#rigid_disk.pick_up()
-	#else:
-		## TODO Should really figure out something else to do here
-		#colliding_object.queue_free()
+	var associated_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(incoming_item.item_data.creation_type, incoming_item.item_data.internal_type)
+	var new_item_data: AssetData = AssetData.create_item_data(incoming_item.item_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, associated_creation_type, item_owner.item_data.group_name)
+	var new_asset: Node3D = create_asset(new_item_data.internal_type)
+	if new_asset != null:
+		_set_asset_data(new_asset, new_item_data)
+		var overflow_item: Node3D = item_owner.equip_item(new_asset)
+		if overflow_item != null:
+			dump_asset(overflow_item)
+		incoming_item.pick_up()
+	else:
+		Logger.debug(_INVALID_INCOMING_ITEM, [str(incoming_item)], self)
 
-func spawn_asset(item_data: AssetData, spawn_parent: Node3D, spawn_location: Vector3 = Vector3(0, 1, 0)) -> void:
-	var created_node: Node3D = create_asset(item_data)
+# TODO Implement
+func dump_asset(overflow_item: Node3D) -> void:
+	# TODO Spawn this into the Levels default spawn area
+	# TODO Should eventually have it dump on top of whatever entity caused it to overflow
+	pass
+
+func spawn_asset(asset_data: AssetData, spawn_parent: Node3D, spawn_location: Vector3 = Vector3(0, 1, 0)) -> void:
+	var created_node: Node3D = create_asset(asset_data.internal_type)
+	var has_set_asset_data: bool = false
+	if created_node.has_method(CONSTANTS.SET_ASSET_DATA):
+		# TODO Logic to add asset data to new object
+		has_set_asset_data = true
+		pass
 	spawn_parent.add_child(created_node)
+	# TODO Don't do below; Make sure objects that contain AssetData have a check to see if their value is null on _ready
+	#			If not they should check to see if their group name is empty
+	#				If its not they should add themselves to the containing group
+	# TODO If node had method and incoming data contained a group add the new asset to that group
 	created_node.global_position = spawn_location
 
-func create_asset(item_data: AssetData) -> Node3D:
-	var internal_type: AssetData.TYPE = item_data.internal_type
-	var new_packed_scene: PackedScene = scene_library.get(internal_type, null)
+func create_asset(asset_type: AssetData.TYPE) -> Node3D:
+	var new_packed_scene: PackedScene = scene_library.get(asset_type, null)
 	return _instantiate_packed_scene(new_packed_scene)
 
 static func _instantiate_packed_scene(incoming_scene: PackedScene) -> Node3D:
-	var new_node: Node3D = incoming_scene.instantiate()
-	_brand(new_node)
-	return new_node
+	var return_node: Node3D = null
+	if incoming_scene != null:
+		var new_node: Node3D = incoming_scene.instantiate()
+		_brand(new_node)
+		return_node = new_node
+	else:
+		var formatted_string: String = CONSTANTS.NULL_PARAMETER_STRING + CONSTANTS.LOG_SEPARATOR + CONSTANTS.CANNOT_ACTION_STRING + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
+		Logger.debug(formatted_string, [_INSTANTIATE_PACKED_SCENE], null)
+	return return_node
+
+static func _set_asset_data(incoming_asset: Node3D, incoming_data: AssetData) -> bool:
+	var data_set: bool = false
+	if incoming_asset.has_method(CONSTANTS.SET_ASSET_DATA):
+		incoming_asset.call(CONSTANTS.SET_ASSET_DATA, incoming_data)
+		data_set = true
+	else:
+		Logger.debug(CONSTANTS.NO_METHOD_FOUND, [CONSTANTS.SET_ASSET_DATA, str(incoming_asset)], null)
+	return data_set
+
+static func _set_launch_parameters(incoming_asset: Node3D, incoming_data: FlightData) -> bool:
+	var data_set: bool = false
+	if incoming_asset.has_method(CONSTANTS.SET_FLIGHT_DATA):
+		incoming_asset.call(CONSTANTS.SET_FLIGHT_DATA, incoming_data)
+		data_set = true
+	else:
+		Logger.debug(CONSTANTS.NO_METHOD_FOUND, [CONSTANTS.SET_FLIGHT_DATA, str(incoming_asset)], null)
+	return data_set
+
+static func _launch_asset(incoming_asset: Node3D) -> bool:
+	var asset_launched: bool = false
+	if incoming_asset.has_method(CONSTANTS.LAUNCH):
+		incoming_asset.call(CONSTANTS.LAUNCH)
+		asset_launched = true
+	else:
+		Logger.debug(CONSTANTS.NO_METHOD_FOUND, [CONSTANTS.SET_FLIGHT_DATA, str(incoming_asset)], null)
+	return asset_launched	
 
 # TODO Make sure the classes that need it have their local scene/global group creation in their ready methods
 static func new_camera_container() -> CameraContainer:

@@ -3,6 +3,8 @@ extends LocalResource
 ## Used in interaction, contruction, and deconstruction of assets in the world
 class_name AssetData
 
+const _NO_VALUE: String = "No value assicated in the creation matrix for \"%s\""
+
 ## Used for storing type property in engine Groups
 const TYPE_PROPERTY: String = "Type"
 ## Describes the type and assumed functionality of the object
@@ -22,6 +24,13 @@ enum ITEM_STATE{DISABLED = 0, DEACTIVATED = 1, ACTIVATED = 2, UNKNOWN = 999}
 @export var item_state: AssetData.ITEM_STATE
 ## The state of this asset's internal camera
 @export var camera_state: AssetData.CAMERA_STATE
+
+const CREATION_MATRIX: Dictionary = {
+	TYPE.CHARGE: [TYPE.FORCE],
+	TYPE.PULL: [TYPE.PATH],
+	TYPE.PATH: [TYPE.FORCE],
+	TYPE.FORCE: [TYPE.CHARGE, TYPE.PULL]
+}
 
 const ITEM_COLOR: Dictionary = {
 	AssetData.TYPE.FORCE: GlobalSettings.COLOR.FORCE,
@@ -56,3 +65,23 @@ static func get_camera_state(camera_container: CameraContainer = null) -> AssetD
 			if camera_container.is_current():
 				updated_state = AssetData.CAMERA_STATE.ACTIVE
 	return updated_state
+
+## Retrieves the creation type associated with the given incoming_type
+## Takes previous_internal_type into account if multiple creation values are possible
+## Uses first value if previous_internal_type was needed to determine but not provided
+static func get_associated_creation_type(incoming_type: AssetData.TYPE, previous_internal_type: AssetData.TYPE = AssetData.TYPE.UNKNOWN) -> AssetData.TYPE:
+	var associated_type: AssetData.TYPE = AssetData.TYPE.UNKNOWN
+	var possible_creation_types: Array = CREATION_MATRIX.get(incoming_type, []) as Array
+	if possible_creation_types != null && !possible_creation_types.is_empty():
+		if possible_creation_types.size() > 1:
+			var previous_index: int = possible_creation_types.find(previous_internal_type)
+			if previous_index > -1:
+				associated_type = possible_creation_types[previous_index]
+			else:
+				associated_type = possible_creation_types[0]
+		else:
+			associated_type = possible_creation_types[0]
+	else:
+		var formatted_string: String = _NO_VALUE + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_UNKNOWN_LOG
+		Logger.debug(formatted_string, [str(incoming_type)], null)
+	return associated_type

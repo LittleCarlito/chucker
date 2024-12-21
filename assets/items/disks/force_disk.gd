@@ -2,7 +2,7 @@ extends RigidBody3D
 class_name ForceDisk
 
 	# TODO Continue from here
-	# TODO Get ChuckTee camera looking correctly
+	# TODO Implement EquipItem in AssetFactory
 	# TODO Get aiming from CameraContainer working properly in ChargeDisk
 	# TODO Throw a ChargeDisk and have it land/collide properly
 	# TODO Get TeeBox HoleNode and ChuckHole spawned in through asset factory
