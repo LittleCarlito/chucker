@@ -25,6 +25,7 @@ InputEventLibrary="*res://configuration/input/input_event_library.gd"
 InputSprite="*res://configuration/sprite/input_sprite.gd"
 GlobalSettings="*res://configuration/global_settings.gd"
 AssetFactory="*res://assets/common/factory/asset_factory.gd"
+AssetDelivery="*res://assets/common/factory/asset_delivery.gd"
 
 [global_group]
 

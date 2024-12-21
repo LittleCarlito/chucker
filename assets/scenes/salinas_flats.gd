@@ -44,15 +44,15 @@ func _ready() -> void:
 	# Spawn in Character
 	var chuck_data: AssetData = AssetData.create_item_data(AssetData.TYPE.PLAYER, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
 	var chuck_location: Vector3 = Vector3(0, 1, 0)
-	AssetFactory.spawn_asset(chuck_data, self, chuck_location)
+	AssetDelivery.spawn_asset(chuck_data, self, chuck_location)
 	# Spawn Path disk
 	var path_data: AssetData = AssetData.create_item_data(AssetData.TYPE.PATH, AssetData.ITEM_STATE.DEACTIVATED)
 	var path_location: Vector3 = Vector3(2, 4, -2)
-	AssetFactory.spawn_asset(path_data, self, path_location)
+	AssetDelivery.spawn_asset(path_data, self, path_location)
 	# Spawn in ForceDisk
 	var force_data: AssetData = AssetData.create_item_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED)
 	var force_location: Vector3 = Vector3(-2, 4, -2)
-	AssetFactory.spawn_asset(force_data, self, force_location)
+	AssetDelivery.spawn_asset(force_data, self, force_location)
 	# TODO Spawn in holes
 	# 		First Hole location:
 	# TODO Spawn in teeboxes

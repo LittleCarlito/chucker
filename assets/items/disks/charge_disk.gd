@@ -52,7 +52,7 @@ func release_action() -> void:
 		# TODO Launcd disk needs to be refactored into this class
 		if flight_data.flight_ready:
 			# TODO Make sure that item_data contains the group_name of the entity throwing it
-			AssetFactory.create_and_launch(flight_data, item_data)
+			AssetDelivery.create_and_launch(flight_data, item_data)
 			#self.queue_free()
 		else:
 			Logger.error(FlightData.LAUNCH_NOT_READY_LOG, [], self)
