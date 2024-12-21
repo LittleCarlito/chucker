@@ -18,7 +18,7 @@ const _EMPTY_CAMERA_CONTAINER: String = "CameraContainer from \"%s\" returned nu
 #		This as the owner can call to fire_launcher()
 #		Disks as member of the group should check their type
 #			If LAUNCHER reach to the signal/method by sending set flight_data and item_data to the factory
-@export var item_data: AssetData
+@export var asset_data: AssetData
 var stopwatch: Stopwatch = Stopwatch.new()
 var height: float
 
@@ -36,9 +36,9 @@ func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	height = chuck_mesh.get_aabb().size.y
 	camera_container.populate_camera_control(_get_focus_point())
-	if item_data == null:
-		item_data = AssetData.create_item_data(AssetData.TYPE.PLAYER)
-	item_data.group_name = self.name
+	if asset_data == null:
+		asset_data = AssetData.create_item_data(AssetData.TYPE.PLAYER)
+	asset_data.group_name = self.name
 	_update_state()
 
 func _process(_delta: float) -> void:
@@ -96,7 +96,6 @@ func _handle_player_interact() -> void:
 		var colliding_count = front_detection.get_collision_count()
 		for n in colliding_count:
 			var colliding_object = front_detection.get_collider(0)
-			Logger.debug("%s", [str(colliding_object)], colliding_object)
 			if colliding_object != null and colliding_object is ForceDisk:
 				AssetDelivery.create_and_give_item(self, colliding_object)
 
@@ -209,7 +208,7 @@ func _can_vertically_rotate(rotation_amount:float) -> bool:
 	return (potential_vertical_roation > min_vertical_value) and (potential_vertical_roation < max_vertical_value)
 
 func _update_state() -> void:
-	item_data.camera_state = AssetData.get_camera_state(camera_container)
+	asset_data.camera_state = AssetData.get_camera_state(camera_container)
 
 func hold_action(delta: float) -> void:
 	Logger.debug("I'm gonna chuck", [], self)

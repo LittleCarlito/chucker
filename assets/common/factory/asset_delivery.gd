@@ -65,8 +65,8 @@ func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) ->
 	# TODO Should create the ChargeDisk and add it to the group for the passed in Chuck
 	#		Should add the new disk as a child to ChuckChucker
 	#			Should have method in ChuckChucker to set holdItem or something
-	var associated_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(incoming_item.item_data.creation_type, incoming_item.item_data.internal_type)
-	var new_item_data: AssetData = AssetData.create_item_data(incoming_item.item_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, associated_creation_type, item_owner.item_data.group_name)
+	var associated_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(incoming_item.asset_data.creation_type, incoming_item.asset_data.internal_type)
+	var new_item_data: AssetData = AssetData.create_item_data(incoming_item.asset_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, associated_creation_type, item_owner.asset_data.group_name)
 	var new_asset: Node3D = AssetFactory.create_asset(new_item_data.internal_type)
 	if new_asset != null:
 		_set_asset_data(new_asset, new_item_data)
@@ -75,7 +75,7 @@ func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) ->
 			dump_asset(overflow_item)
 		incoming_item.pick_up()
 	else:
-		Logger.debug(_INVALID_INCOMING_ITEM, [str(incoming_item)], self)
+		Logger.info(_INVALID_INCOMING_ITEM, [str(incoming_item)], self)
 
 # TODO Implement
 func dump_asset(overflow_item: Node3D) -> void:
@@ -83,18 +83,12 @@ func dump_asset(overflow_item: Node3D) -> void:
 	# TODO Should eventually have it dump on top of whatever entity caused it to overflow
 	pass
 
+# TODO Make sure that nodes check for AssetData in their _ready and add themselves to the group if one exists there
 func spawn_asset(asset_data: AssetData, spawn_parent: Node3D, spawn_location: Vector3 = Vector3(0, 1, 0)) -> void:
 	var created_node: Node3D = AssetFactory.create_asset(asset_data.internal_type)
-	var has_set_asset_data: bool = false
 	if created_node.has_method(CONSTANTS.SET_ASSET_DATA):
-		# TODO Logic to add asset data to new object
-		has_set_asset_data = true
-		pass
+		asset_data.call(CONSTANTS.SET_ASSET_DATA, asset_data)
 	spawn_parent.add_child(created_node)
-	# TODO Don't do below; Make sure objects that contain AssetData have a check to see if their value is null on _ready
-	#			If not they should check to see if their group name is empty
-	#				If its not they should add themselves to the containing group
-	# TODO If node had method and incoming data contained a group add the new asset to that group
 	created_node.global_position = spawn_location
 
 static func _set_asset_data(incoming_asset: Node3D, incoming_data: AssetData) -> bool:

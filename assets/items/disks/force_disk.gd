@@ -45,25 +45,27 @@ signal lose_focus
 
 @onready var disk_mesh: DiskMesh = $DiskMesh
 @onready var disk_collision: DiskCollision = $DiskCollision
-@export var item_data: AssetData
+@export var asset_data: AssetData
 @export var flight_data: FlightData
 var camera_container: CameraContainer
 
 func _ready() -> void:
-	if item_data == null:
-		item_data = AssetData.create_item_data(GlobalSettings.DEFAULTS.ITEM as AssetData.TYPE)
-	disk_mesh.set_type(item_data.internal_type)
+	if asset_data == null:
+		asset_data = AssetData.create_item_data(GlobalSettings.DEFAULTS.ITEM as AssetData.TYPE)
+		if !asset_data.group_name.is_empty():
+			add_to_group(asset_data.group_name)
+	disk_mesh.set_type(asset_data.internal_type)
 	_update_state()
 
 func _process(_delta: float) -> void:
 	pass
 
 func set_internal_type(new_internal_type: AssetData.TYPE) -> void:
-	item_data.internal_type = new_internal_type
-	disk_mesh.set_type(item_data.internal_type)
+	asset_data.internal_type = new_internal_type
+	disk_mesh.set_type(asset_data.internal_type)
 
 func set_creation_type(new_creation_type: AssetData.TYPE) -> void:
-	item_data.creation_type = new_creation_type
+	asset_data.creation_type = new_creation_type
 
 func set_launch_parameters(incoming_data: FlightData) -> void:
 	flight_data = incoming_data
@@ -81,8 +83,8 @@ func launch_disk() -> void:
 		Logger.warn(_MISSING_FLIGHT_DATA_LOG, [], self)
 
 func get_item_type() -> AssetData.TYPE:
-	if item_data != null:
-		return item_data.internal_type
+	if asset_data != null:
+		return asset_data.internal_type
 	else:
 		var formatted_string: String = _NO_ITEM_DATA_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_UNKNOWN_LOG
 		Logger.warn(formatted_string, [], self)
@@ -124,7 +126,7 @@ func set_disk_camera(new_camera: Camera3D) -> void:
 	_update_state()
 
 func _handle_collision(body_rid: RID, _body: Node, _body_shape_index: int, _local_shape_index: int) -> void:
-	disk_collision.store_collision(self.get_rid(), body_rid, self.global_position, flight_data, item_data)
+	disk_collision.store_collision(self.get_rid(), body_rid, self.global_position, flight_data, asset_data)
 	if camera_container != null && (camera_container.has_camera() && camera_container.is_current()):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		if !camera_container.is_focused():
@@ -156,4 +158,4 @@ func _create_camera_container() -> void:
 		Logger.warn(CONSTANTS.ALREADY_EXISTS_LOG, [CONSTANTS.CAMERA_CONTAINER], self)
 
 func _update_state() -> void:
-	item_data.camera_state = AssetData.get_camera_state(camera_container)
+	asset_data.camera_state = AssetData.get_camera_state(camera_container)

@@ -18,9 +18,7 @@ const _CURRENT_CAMERA_LOG: String = "Current camera is %s"
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	camera_container.populate_camera_control(_get_focus_point())
-	Logger.debug("FOV before setting %s", [str(camera_container.get_camera().fov)], self)
 	camera_container.set_fov(GlobalSettings.CAMERA.get(CONSTANTS.STATIONARY_FOV, GlobalSettings.CAMERA_DEFAULTS.STATIONARY_FOV))
-	Logger.debug("FOV after setting %s", [str(camera_container.get_camera().fov)], self)
 	# TODO Need to get noded path from teebox to hole and have camera focus on first node
 	# TODO need to create group from teebox this will be group owner
 	#		Try to share asset status stuff with already existing classes

@@ -24,11 +24,13 @@ const _BODY_ENTER: String = "body_enter"
 @onready var path_3d: Path3D = $Path3D
 @onready var path_follow: PathFollow3D = $Path3D/PathFollow3D
 @export var flight_data: FlightData
-@export var item_data: AssetData
+@export var asset_data: AssetData
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	disk_mesh.set_type(AssetData.TYPE.PATH)
+	if asset_data != null and !asset_data.group_name.is_empty():
+		add_to_group(asset_data.group_name)
 
 # BUG When path is short the disk travels too quickly
 # Called every frame. 'delta' is the elapsed time since the previous frame.
