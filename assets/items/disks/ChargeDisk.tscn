@@ -1,27 +1,17 @@
-[gd_scene load_steps=11 format=3 uid="uid://cfb8nwjdbjdsi"]
+[gd_scene load_steps=9 format=3 uid="uid://cfb8nwjdbjdsi"]
 
 [ext_resource type="Script" path="res://assets/items/disks/charge_disk.gd" id="2_o74uw"]
 [ext_resource type="Script" path="res://assets/items/common/flight_data.gd" id="2_vyydj"]
 [ext_resource type="PackedScene" uid="uid://cfpse6r2su0ua" path="res://assets/ui/views/ChargeView.tscn" id="3_ag6h7"]
-[ext_resource type="Script" path="res://assets/common/factory/asset_data.gd" id="3_gcqdw"]
 [ext_resource type="PackedScene" uid="uid://jvw5pa8yws2g" path="res://assets/items/disks/common/disk_mesh.tscn" id="3_h4vod"]
 [ext_resource type="PackedScene" uid="uid://ctgyvj14lfkpj" path="res://assets/items/common/aim_line.tscn" id="6_bvyjy"]
 
 [sub_resource type="Resource" id="Resource_6rxnd"]
 script = ExtResource("2_vyydj")
 flight_speed = 0.0
-flight_angle = 0.0
+flight_global_basis = Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
 flight_path = Array[Vector3]([])
 focus_flight = true
-flight_ready = false
-
-[sub_resource type="Resource" id="Resource_7grwk"]
-script = ExtResource("3_gcqdw")
-internal_type = 0
-group_name = ""
-creation_type = 0
-item_state = 0
-camera_state = 0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dv51d"]
 resource_local_to_scene = true
@@ -35,7 +25,6 @@ height = 0.1
 [node name="ChargeDisk" type="Node3D" groups=["All", "Disk", "General"]]
 script = ExtResource("2_o74uw")
 flight_data = SubResource("Resource_6rxnd")
-item_data = SubResource("Resource_7grwk")
 
 [node name="ChargeView" parent="." instance=ExtResource("3_ag6h7")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 1.16, 0.655, 0)

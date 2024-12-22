@@ -2,8 +2,7 @@ extends RigidBody3D
 class_name ForceDisk
 
 	# TODO Continue from here
-	# TODO Implement EquipItem in AssetFactory
-	# TODO Get aiming from CameraContainer working properly in ChargeDisk
+	# TODO Be able to pick up thrown charge disk
 	# TODO Throw a ChargeDisk and have it land/collide properly
 	# TODO Get TeeBox HoleNode and ChuckHole spawned in through asset factory
 	#			Have their data integrated to Global Hole Data
@@ -20,6 +19,7 @@ class_name ForceDisk
 	#			Each disk type and ChuckChucker type should have a "item_lose_focus" method
 	#				Item one will set camera current to false and queue_free self
 	#				ChuckChucker type will enable camera and movement
+	# TODO Get aiming from CameraContainer working properly in ChargeDisk
 	# TODO Make GlobalSignal handler
 	#		Start with method to collect all movement signals from a group and log how many objects are moving every 3rd frame
 	# TODO Instead of queue_freeing objects work on pooling and reusing them
@@ -40,8 +40,6 @@ const _NO_ITEM_DATA_LOG: String = "AssetData has not been initialized for this n
 const _CREATING_CAMERA_LOG: String = "Creating camera container"
 const _SET_DISK_CAMERA: String = "set_disk_camera"
 const _GET_DISK_CAMERA: String = "get_disk_camera"
-
-signal lose_focus
 
 @onready var disk_mesh: DiskMesh = $DiskMesh
 @onready var disk_collision: DiskCollision = $DiskCollision
@@ -66,21 +64,6 @@ func set_internal_type(new_internal_type: AssetData.TYPE) -> void:
 
 func set_creation_type(new_creation_type: AssetData.TYPE) -> void:
 	asset_data.creation_type = new_creation_type
-
-func set_launch_parameters(incoming_data: FlightData) -> void:
-	flight_data = incoming_data
-
-func launch_disk() -> void:
-	if flight_data != null:
-		self.rotate_x(flight_data.flight_angle)
-		self.linear_velocity = -self.global_transform.basis.z * flight_data.flight_speed
-		if flight_data.focus_flight:
-			# TODO This should be changed to transfer camera or something along those lines
-			toggle_camera()
-			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
-				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	else:
-		Logger.warn(_MISSING_FLIGHT_DATA_LOG, [], self)
 
 func get_item_type() -> AssetData.TYPE:
 	if asset_data != null:
@@ -137,13 +120,6 @@ func _handle_collision(body_rid: RID, _body: Node, _body_shape_index: int, _loca
 			self.linear_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
 			self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
 
-# TODO Move this to holders of the CameraContainer Resource
-# TODO Make sure you connect the signal to the item_owner in the factory
-#		If doing above then no longer need to pass in and store item_owner and fallback_camera
-# TODO Change this to be a group call that that activates the owner and deactivates the disks
-func _on_lose_focus() -> void:
-	lose_focus.emit()
-
 func pick_up() -> void:
 	self.queue_free()
 
@@ -162,3 +138,19 @@ func _update_state() -> void:
 
 func _set_asset_data(incoming_data: AssetData) -> void:
 	asset_data = incoming_data
+
+func _set_flight_data(incoming_data: FlightData) -> void:
+	flight_data = incoming_data
+
+func _launch() -> void:
+	if flight_data != null:
+		self.basis = flight_data.flight_global_basis
+		Logger.info("Finding launch angle %s", [str(flight_data.flight_global_basis.get_euler().x)], self)
+		self.linear_velocity = -self.global_transform.basis.z * flight_data.flight_speed
+		if flight_data.focus_flight:
+			# TODO This should be changed to request camera; Where it pulls the active camera from its group
+			toggle_camera()
+			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
+				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	else:
+		Logger.warn(_MISSING_FLIGHT_DATA_LOG, [], self)

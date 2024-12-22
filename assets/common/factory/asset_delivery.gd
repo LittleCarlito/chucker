@@ -66,10 +66,9 @@ func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) ->
 	# TODO Should create the ChargeDisk and add it to the group for the passed in Chuck
 	#		Should add the new disk as a child to ChuckChucker
 	#			Should have method in ChuckChucker to set holdItem or something
-	var new_internal_type: AssetData.TYPE = AssetData.get_associated_creation_type(incoming_item.asset_data.creation_type, incoming_item.asset_data.internal_type)
-	var new_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(new_internal_type, incoming_item.asset_data.creation_type)
-	var new_item_data: AssetData = AssetData.create_item_data(new_internal_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, new_creation_type, item_owner.asset_data.group_name)
-	var new_asset: Node3D = AssetFactory.create_asset(new_internal_type)
+	var new_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(incoming_item.asset_data.creation_type, incoming_item.asset_data.internal_type)
+	var new_item_data: AssetData = AssetData.create_item_data(incoming_item.asset_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, new_creation_type, item_owner.asset_data.group_name)
+	var new_asset: Node3D = AssetFactory.create_asset(incoming_item.asset_data.creation_type)
 	if new_asset != null:
 		_set_asset_data(new_asset, new_item_data)
 		item_owner.equip_item(new_asset)
@@ -115,5 +114,5 @@ static func _launch_asset(incoming_asset: Node3D) -> bool:
 		incoming_asset.call(CONSTANTS.LAUNCH)
 		asset_launched = true
 	else:
-		Logger.debug(CONSTANTS.NO_METHOD_FOUND, [CONSTANTS.SET_FLIGHT_DATA, str(incoming_asset)], null)
+		Logger.debug(CONSTANTS.NO_METHOD_FOUND, [CONSTANTS.LAUNCH, str(incoming_asset)], null)
 	return asset_launched	

@@ -64,23 +64,20 @@ func _handle_jump(delta: float) -> void:
 
 ## Rotation and aiming logic
 func _handle_camera_controls() -> void:
-	# Left and right rotation inputs
 	if is_rotation_enabled():
+		# Left and right rotation inputs
 		if Input.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_LEFT):
-			#camera_container.rotate_y(deg_to_rad(GlobalSettings.CAMERA.ROTATE_SPEED))
 			self.rotate_y(deg_to_rad(GlobalSettings.CAMERA.ROTATE_SPEED))
 		if Input.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_RIGHT):
-			#camera_container.rotate_y(deg_to_rad(-GlobalSettings.CAMERA.ROTATE_SPEED))
 			self.rotate_y(deg_to_rad(-GlobalSettings.CAMERA.ROTATE_SPEED))
 
 ## Actions when disk is thrown
 func _handle_player_action(delta: float) -> void:
 	if item_container.is_equipped():
-		# TODO Need to make sure disks that are capable of launching have these methods implemented
 		if Input.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY):
-			get_tree().call_group(self.name, CONSTANTS.HOLD_ACTION, delta)
+			item_container.hold_action(delta)
 		if Input.is_action_just_released(CONSTANTS.USER_INPUT.PRIMARY):
-			get_tree().call_group(self.name, CONSTANTS.RELEASE_ACTION)
+			item_container.release_action()
 
 # TODO FrontDetect should be made its own scene with this in its script
 ## Handle player pressing interact button
@@ -96,7 +93,7 @@ func _handle_player_interact() -> void:
 # TODO This should just be handled by this class without signals from below being needed
 #		Should be checking if equipped (if necessary what type; group check)
 #			Then handling rotation event and calling this method internally not from a signal
-# Handles rotation signals from held nodes
+## Handles rotation signals from held nodes
 func _handle_rotation(rotation_amount: float) -> void:
 	var is_min_rotate: bool = rotation_amount > 0 and item_container.rotation_degrees.x < GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION
 	var is_max_rotate: bool = rotation_amount < 0 and item_container.rotation_degrees.x > GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION
@@ -126,7 +123,7 @@ func _handle_movement(delta: float) -> void:
 	if(is_on_floor()):
 		var direction = (self.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		if direction:
-			if item_container.is_equipped() || is_movement_disabled():
+			if is_movement_disabled():
 				velocity.x = 0
 				velocity.z = 0
 			else:
@@ -158,6 +155,7 @@ func regain_focus() -> void:
 func reload_project_settings() -> void:
 	camera_container.reset_zoom()
 
+# TODO Seems like maybe its time to mix in oop and extend CameraContainer for LookingCameraContainer
 func _handle_looking(event: InputEvent) -> void:
 	if event.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -201,11 +199,13 @@ func _can_vertically_rotate(rotation_amount:float) -> bool:
 	var min_vertical_value: float = GlobalSettings.CAMERA.get(CONSTANTS.MIN_VERTICAL_ROTATION, GlobalSettings.CAMERA_DEFAULTS.MIN_VERTICAL_ROTATION)
 	return (potential_vertical_roation > min_vertical_value) and (potential_vertical_roation < max_vertical_value)
 
+# TODO Need to go through methods in and affecting this class and determine which need to have this method called after
 func _update_state() -> void:
 	asset_data.camera_state = AssetData.get_camera_state(camera_container)
 
+# TODO Should come up with something; Maybe an unequip check and then some default interaction
 func hold_action(delta: float) -> void:
-	Logger.debug("I'm gonna chuck", [], self)
+	pass
 
 func release_action() -> void:
 	# TODO Should probably be doing something with the unequip_item() where camera is offered up to the item_container

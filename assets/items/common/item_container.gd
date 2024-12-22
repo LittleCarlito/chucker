@@ -2,6 +2,8 @@ extends Node3D
 class_name ItemContainer
 
 const _UNEQUIP_MESSAGE_LOG: String = "unequip_item() called but no item is equiped"
+const _EQUIPPED_MISSING_METHOD: String = "Equipped item \"%s\" doesn't have %s method"
+const _ITEM_CONTAINER_UNEQUIPPED: String = "ItemContainer is not equipped with an item; %s should not have been called"
 
 var equipped_item: Node3D
 
@@ -35,6 +37,26 @@ func unequip_item() -> void:
 		Logger.warn(_UNEQUIP_MESSAGE_LOG, [], self)
 	# Reset item controller rotation
 	self.rotation_degrees.x = 0
+
+# TODO Figure out a default 0ing, min, or max value for Basis to allow defaulting
+func hold_action(delta: float) -> void:
+	if is_equipped():
+		if equipped_item.has_method(CONSTANTS.HOLD_ACTION):
+			equipped_item.call(CONSTANTS.HOLD_ACTION, delta, self.global_basis)
+		else:
+			Logger.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), CONSTANTS.HOLD_ACTION], self)
+	else:
+		Logger.debug(_ITEM_CONTAINER_UNEQUIPPED, [CONSTANTS.HOLD_ACTION], self)
+
+# TODO Figure out a default 0ing, min, or max value for Basis to allow defaulting
+func release_action() -> void:
+	if is_equipped():
+		if equipped_item.has_method(CONSTANTS.RELEASE_ACTION):
+			equipped_item.call(CONSTANTS.RELEASE_ACTION, self.global_basis)
+		else:
+			Logger.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), CONSTANTS.RELEASE_ACTION], self)
+	else:
+		Logger.debug(_ITEM_CONTAINER_UNEQUIPPED, [CONSTANTS.RELEASE_ACTION], self)
 
 func is_equipped() -> bool:
 	return equipped_item != null
