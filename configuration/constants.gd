@@ -43,17 +43,19 @@ const DEACTIVATE_LOG: String = "%s is deactivating"
 const LOG_SEPARATOR: String = "; "
 const OR_SEPARATOR: String = " OR "
 const EITHER_STARTER: String = "Either "
-
 const NO_METHOD_FOUND: String = "No method \"%s\" found on object \"%s\""
+
+
 # General method names
 # TODO Need to implement this method in all assets that contain CameraContainer
 const SET_CAMERA: String = "set_camera" # (incoming_camera: Camera3D, focus_point: Vector3 = Vecotr3.INF)
 const HAS_CAMERA: String = "has_camera"
 # TODO Need to implement this in objects that will initiate transferring of cameras (ChuckChucker, PathDisk)
-const GIVE_CAMERA: String = "_give_camera" # (requesting_owner: Node3D) # requesting_owner must implement _get_camera_container
+const GIVE_CAMERA: String = "_give_camera" # (requesting_owner: Node3D)
 # TODO CameraContainer needs to implement this to attempt to give ones of its instances of itself to the requesting_owner
 #			Will need to update in the future to ask for specific camera
-const REQUEST_CAMERA: String = "_request_camera" # (requesting_owner: Node3D) # requesting_owner must implement _get_camera_container
+const REQUEST_CAMERA: String = "_request_camera" # (requesting_owner: Node3D)
+const RETURN_CAMERA: String = "_return_camera" # (incoming_camera: Camera3D)
 # TODO Implement this method in all assets that can be picked up and have a camera transferred to them
 const GET_CAMERA_CONTAINER: String = "_get_camera_container"
 # TODO All holders of AssetData need getters and setters created

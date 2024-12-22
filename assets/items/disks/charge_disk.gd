@@ -42,9 +42,10 @@ func hold_action(delta: float, incoming_basis: Basis) -> void:
 		var held_time: float = stopwatch.isHeld(delta)
 		charge_view.set_progress((held_time / GlobalSettings.DISK.MAX_HOLD) * 100)
 		var speed_multiplier: float = min(GlobalSettings.DISK.MAX_HOLD, held_time) * GlobalSettings.DISK.HOLD_MULTIPLIER
-		flight_data.flight_path = aim_line.draw_aim_line(speed_multiplier)
+		var drawn_line: Array[Vector3] = aim_line.draw_aim_line(speed_multiplier)
+		if drawn_line != null:
+			flight_data.flight_path 
 		flight_data.flight_global_basis = incoming_basis
-		Logger.info("Recieved basis rotation is: %s", [str(incoming_basis.get_euler())], self)
 
 # TODO Refactor to take in global_basis and set it in flight data as well
 # TODO Figure out default value for Basis
@@ -58,7 +59,6 @@ func release_action(incoming_basis: Basis) -> void:
 		# TODO Added this last multiplier bit in from force disks method (should be done by caller) don't know if its necessary though
 		#		If it is should be simplified into the calculation above instead of 2 separate lines
 		var final_speed: float = GlobalSettings.DISK.LAUNCH_SPEED * speed_multiplier
-		Logger.info("Recieved basis rotation is: %s", [str(incoming_basis.get_euler())], self)
 		flight_data = FlightData.create_flight_data(final_speed, incoming_basis, flight_data.flight_path, flight_data.focus_flight)
 		# TODO Launcd disk needs to be refactored into this class
 		if flight_data != null:

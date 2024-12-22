@@ -41,9 +41,9 @@ func create_and_launch(flight_data: FlightData, item_data: AssetData) -> void:
 				if(_launch_asset(new_asset)):
 					var has_camera_container_method: bool = new_asset.has_method(CONSTANTS.GET_CAMERA_CONTAINER)
 					if has_camera_container_method and flight_data.focus_flight:
-						get_tree().call_group(CONSTANTS.CAMERA_CONTAINER, CONSTANTS.REQUEST_CAMERA, new_asset)
+						get_tree().call_group(new_asset_data.group_name, CONSTANTS.REQUEST_CAMERA, new_asset)
 					else:
-						var formatted_string: String = CONSTANTS.EITHER_STARTER + _ASSET_MISSING_METHOD + CONSTANTS.OR_SEPARATOR + _FOCUSED_FLIGHT + CONSTANTS.KEEPING_CAMERA
+						var formatted_string: String = CONSTANTS.EITHER_STARTER + _ASSET_MISSING_METHOD + CONSTANTS.OR_SEPARATOR + _FOCUSED_FLIGHT + CONSTANTS.LOG_SEPARATOR + CONSTANTS.KEEPING_CAMERA
 						Logger.debug(formatted_string, [str(new_asset), CONSTANTS.GET_CAMERA_CONTAINER, str(has_camera_container_method), str(flight_data.focus_flight)], self)
 					Logger.debug(_LAUNCH_RESULT_STRING, [str(new_asset), CONSTANTS.SUCCESSFUL], self)
 				else:

@@ -27,6 +27,7 @@ var height: float
 
 func _ready() -> void:
 	self.add_to_group(self.name)
+	camera_container.add_to_group(self.name)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	height = chuck_mesh.get_aabb().size.y
 	camera_container.populate_camera_control(_get_focus_point())
@@ -131,7 +132,7 @@ func _handle_movement(delta: float) -> void:
 				if Input.is_action_pressed(CONSTANTS.USER_INPUT.SPRINT):
 					sprint_addition = GlobalSettings.PLAYER.SPRINT_SPEED
 					camera_container.zoom_out()
-				else:
+				elif camera_container.has_camera():
 					camera_container.reset_zoom()
 				velocity.x = direction.x * (GlobalSettings.PLAYER.RUN_SPEED + sprint_addition)
 				velocity.z = direction.z * (GlobalSettings.PLAYER.RUN_SPEED + sprint_addition)
@@ -247,15 +248,9 @@ func _give_camera(new_item: Node3D) -> void:
 		var formatted_string: String = _NO_CAMERA_CONTAINER_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.KEEPING_CAMERA
 		Logger.debug(formatted_string, [str(new_item)], self)
 
-# TODO Some version of this should be implemented to handle when a deactivate_to_owner()
-#func activate_fallback() -> void:
-	#if fallback_camera != null:
-		#fallback_camera.current = true
-	#if item_owner != null:
-		#item_owner.enable_movement()
-		#item_owner.enable_rotation()
-	#deactivate.emit()
-
 func _get_focus_point() -> Vector3:
 	var focus_point: Vector3 = self.position + GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOCUS_OFFSET, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOCUS_OFFSET)
 	return focus_point
+
+func _return_camera(incoming_camera: Camera3D) -> void:
+	camera_container.set_camera(incoming_camera)

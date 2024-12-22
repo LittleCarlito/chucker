@@ -30,8 +30,8 @@ const _NO_FOCUS_LOG: String = "Camera \"%s\" with no focus set"
 const _CAMERA_ALREADY_EXISTS: String = "Camera already exists cannot populate with new instance"
 const _DISABLE_LOG: String = "Camera is being disabled"
 const _HORIZONTAL_ROTATE: String = "horizontal_rotate"
-const _FOCUS_CAMERA: String = "focus_camera"
 const _REPARENT_CAMERA: String = "reparent_camera"
+const _FOCUS_CAMERA_CONTROL: String = "focus_camera_control"
 
 @onready var camera_control: Node3D = $CameraControl
 @onready var camera_timer: Timer = $CameraTimer
@@ -40,7 +40,9 @@ var internal_camera: Camera3D
 signal lose_focus
 
 @export var handle_input_when_current: bool = false
+# TODO Refactor these to be public
 var _focus_location: Vector3 = Vector3.INF
+# TODO Refactor these to "is" type naming
 var _focused: bool = false
 var _idle_rotate: bool = false
 
@@ -55,23 +57,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	if _idle_rotate:
-		idle_rotate(_delta)
-	elif _focus_location != Vector3.INF and _focused:
-		focus_camera_control(_focus_location)
-
-# TODO Holders should manage this method themselvs and call upon camera container as needed using rotate and pan methods
-#func _input(event: InputEvent) -> void:
-	## Looking controls
-	#if handle_input_when_current and is_current() and (Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED):
-		#handle_input(event)
-
-# TODO Dont' have a method for panning and see comment above _input
-#func handle_input(event: InputEvent) -> void:
-	#if event is InputEventMouseMotion:
-		## Determine amount to pan
-		#var horizontal_pan_amount: float = deg_to_rad(event.relative.x) * GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
-		#horizontal_pan(horizontal_pan_amount)
+	pass
 
 static func new_container_with_camera() -> CameraContainer:
 	var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
@@ -95,7 +81,7 @@ func focus_camera_control(focus_location: Vector3, hold_focus: bool = false) -> 
 		Logger.warn(_INF_FOCUS_LOG, [str(_focus_location)], self)
 		camera_control.look_at(_focus_location)
 	else:
-		Logger.error(_NO_FOCUS_LOG, [_FOCUS_CAMERA], self)
+		Logger.error(_NO_FOCUS_LOG, [_FOCUS_CAMERA_CONTROL], self)
 
 func horizontal_pan(roation_amount: float, focus_location: Vector3 = Vector3.INF) -> void:
 	self.global_rotation_degrees.y += roation_amount
@@ -126,25 +112,32 @@ func snap_back(new_basis: Basis, focus_position: Vector3 = Vector3.INF) -> void:
 func has_camera() -> bool:
 	return internal_camera != null
 
-func start_focus() -> void:
+func start_focus(incoming_location: Vector3 = Vector3.INF) -> void:
+	if incoming_location != Vector3.INF:
+		_focus_location = incoming_location
 	_focused = true
+	_idle_rotate = true
 	camera_timer.start(GlobalSettings.CAMERA.SHOT_WATCH_TIME)
 
 func is_focused() -> bool:
-	return _focused
+	return _focused and _focus_location != Vector3.INF
 
 func _on_camera_timer_timeout() -> void:
 	Logger.debug(_DISABLE_LOG, [], self)
 	_focused = false
-	internal_camera.current = false
+	#internal_camera.current = false
 	_focus_location = Vector3.INF
 	# TODO Esnure handlers of this signal set fallback camera to current and enable movement on item owner
 	lose_focus.emit()
 
+# TODO Think its because this classes basis is set on itself and not the disk itself so the rotation makes it be on its own axis
 func idle_rotate(delta: float, focus_location: Vector3 = Vector3.INF) -> void:
+	 #TODO Why would you cacluate below in radians and then use the degrees reference when making changes?
 	# Calculate the rotation angle in radians
 	var rotation_amount: float = (GlobalSettings.CAMERA.IDLE_ROTATE_SPEED * delta)
+	Logger.debug(CONSTANTS.METHOD_LOG, [camera_control.global_rotation_degrees.y], self)
 	self.global_rotation_degrees.y += rotation_amount
+	Logger.debug(CONSTANTS.METHOD_LOG, [camera_control.global_rotation_degrees.y], self)
 	focus_camera_control(focus_location)
 
 func get_camera() -> Camera3D:
@@ -184,13 +177,15 @@ func set_camera(incoming_camera: Camera3D, incoming_focus: Vector3 = Vector3.INF
 	var camera_set: bool = false
 	if !has_camera():
 		incoming_camera.global_transform = camera_control.global_transform
-		camera_control.add_child(incoming_camera)
-		incoming_camera.global_position = camera_control.global_position
+		if incoming_camera.get_parent() != null:
+			incoming_camera.reparent(camera_control, false)
+		else:
+			camera_control.add_child(incoming_camera)
+		# TODO I think it is the focus point causing it maybe
+		incoming_camera.global_transform = camera_control.global_transform
+		#incoming_camera.transform = camera_control.transform
 		if incoming_focus != Vector3.INF:
 			focus_camera_control(incoming_focus)
-		var old_camera: Camera3D = internal_camera
-		if is_instance_valid(old_camera):
-			old_camera.queue_free()
 		internal_camera = incoming_camera
 		camera_set = true
 	else:
@@ -248,9 +243,6 @@ func zoom_out() -> void:
 func set_fov(incoming_fov: float) -> void:
 	internal_camera.fov = incoming_fov
 
-# TODO Will need to update this in the future to
-#			Check if the requestor already has a camera
-#			Have the method ask for specific camera RIDs
 func _request_camera(new_parent: Node3D) -> bool:
 	var parent_swapped: bool = false
 	if internal_camera != null:
@@ -258,10 +250,9 @@ func _request_camera(new_parent: Node3D) -> bool:
 		if new_parent is CameraContainer:
 			parent_camera_container = new_parent as CameraContainer
 		elif new_parent.has_method(CONSTANTS.GET_CAMERA_CONTAINER):
-			parent_camera_container = new_parent.call(CONSTANTS.GET_CAMERA_CONTAINER, self) as CameraContainer
+			parent_camera_container = new_parent.call(CONSTANTS.GET_CAMERA_CONTAINER) as CameraContainer
 		if parent_camera_container != null:
-			# False is for keep global tranform
-			internal_camera.reparent(parent_camera_container.camera_control, false)
+			parent_camera_container.set_camera(internal_camera)
 			internal_camera = null
 			parent_swapped = true
 		else:
