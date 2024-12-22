@@ -7,7 +7,7 @@ class_name ChargeDisk
 
 var stopwatch: Stopwatch = Stopwatch.new()
 @export var flight_data: FlightData
-@export var item_data: AssetData
+@export var asset_data: AssetData
 
 # TODO Have charge and line decrease after reaching max and increase after reaching min on long holds
 # TODO Add charge effects
@@ -52,7 +52,7 @@ func release_action() -> void:
 		# TODO Launcd disk needs to be refactored into this class
 		if flight_data.flight_ready:
 			# TODO Make sure that item_data contains the group_name of the entity throwing it
-			AssetDelivery.create_and_launch(flight_data, item_data)
+			AssetDelivery.create_and_launch(flight_data, asset_data)
 			#self.queue_free()
 		else:
 			Logger.error(FlightData.LAUNCH_NOT_READY_LOG, [], self)
@@ -65,3 +65,6 @@ func release_action() -> void:
 
 func reset_launch_parameters() -> void:
 	flight_data = null
+
+func _set_asset_data(incoming_data: AssetData) -> void:
+	asset_data = incoming_data

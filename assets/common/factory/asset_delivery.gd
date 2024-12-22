@@ -61,18 +61,18 @@ func create_and_launch(flight_data: FlightData, item_data: AssetData) -> void:
 		Logger.debug(_INVALID_INCOMING_ITEM, [str(item_data)], self)
 
 ## TODO Equips incoming owner with internal type found inside given item
+# BUG Spawns at the foot of item_owner
 func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) -> void:
 	# TODO Should create the ChargeDisk and add it to the group for the passed in Chuck
 	#		Should add the new disk as a child to ChuckChucker
 	#			Should have method in ChuckChucker to set holdItem or something
-	var associated_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(incoming_item.asset_data.creation_type, incoming_item.asset_data.internal_type)
-	var new_item_data: AssetData = AssetData.create_item_data(incoming_item.asset_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, associated_creation_type, item_owner.asset_data.group_name)
-	var new_asset: Node3D = AssetFactory.create_asset(new_item_data.internal_type)
+	var new_internal_type: AssetData.TYPE = AssetData.get_associated_creation_type(incoming_item.asset_data.creation_type, incoming_item.asset_data.internal_type)
+	var new_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(new_internal_type, incoming_item.asset_data.creation_type)
+	var new_item_data: AssetData = AssetData.create_item_data(new_internal_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, new_creation_type, item_owner.asset_data.group_name)
+	var new_asset: Node3D = AssetFactory.create_asset(new_internal_type)
 	if new_asset != null:
 		_set_asset_data(new_asset, new_item_data)
-		var overflow_item: Node3D = item_owner.equip_item(new_asset)
-		if overflow_item != null:
-			dump_asset(overflow_item)
+		item_owner.equip_item(new_asset)
 		incoming_item.pick_up()
 	else:
 		Logger.info(_INVALID_INCOMING_ITEM, [str(incoming_item)], self)
@@ -87,7 +87,7 @@ func dump_asset(overflow_item: Node3D) -> void:
 func spawn_asset(asset_data: AssetData, spawn_parent: Node3D, spawn_location: Vector3 = Vector3(0, 1, 0)) -> void:
 	var created_node: Node3D = AssetFactory.create_asset(asset_data.internal_type)
 	if created_node.has_method(CONSTANTS.SET_ASSET_DATA):
-		asset_data.call(CONSTANTS.SET_ASSET_DATA, asset_data)
+		created_node.call(CONSTANTS.SET_ASSET_DATA, asset_data)
 	spawn_parent.add_child(created_node)
 	created_node.global_position = spawn_location
 

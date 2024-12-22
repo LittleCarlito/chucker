@@ -159,3 +159,6 @@ func _create_camera_container() -> void:
 
 func _update_state() -> void:
 	asset_data.camera_state = AssetData.get_camera_state(camera_container)
+
+func _set_asset_data(incoming_data: AssetData) -> void:
+	asset_data = incoming_data

@@ -50,7 +50,7 @@ func _ready() -> void:
 	var path_location: Vector3 = Vector3(2, 4, -2)
 	AssetDelivery.spawn_asset(path_data, self, path_location)
 	# Spawn in ForceDisk
-	var force_data: AssetData = AssetData.create_item_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED)
+	var force_data: AssetData = AssetData.create_item_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.EXISTS, AssetData.TYPE.FORCE)
 	var force_location: Vector3 = Vector3(-2, 4, -2)
 	AssetDelivery.spawn_asset(force_data, self, force_location)
 	# TODO Spawn in holes

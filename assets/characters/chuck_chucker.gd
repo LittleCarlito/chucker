@@ -22,14 +22,8 @@ const _EMPTY_CAMERA_CONTAINER: String = "CameraContainer from \"%s\" returned nu
 var stopwatch: Stopwatch = Stopwatch.new()
 var height: float
 
-# TODO Make sure states are properly set by objects at each state changing event
-#		EXISTS, TRACKABLE, VIEWABLE
-#		EXISTS - No internal containers; just the object
-#		TRACKABLE - FocusContainer exists within it
-#		VIEWABLE - Has a Camera3D within its FocusControl
 # TODO Get ChuckChucker, mesh, and collision into a scene as BaseCharacter
 #		Then make another scene off that one with controls in the script and a camera at creation called ControllableCharacter
-# BUG After throwing the disk a second time mesh was spun sidways but controls remained normal (cube rotated on y axis)
 
 func _ready() -> void:
 	self.add_to_group(self.name)
@@ -225,13 +219,14 @@ func release_action() -> void:
 
 ## Stores new_item internally and attempts to give it internal camera if possible
 ## Returns item that was equipped if one was previously
-func equip_item(new_item: Node3D) -> Node3D:
+func equip_item(new_item: Node3D) -> void:
 	var displaced_item: Node3D = null
 	_give_camera(new_item)
 	# Returns the equipped item if there was one
 	displaced_item = item_container.equip_item(new_item)
+	if displaced_item != null:
+		AssetDelivery.dump_asset(displaced_item)
 	_update_state()
-	return displaced_item
 
 func _give_camera(new_item: Node3D) -> void:
 	if new_item is CameraContainer or new_item.has_method(CONSTANTS.GET_CAMERA_CONTAINER):
