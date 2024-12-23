@@ -38,15 +38,7 @@ func create_and_launch(flight_data: FlightData, item_data: AssetData) -> void:
 		if !flight_data.flight_path.is_empty():
 			new_asset.global_position = flight_data.flight_path[0]
 			if(_set_launch_parameters(new_asset, flight_data)):
-				if(_launch_asset(new_asset)):
-					var has_camera_container_method: bool = new_asset.has_method(CONSTANTS.GET_CAMERA_CONTAINER)
-					if has_camera_container_method and flight_data.focus_flight:
-						get_tree().call_group(new_asset_data.group_name, CONSTANTS.REQUEST_CAMERA, new_asset)
-					else:
-						var formatted_string: String = CONSTANTS.EITHER_STARTER + _ASSET_MISSING_METHOD + CONSTANTS.OR_SEPARATOR + _FOCUSED_FLIGHT + CONSTANTS.LOG_SEPARATOR + CONSTANTS.KEEPING_CAMERA
-						Logger.debug(formatted_string, [str(new_asset), CONSTANTS.GET_CAMERA_CONTAINER, str(has_camera_container_method), str(flight_data.focus_flight)], self)
-					Logger.debug(_LAUNCH_RESULT_STRING, [str(new_asset), CONSTANTS.SUCCESSFUL], self)
-				else:
+				if not _launch_asset(new_asset):
 					Logger.debug(_LAUNCH_RESULT_STRING, [str(new_asset), CONSTANTS.FAILURE], self)
 				# Regardless of flight result have the items in th given data group update their status data
 				if item_data.group_name != null:

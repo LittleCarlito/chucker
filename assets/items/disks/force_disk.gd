@@ -2,9 +2,7 @@ extends RigidBody3D
 class_name ForceDisk
 
 	# TODO Continue from here
-	# TODO Have camera follow thrown charge disk
-	# TODO Have camera circle charge disk on collision
-	# TODO Throw a ChargeDisk and have it land/collide properly
+	# TODO Rotate camera container while force disk is active
 	# TODO Get TeeBox HoleNode and ChuckHole spawned in through asset factory
 	#			Have their data integrated to Global Hole Data
 	# TODO Get looking/rotation/idling from CameraContainer working properly ForceDisk
@@ -36,6 +34,9 @@ class_name ForceDisk
 	# TODO Swap out disk creation stuff in swap disk with DiskFactory usage
 	# TODO See about slowing (maybe clamping) values as bounds get closer to make it feel like resistance
 
+const _NO_GROUP_LOG: String = "No group name"
+const _NOT_SUBMITTING: String = "Not submitting camera request"
+const _CANT_RETURN_LOG: String = "Missing asset data or camera container/camera to return camera to owner \"%s\""
 const _MISSING_FLIGHT_DATA_LOG: String = "Launch parameters must be set before item can be launched"
 const _NO_ITEM_DATA_LOG: String = "AssetData has not been initialized for this node"
 const _CREATING_CAMERA_LOG: String = "Creating camera container"
@@ -48,6 +49,7 @@ const _LOSE_FOCUS: String = "lose_focus"
 @export var asset_data: AssetData
 @export var flight_data: FlightData
 var camera_container: CameraContainer
+var _collided: bool
 
 func _ready() -> void:
 	if asset_data == null:
@@ -57,13 +59,22 @@ func _ready() -> void:
 	disk_mesh.set_type(asset_data.internal_type)
 	_update_state()
 
-func _process(delta: float) -> void:
-	# TODO issue seems to be not setting focus location
-	if camera_container != null && camera_container._focused:
-		if camera_container._idle_rotate:
-			camera_container.idle_rotate(delta, self.global_position)
-		else:
-			camera_container.focus_camera_control(self.global_position)
+func _process(_delta: float) -> void:
+	if camera_container != null and camera_container.is_current():
+		if !_collided:
+			if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
+				Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED
+			if self.linear_damp_mode != RigidBody3D.DAMP_MODE_COMBINE:
+				self.linear_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
+			if self.angular_damp_mode != RigidBody3D.DAMP_MODE_COMBINE:
+				self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
+
+func _input(event: InputEvent) -> void:
+	# Looking controls
+	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and camera_container != null and camera_container.is_current():
+		if event is InputEventMouseMotion:
+			var horizontal_rotation_amount: float = deg_to_rad(event.relative.x) * GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
+			camera_container.horizontal_pan(horizontal_rotation_amount, self.global_position)
 
 func set_internal_type(new_internal_type: AssetData.TYPE) -> void:
 	asset_data.internal_type = new_internal_type
@@ -116,16 +127,15 @@ func set_disk_camera(new_camera: Camera3D) -> void:
 	_update_state()
 
 func _handle_collision(body_rid: RID, _body: Node, _body_shape_index: int, _local_shape_index: int) -> void:
+	_collided = true
 	disk_collision.store_collision(self.get_rid(), body_rid, self.global_position, flight_data, asset_data)
 	if camera_container != null && (camera_container.has_camera() && camera_container.is_current()):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		if !camera_container.is_focused():
 			# Focus camera on collision location
-			Logger.debug(CONSTANTS.METHOD_LOG, ["IS_FOCUSED", camera_container._focused], self)
-			camera_container.start_focus(self.global_position)
-			Logger.debug(CONSTANTS.METHOD_LOG, ["IS_FOCUSED", camera_container._focused], self)
-			self.linear_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
-			self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
+			camera_container.start_focus(self.global_basis, self.global_position)
+			self.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
+			self.angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
 
 func pick_up() -> void:
 	self.queue_free()
@@ -152,19 +162,17 @@ func _set_flight_data(incoming_data: FlightData) -> void:
 
 func _launch() -> void:
 	if flight_data != null:
-		self.basis = flight_data.flight_global_basis
+		self.global_basis = flight_data.flight_global_basis
 		self.linear_velocity = -self.global_transform.basis.z * flight_data.flight_speed
 		if flight_data.focus_flight:
-			# TODO This should be changed to request camera; Where it pulls the active camera from its group
-			toggle_camera()
+			_submit_camera_request()
 			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	else:
 		Logger.warn(_MISSING_FLIGHT_DATA_LOG, [], self)
 
 func _get_camera_container() -> CameraContainer:
-	if camera_container == null:
-		_create_camera_container()
+	_create_camera_container()
 	return camera_container
 
 func _set_camera_container(incoming_container: CameraContainer) -> void:
@@ -180,5 +188,13 @@ func _return_camera_to_owner() -> void:
 	if has_camera and has_custom_group:
 		get_tree().call_group(asset_data.group_name, CONSTANTS.RETURN_CAMERA, camera_container.get_camera())
 	else:
-		const _CANT_RETURN_LOG: String = "Missing asset data or camera container/camera to return camera to owner \"%s\""
 		Logger.debug(_CANT_RETURN_LOG, [str(self)], self)
+
+func _submit_camera_request() -> void:
+	if asset_data != null and !asset_data.group_name.is_empty():
+		_create_camera_container()
+		get_tree().call_group(asset_data.group_name, CONSTANTS.REQUEST_CAMERA, camera_container)
+	else:
+
+		var formatted_string: String = _NO_GROUP_LOG + CONSTANTS.LOG_SEPARATOR + _NOT_SUBMITTING
+		Logger.debug(formatted_string, [], self)

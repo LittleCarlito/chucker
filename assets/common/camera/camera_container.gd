@@ -56,8 +56,12 @@ func _ready() -> void:
 	camera_timer.one_shot = true
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
+func _process(delta: float) -> void:
+	if _focused:
+		if _idle_rotate:
+			idle_rotate(delta, self.global_position)
+		else:
+			focus_camera_control(self.global_position)
 
 static func new_container_with_camera() -> CameraContainer:
 	var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
@@ -70,7 +74,7 @@ func populate_camera_control(incoming_focus: Vector3 = Vector3.INF) -> void:
 		var new_scene_camera: Camera3D = AssetFactory.new_camera()
 		set_camera(new_scene_camera, incoming_focus)
 	else:
-		Logger.warn(_CAMERA_ALREADY_EXISTS, [], self)
+		Logger.debug(_CAMERA_ALREADY_EXISTS, [], self)
 
 func focus_camera_control(focus_location: Vector3, hold_focus: bool = false) -> void:
 	_focused = hold_focus
@@ -78,17 +82,17 @@ func focus_camera_control(focus_location: Vector3, hold_focus: bool = false) -> 
 		_focus_location = focus_location
 		camera_control.look_at(_focus_location)
 	elif _focus_location != Vector3.INF:
-		Logger.warn(_INF_FOCUS_LOG, [str(_focus_location)], self)
+		Logger.debug(_INF_FOCUS_LOG, [str(_focus_location)], self)
 		camera_control.look_at(_focus_location)
 	else:
-		Logger.error(_NO_FOCUS_LOG, [_FOCUS_CAMERA_CONTROL], self)
+		Logger.debug(_NO_FOCUS_LOG, [_FOCUS_CAMERA_CONTROL], self)
 
 func horizontal_pan(roation_amount: float, focus_location: Vector3 = Vector3.INF) -> void:
 	self.global_rotation_degrees.y += roation_amount
 	if focus_location != Vector3.INF:
 		_focus_location = focus_location
 	elif _focus_location == Vector3.INF:
-		Logger.error(_NO_FOCUS_LOG, [_HORIZONTAL_ROTATE], self)
+		Logger.debug(_NO_FOCUS_LOG, [_HORIZONTAL_ROTATE], self)
 
 func horizontal_rotate(roation_amount: float) -> void:
 	camera_control.rotation.y += roation_amount
@@ -112,7 +116,8 @@ func snap_back(new_basis: Basis, focus_position: Vector3 = Vector3.INF) -> void:
 func has_camera() -> bool:
 	return internal_camera != null
 
-func start_focus(incoming_location: Vector3 = Vector3.INF) -> void:
+func start_focus(incoming_global_basis: Basis, incoming_location: Vector3 = Vector3.INF) -> void:
+	self.global_basis = incoming_global_basis
 	if incoming_location != Vector3.INF:
 		_focus_location = incoming_location
 	_focused = true
@@ -127,25 +132,21 @@ func _on_camera_timer_timeout() -> void:
 	_focused = false
 	#internal_camera.current = false
 	_focus_location = Vector3.INF
-	# TODO Esnure handlers of this signal set fallback camera to current and enable movement on item owner
 	lose_focus.emit()
 
-# TODO Think its because this classes basis is set on itself and not the disk itself so the rotation makes it be on its own axis
+# TODO Is getting called and working but only getting called once
 func idle_rotate(delta: float, focus_location: Vector3 = Vector3.INF) -> void:
 	 #TODO Why would you cacluate below in radians and then use the degrees reference when making changes?
 	# Calculate the rotation angle in radians
 	var rotation_amount: float = (GlobalSettings.CAMERA.IDLE_ROTATE_SPEED * delta)
-	Logger.debug(CONSTANTS.METHOD_LOG, [camera_control.global_rotation_degrees.y], self)
-	self.global_rotation_degrees.y += rotation_amount
-	Logger.debug(CONSTANTS.METHOD_LOG, [camera_control.global_rotation_degrees.y], self)
-	focus_camera_control(focus_location)
+	horizontal_pan(rotation_amount)
 
 func get_camera() -> Camera3D:
 	if internal_camera != null:
 		return internal_camera
 	else:
 		var formatted_string: String = CONSTANTS.NULL_CAMERA_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
-		Logger.error(formatted_string, [CONSTANTS.GET_CAMERA], self)
+		Logger.debug(formatted_string, [CONSTANTS.GET_CAMERA], self)
 		return null
 
 ## Determines if the incoming holder can hold the camera and transferrs it if possible
@@ -198,21 +199,21 @@ func toggle_camera() -> void:
 	if internal_camera != null:
 		internal_camera.current = not internal_camera.current
 	else:
-		Logger.error(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.TOGGLE_CAMERA], self)
+		Logger.debug(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.TOGGLE_CAMERA], self)
 
 # TODO In disable and enable camera are where signals or group method calls need to be sent to update asset status
 func disable_camera() -> void:
 	if internal_camera != null:
 		internal_camera.current = false
 	else:
-		Logger.error(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.DISABLE_CAMERA], self)
+		Logger.debug(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.DISABLE_CAMERA], self)
 
 # TODO In disable and enable camera are where signals or group method calls need to be sent to update asset status
 func enable_camera() -> void:
 	if internal_camera != null:
 		internal_camera.current = true
 	else:
-		Logger.error(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.ENABLE_CAMERA], self)
+		Logger.debug(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.ENABLE_CAMERA], self)
 
 func is_current() -> bool:
 	if internal_camera != null:
@@ -226,19 +227,19 @@ func reset_zoom() -> void:
 	if internal_camera != null:
 		internal_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOV, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOV)
 	else:
-		Logger.error(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.RESET_ZOOM], self)
+		Logger.debug(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.RESET_ZOOM], self)
 
 func zoom_in() -> void:
 	if internal_camera != null:
 		internal_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOV, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOV) - GlobalSettings.CAMERA.IN_ADJUST
 	else:
-		Logger.error(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.ZOOM_IN], self)
+		Logger.debug(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.ZOOM_IN], self)
 
 func zoom_out() -> void:
 	if internal_camera != null:
 		internal_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOV, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOV) + GlobalSettings.CAMERA.OUT_ADJUST
 	else:
-		Logger.error(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.ZOOM_OUT], self)
+		Logger.debug(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.ZOOM_OUT], self)
 
 func set_fov(incoming_fov: float) -> void:
 	internal_camera.fov = incoming_fov
