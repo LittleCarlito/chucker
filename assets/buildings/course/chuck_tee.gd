@@ -74,7 +74,7 @@ func _decrease_node_number(hole_number: int, incoming_node_number: int) -> void:
 		Logger.error(formatted_string, [CONSTANTS.HOLE_NODE_DATA, CONSTANTS.DECREASE_NODE_NUMBER], self)
 
 func _get_focus_point() -> Vector3:
-	var focus_point: Vector3 = self.position + GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOCUS_OFFSET, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOCUS_OFFSET)
+	var focus_point: Vector3 = self.position + GlobalSettings.CAMERA.get(CONSTANTS.TEE_FOCUS_OFFSET, GlobalSettings.CAMERA_DEFAULTS.TEE_FOCUS_OFFSET)
 	if !hole_nodes.is_empty():
 		# TODO Need to get HoleNodes integrated and have this look to its next hole node
 		pass

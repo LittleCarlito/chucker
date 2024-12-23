@@ -37,7 +37,7 @@ transform = Transform3D(1, 0.000827476, 0.000366273, -0.000826948, 0.999999, -0.
 shape = SubResource("BoxShape3D_n4t14")
 
 [node name="CameraContainer" parent="." instance=ExtResource("2_ofn0f")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.90325, 5.34535)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.09525, 5.86611)
 
 [node name="ScorecardView" parent="." instance=ExtResource("2_2voba")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 27, 0)

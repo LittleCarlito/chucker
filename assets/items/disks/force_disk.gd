@@ -2,10 +2,10 @@ extends RigidBody3D
 class_name ForceDisk
 
 	# TODO Continue from here
-	# TODO Rotate camera container while force disk is active
 	# TODO Get TeeBox HoleNode and ChuckHole spawned in through asset factory
 	#			Have their data integrated to Global Hole Data
-	# TODO Get looking/rotation/idling from CameraContainer working properly ForceDisk
+	# TODO Add lerp to camera handoffs
+	#			Learn them by making lerp speed configurable
 	# TODO Shouldn't have to add special input handling
 	#		As long as camera_container exists and its conditionals are met its handling should take effect
 	#			Cause by inherit mode processing
@@ -19,8 +19,6 @@ class_name ForceDisk
 	#				Item one will set camera current to false and queue_free self
 	#				ChuckChucker type will enable camera and movement
 	# TODO Get aiming from CameraContainer working properly in ChargeDisk
-	# TODO Make GlobalSignal handler
-	#		Start with method to collect all movement signals from a group and log how many objects are moving every 3rd frame
 	# TODO Instead of queue_freeing objects work on pooling and reusing them
 	# TODO Look into using Entity Component System (ECS) over OOP
 	#		How godot (and game dev in general) is done
