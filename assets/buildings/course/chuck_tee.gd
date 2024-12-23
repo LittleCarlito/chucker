@@ -12,6 +12,7 @@ class_name ChuckTee
 #			TeeBox group method then calculates all the distances between the one node and the next
 #			After all Nodes in the array have had their stats updated
 var hole_nodes: Array[HoleNode] = []
+var asset_data: AssetData
 
 const _CURRENT_CAMERA_LOG: String = "Current camera is %s"
 
@@ -79,3 +80,6 @@ func _get_focus_point() -> Vector3:
 		# TODO Need to get HoleNodes integrated and have this look to its next hole node
 		pass
 	return focus_point
+
+func _set_asset_data(incoming_data: AssetData) -> void:
+	asset_data = incoming_data

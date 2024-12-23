@@ -2,6 +2,7 @@ extends Area3D
 class_name ChuckHole
 
 @export var hole_node_data: HoleNodeData
+var asset_data: AssetData
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -29,3 +30,6 @@ func _decrease_node_number(hole_number: int, incoming_node_number: int) -> void:
 	else:
 		var formatted_string: String = CONSTANTS.NOT_FOUND_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.FOR_METHOD_LOG
 		Logger.error(formatted_string, [CONSTANTS.HOLE_NODE_DATA, CONSTANTS.DECREASE_NODE_NUMBER], self)
+
+func _set_asset_data(incoming_data: AssetData) -> void:
+	asset_data = incoming_data

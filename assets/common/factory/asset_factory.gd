@@ -8,6 +8,9 @@ const _charge_scene: PackedScene = preload("res://assets/items/disks/ChargeDisk.
 const _pull_scene: PackedScene = preload("res://assets/items/disks/PullDisk.tscn")
 const _player_scene: PackedScene = preload("res://assets/characters/chuck_chucker.tscn")
 const _item_container_scene: PackedScene = preload("res://assets/items/common/item_container.tscn")
+const _chuck_tee_scene: PackedScene = preload("res://assets/buildings/course/chuck_tee.tscn")
+const _chuck_hole_scene: PackedScene = preload("res://assets/buildings/course/chuck_hole.tscn")
+const _hole_node_scene: PackedScene = preload("res://assets/buildings/course/hole_node.tscn")
 
 var scene_library: Dictionary = {
 	AssetData.TYPE.CAMERA_CONTAINER: _camera_container_scene,
@@ -17,7 +20,10 @@ var scene_library: Dictionary = {
 	AssetData.TYPE.CHARGE: _charge_scene,
 	AssetData.TYPE.PULL: _pull_scene,
 	AssetData.TYPE.PLAYER: _player_scene,
-	AssetData.TYPE.ITEM_CONTAINER: _item_container_scene
+	AssetData.TYPE.ITEM_CONTAINER: _item_container_scene,
+	AssetData.TYPE.TEE: _chuck_tee_scene,
+	AssetData.TYPE.HOLE: _chuck_hole_scene,
+	AssetData.TYPE.HOLE_NODE: _hole_node_scene
 }
 
 const _INSTANTIATE_PACKED_SCENE: String = "_instantiate_packed_scene"
@@ -45,7 +51,6 @@ static func _instantiate_packed_scene(incoming_scene: PackedScene) -> Node3D:
 		Logger.debug(formatted_string, [_INSTANTIATE_PACKED_SCENE], null)
 	return return_node
 
-# TODO Make sure the classes that need it have their local scene/global group creation in their ready methods
 static func new_camera_container() -> CameraContainer:
 	var new_container: CameraContainer = _camera_container_scene.instantiate()
 	_brand(new_container)
@@ -86,5 +91,20 @@ static func new_item_controller() -> ItemContainer:
 	_brand(new_controller)
 	return new_controller
 
+static func new_course_tee() -> ChuckTee:
+	var new_chuck_tee: ChuckTee = _chuck_tee_scene.instantiate()
+	_brand(new_chuck_tee)
+	return new_chuck_tee
+
+static func new_course_hole() -> ChuckHole:
+	var new_chuck_hole: ChuckHole = _chuck_hole_scene.instantiate()
+	_brand(new_chuck_hole)
+	return new_chuck_hole
+
+static func new_course_node() -> HoleNode:
+	var new_hole_node: HoleNode = _hole_node_scene.instantiate()
+	_brand(new_hole_node)
+	return new_hole_node
+	
 static func _brand(incoming_node: Node) -> void:
 	incoming_node.name = incoming_node.name + "-" + str(incoming_node.get_instance_id())

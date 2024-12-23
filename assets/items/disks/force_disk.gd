@@ -2,10 +2,9 @@ extends RigidBody3D
 class_name ForceDisk
 
 	# TODO Continue from here
-	# TODO Get TeeBox HoleNode and ChuckHole spawned in through asset factory
-	#			Have their data integrated to Global Hole Data
+	# TODO Have the spawned course objects integrate their data with Global Hole Data
 	# TODO Add lerp to camera handoffs
-	#			Learn them by making lerp speed configurable
+	#			make lerp speed global setting configurable
 	# TODO Shouldn't have to add special input handling
 	#		As long as camera_container exists and its conditionals are met its handling should take effect
 	#			Cause by inherit mode processing
