@@ -388,7 +388,7 @@ func _set_data_sequential(hole_number: int = CONSTANTS.INT64_MAX) -> void:
 			Logger.debug(formatted_string, [str(hole_number)], self)
 	else:
 		var updated_holes: Dictionary = {}
-		var existing_hole_numbers: Array[int] = hole_data.keys()
+		var existing_hole_numbers: Array = hole_data.keys()
 		existing_hole_numbers.sort()
 		var first_bad_index: int = NodeUtil.get_first_non_sequential_index(existing_hole_numbers)
 		for n in range(first_bad_index, existing_hole_numbers.size()):

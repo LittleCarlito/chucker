@@ -85,7 +85,7 @@ const ENABLE_MOVEMENT: String = "enable_movement"
 const DISABLE_ROTATION: String = "disable_rotation"
 const ENABLE_ROTATION: String = "enable_rotation"
 const RELOAD_PROJECT_SETTINGS: String = "reload_project_settings"
-# TODO Launchable items need to implement this for after launch attempts
+# TODO General items need to implement this for after launch attempts
 const UPDATE_STATE: String = "_update_state"
 # TODO Rework these to be ALTER_HOLE_NUMBER and ALTER_HOLE_NODE_NUMBER; These should only be on TeeBox assets
 const ALTER_HOLE_NODE_NUMBERS: String = "_alter_hole_node_numbers" # (hole_number: int, update_data: Dictionary[old_value[int], new_value[int])

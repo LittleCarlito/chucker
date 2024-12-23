@@ -64,8 +64,7 @@ func _ready() -> void:
 	var hole_data: AssetData = AssetData.create_item_data(AssetData.TYPE.HOLE)
 	var hole_location: Vector3 = Vector3(0, 5, -80)
 	AssetDelivery.spawn_asset(hole_data, self, hole_location)
-	# Update all settings
-	get_tree().call_group(CONSTANTS.GENERAL, CONSTANTS.UPDATE_STATE)
+	update_course_data()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -85,3 +84,9 @@ func _enable_character_rotation() -> void:
 
 func _apply_settings() -> void:
 	get_tree().call_group(CONSTANTS.GENERAL, CONSTANTS.RELOAD_PROJECT_SETTINGS)
+
+func update_course_data() -> void:
+	get_tree().call_group(CONSTANTS.GENERAL, CONSTANTS.UPDATE_STATE)
+	# TODO Call to make all the hole numbers sequential
+	# TODO OOOOO
+	#GlobalHoleData._set_data_sequential()

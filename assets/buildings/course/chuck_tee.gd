@@ -83,3 +83,11 @@ func _get_focus_point() -> Vector3:
 
 func _set_asset_data(incoming_data: AssetData) -> void:
 	asset_data = incoming_data
+
+# TODO Implement to
+#			Make all the nodes for the holes data sequential
+#			Update all the nodes distance between eachother
+#				Should have reference to them in stored array
+#			Update total distance of the hole
+func _update_state() -> void:
+	pass

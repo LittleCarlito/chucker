@@ -33,3 +33,10 @@ func _decrease_node_number(hole_number: int, incoming_node_number: int) -> void:
 
 func _set_asset_data(incoming_data: AssetData) -> void:
 	asset_data = incoming_data
+
+# TODO Don't think below is needed; TeeBox should have Array of all these objects and can update them in order to simplify flow
+# TODO Implement to
+#		Update stats about the nodes disatnce to previous node
+#			As a hole there shouldn't be any other data to update
+#func _update_state() -> void:
+	#pass
