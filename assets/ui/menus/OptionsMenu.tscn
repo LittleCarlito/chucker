@@ -162,12 +162,17 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 5.0
 
-[node name="CloseButton" parent="MainContainer/ContentBox/OptionRows/TopOptionBar" instance=ExtResource("3_1rkto")]
+[node name="CloseColumn" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
 layout_mode = 2
-size_flags_horizontal = 10
-size_flags_vertical = 0
-size_flags_stretch_ratio = 0.0
+size_flags_horizontal = 3
+
+[node name="CloseButton" parent="MainContainer/ContentBox/OptionRows/TopOptionBar/CloseColumn" instance=ExtResource("3_1rkto")]
+layout_mode = 2
 script = SubResource("GDScript_bli58")
+
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/TopOptionBar/CloseColumn"]
+layout_mode = 2
+size_flags_vertical = 3
 
 [node name="OptionTabContainer" type="TabContainer" parent="MainContainer/ContentBox/OptionRows"]
 layout_mode = 2
@@ -675,7 +680,7 @@ layout_mode = 1
 
 [connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/BackButton" to="." method="_on_back_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/SaveButton" to="." method="_on_save_menu"]
-[connection signal="close_menu" from="MainContainer/ContentBox/OptionRows/TopOptionBar/CloseButton" to="." method="_on_close_menu"]
+[connection signal="close_menu" from="MainContainer/ContentBox/OptionRows/TopOptionBar/CloseColumn/CloseButton" to="." method="_on_close_menu"]
 [connection signal="drag_ended" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovSliderContainer/FovSlider" to="." method="_on_fov_slider_drag_ended"]
 [connection signal="value_changed" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovSliderContainer/FovSlider" to="." method="_on_fov_slider_value_changed"]
 [connection signal="toggled" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/VInversionToggle" to="." method="_on_v_inversion_toggle_toggled"]

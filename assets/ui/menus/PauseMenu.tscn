@@ -1,10 +1,8 @@
-[gd_scene load_steps=18 format=3 uid="uid://dxo1losx217fd"]
+[gd_scene load_steps=16 format=3 uid="uid://dxo1losx217fd"]
 
 [ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://assets/ui/menus/MainMenu_theme.tres" id="1_guofl"]
 [ext_resource type="Script" path="res://assets/ui/menus/pause_menu.gd" id="1_mhopn"]
-[ext_resource type="Texture2D" uid="uid://bp40bm8j1n6b1" path="res://resources/Sprites/Menu/ExitButton.png" id="3_n2i6t"]
-[ext_resource type="Texture2D" uid="uid://bpnj1g0m3lfn3" path="res://resources/Sprites/Menu/ExitButton_Pressed.png" id="4_yp0aw"]
-[ext_resource type="Texture2D" uid="uid://bsbcc5ek3c1ye" path="res://resources/Sprites/Menu/ExitButton_hover.png" id="5_6eac1"]
+[ext_resource type="PackedScene" uid="uid://b5pco8trxx8mb" path="res://assets/ui/buttons/CloseButton.tscn" id="3_3tmsg"]
 [ext_resource type="Texture2D" uid="uid://dum0opc2rf4gr" path="res://resources/Sprites/Menu/ResumeButton_pressed.png" id="5_g8iq8"]
 [ext_resource type="Texture2D" uid="uid://d38j3sn48k67u" path="res://resources/Sprites/Menu/ResumeButton.png" id="5_y872g"]
 [ext_resource type="Texture2D" uid="uid://b2mcgyj4flroy" path="res://resources/Sprites/Menu/PauseTitle.png" id="6_sloq1"]
@@ -78,15 +76,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 20.0
 
-[node name="CloseButton" type="TextureButton" parent="MainContainer/ContentBox/ButtonBox/TopRow"]
-custom_minimum_size = Vector2(25, 25)
+[node name="CloseButton2" parent="MainContainer/ContentBox/ButtonBox/TopRow" instance=ExtResource("3_3tmsg")]
 layout_mode = 2
-size_flags_horizontal = 3
-texture_normal = ExtResource("3_n2i6t")
-texture_pressed = ExtResource("4_yp0aw")
-texture_hover = ExtResource("5_6eac1")
-ignore_texture_size = true
-stretch_mode = 5
 
 [node name="PausedLabelBackground" type="Panel" parent="MainContainer/ContentBox/ButtonBox"]
 custom_minimum_size = Vector2(750, 70)
@@ -151,7 +142,7 @@ layout_mode = 1
 wait_time = 0.1
 one_shot = true
 
-[connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/TopRow/CloseButton" to="." method="_on_close_menu"]
+[connection signal="close_menu" from="MainContainer/ContentBox/ButtonBox/TopRow/CloseButton2" to="." method="_on_close_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/ResumeButton" to="." method="_on_close_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/OptionsButton" to="." method="_on_options_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/QuitButton" to="." method="_on_quit"]
