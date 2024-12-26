@@ -98,6 +98,10 @@ const DECREASE_NODE_NUMBER: String = "_decrease_node_number"
 # TODO Implement this in TEEBOX assets
 const INCREASE_HOLE_NUMBER: String = "_increase_hole_number"
 
+const WINDOW: Dictionary = {
+	"MIN_SIZE": Vector2i(870, 570)
+}
+
 const MENU: Dictionary = {
 	"SCORECARD": {
 		"PLAYER_PIXEL_SIZE": .003,

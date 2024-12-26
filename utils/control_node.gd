@@ -25,9 +25,11 @@ signal enable_rotation
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	get_window().set_min_size(CONSTANTS.WINDOW.MIN_SIZE)
 	# Create game file structures
 	var base_dir = DirAccess.open(BASE_PATH)
 	base_dir.make_dir(SAVE_DIR)
+	get_tree().get_root().size_changed.connect(_debug_resize) 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -182,3 +184,7 @@ func _update_state() -> void:
 			InputMap.action_add_event(userInput, boundKey)
 		else:
 			Logger.error(_BAD_USER_INPUT_LOG, [userInput], self)
+
+func _debug_resize() -> void:
+	# TODO Need to determine at what points font sizes need bumping and send group messages telling _set_font_size(font_size: int)
+	Logger.debug("New screen resolution %s", [str(get_viewport().get_visible_rect().size)], self)

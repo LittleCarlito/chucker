@@ -1,6 +1,8 @@
 extends Control
 class_name OptionsMenu
 
+# TODO See about updating Font dynamically at runtime according to screensize
+
 const _UPDATE_CONTROL_LOG: String = "Updating control \"%s\" to input \"%s\""
 const _SELECT_ERROR_LOG: String = "Incorrect number of items selected to change control input; \"%s\" items selected"
 const _UNBOUND_INPUT_LOG: String = "\"%s\" is not bound to an input"
@@ -9,6 +11,8 @@ const _CONTROL_REMAPPED_LOG: String = "Control \"%s\" has been remapped from \"%
 const _NO_KEYCODE_ICON_STRING: String = "Path \"%s\" could not be mapped back to a keycode; Not persisting input change"
 const _MISSING_CONSTANT_LOG: String = "No constant could be found for input \"%s\"; Returning \"%s\""
 
+@export var min_tab_font_size: int
+@export var max_tab_font_size: int
 @export var fov_slider: HSlider
 @export var fov_value: Label
 @export var horizontal_aim_sensitivity_slider: HSlider
@@ -69,6 +73,8 @@ func initialize_ui() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
+	# TODO Connect this to a signal in ready on viewport size change instead
+	_update_font_to_window_size()
 	pass
 
 func _input(event: InputEvent) -> void:
@@ -247,3 +253,58 @@ func _get_control_index(constant_name: String) -> int:
 		if item_text == constant_item_text:
 			return control_setting
 	return CONSTANTS.INT32_MAX
+
+## Updates font in menu according to window size
+func _update_font_to_window_size() -> void:
+	var font_size_range: Vector2i = Vector2i(min_tab_font_size, max_tab_font_size)
+	# TODO Have menu organized with theme so this works on all text at once
+	var font: Font = get_theme_font("font")
+	
+	# TODO Update font by viewport size
+	var horizontal_window_length: float = get_viewport_rect().size.x
+	
+'''
+class_name AutoSizer
+
+static func get_text_paragraph() -> TextParagraph:
+	var line := TextParagraph.new()
+	line.justification_flags = TextServer.JUSTIFICATION_NONE
+	line.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	
+	return line
+
+static func update_font_size_by_height(label: AutoSizeLabel) -> void:
+	var font_size_range := Vector2i(label.min_font_size, label.max_font_size)
+	var font := label.get_theme_font("font")
+	
+	var paragraph := get_text_paragraph()
+	paragraph.width = label.size.x
+	paragraph.break_flags = TextServer.BREAK_MANDATORY | TextServer.BREAK_WORD_BOUND | TextServer.BREAK_ADAPTIVE
+	
+	while true:
+		paragraph.clear()
+		
+		var mid_font_size := font_size_range.x + roundi((font_size_range.y - font_size_range.x) * 0.5)
+		if !paragraph.add_string(label.text, font, mid_font_size):
+			push_warning("Could not create a string!")
+			return
+		
+		var text_height: int = paragraph.get_size().y
+		
+		if text_height > label.size.y:
+			if font_size_range.y == mid_font_size:
+				break
+			
+			font_size_range.y = mid_font_size
+		
+		if text_height <= label.size.y:
+			if font_size_range.x == mid_font_size:
+				break
+			
+			font_size_range.x = mid_font_size
+	label.add_theme_font_size_override("font_size", font_size_range.x)
+	#Detect if lines got clipped. If yes, force it to reduce size to fit inside the original 
+	while label.get_visible_line_count()<label.get_line_count():
+		font_size_range.x-=1
+		label.add_theme_font_size_override("font_size", font_size_range.x)
+'''

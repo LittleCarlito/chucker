@@ -55,6 +55,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_6pi5a")
+min_tab_font_size = 16
+max_tab_font_size = 22
 fov_slider = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovSliderContainer/FovSlider")
 fov_value = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovValueCenter/FovValue")
 horizontal_aim_sensitivity_slider = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalAimSensitivityRows/HorizontalAimSensitivityColumns/HorizontalAimSensitvitySliderContainer/HorizontalAimSensitivitySlider")
@@ -165,6 +167,7 @@ size_flags_stretch_ratio = 5.0
 [node name="CloseColumn" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.75
 
 [node name="CloseButton" parent="MainContainer/ContentBox/OptionRows/TopOptionBar/CloseColumn" instance=ExtResource("3_1rkto")]
 layout_mode = 2
@@ -174,10 +177,15 @@ script = SubResource("GDScript_bli58")
 layout_mode = 2
 size_flags_vertical = 3
 
+[node name="Separator" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows"]
+layout_mode = 2
+size_flags_vertical = 3
+
 [node name="OptionTabContainer" type="TabContainer" parent="MainContainer/ContentBox/OptionRows"]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
+theme = ExtResource("2_dnfin")
 current_tab = 0
 
 [node name="General" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
