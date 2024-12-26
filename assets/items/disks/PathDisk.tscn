@@ -14,8 +14,13 @@ resource_local_to_scene = true
 material = SubResource("StandardMaterial3D_6l2g0")
 height = 0.1
 
-[node name="PathDisk" type="Node3D" groups=["All", "Disk", "General"]]
+[node name="PathDisk" type="Node3D" node_paths=PackedStringArray("disk_mesh", "disk_collision", "camera_container", "path_3d", "path_follow") groups=["All", "Disk", "General"]]
 script = ExtResource("1_3o2g5")
+disk_mesh = NodePath("Path3D/PathFollow3D/DiskMesh")
+disk_collision = NodePath("Path3D/PathFollow3D/CollisionArea/DiskCollision")
+camera_container = NodePath("Path3D/PathFollow3D/DiskMesh/CameraContainer")
+path_3d = NodePath("Path3D")
+path_follow = NodePath("Path3D/PathFollow3D")
 
 [node name="Path3D" type="Path3D" parent="."]
 

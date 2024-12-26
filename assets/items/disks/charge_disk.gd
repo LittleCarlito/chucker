@@ -4,12 +4,13 @@ class_name ChargeDisk
 
 const _FLIGHT_DATA_NOT_SET: String = "FlightData not set; Cannot set flight global basis"
 
-@onready var charge_view: ChargeView = $ChargeView
-@onready var aim_line: AimLine = $AimLine
+@export var charge_view: ChargeView
+@export var aim_line: AimLine
+@export var disk_mesh: DiskMesh
 
+var asset_data: AssetData
+var flight_data: FlightData = FlightData.new()
 var stopwatch: Stopwatch = Stopwatch.new()
-@export var flight_data: FlightData
-@export var asset_data: AssetData
 
 # TODO Have charge and line decrease after reaching max and increase after reaching min on long holds
 # TODO Add charge effects
@@ -72,7 +73,6 @@ func release_action(incoming_basis: Basis) -> void:
 		#item_owner.disable_movement()
 		#item_owner.disable_rotation()
 		#item_owner.unequip_item()
-
 
 func reset_launch_parameters() -> void:
 	flight_data = null

@@ -1,3 +1,4 @@
+# TODO Get rid of this class and move the disable stuff into chuck
 extends CharacterBody3D
 class_name PlayableCharacter
 

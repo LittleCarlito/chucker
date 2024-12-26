@@ -41,10 +41,10 @@ const _SET_DISK_CAMERA: String = "set_disk_camera"
 const _GET_DISK_CAMERA: String = "get_disk_camera"
 const _LOSE_FOCUS: String = "lose_focus"
 
-@onready var disk_mesh: DiskMesh = $DiskMesh
-@onready var disk_collision: DiskCollision = $DiskCollision
-@export var asset_data: AssetData
-@export var flight_data: FlightData
+@export var disk_mesh: DiskMesh
+@export var disk_collision: DiskCollision
+var asset_data: AssetData
+var flight_data: FlightData
 var camera_container: CameraContainer
 var _collided: bool
 

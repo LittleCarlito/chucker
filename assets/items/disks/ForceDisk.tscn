@@ -13,12 +13,14 @@ resource_local_to_scene = true
 material = SubResource("StandardMaterial3D_g2ql2")
 height = 0.1
 
-[node name="ForceDisk" type="RigidBody3D" groups=["All", "Disk", "General"]]
+[node name="ForceDisk" type="RigidBody3D" node_paths=PackedStringArray("disk_mesh", "disk_collision") groups=["All", "Disk", "General"]]
 collision_layer = 4
 collision_mask = 30
 contact_monitor = true
 max_contacts_reported = 1
 script = ExtResource("1_13oos")
+disk_mesh = NodePath("DiskMesh")
+disk_collision = NodePath("DiskCollision")
 
 [node name="DiskCollision" parent="." instance=ExtResource("2_jt5ve")]
 

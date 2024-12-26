@@ -5,9 +5,11 @@
 [ext_resource type="PackedScene" uid="uid://cfpse6r2su0ua" path="res://assets/ui/views/ChargeView.tscn" id="3_v64oc"]
 [ext_resource type="PackedScene" uid="uid://bsh3ij28tbgvr" path="res://assets/ui/action/PullDraw.tscn" id="4_w350m"]
 
-[node name="PullDisk" type="MeshInstance3D"]
+[node name="PullDisk" type="MeshInstance3D" node_paths=PackedStringArray("pull_draw", "charge_view")]
 mesh = ExtResource("1_7ppud")
 script = ExtResource("2_ebead")
+pull_draw = NodePath("PullDraw")
+charge_view = NodePath("ChargeView")
 
 [node name="ChargeView" parent="." instance=ExtResource("3_v64oc")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 1.16, 0.655, 0)

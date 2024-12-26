@@ -5,20 +5,12 @@ const _UKNOWN_OBJECT_LOG: String = "Tried to pick up UKNOWN object; Where did yo
 const _NO_CAMERA_CONTAINER_LOG: String = "New item \"%s\" doesn't have the ability to hold a camera"
 const _EMPTY_CAMERA_CONTAINER: String = "CameraContainer from \"%s\" returned null"
 
-@onready var chuck_mesh: MeshInstance3D = $ChuckMesh
-@onready var front_detection: ShapeCast3D = $FrontDetect
-@onready var camera_container: CameraContainer = $CameraContainer
-@onready var item_container: ItemContainer = $ItemContainer
+@export var chuck_mesh: MeshInstance3D
+@export var front_detection: ShapeCast3D
+@export var camera_container: CameraContainer
+@export var item_container: ItemContainer
 
-# TODO Time for Groups
-# 		Use of disks should be done through group method calls
-#		This as the owner can call to prepare_launcher(flight_data)
-#		Disks as members of the group should check their type
-#			If LAUNCHER react to the signal/method call by preparing launcher
-#		This as the owner can call to fire_launcher()
-#		Disks as member of the group should check their type
-#			If LAUNCHER reach to the signal/method by sending set flight_data and item_data to the factory
-@export var asset_data: AssetData
+var asset_data: AssetData
 var stopwatch: Stopwatch = Stopwatch.new()
 var height: float
 
@@ -48,6 +40,7 @@ func _physics_process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	_handle_looking(event)
 	## Rotate input control
+	# TODO Add support for track pad scrolling to rotate disk up
 	if event.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_UP) || event.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_DOWN):
 		var rotation_adjust: float = GlobalSettings.DISK.ROTATE_ADJUST
 		if event.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_DOWN):
@@ -91,10 +84,8 @@ func _handle_player_interact() -> void:
 			if colliding_object != null and colliding_object is ForceDisk:
 				AssetDelivery.create_and_give_item(self, colliding_object)
 
-# TODO This should just be handled by this class without signals from below being needed
-#		Should be checking if equipped (if necessary what type; group check)
-#			Then handling rotation event and calling this method internally not from a signal
-## Handles rotation signals from held nodes
+# TODO Redo this to use clamp() inseach of the checking logic
+## Rotates contained item by given amount
 func _handle_rotation(rotation_amount: float) -> void:
 	var is_min_rotate: bool = rotation_amount > 0 and item_container.rotation_degrees.x < GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION
 	var is_max_rotate: bool = rotation_amount < 0 and item_container.rotation_degrees.x > GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION

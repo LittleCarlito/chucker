@@ -18,13 +18,13 @@ class_name PathDisk
 const _BODY_EXIT: String = "body_exit"
 const _BODY_ENTER: String = "body_enter"
 
-@onready var disk_mesh: DiskMesh = $Path3D/PathFollow3D/DiskMesh
-@onready var disk_collision: DiskCollision = $Path3D/PathFollow3D/CollisionArea/DiskCollision
-@onready var camera_container: CameraContainer = $Path3D/PathFollow3D/DiskMesh/CameraContainer
-@onready var path_3d: Path3D = $Path3D
-@onready var path_follow: PathFollow3D = $Path3D/PathFollow3D
-@export var flight_data: FlightData
-@export var asset_data: AssetData
+@export var disk_mesh: DiskMesh
+@export var disk_collision: DiskCollision
+@export var camera_container: CameraContainer
+@export var path_3d: Path3D
+@export var path_follow: PathFollow3D
+var flight_data: FlightData
+var asset_data: AssetData
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

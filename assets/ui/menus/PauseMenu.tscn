@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bsbcc5ek3c1ye" path="res://resources/Sprites/Menu/ExitButton_hover.png" id="5_6eac1"]
 [ext_resource type="Texture2D" uid="uid://dum0opc2rf4gr" path="res://resources/Sprites/Menu/ResumeButton_pressed.png" id="5_g8iq8"]
 [ext_resource type="Texture2D" uid="uid://d38j3sn48k67u" path="res://resources/Sprites/Menu/ResumeButton.png" id="5_y872g"]
+[ext_resource type="Texture2D" uid="uid://b2mcgyj4flroy" path="res://resources/Sprites/Menu/PauseTitle.png" id="6_sloq1"]
 [ext_resource type="Texture2D" uid="uid://bfpof2bo3bspx" path="res://resources/Sprites/Menu/ResumeButton_hover.png" id="6_xffti"]
 [ext_resource type="Texture2D" uid="uid://5wlocgrcumg0" path="res://resources/Sprites/Menu/OptionsButton.png" id="7_5lwia"]
 [ext_resource type="PackedScene" uid="uid://buojyeswghm00" path="res://assets/ui/menus/OptionsMenu.tscn" id="7_twhfd"]
@@ -15,9 +16,6 @@
 [ext_resource type="Texture2D" uid="uid://c2qrmn1dekoqq" path="res://resources/Sprites/Menu/QuitButton.png" id="9_vceil"]
 [ext_resource type="Texture2D" uid="uid://dmhx2lxkydtfq" path="res://resources/Sprites/Menu/QuitButton_pressed.png" id="11_hke21"]
 [ext_resource type="Texture2D" uid="uid://dqtgshqyll7x2" path="res://resources/Sprites/Menu/QuitButton_hover.png" id="12_cho6y"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b4ewp"]
-bg_color = Color(0.431373, 0.360784, 0.227451, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7nrxq"]
 bg_color = Color(0.43, 0.362633, 0.2279, 1)
@@ -52,11 +50,11 @@ grow_vertical = 2
 [node name="LeftMargin" type="MarginContainer" parent="MainContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme = ExtResource("1_guofl")
 
 [node name="ContentBox" type="VBoxContainer" parent="MainContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 5.0
 
 [node name="TopMargin" type="MarginContainer" parent="MainContainer/ContentBox"]
 layout_mode = 2
@@ -66,32 +64,24 @@ theme = ExtResource("1_guofl")
 [node name="ButtonBox" type="VBoxContainer" parent="MainContainer/ContentBox"]
 custom_minimum_size = Vector2(0, 590)
 layout_mode = 2
-size_flags_stretch_ratio = 20.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 5.0
 theme = ExtResource("1_guofl")
 
-[node name="CloseButtonBorder" type="Panel" parent="MainContainer/ContentBox/ButtonBox"]
-custom_minimum_size = Vector2(30, 30)
+[node name="TopRow" type="HBoxContainer" parent="MainContainer/ContentBox/ButtonBox"]
 layout_mode = 2
-size_flags_horizontal = 8
-theme = ExtResource("1_guofl")
-theme_type_variation = &"Subpanel"
-theme_override_styles/panel = SubResource("StyleBoxFlat_b4ewp")
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.25
 
-[node name="CloseButton" type="TextureButton" parent="MainContainer/ContentBox/ButtonBox/CloseButtonBorder"]
+[node name="LeftMargin" type="MarginContainer" parent="MainContainer/ContentBox/ButtonBox/TopRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 20.0
+
+[node name="CloseButton" type="TextureButton" parent="MainContainer/ContentBox/ButtonBox/TopRow"]
 custom_minimum_size = Vector2(25, 25)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -12.5
-offset_top = -12.5
-offset_right = 12.5
-offset_bottom = 12.5
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 8
+layout_mode = 2
+size_flags_horizontal = 3
 texture_normal = ExtResource("3_n2i6t")
 texture_pressed = ExtResource("4_yp0aw")
 texture_hover = ExtResource("5_6eac1")
@@ -101,21 +91,21 @@ stretch_mode = 5
 [node name="PausedLabelBackground" type="Panel" parent="MainContainer/ContentBox/ButtonBox"]
 custom_minimum_size = Vector2(750, 70)
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.75
 theme = ExtResource("1_guofl")
 theme_override_styles/panel = SubResource("StyleBoxFlat_7nrxq")
 
-[node name="PausedLabel" type="Label" parent="MainContainer/ContentBox/ButtonBox/PausedLabelBackground"]
+[node name="TextureRect" type="TextureRect" parent="MainContainer/ContentBox/ButtonBox/PausedLabelBackground"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_guofl")
-text = "PAUSED"
-horizontal_alignment = 1
-vertical_alignment = 1
+texture = ExtResource("6_sloq1")
+expand_mode = 5
+stretch_mode = 5
 
 [node name="ResumeButton" type="TextureButton" parent="MainContainer/ContentBox/ButtonBox"]
 layout_mode = 2
@@ -151,8 +141,7 @@ theme = ExtResource("1_guofl")
 
 [node name="RightMargin" type="MarginContainer" parent="MainContainer"]
 layout_mode = 2
-size_flags_horizontal = 10
-theme = ExtResource("1_guofl")
+size_flags_horizontal = 3
 
 [node name="OptionsMenu" parent="." instance=ExtResource("7_twhfd")]
 visible = false
@@ -162,7 +151,7 @@ layout_mode = 1
 wait_time = 0.1
 one_shot = true
 
-[connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/CloseButtonBorder/CloseButton" to="." method="_on_close_menu"]
+[connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/TopRow/CloseButton" to="." method="_on_close_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/ResumeButton" to="." method="_on_close_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/OptionsButton" to="." method="_on_options_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/ButtonBox/QuitButton" to="." method="_on_quit"]

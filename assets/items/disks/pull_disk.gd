@@ -7,9 +7,9 @@ class_name PullDisk
 #		Probably make that part of ThrowableItem and not have it in both
 #		Make it shake the disk as timer gets closer until it finally just inaccurately launches
 
-@onready var pull_draw: PullDraw = $PullDraw
-@onready var charge_view: ChargeView = $ChargeView
-@onready var item_data: AssetData
+@export var pull_draw: PullDraw
+@export var charge_view: ChargeView
+var item_data: AssetData
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
