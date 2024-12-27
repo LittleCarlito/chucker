@@ -62,6 +62,21 @@ const ICON_SCALE_MATRIX: Dictionary = {
 	DisplaySize.SIZE.MAXIMUM: .68
 }
 
+const MENU_SCALE_MATRIX: Dictionary = {
+	DisplaySize.SIZE.TEENY: 1,
+	DisplaySize.SIZE.EXTRA_EXTRA_SMALL: 1.2,
+	DisplaySize.SIZE.EXTRA_SMALL: 1.4,
+	DisplaySize.SIZE.SMALL: 1.6,
+	DisplaySize.SIZE.MEDIUM_SMALL: 1.8,
+	DisplaySize.SIZE.MEDIUM: 2.0,
+	DisplaySize.SIZE.MEDIUM_LARGE: 2.2,
+	DisplaySize.SIZE.LARGE: 2.4,
+	DisplaySize.SIZE.EXTRA_LARGE: 2.6,
+	DisplaySize.SIZE.EXTRA_EXTRA_LARGE: 2.8,
+	DisplaySize.SIZE.HUGE: 3.0,
+	DisplaySize.SIZE.MAXIMUM: 3.2
+}
+
 ## Determines associated SIZE from given screen_resolution
 static func determine_display_size(screen_resolution: Vector2i) -> DisplaySize.SIZE:
 	var display_size: DisplaySize.SIZE

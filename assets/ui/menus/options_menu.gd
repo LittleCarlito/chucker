@@ -1,7 +1,6 @@
 extends Control
 class_name OptionsMenu
 
-# TODO Add Controls tab to resizing logic
 # TODO Make Graphics tab contents scrollable when beyond window
 # TODO Refactor menus and tabs to their own nodes
 
@@ -64,6 +63,8 @@ signal load_settings
 signal apply_settings
 
 var font_update_list: Array[Control]
+var y_scale_update_list: Array[Control]
+var xy_scale_update_list: Array[Control]
 var display_size: DisplaySize.SIZE
 var dropdown_index: int
 var frame_count: int
@@ -95,7 +96,21 @@ func _ready() -> void:
 		monitor_choice_label,
 		monitor_choice_select,
 		frame_rate_label,
-		frame_rate_select
+		frame_rate_select,
+		control_list
+	]
+	y_scale_update_list = [
+		fov_slider,
+		vertical_aim_sensitivity_slider,
+		vertical_look_sensitivity_slider,
+		horizontal_aim_sensitivity_slider,
+		horizontal_look_sensitivity_slider
+	]
+	xy_scale_update_list = [
+		v_inversion_toggle,
+		h_inversion_toggle,
+		bloom_check,
+		performance_display_check
 	]
 	initialize_ui()
 
@@ -326,7 +341,6 @@ func _handle_resize() -> void:
 		display_size = temp_display_size
 		_handle_font_resize()
 		_handle_icon_resize()
-	# TODO Add an update to text objects that need thicker text outlining
 
 func _handle_font_resize() -> void:
 	var font_size: int = DisplaySize.FONT_MATRIX.get(display_size)
@@ -335,5 +349,13 @@ func _handle_font_resize() -> void:
 	Logger.debug(_UI_UPDATED_LOG, [_OPTION_MENU, str(display_size)], self)
 
 func _handle_icon_resize() -> void:
+	# ControlList rescaling
 	var icon_scale: float = DisplaySize.ICON_SCALE_MATRIX.get(display_size)
 	control_list.icon_scale = icon_scale
+	# Slider/checkbox rescaling
+	var menu_item_scale: float = DisplaySize.MENU_SCALE_MATRIX.get(display_size)
+	for y_rescale in y_scale_update_list:
+		y_rescale.scale.y = menu_item_scale
+	for xy_rescale in xy_scale_update_list:
+		xy_rescale.scale.y = menu_item_scale
+		xy_rescale.scale.x = menu_item_scale

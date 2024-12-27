@@ -201,10 +201,9 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
 theme = ExtResource("2_dnfin")
-current_tab = 1
+current_tab = 0
 
 [node name="General" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
-visible = false
 layout_mode = 2
 theme = ExtResource("2_dnfin")
 theme_type_variation = &"OptionTab"
@@ -509,6 +508,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Controls" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
+visible = false
 layout_mode = 2
 theme = ExtResource("2_dnfin")
 theme_type_variation = &"OptionTab"
