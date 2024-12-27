@@ -47,6 +47,21 @@ const FONT_MATRIX: Dictionary = {
 	DisplaySize.SIZE.MAXIMUM: 78
 }
 
+const ICON_SCALE_MATRIX: Dictionary = {
+	DisplaySize.SIZE.TEENY: .04,
+	DisplaySize.SIZE.EXTRA_EXTRA_SMALL: .1,
+	DisplaySize.SIZE.EXTRA_SMALL: .16,
+	DisplaySize.SIZE.SMALL: .2,
+	DisplaySize.SIZE.MEDIUM_SMALL: .26,
+	DisplaySize.SIZE.MEDIUM: .32,
+	DisplaySize.SIZE.MEDIUM_LARGE: .38,
+	DisplaySize.SIZE.LARGE: .44,
+	DisplaySize.SIZE.EXTRA_LARGE: .50,
+	DisplaySize.SIZE.EXTRA_EXTRA_LARGE: .56,
+	DisplaySize.SIZE.HUGE: .62,
+	DisplaySize.SIZE.MAXIMUM: .68
+}
+
 ## Determines associated SIZE from given screen_resolution
 static func determine_display_size(screen_resolution: Vector2i) -> DisplaySize.SIZE:
 	var display_size: DisplaySize.SIZE

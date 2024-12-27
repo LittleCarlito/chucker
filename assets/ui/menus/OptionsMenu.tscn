@@ -72,7 +72,7 @@ motion_blur_check = NodePath("MainContainer/ContentBox/OptionRows/OptionTabConta
 bloom_check = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows/BloomCheck")
 performance_display_check = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck")
 control_select_menu = NodePath("ControlSelectMenu")
-control_list = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls/ControlsRows/ControlList")
+control_list = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls/ControlList")
 option_tab_container = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer")
 fov_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovLabelCenter/FovLabel")
 horizontal_look_sensitivity_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalLookSensitivityRows/HorizontalLookSensitivityLabelCenter/HorizontalLookSensitivityLabel")
@@ -201,7 +201,7 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
 theme = ExtResource("2_dnfin")
-current_tab = 2
+current_tab = 1
 
 [node name="General" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
 visible = false
@@ -509,22 +509,18 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Controls" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
-visible = false
 layout_mode = 2
 theme = ExtResource("2_dnfin")
 theme_type_variation = &"OptionTab"
 metadata/_tab_index = 1
 
-[node name="ControlsRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls"]
+[node name="ControlList" type="ItemList" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="ControlList" type="ItemList" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls/ControlsRows"]
-layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("2_dnfin")
 item_count = 15
@@ -563,6 +559,7 @@ item_14/text = "Pick Up"
 item_14/icon = ExtResource("17_ajqtq")
 
 [node name="Graphics" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
+visible = false
 layout_mode = 2
 theme = ExtResource("2_dnfin")
 metadata/_tab_index = 2
@@ -725,7 +722,7 @@ layout_mode = 1
 [connection signal="value_changed" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalAimSensitivityRows/HorizontalAimSensitivityColumns/HorizontalAimSensitvitySliderContainer/HorizontalAimSensitivitySlider" to="." method="_on_horizontal_aim_sensitivity_slider_value_changed"]
 [connection signal="drag_ended" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityColumns/VerticalAimSensitvitySliderContainer/VerticalAimSensitivitySlider" to="." method="_on_vertical_aim_sensitivity_slider_drag_ended"]
 [connection signal="value_changed" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityColumns/VerticalAimSensitvitySliderContainer/VerticalAimSensitivitySlider" to="." method="_on_vertical_aim_sensitivity_slider_value_changed"]
-[connection signal="item_clicked" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls/ControlsRows/ControlList" to="." method="_open_control_select_menu"]
+[connection signal="item_clicked" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls/ControlList" to="." method="_open_control_select_menu"]
 [connection signal="item_selected" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/DisplayTypeRows/DisplayTypeSelect" to="." method="_handle_resize_request"]
 [connection signal="toggled" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck" to="." method="_on_performance_display_check_toggled"]
 [connection signal="menu_closed" from="ControlSelectMenu" to="." method="_control_select_closed"]

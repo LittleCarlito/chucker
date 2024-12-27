@@ -314,15 +314,26 @@ func _get_control_index(constant_name: String) -> int:
 
 ## Updates font in menu according to window size
 func _handle_resize() -> void:
+	# Update dropdown setting value
 	var temp_index: int = display_type_select.get_item_index(get_window().mode)
 	if temp_index != dropdown_index:
 		dropdown_index = temp_index
 		display_type_select.select(dropdown_index)
+	# Check if display size changed
 	var temp_display_size: DisplaySize.SIZE = DisplaySize.determine_display_size(get_viewport().get_visible_rect().size)
+	# If changed update menu items
 	if temp_display_size != display_size:
 		display_size = temp_display_size
-		var font_size: int = DisplaySize.FONT_MATRIX.get(display_size)
-		for update_control in font_update_list:
-			update_control.add_theme_font_size_override(CONSTANTS.FONT_SIZE, font_size)
-		Logger.debug(_UI_UPDATED_LOG, [_OPTION_MENU, str(display_size)], self)
-	# TODO Add text outline and other things to resizing logic
+		_handle_font_resize()
+		_handle_icon_resize()
+	# TODO Add an update to text objects that need thicker text outlining
+
+func _handle_font_resize() -> void:
+	var font_size: int = DisplaySize.FONT_MATRIX.get(display_size)
+	for update_control in font_update_list:
+		update_control.add_theme_font_size_override(CONSTANTS.FONT_SIZE, font_size)
+	Logger.debug(_UI_UPDATED_LOG, [_OPTION_MENU, str(display_size)], self)
+
+func _handle_icon_resize() -> void:
+	var icon_scale: float = DisplaySize.ICON_SCALE_MATRIX.get(display_size)
+	control_list.icon_scale = icon_scale
