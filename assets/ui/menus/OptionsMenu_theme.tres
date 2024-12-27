@@ -9,4 +9,5 @@ ItemList/constants/h_separation = 68
 ItemList/constants/v_separation = 20
 Label/font_sizes/font_size = 18
 Panel/styles/panel = SubResource("StyleBoxFlat_3pqj7")
+TabContainer/constants/outline_size = 5
 VBoxContainer/styles/SubmenuVBoxContainer = null

@@ -47,6 +47,7 @@ signal apply_settings
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	initialize_ui()
+	get_tree().get_root().size_changed.connect(_handle_resize) 
 
 func initialize_ui() -> void:
 	control_select_menu.visible = false
@@ -70,11 +71,10 @@ func initialize_ui() -> void:
 		var mapped_input: InputEvent = _get_constant_value(constant_name)
 		var mapped_texture: Texture2D = InputSprite.get_sprite(mapped_input)
 		control_list.set_item_icon(i, mapped_texture)
+	_handle_resize()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	# TODO Connect this to a signal in ready on viewport size change instead
-	_update_font_to_window_size()
 	pass
 
 func _input(event: InputEvent) -> void:
@@ -255,56 +255,8 @@ func _get_control_index(constant_name: String) -> int:
 	return CONSTANTS.INT32_MAX
 
 ## Updates font in menu according to window size
-func _update_font_to_window_size() -> void:
-	var font_size_range: Vector2i = Vector2i(min_tab_font_size, max_tab_font_size)
-	# TODO Have menu organized with theme so this works on all text at once
-	var font: Font = get_theme_font("font")
-	
-	# TODO Update font by viewport size
-	var horizontal_window_length: float = get_viewport_rect().size.x
-	
-'''
-class_name AutoSizer
-
-static func get_text_paragraph() -> TextParagraph:
-	var line := TextParagraph.new()
-	line.justification_flags = TextServer.JUSTIFICATION_NONE
-	line.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	
-	return line
-
-static func update_font_size_by_height(label: AutoSizeLabel) -> void:
-	var font_size_range := Vector2i(label.min_font_size, label.max_font_size)
-	var font := label.get_theme_font("font")
-	
-	var paragraph := get_text_paragraph()
-	paragraph.width = label.size.x
-	paragraph.break_flags = TextServer.BREAK_MANDATORY | TextServer.BREAK_WORD_BOUND | TextServer.BREAK_ADAPTIVE
-	
-	while true:
-		paragraph.clear()
-		
-		var mid_font_size := font_size_range.x + roundi((font_size_range.y - font_size_range.x) * 0.5)
-		if !paragraph.add_string(label.text, font, mid_font_size):
-			push_warning("Could not create a string!")
-			return
-		
-		var text_height: int = paragraph.get_size().y
-		
-		if text_height > label.size.y:
-			if font_size_range.y == mid_font_size:
-				break
-			
-			font_size_range.y = mid_font_size
-		
-		if text_height <= label.size.y:
-			if font_size_range.x == mid_font_size:
-				break
-			
-			font_size_range.x = mid_font_size
-	label.add_theme_font_size_override("font_size", font_size_range.x)
-	#Detect if lines got clipped. If yes, force it to reduce size to fit inside the original 
-	while label.get_visible_line_count()<label.get_line_count():
-		font_size_range.x-=1
-		label.add_theme_font_size_override("font_size", font_size_range.x)
-'''
+func _handle_resize() -> void:
+	var display_size: DisplaySize.SIZE = DisplaySize.determine_display_size(get_viewport().get_visible_rect().size)
+	var font_size: int = DisplaySize.FONT_MATRIX.get(display_size)
+	option_tab_container.add_theme_font_size_override("font_size", font_size)
+	# TODO Add text outline and other things to resizing logic
