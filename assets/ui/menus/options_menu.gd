@@ -1,7 +1,6 @@
 extends Control
 class_name OptionsMenu
 
-# BUG Graphics content misaligned when loading fullscreen
 # TODO Add Controls tab to resizing logic
 # TODO Make Graphics tab contents scrollable when beyond window
 # TODO Refactor menus and tabs to their own nodes
@@ -71,9 +70,7 @@ var frame_count: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	initialize_ui()
 	get_tree().get_root().size_changed.connect(_handle_resize)
-	# TODO Find all objects in menu that need font updated
 	font_update_list = [
 		fov_value,
 		horizontal_aim_sensitivity_value,
@@ -100,6 +97,7 @@ func _ready() -> void:
 		frame_rate_label,
 		frame_rate_select
 	]
+	initialize_ui()
 
 func initialize_ui() -> void:
 	control_select_menu.visible = false
@@ -117,10 +115,6 @@ func initialize_ui() -> void:
 	v_inversion_toggle.button_pressed = GlobalSettings.CAMERA.get(CONSTANTS.INVERT_VERTICAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_VERTICAL)
 	h_inversion_toggle.button_pressed = GlobalSettings.CAMERA.get(CONSTANTS.INVERT_HORIZONTAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_HORIZONTAL)
 	performance_display_check.button_pressed = GlobalSettings.DISPLAY.get(CONSTANTS.PERFORMANCE, GlobalSettings.DISPLAY_DEFAULTS.PERFORMANCE)
-	# TODO Determine if fullscreen or not and set the Graphics tab dropdown value accordingly
-	# TODO make available dropdowns based off mode enums for Window
-	# TODO Then add logic to change the fullscreen settings if the dropdown is updated
-
 	# Load in icons for set controls
 	for i in control_list.item_count:
 		var constant_name: String = _get_constant_name(control_list.get_item_text(i))
@@ -256,6 +250,10 @@ func _control_select_set(control_to_update: String, selected_input: ControlSetti
 		else:
 			Logger.error(_SELECT_ERROR_LOG, [str(selected_icons.size())], self)
 
+func _handle_resize_request(selected_index: int) -> void:
+	var selected_window_type: int = display_type_select.get_item_id(selected_index)
+	get_window().mode = selected_window_type
+
 # Updates selected icons in control_list to the passed in texture
 func _update_selected_icons(new_icon: Texture2D) -> void:
 	var selected_icons: PackedInt32Array = control_list.get_selected_items()
@@ -316,7 +314,6 @@ func _get_control_index(constant_name: String) -> int:
 
 ## Updates font in menu according to window size
 func _handle_resize() -> void:
-	# TODO The lack of this changing on exiting fullscreen shows change_size isn't enough for that signal
 	var temp_index: int = display_type_select.get_item_index(get_window().mode)
 	if temp_index != dropdown_index:
 		dropdown_index = temp_index

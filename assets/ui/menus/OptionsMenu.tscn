@@ -149,18 +149,21 @@ custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 15.0
+mouse_filter = 2
 theme_type_variation = &"OptionLabel"
 
 [node name="TextureRect" type="TextureRect" parent="MainContainer/ContentBox/OptionRows/TopOptionBar/OptionsLabelBackground"]
+clip_contents = true
 layout_mode = 1
 anchors_preset = 13
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -417.0
-offset_right = 419.0
+offset_left = -505.0
+offset_right = 507.143
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 texture = ExtResource("4_2xypg")
 expand_mode = 3
 stretch_mode = 5
@@ -723,6 +726,7 @@ layout_mode = 1
 [connection signal="drag_ended" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityColumns/VerticalAimSensitvitySliderContainer/VerticalAimSensitivitySlider" to="." method="_on_vertical_aim_sensitivity_slider_drag_ended"]
 [connection signal="value_changed" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityColumns/VerticalAimSensitvitySliderContainer/VerticalAimSensitivitySlider" to="." method="_on_vertical_aim_sensitivity_slider_value_changed"]
 [connection signal="item_clicked" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls/ControlsRows/ControlList" to="." method="_open_control_select_menu"]
+[connection signal="item_selected" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/DisplayTypeRows/DisplayTypeSelect" to="." method="_handle_resize_request"]
 [connection signal="toggled" from="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck" to="." method="_on_performance_display_check_toggled"]
 [connection signal="menu_closed" from="ControlSelectMenu" to="." method="_control_select_closed"]
 [connection signal="save_input" from="ControlSelectMenu" to="." method="_control_select_set"]
