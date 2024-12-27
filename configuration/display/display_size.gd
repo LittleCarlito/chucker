@@ -51,28 +51,59 @@ const FONT_MATRIX: Dictionary = {
 static func determine_display_size(screen_resolution: Vector2i) -> DisplaySize.SIZE:
 	var display_size: DisplaySize.SIZE
 	var window_width: int = screen_resolution.x
+	var window_height: int = screen_resolution.y
 	if window_width < TEENY.x:
 		display_size = DisplaySize.SIZE.TEENY
 	elif window_width < EXTRA_EXTRA_SMALL.x:
 		display_size = DisplaySize.SIZE.EXTRA_EXTRA_SMALL
 	elif window_width < EXTRA_SMALL.x:
-		display_size = DisplaySize.SIZE.EXTRA_SMALL
+		if window_height > EXTRA_EXTRA_SMALL.y:
+			display_size = DisplaySize.SIZE.EXTRA_SMALL
+		else:
+			display_size = DisplaySize.SIZE.EXTRA_EXTRA_SMALL
 	elif window_width < SMALL.x:
-		display_size = DisplaySize.SIZE.SMALL
+		if window_height > EXTRA_SMALL.y:
+			display_size = DisplaySize.SIZE.SMALL
+		else:
+			display_size = DisplaySize.SIZE.EXTRA_SMALL
 	elif window_width < MEDIUM_SMALL.x:
-		display_size = DisplaySize.SIZE.MEDIUM_SMALL
+		if window_height > SMALL.y:
+			display_size = DisplaySize.SIZE.MEDIUM_SMALL
+		else:
+			display_size = DisplaySize.SIZE.SMALL
 	elif window_width < MEDIUM.x:
-		display_size = DisplaySize.SIZE.MEDIUM
+		if window_height > MEDIUM_SMALL.y:
+			display_size = DisplaySize.SIZE.MEDIUM
+		else:
+			display_size = DisplaySize.SIZE.MEDIUM_SMALL
 	elif window_width < MEDIUM_LARGE.x:
-		display_size = DisplaySize.SIZE.MEDIUM_LARGE
+		if window_height > MEDIUM.y:
+			display_size = DisplaySize.SIZE.MEDIUM_LARGE
+		else:
+			display_size = DisplaySize.SIZE.MEDIUM
 	elif window_width < LARGE.x:
-		display_size = DisplaySize.SIZE.LARGE
+		if window_height > MEDIUM_LARGE.y:
+			display_size = DisplaySize.SIZE.LARGE
+		else:
+			display_size = DisplaySize.SIZE.MEDIUM_LARGE
 	elif window_width < EXTRA_LARGE.x:
-		display_size = DisplaySize.SIZE.EXTRA_LARGE
+		if window_height > LARGE.y:
+			display_size = DisplaySize.SIZE.EXTRA_LARGE
+		else:
+			display_size = DisplaySize.SIZE.LARGE
 	elif window_width < EXTRA_EXTRA_LARGE.x:
-		display_size = DisplaySize.SIZE.EXTRA_EXTRA_LARGE
+		if window_height > EXTRA_LARGE.y:
+			display_size = DisplaySize.SIZE.EXTRA_EXTRA_LARGE
+		else:
+			display_size = DisplaySize.SIZE.EXTRA_LARGE
 	elif window_width < HUGE.x:
-		display_size = DisplaySize.SIZE.HUGE
-	else:
-		display_size = DisplaySize.SIZE.MAXIMUM
+		if window_height > EXTRA_EXTRA_LARGE.y:
+			display_size = DisplaySize.SIZE.HUGE
+		else:
+			display_size = DisplaySize.SIZE.EXTRA_EXTRA_LARGE
+	elif window_width < MAXIMUM.x:
+		if window_height > HUGE.y:
+			display_size = DisplaySize.SIZE.MAXIMUM
+		else:
+			display_size = DisplaySize.SIZE.HUGE
 	return display_size

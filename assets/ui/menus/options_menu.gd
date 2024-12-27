@@ -1,7 +1,10 @@
 extends Control
 class_name OptionsMenu
 
-# TODO See about updating Font dynamically at runtime according to screensize
+# BUG Graphics content misaligned when loading fullscreen
+# TODO Add Controls tab to resizing logic
+# TODO Make Graphics tab contents scrollable when beyond window
+# TODO Refactor menus and tabs to their own nodes
 
 const _UPDATE_CONTROL_LOG: String = "Updating control \"%s\" to input \"%s\""
 const _SELECT_ERROR_LOG: String = "Incorrect number of items selected to change control input; \"%s\" items selected"
@@ -10,9 +13,11 @@ const _UNBIND_LOG: String = "Input \"%s\" key has been rebound"
 const _CONTROL_REMAPPED_LOG: String = "Control \"%s\" has been remapped from \"%s\" to \"%s\""
 const _NO_KEYCODE_ICON_STRING: String = "Path \"%s\" could not be mapped back to a keycode; Not persisting input change"
 const _MISSING_CONSTANT_LOG: String = "No constant could be found for input \"%s\"; Returning \"%s\""
+const _UI_UPDATED_LOG: String = "%s updated to display size %s"
+const _OPTION_MENU: String = "OptionsMenu"
 
-@export var min_tab_font_size: int
-@export var max_tab_font_size: int
+@export var process_delay_frame_count: int
+# Logically used controls
 @export var fov_slider: HSlider
 @export var fov_value: Label
 @export var horizontal_aim_sensitivity_slider: HSlider
@@ -31,6 +36,21 @@ const _MISSING_CONSTANT_LOG: String = "No constant could be found for input \"%s
 @export var control_select_menu: ControlSelectMenu
 @export var control_list: ItemList
 @export var option_tab_container: TabContainer
+# Label controls
+@export var fov_label: Label
+@export var horizontal_look_sensitivity_label: Label
+@export var vertical_look_sensitivity_label: Label
+@export var horizontal_aim_sensitivity_label: Label
+@export var vertical_aim_sensitivity_label: Label
+# Graphics tab
+@export var resolution_label: Label
+@export var resolution_select: OptionButton
+@export var display_type_label: Label
+@export var display_type_select: OptionButton
+@export var monitor_choice_label: Label
+@export var monitor_choice_select: OptionButton
+@export var frame_rate_label: Label
+@export var frame_rate_select: OptionButton
 
 enum SETTING_TABS {GENERAL, CONTROLS, GRAPHICS}
 var camera_settings: Dictionary
@@ -44,10 +64,42 @@ signal save_settings(updated_settings)
 signal load_settings
 signal apply_settings
 
+var font_update_list: Array[Control]
+var display_size: DisplaySize.SIZE
+var dropdown_index: int
+var frame_count: int
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	initialize_ui()
-	get_tree().get_root().size_changed.connect(_handle_resize) 
+	get_tree().get_root().size_changed.connect(_handle_resize)
+	# TODO Find all objects in menu that need font updated
+	font_update_list = [
+		fov_value,
+		horizontal_aim_sensitivity_value,
+		vertical_aim_sensitivity_value,
+		horizontal_look_sensitivity_value,
+		vertical_look_sensitivity_value,
+		option_tab_container,
+		v_inversion_toggle,
+		h_inversion_toggle,
+		fov_label,
+		horizontal_look_sensitivity_label,
+		vertical_look_sensitivity_label,
+		horizontal_aim_sensitivity_label,
+		vertical_aim_sensitivity_label,
+		motion_blur_check,
+		bloom_check,
+		performance_display_check,
+		resolution_label,
+		resolution_select,
+		display_type_label,
+		display_type_select,
+		monitor_choice_label,
+		monitor_choice_select,
+		frame_rate_label,
+		frame_rate_select
+	]
 
 func initialize_ui() -> void:
 	control_select_menu.visible = false
@@ -65,6 +117,10 @@ func initialize_ui() -> void:
 	v_inversion_toggle.button_pressed = GlobalSettings.CAMERA.get(CONSTANTS.INVERT_VERTICAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_VERTICAL)
 	h_inversion_toggle.button_pressed = GlobalSettings.CAMERA.get(CONSTANTS.INVERT_HORIZONTAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_HORIZONTAL)
 	performance_display_check.button_pressed = GlobalSettings.DISPLAY.get(CONSTANTS.PERFORMANCE, GlobalSettings.DISPLAY_DEFAULTS.PERFORMANCE)
+	# TODO Determine if fullscreen or not and set the Graphics tab dropdown value accordingly
+	# TODO make available dropdowns based off mode enums for Window
+	# TODO Then add logic to change the fullscreen settings if the dropdown is updated
+
 	# Load in icons for set controls
 	for i in control_list.item_count:
 		var constant_name: String = _get_constant_name(control_list.get_item_text(i))
@@ -74,8 +130,12 @@ func initialize_ui() -> void:
 	_handle_resize()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
+func _process(delta: float) -> void:
+	frame_count += delta
+	frame_count = min(process_delay_frame_count, frame_count)
+	if frame_count % process_delay_frame_count == 0:
+		_handle_resize()
+		frame_count = 0
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(CONSTANTS.USER_INPUT.PAUSE) and self.visible:
@@ -256,7 +316,16 @@ func _get_control_index(constant_name: String) -> int:
 
 ## Updates font in menu according to window size
 func _handle_resize() -> void:
-	var display_size: DisplaySize.SIZE = DisplaySize.determine_display_size(get_viewport().get_visible_rect().size)
-	var font_size: int = DisplaySize.FONT_MATRIX.get(display_size)
-	option_tab_container.add_theme_font_size_override("font_size", font_size)
+	# TODO The lack of this changing on exiting fullscreen shows change_size isn't enough for that signal
+	var temp_index: int = display_type_select.get_item_index(get_window().mode)
+	if temp_index != dropdown_index:
+		dropdown_index = temp_index
+		display_type_select.select(dropdown_index)
+	var temp_display_size: DisplaySize.SIZE = DisplaySize.determine_display_size(get_viewport().get_visible_rect().size)
+	if temp_display_size != display_size:
+		display_size = temp_display_size
+		var font_size: int = DisplaySize.FONT_MATRIX.get(display_size)
+		for update_control in font_update_list:
+			update_control.add_theme_font_size_override(CONSTANTS.FONT_SIZE, font_size)
+		Logger.debug(_UI_UPDATED_LOG, [_OPTION_MENU, str(display_size)], self)
 	# TODO Add text outline and other things to resizing logic

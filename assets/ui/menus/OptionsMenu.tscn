@@ -46,7 +46,7 @@ func _on_close_menu() -> void:
 	close_menu.emit()
 "
 
-[node name="OptionsMenu" type="Control" node_paths=PackedStringArray("fov_slider", "fov_value", "horizontal_aim_sensitivity_slider", "horizontal_aim_sensitivity_value", "vertical_aim_sensitivity_slider", "vertical_aim_sensitivity_value", "horizontal_look_sensitivity_slider", "horizontal_look_sensitivity_value", "vertical_look_sensitivity_slider", "vertical_look_sensitivity_value", "v_inversion_toggle", "h_inversion_toggle", "motion_blur_check", "bloom_check", "performance_display_check", "control_select_menu", "control_list", "option_tab_container")]
+[node name="OptionsMenu" type="Control" node_paths=PackedStringArray("fov_slider", "fov_value", "horizontal_aim_sensitivity_slider", "horizontal_aim_sensitivity_value", "vertical_aim_sensitivity_slider", "vertical_aim_sensitivity_value", "horizontal_look_sensitivity_slider", "horizontal_look_sensitivity_value", "vertical_look_sensitivity_slider", "vertical_look_sensitivity_value", "v_inversion_toggle", "h_inversion_toggle", "motion_blur_check", "bloom_check", "performance_display_check", "control_select_menu", "control_list", "option_tab_container", "fov_label", "horizontal_look_sensitivity_label", "vertical_look_sensitivity_label", "horizontal_aim_sensitivity_label", "vertical_aim_sensitivity_label", "resolution_label", "resolution_select", "display_type_label", "display_type_select", "monitor_choice_label", "monitor_choice_select", "frame_rate_label", "frame_rate_select")]
 process_mode = 2
 layout_mode = 3
 anchors_preset = 15
@@ -55,8 +55,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_6pi5a")
-min_tab_font_size = 16
-max_tab_font_size = 22
+process_delay_frame_count = 60
 fov_slider = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovSliderContainer/FovSlider")
 fov_value = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovSliderColumns/FovValueCenter/FovValue")
 horizontal_aim_sensitivity_slider = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalAimSensitivityRows/HorizontalAimSensitivityColumns/HorizontalAimSensitvitySliderContainer/HorizontalAimSensitivitySlider")
@@ -75,6 +74,19 @@ performance_display_check = NodePath("MainContainer/ContentBox/OptionRows/Option
 control_select_menu = NodePath("ControlSelectMenu")
 control_list = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls/ControlsRows/ControlList")
 option_tab_container = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer")
+fov_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopOptionColumns/TopSelectRows/FovLabelRows/FovLabelCenter/FovLabel")
+horizontal_look_sensitivity_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalLookSensitivityRows/HorizontalLookSensitivityLabelCenter/HorizontalLookSensitivityLabel")
+vertical_look_sensitivity_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalLookSensitivityRows/VerticalLookSensitivityLabelCenter/VerticalLookSensitivityLabel")
+horizontal_aim_sensitivity_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalAimSensitivityRows/HorizontalAimSensitivityLabelCenter/HorizontalAimSensitivityLabel")
+vertical_aim_sensitivity_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityLabelCenter/VerticalAimSensitivityLabel")
+resolution_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/ResolutionRows/ResolutionLabel")
+resolution_select = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/ResolutionRows/ResolutionSelect")
+display_type_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/DisplayTypeRows/DisplayTypeLabel")
+display_type_select = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/DisplayTypeRows/DisplayTypeSelect")
+monitor_choice_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/MonitorChoiceRows/MonitorChoiceLabel")
+monitor_choice_select = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/MonitorChoiceRows/MonitorChoiceSelect")
+frame_rate_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/FrameRateRows/FrameRateLabel")
+frame_rate_select = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/FrameRateRows/FrameRateSelect")
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1
@@ -186,9 +198,10 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
 theme = ExtResource("2_dnfin")
-current_tab = 0
+current_tab = 2
 
 [node name="General" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
+visible = false
 layout_mode = 2
 theme = ExtResource("2_dnfin")
 theme_type_variation = &"OptionTab"
@@ -547,7 +560,6 @@ item_14/text = "Pick Up"
 item_14/icon = ExtResource("17_ajqtq")
 
 [node name="Graphics" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
-visible = false
 layout_mode = 2
 theme = ExtResource("2_dnfin")
 metadata/_tab_index = 2
@@ -559,10 +571,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-alignment = 1
+
+[node name="LeftMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="GraphicsRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
 [node name="TopMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows"]
@@ -600,13 +616,14 @@ text = "Display Type"
 [node name="DisplayTypeSelect" type="OptionButton" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/DisplayTypeRows"]
 layout_mode = 2
 selected = 0
-item_count = 3
+item_count = 4
 popup/item_0/text = "Windowed"
-popup/item_0/id = 1
-popup/item_1/text = "Fullscreen"
+popup/item_1/text = "Borderless Window"
 popup/item_1/id = 2
 popup/item_2/text = "Windowed Fullscreen"
 popup/item_2/id = 3
+popup/item_3/text = "Exclusive Fullscreen"
+popup/item_3/id = 4
 
 [node name="MonitorChoiceRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows"]
 layout_mode = 2
@@ -670,6 +687,10 @@ layout_mode = 2
 [node name="PerformanceDisplayCheck" type="CheckBox" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows"]
 layout_mode = 2
 text = "Performance Display"
+
+[node name="RightMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="BottomMargin" type="MarginContainer" parent="MainContainer/ContentBox"]
 layout_mode = 2
