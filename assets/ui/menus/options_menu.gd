@@ -41,6 +41,7 @@ const _OPTION_MENU: String = "OptionsMenu"
 @export var horizontal_aim_sensitivity_label: Label
 @export var vertical_aim_sensitivity_label: Label
 # Graphics tab
+@export var scroll_color: Color
 @export var resolution_label: Label
 @export var resolution_select: OptionButton
 @export var display_type_label: Label
@@ -52,7 +53,9 @@ const _OPTION_MENU: String = "OptionsMenu"
 @export var graphics_rows: VBoxContainer
 @export var graphics_columns: HBoxContainer
 @export var graphics_background: Panel
-
+@export var graphics_left_margin: Panel
+@export var graphics_right_margin: Panel
+@export var graphic_select_top_margin: MarginContainer
 
 enum SETTING_TABS {GENERAL, CONTROLS, GRAPHICS}
 var camera_settings: Dictionary
@@ -149,6 +152,7 @@ func _process(delta: float) -> void:
 	if visible:
 		frame_count += delta
 		frame_count = min(process_delay_frame_count, frame_count)
+		# TODO This is being called too often; Making jittery; See about locking frame count for testing
 		if frame_count % process_delay_frame_count == 0:
 			_handle_resize()
 			_handle_scrollable_windows()
@@ -380,16 +384,25 @@ func _handle_scrollable_windows() -> void:
 		new_vertical_scroll.set_v_size_flags(SIZE_SHRINK_CENTER)
 		new_vertical_scroll.set_custom_minimum_size(Vector2(new_vertical_scroll.size.x, panel_height - 50))
 		graphics_columns.add_child(new_vertical_scroll)
-		graphics_columns.move_child(new_vertical_scroll, 2)
-		# TODO OOOOO
-		#		Doing below; Seems like GraphicsRows is pushing above tabContainer and not being clipped
-		#			That is why optional margin containers clipped above and didn't work
-		#		Might need to move column rows down when scaling is done
+		var graphics_stylebox: StyleBox = graphics_background.get_theme_stylebox("panel").duplicate()
+		graphics_stylebox.set("bg_color", scroll_color)
+		graphics_background.add_theme_stylebox_override("panel", graphics_stylebox)
+		# TODO UI Continue from here
+		#		Looks like all you have to do is enable scrolling but don't be fooled
+		#		Pretty sure the stuff moving up in position will not actually be clipped accurately
+		#		Pretty sure Tab Bar is going to be needed
+		#		Then each submenu needs to be broken out into its own node class
+		#		Then in each tab bar probably use a viewport and look at the menu
+		#			Viewport will actually clip shit unlike half provided godot containers
+		# TODO Something like below but it didn't work to set background and rely on panels to make it look like only middle is colored
+		#graphics_background.add_theme_color_override("panel", scroll_color)
 		# TODO Logic to create darkened panel background behind columns
 		#		Create panel behind graphicsRows
 		# TODO Make darkened panel area scroll detectable to move created scrollbar
 		# TODO Now have scrollbar movement move container position so different options are displayed
+		graphics_columns.position.y -= 50
 	elif row_height <= panel_height and graphics_columns.get_child_count() > default_graphic_column_count:
+		graphics_background.remove_theme_stylebox_override("panel")
 		var graphics_children: Array[Node] = graphics_columns.get_children()
 		for graphic_child in graphics_children:
 			if graphic_child is VScrollBar:

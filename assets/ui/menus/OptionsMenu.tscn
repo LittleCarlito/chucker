@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://buojyeswghm00"]
+[gd_scene load_steps=29 format=3 uid="uid://buojyeswghm00"]
 
 [ext_resource type="Script" path="res://assets/ui/menus/options_menu.gd" id="1_6pi5a"]
 [ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://assets/ui/menus/MainMenu_theme.tres" id="1_mx8pt"]
@@ -46,7 +46,13 @@ func _on_close_menu() -> void:
 	close_menu.emit()
 "
 
-[node name="OptionsMenu" type="Control" node_paths=PackedStringArray("fov_slider", "fov_value", "horizontal_aim_sensitivity_slider", "horizontal_aim_sensitivity_value", "vertical_aim_sensitivity_slider", "vertical_aim_sensitivity_value", "horizontal_look_sensitivity_slider", "horizontal_look_sensitivity_value", "vertical_look_sensitivity_slider", "vertical_look_sensitivity_value", "v_inversion_toggle", "h_inversion_toggle", "motion_blur_check", "bloom_check", "performance_display_check", "control_select_menu", "control_list", "option_tab_container", "fov_label", "horizontal_look_sensitivity_label", "vertical_look_sensitivity_label", "horizontal_aim_sensitivity_label", "vertical_aim_sensitivity_label", "resolution_label", "resolution_select", "display_type_label", "display_type_select", "monitor_choice_label", "monitor_choice_select", "frame_rate_label", "frame_rate_select", "graphics_rows", "graphics_columns", "graphics_background")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fyxyk"]
+bg_color = Color(0, 0.725223, 0.208173, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mvars"]
+bg_color = Color(0.0711474, 0.726915, 0, 1)
+
+[node name="OptionsMenu" type="Control" node_paths=PackedStringArray("fov_slider", "fov_value", "horizontal_aim_sensitivity_slider", "horizontal_aim_sensitivity_value", "vertical_aim_sensitivity_slider", "vertical_aim_sensitivity_value", "horizontal_look_sensitivity_slider", "horizontal_look_sensitivity_value", "vertical_look_sensitivity_slider", "vertical_look_sensitivity_value", "v_inversion_toggle", "h_inversion_toggle", "motion_blur_check", "bloom_check", "performance_display_check", "control_select_menu", "control_list", "option_tab_container", "fov_label", "horizontal_look_sensitivity_label", "vertical_look_sensitivity_label", "horizontal_aim_sensitivity_label", "vertical_aim_sensitivity_label", "resolution_label", "resolution_select", "display_type_label", "display_type_select", "monitor_choice_label", "monitor_choice_select", "frame_rate_label", "frame_rate_select", "graphics_rows", "graphics_columns", "graphics_background", "graphics_left_margin", "graphics_right_margin", "graphic_select_top_margin")]
 process_mode = 2
 layout_mode = 3
 anchors_preset = 15
@@ -79,6 +85,7 @@ horizontal_look_sensitivity_label = NodePath("MainContainer/ContentBox/OptionRow
 vertical_look_sensitivity_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalLookSensitivityRows/VerticalLookSensitivityLabelCenter/VerticalLookSensitivityLabel")
 horizontal_aim_sensitivity_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalAimSensitivityRows/HorizontalAimSensitivityLabelCenter/HorizontalAimSensitivityLabel")
 vertical_aim_sensitivity_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityLabelCenter/VerticalAimSensitivityLabel")
+scroll_color = Color(0.701961, 0.596078, 0.368627, 0.611765)
 resolution_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/ResolutionRows/ResolutionLabel")
 resolution_select = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/ResolutionRows/ResolutionSelect")
 display_type_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/DisplayTypeRows/DisplayTypeLabel")
@@ -90,6 +97,9 @@ frame_rate_select = NodePath("MainContainer/ContentBox/OptionRows/OptionTabConta
 graphics_rows = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows")
 graphics_columns = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns")
 graphics_background = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsBackground")
+graphics_left_margin = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsLeftMargin")
+graphics_right_margin = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRightMargin")
+graphic_select_top_margin = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/GraphicSelectTopMargin")
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1
@@ -208,6 +218,7 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
 theme = ExtResource("2_dnfin")
 current_tab = 2
+all_tabs_in_front = true
 
 [node name="General" type="Control" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
 visible = false
@@ -604,17 +615,18 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
 
-[node name="LeftMargin" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns"]
-modulate = Color(1, 1, 1, 0)
+[node name="GraphicsLeftMargin" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 8
+theme_override_styles/panel = SubResource("StyleBoxFlat_fyxyk")
 
 [node name="GraphicsRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="TopMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows"]
+[node name="GraphicSelectTopMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows"]
 layout_mode = 2
 theme_override_constants/margin_top = 3
 
@@ -721,10 +733,11 @@ layout_mode = 2
 layout_mode = 2
 text = "Performance Display"
 
-[node name="RighMargin" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns"]
-modulate = Color(1, 1, 1, 0)
+[node name="GraphicsRightMargin" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 8
+theme_override_styles/panel = SubResource("StyleBoxFlat_mvars")
 
 [node name="BottomMargin" type="MarginContainer" parent="MainContainer/ContentBox"]
 layout_mode = 2
