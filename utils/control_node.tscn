@@ -4,8 +4,10 @@
 [ext_resource type="PackedScene" uid="uid://btbtiiilcdji5" path="res://assets/ui/views/ScorecardView.tscn" id="2_rw607"]
 [ext_resource type="PackedScene" uid="uid://dxo1losx217fd" path="res://assets/ui/menus/PauseMenu.tscn" id="3_w8mbf"]
 
-[node name="ControlNode" type="Node3D" groups=["General"]]
+[node name="ControlNode" type="Node3D" node_paths=PackedStringArray("scorecard", "pause_menu") groups=["General"]]
 script = ExtResource("1_5pady")
+scorecard = NodePath("ScorecardView")
+pause_menu = NodePath("PauseMenu")
 
 [node name="ScorecardView" parent="." instance=ExtResource("2_rw607")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)

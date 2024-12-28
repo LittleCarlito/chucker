@@ -14,8 +14,8 @@ const BASE_PATH: String = "user://"
 const SAVE_DIR: String = BASE_PATH + "settings/"
 const SAVE_FILE: String = SAVE_DIR + "user_settings.json"
 
-@onready var scorecard: ScorecardView = $ScorecardView
-@onready var pause_menu: PauseMenu = $PauseMenu
+@export var scorecard: ScorecardView
+@export var pause_menu: PauseMenu
 
 signal apply_settings
 signal disable_movement

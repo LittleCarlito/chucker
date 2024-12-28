@@ -1,8 +1,10 @@
 extends Control
 class_name OptionsMenu
 
-# TODO Make Graphics tab contents scrollable when beyond window
-# TODO Refactor menus and tabs to their own nodes
+# TODO Break into individual scenes
+# TODO Change the TabContainer to be a TabBar with a ViewPort under it
+# TODO Depending on the active tab different submenu scene is visible
+# TODO When content exceeds viewport limits scrollbar appears to manipulate what is visible in the menu
 
 const _UPDATE_CONTROL_LOG: String = "Updating control \"%s\" to input \"%s\""
 const _SELECT_ERROR_LOG: String = "Incorrect number of items selected to change control input; \"%s\" items selected"
@@ -155,8 +157,6 @@ func _process(delta: float) -> void:
 		# TODO This is being called too often; Making jittery; See about locking frame count for testing
 		if frame_count % process_delay_frame_count == 0:
 			_handle_resize()
-			_handle_scrollable_windows()
-			_resize_scroll_bars()
 			frame_count = 0
 
 func _input(event: InputEvent) -> void:
@@ -372,43 +372,3 @@ func _handle_icon_resize() -> void:
 	for xy_rescale in xy_scale_update_list:
 		xy_rescale.scale.y = menu_item_scale
 		xy_rescale.scale.x = menu_item_scale
-
-## TODO Compares existing setting windows and panel size
-## Creates a scrollable window if size is exceeded
-func _handle_scrollable_windows() -> void:
-	# TODO Implement
-	var panel_height: float = graphics_background.size.y
-	var row_height:float = graphics_rows.size.y
-	if row_height > panel_height and graphics_columns.get_child_count() == default_graphic_column_count:
-		var new_vertical_scroll: VScrollBar = VScrollBar.new()
-		new_vertical_scroll.set_v_size_flags(SIZE_SHRINK_CENTER)
-		new_vertical_scroll.set_custom_minimum_size(Vector2(new_vertical_scroll.size.x, panel_height - 50))
-		graphics_columns.add_child(new_vertical_scroll)
-		var graphics_stylebox: StyleBox = graphics_background.get_theme_stylebox("panel").duplicate()
-		graphics_stylebox.set("bg_color", scroll_color)
-		graphics_background.add_theme_stylebox_override("panel", graphics_stylebox)
-		# TODO UI Continue from here
-		#		Looks like all you have to do is enable scrolling but don't be fooled
-		#		Pretty sure the stuff moving up in position will not actually be clipped accurately
-		#		Pretty sure Tab Bar is going to be needed
-		#		Then each submenu needs to be broken out into its own node class
-		#		Then in each tab bar probably use a viewport and look at the menu
-		#			Viewport will actually clip shit unlike half provided godot containers
-		# TODO Something like below but it didn't work to set background and rely on panels to make it look like only middle is colored
-		#graphics_background.add_theme_color_override("panel", scroll_color)
-		# TODO Logic to create darkened panel background behind columns
-		#		Create panel behind graphicsRows
-		# TODO Make darkened panel area scroll detectable to move created scrollbar
-		# TODO Now have scrollbar movement move container position so different options are displayed
-		graphics_columns.position.y -= 50
-	elif row_height <= panel_height and graphics_columns.get_child_count() > default_graphic_column_count:
-		graphics_background.remove_theme_stylebox_override("panel")
-		var graphics_children: Array[Node] = graphics_columns.get_children()
-		for graphic_child in graphics_children:
-			if graphic_child is VScrollBar:
-				graphic_child.queue_free()
-
-## TODO Resizes existing scrollbars to be padded and scaled according to resolution
-func _resize_scroll_bars() -> void:
-	# TODO Implement once persistant scroll bars exist
-	pass
