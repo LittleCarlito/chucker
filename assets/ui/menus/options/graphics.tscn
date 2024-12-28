@@ -1,0 +1,160 @@
+[gd_scene load_steps=4 format=3 uid="uid://m14crubabs1v"]
+
+[ext_resource type="Theme" uid="uid://df6ukhlv3h184" path="res://assets/ui/menus/OptionsMenu_theme.tres" id="1_i0saw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xxd0s"]
+bg_color = Color(0, 0.725223, 0.208173, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d5jjh"]
+bg_color = Color(0.0711474, 0.726915, 0, 1)
+
+[node name="Graphics" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GraphicsBackground" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_i0saw")
+theme_type_variation = &"OptionTab"
+
+[node name="GraphicsColumns" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="GraphicsLeftMargin" type="Panel" parent="GraphicsColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+theme_override_styles/panel = SubResource("StyleBoxFlat_xxd0s")
+
+[node name="GraphicsRows" type="VBoxContainer" parent="GraphicsColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="GraphicSelectTopMargin" type="MarginContainer" parent="GraphicsColumns/GraphicsRows"]
+layout_mode = 2
+theme_override_constants/margin_top = 3
+
+[node name="ResolutionRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="ResolutionLabel" type="Label" parent="GraphicsColumns/GraphicsRows/ResolutionRows"]
+layout_mode = 2
+text = "Resolution"
+
+[node name="ResolutionSelect" type="OptionButton" parent="GraphicsColumns/GraphicsRows/ResolutionRows"]
+layout_mode = 2
+selected = 0
+item_count = 3
+popup/item_0/text = "Where to get list of official options?"
+popup/item_0/id = 1
+popup/item_1/text = "Res 2"
+popup/item_1/id = 2
+popup/item_2/text = "Res 3"
+popup/item_2/id = 3
+
+[node name="DisplayTypeRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows"]
+layout_mode = 2
+theme = ExtResource("1_i0saw")
+theme_override_constants/separation = 0
+
+[node name="DisplayTypeLabel" type="Label" parent="GraphicsColumns/GraphicsRows/DisplayTypeRows"]
+layout_mode = 2
+text = "Display Type"
+
+[node name="DisplayTypeSelect" type="OptionButton" parent="GraphicsColumns/GraphicsRows/DisplayTypeRows"]
+layout_mode = 2
+selected = 0
+item_count = 4
+popup/item_0/text = "Windowed"
+popup/item_1/text = "Borderless Window"
+popup/item_1/id = 2
+popup/item_2/text = "Windowed Fullscreen"
+popup/item_2/id = 3
+popup/item_3/text = "Exclusive Fullscreen"
+popup/item_3/id = 4
+
+[node name="MonitorChoiceRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows"]
+layout_mode = 2
+theme = ExtResource("1_i0saw")
+theme_override_constants/separation = 0
+
+[node name="MonitorChoiceLabel" type="Label" parent="GraphicsColumns/GraphicsRows/MonitorChoiceRows"]
+layout_mode = 2
+text = "Monitor Select"
+
+[node name="MonitorChoiceSelect" type="OptionButton" parent="GraphicsColumns/GraphicsRows/MonitorChoiceRows"]
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "Only enable if fullscreen"
+popup/item_0/id = 1
+popup/item_1/text = "Need to figure out how to detect monitors"
+popup/item_1/id = 2
+
+[node name="FrameRateRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="FrameRateLabel" type="Label" parent="GraphicsColumns/GraphicsRows/FrameRateRows"]
+layout_mode = 2
+text = "FPS Limit"
+
+[node name="FrameRateSelect" type="OptionButton" parent="GraphicsColumns/GraphicsRows/FrameRateRows"]
+layout_mode = 2
+selected = 0
+item_count = 5
+popup/item_0/text = "Unlimited"
+popup/item_1/text = "30"
+popup/item_1/id = 1
+popup/item_2/text = "60"
+popup/item_2/id = 2
+popup/item_3/text = "90"
+popup/item_3/id = 3
+popup/item_4/text = "120"
+popup/item_4/id = 4
+
+[node name="GraphicCheckColumns" type="HBoxContainer" parent="GraphicsColumns/GraphicsRows"]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="VisualCheckRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows/GraphicCheckColumns"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="MotionBlurCheck" type="CheckBox" parent="GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows"]
+layout_mode = 2
+text = "Motion Blur"
+
+[node name="BloomCheck" type="CheckBox" parent="GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows"]
+layout_mode = 2
+text = "Bloom"
+
+[node name="DataCheckRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows/GraphicCheckColumns"]
+layout_mode = 2
+
+[node name="PerformanceDisplayCheck" type="CheckBox" parent="GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows"]
+layout_mode = 2
+text = "Performance Display"
+
+[node name="GraphicsRightMargin" type="Panel" parent="GraphicsColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+theme_override_styles/panel = SubResource("StyleBoxFlat_d5jjh")

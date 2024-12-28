@@ -217,11 +217,10 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
 theme = ExtResource("2_dnfin")
-current_tab = 2
+current_tab = 0
 all_tabs_in_front = true
 
 [node name="General" type="Control" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -243,12 +242,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TopMargin" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows"]
-layout_mode = 2
-theme_override_constants/margin_top = 3
-
 [node name="TopOptionColumns" type="HBoxContainer" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/General/ControlsRows"]
 layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 15.0
 theme = ExtResource("2_dnfin")
 theme_override_constants/separation = 0
 
@@ -593,6 +590,7 @@ item_14/text = "Pick Up"
 item_14/icon = ExtResource("17_ajqtq")
 
 [node name="Graphics" type="Control" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 2
 
