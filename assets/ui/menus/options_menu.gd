@@ -49,6 +49,9 @@ const _OPTION_MENU: String = "OptionsMenu"
 @export var monitor_choice_select: OptionButton
 @export var frame_rate_label: Label
 @export var frame_rate_select: OptionButton
+@export var graphics_rows: VBoxContainer
+@export var graphics_background: Panel
+
 
 enum SETTING_TABS {GENERAL, CONTROLS, GRAPHICS}
 var camera_settings: Dictionary
@@ -329,6 +332,8 @@ func _get_control_index(constant_name: String) -> int:
 
 ## Updates font in menu according to window size
 func _handle_resize() -> void:
+	_handle_scrollable_windows()
+	_resize_scroll_bars()
 	# Update dropdown setting value
 	var temp_index: int = display_type_select.get_item_index(get_window().mode)
 	if temp_index != dropdown_index:
@@ -359,3 +364,19 @@ func _handle_icon_resize() -> void:
 	for xy_rescale in xy_scale_update_list:
 		xy_rescale.scale.y = menu_item_scale
 		xy_rescale.scale.x = menu_item_scale
+
+## TODO Compares existing setting windows and panel size
+## Creates a scrollable window if size is exceeded
+func _handle_scrollable_windows() -> void:
+	# TODO Implement
+	var panel_height: float = graphics_background.size.y
+	var row_height:float = graphics_rows.size.y
+	Logger.debug("Panel height %s; Row height %s", [str(panel_height), str(row_height)], self)
+	if row_height <= panel_height:
+		# TODO Logic to create darkened panel background behind columns and create a vertical scrollbar in GraphicsColumns
+		pass
+
+## TODO Resizes existing scrollbars to be padded and scaled according to resolution
+func _resize_scroll_bars() -> void:
+	# TODO Implement
+	pass

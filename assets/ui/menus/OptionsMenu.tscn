@@ -46,7 +46,7 @@ func _on_close_menu() -> void:
 	close_menu.emit()
 "
 
-[node name="OptionsMenu" type="Control" node_paths=PackedStringArray("fov_slider", "fov_value", "horizontal_aim_sensitivity_slider", "horizontal_aim_sensitivity_value", "vertical_aim_sensitivity_slider", "vertical_aim_sensitivity_value", "horizontal_look_sensitivity_slider", "horizontal_look_sensitivity_value", "vertical_look_sensitivity_slider", "vertical_look_sensitivity_value", "v_inversion_toggle", "h_inversion_toggle", "motion_blur_check", "bloom_check", "performance_display_check", "control_select_menu", "control_list", "option_tab_container", "fov_label", "horizontal_look_sensitivity_label", "vertical_look_sensitivity_label", "horizontal_aim_sensitivity_label", "vertical_aim_sensitivity_label", "resolution_label", "resolution_select", "display_type_label", "display_type_select", "monitor_choice_label", "monitor_choice_select", "frame_rate_label", "frame_rate_select")]
+[node name="OptionsMenu" type="Control" node_paths=PackedStringArray("fov_slider", "fov_value", "horizontal_aim_sensitivity_slider", "horizontal_aim_sensitivity_value", "vertical_aim_sensitivity_slider", "vertical_aim_sensitivity_value", "horizontal_look_sensitivity_slider", "horizontal_look_sensitivity_value", "vertical_look_sensitivity_slider", "vertical_look_sensitivity_value", "v_inversion_toggle", "h_inversion_toggle", "motion_blur_check", "bloom_check", "performance_display_check", "control_select_menu", "control_list", "option_tab_container", "fov_label", "horizontal_look_sensitivity_label", "vertical_look_sensitivity_label", "horizontal_aim_sensitivity_label", "vertical_aim_sensitivity_label", "resolution_label", "resolution_select", "display_type_label", "display_type_select", "monitor_choice_label", "monitor_choice_select", "frame_rate_label", "frame_rate_select", "graphics_rows", "graphics_background")]
 process_mode = 2
 layout_mode = 3
 anchors_preset = 15
@@ -87,6 +87,8 @@ monitor_choice_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabCo
 monitor_choice_select = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/MonitorChoiceRows/MonitorChoiceSelect")
 frame_rate_label = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/FrameRateRows/FrameRateLabel")
 frame_rate_select = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows/FrameRateRows/FrameRateSelect")
+graphics_rows = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsColumns/GraphicsRows")
+graphics_background = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics/GraphicsBackground")
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1
@@ -108,22 +110,24 @@ grow_vertical = 2
 
 [node name="LeftMargin" type="MarginContainer" parent="MainContainer"]
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 2
 theme = ExtResource("1_mx8pt")
 
 [node name="ContentBox" type="VBoxContainer" parent="MainContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 20.0
 
 [node name="TopMargin" type="MarginContainer" parent="MainContainer/ContentBox"]
 layout_mode = 2
-size_flags_vertical = 0
+size_flags_vertical = 2
 theme = ExtResource("1_mx8pt")
 
 [node name="OptionRows" type="VBoxContainer" parent="MainContainer/ContentBox"]
 custom_minimum_size = Vector2(600, 0)
 layout_mode = 2
 size_flags_vertical = 3
+size_flags_stretch_ratio = 20.0
 theme = ExtResource("1_mx8pt")
 theme_override_constants/separation = 9
 
@@ -197,6 +201,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="OptionTabContainer" type="TabContainer" parent="MainContainer/ContentBox/OptionRows"]
+clip_contents = true
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
@@ -719,12 +724,12 @@ size_flags_horizontal = 3
 
 [node name="BottomMargin" type="MarginContainer" parent="MainContainer/ContentBox"]
 layout_mode = 2
-size_flags_vertical = 0
+size_flags_vertical = 2
 theme = ExtResource("1_mx8pt")
 
 [node name="RightMargin" type="MarginContainer" parent="MainContainer"]
 layout_mode = 2
-size_flags_horizontal = 8
+size_flags_horizontal = 10
 theme = ExtResource("1_mx8pt")
 
 [node name="ControlSelectMenu" parent="." instance=ExtResource("23_4fv4d")]
