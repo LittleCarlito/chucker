@@ -50,6 +50,7 @@ const _OPTION_MENU: String = "OptionsMenu"
 @export var frame_rate_label: Label
 @export var frame_rate_select: OptionButton
 @export var graphics_rows: VBoxContainer
+@export var graphics_columns: HBoxContainer
 @export var graphics_background: Panel
 
 
@@ -143,11 +144,14 @@ func initialize_ui() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	frame_count += delta
-	frame_count = min(process_delay_frame_count, frame_count)
-	if frame_count % process_delay_frame_count == 0:
-		_handle_resize()
-		frame_count = 0
+	if visible:
+		frame_count += delta
+		frame_count = min(process_delay_frame_count, frame_count)
+		if frame_count % process_delay_frame_count == 0:
+			_handle_resize()
+			_handle_scrollable_windows()
+			_resize_scroll_bars()
+			frame_count = 0
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(CONSTANTS.USER_INPUT.PAUSE) and self.visible:
@@ -332,8 +336,6 @@ func _get_control_index(constant_name: String) -> int:
 
 ## Updates font in menu according to window size
 func _handle_resize() -> void:
-	_handle_scrollable_windows()
-	_resize_scroll_bars()
 	# Update dropdown setting value
 	var temp_index: int = display_type_select.get_item_index(get_window().mode)
 	if temp_index != dropdown_index:
@@ -371,10 +373,19 @@ func _handle_scrollable_windows() -> void:
 	# TODO Implement
 	var panel_height: float = graphics_background.size.y
 	var row_height:float = graphics_rows.size.y
-	Logger.debug("Panel height %s; Row height %s", [str(panel_height), str(row_height)], self)
-	if row_height <= panel_height:
-		# TODO Logic to create darkened panel background behind columns and create a vertical scrollbar in GraphicsColumns
-		pass
+	if row_height > panel_height and graphics_columns.get_child_count() == 3:
+		var new_vertical_scroll: VScrollBar = VScrollBar.new()
+		new_vertical_scroll.set_v_size_flags(SIZE_SHRINK_CENTER)
+		new_vertical_scroll.set_custom_minimum_size(Vector2(new_vertical_scroll.size.x, panel_height - 50))
+		graphics_columns.add_child(new_vertical_scroll)
+		graphics_columns.move_child(new_vertical_scroll, 2)
+		# TODO create a vertical scrollbar in GraphicsColumns
+		# TODO Logic to create darkened panel background behind columns
+	elif row_height <= panel_height and graphics_columns.get_child_count() > 3:
+		var graphics_children: Array[Node] = graphics_columns.get_children()
+		for graphic_child in graphics_children:
+			if graphic_child is VScrollBar:
+				graphic_child.queue_free()
 
 ## TODO Resizes existing scrollbars to be padded and scaled according to resolution
 func _resize_scroll_bars() -> void:
