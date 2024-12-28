@@ -72,10 +72,12 @@ var xy_scale_update_list: Array[Control]
 var display_size: DisplaySize.SIZE
 var dropdown_index: int
 var frame_count: int
+var default_graphic_column_count: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	get_tree().get_root().size_changed.connect(_handle_resize)
+	default_graphic_column_count = graphics_columns.get_child_count()
 	font_update_list = [
 		fov_value,
 		horizontal_aim_sensitivity_value,
@@ -373,15 +375,21 @@ func _handle_scrollable_windows() -> void:
 	# TODO Implement
 	var panel_height: float = graphics_background.size.y
 	var row_height:float = graphics_rows.size.y
-	if row_height > panel_height and graphics_columns.get_child_count() == 3:
+	if row_height > panel_height and graphics_columns.get_child_count() == default_graphic_column_count:
 		var new_vertical_scroll: VScrollBar = VScrollBar.new()
 		new_vertical_scroll.set_v_size_flags(SIZE_SHRINK_CENTER)
 		new_vertical_scroll.set_custom_minimum_size(Vector2(new_vertical_scroll.size.x, panel_height - 50))
 		graphics_columns.add_child(new_vertical_scroll)
 		graphics_columns.move_child(new_vertical_scroll, 2)
-		# TODO create a vertical scrollbar in GraphicsColumns
+		# TODO OOOOO
+		#		Doing below; Seems like GraphicsRows is pushing above tabContainer and not being clipped
+		#			That is why optional margin containers clipped above and didn't work
+		#		Might need to move column rows down when scaling is done
 		# TODO Logic to create darkened panel background behind columns
-	elif row_height <= panel_height and graphics_columns.get_child_count() > 3:
+		#		Create panel behind graphicsRows
+		# TODO Make darkened panel area scroll detectable to move created scrollbar
+		# TODO Now have scrollbar movement move container position so different options are displayed
+	elif row_height <= panel_height and graphics_columns.get_child_count() > default_graphic_column_count:
 		var graphics_children: Array[Node] = graphics_columns.get_children()
 		for graphic_child in graphics_children:
 			if graphic_child is VScrollBar:
@@ -389,5 +397,5 @@ func _handle_scrollable_windows() -> void:
 
 ## TODO Resizes existing scrollbars to be padded and scaled according to resolution
 func _resize_scroll_bars() -> void:
-	# TODO Implement
+	# TODO Implement once persistant scroll bars exist
 	pass
