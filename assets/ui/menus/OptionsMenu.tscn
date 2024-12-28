@@ -201,13 +201,22 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
 theme = ExtResource("2_dnfin")
-current_tab = 0
+current_tab = 2
 
-[node name="General" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
+[node name="General" type="Control" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
+visible = false
 layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="GeneralBackground" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/General"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme = ExtResource("2_dnfin")
 theme_type_variation = &"OptionTab"
-metadata/_tab_index = 0
 
 [node name="ControlsRows" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/General"]
 layout_mode = 1
@@ -507,12 +516,20 @@ horizontal_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Controls" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
+[node name="Controls" type="Control" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
 visible = false
 layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="ControlsBackground" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme = ExtResource("2_dnfin")
 theme_type_variation = &"OptionTab"
-metadata/_tab_index = 1
 
 [node name="ControlList" type="ItemList" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls"]
 layout_mode = 1
@@ -558,11 +575,19 @@ item_13/icon = ExtResource("16_bs5uh")
 item_14/text = "Pick Up"
 item_14/icon = ExtResource("17_ajqtq")
 
-[node name="Graphics" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
-visible = false
+[node name="Graphics" type="Control" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer"]
 layout_mode = 2
-theme = ExtResource("2_dnfin")
 metadata/_tab_index = 2
+
+[node name="GraphicsBackground" type="Panel" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_dnfin")
+theme_type_variation = &"OptionTab"
 
 [node name="GraphicsColumns" type="HBoxContainer" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics"]
 layout_mode = 1
