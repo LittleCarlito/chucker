@@ -43,6 +43,7 @@ grow_vertical = 2
 script = ExtResource("1_6pi5a")
 control_select_menu = NodePath("ControlSelectMenu")
 option_tab_container = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer")
+process_delay_frame_count = 60
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1
@@ -172,6 +173,7 @@ theme = ExtResource("1_mx8pt")
 [node name="ControlSelectMenu" parent="." instance=ExtResource("23_4fv4d")]
 process_mode = 4
 visible = false
+z_index = 20
 layout_mode = 1
 
 [connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/BackButton" to="." method="_on_back_menu"]

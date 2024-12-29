@@ -1,6 +1,8 @@
 extends PlayableCharacter
 class_name ChuckChucker
 
+# BUG Standard camera focus is different after using looking controls on chuck
+
 const _UKNOWN_OBJECT_LOG: String = "Tried to pick up UKNOWN object; Where did you get that?"
 const _NO_CAMERA_CONTAINER_LOG: String = "New item \"%s\" doesn't have the ability to hold a camera"
 const _EMPTY_CAMERA_CONTAINER: String = "CameraContainer from \"%s\" returned null"
@@ -147,7 +149,6 @@ func regain_focus() -> void:
 func reload_project_settings() -> void:
 	camera_container.reset_zoom()
 
-# TODO Seems like maybe its time to mix in oop and extend CameraContainer for LookingCameraContainer
 func _handle_looking(event: InputEvent) -> void:
 	if event.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED

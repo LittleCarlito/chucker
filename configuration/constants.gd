@@ -85,6 +85,7 @@ const DISABLE_MOVEMENT: String = "disable_movement"
 const ENABLE_MOVEMENT: String = "enable_movement"
 const DISABLE_ROTATION: String = "disable_rotation"
 const ENABLE_ROTATION: String = "enable_rotation"
+# TODO Implement this on items that use GlobalSettings for runtime logic; Not used but UI objects for update calls
 const RELOAD_PROJECT_SETTINGS: String = "reload_project_settings"
 # TODO General items need to implement this for after launch attempts
 const UPDATE_STATE: String = "_update_state"

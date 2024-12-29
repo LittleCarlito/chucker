@@ -29,7 +29,6 @@ monitor_choice_select = NodePath("GraphicsColumns/GraphicsRows/MonitorChoiceRows
 frame_rate_label = NodePath("GraphicsColumns/GraphicsRows/FrameRateRows/FrameRateLabel")
 frame_rate_select = NodePath("GraphicsColumns/GraphicsRows/FrameRateRows/FrameRateSelect")
 graphics_columns = NodePath("GraphicsColumns/GraphicsRows/GraphicCheckColumns")
-process_delay_frame_count = 60
 
 [node name="GraphicsBackground" type="Panel" parent="."]
 layout_mode = 1

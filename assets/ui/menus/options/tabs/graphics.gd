@@ -1,6 +1,5 @@
 extends OptionTab
 
-# TODO Sort by logically used vs just updated UI varaiables
 @export var motion_blur_check: CheckBox
 @export var bloom_check: CheckBox
 @export var performance_display_check: CheckBox
@@ -14,9 +13,7 @@ extends OptionTab
 @export var frame_rate_select: OptionButton
 @export var graphics_columns: HBoxContainer
 
-@export var process_delay_frame_count: int
 var default_graphic_column_count: int
-var frame_count: int
 var dropdown_index: int
 
 # Called when the node enters the scene tree for the first time.
@@ -43,19 +40,11 @@ func _ready() -> void:
 	initialize_ui()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	if visible:
-		# Losing decimals here doesn't matter and int is needed for % usage
-		@warning_ignore("narrowing_conversion")
-		frame_count += delta
-		frame_count = min(process_delay_frame_count, frame_count)
-		if frame_count % process_delay_frame_count == 0:
-			_handle_resize()
-			frame_count = 0
+func _process(_delta: float) -> void:
+	pass
 
 func initialize_ui() -> void:
 	performance_display_check.button_pressed = GlobalSettings.DISPLAY.get(CONSTANTS.PERFORMANCE, GlobalSettings.DISPLAY_DEFAULTS.PERFORMANCE)
-	super()
 
 func _on_performance_display_check_toggled(toggled_on: bool) -> void:
 	var new_entry: Dictionary = {CONSTANTS.PERFORMANCE: toggled_on}

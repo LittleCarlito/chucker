@@ -31,7 +31,6 @@ func initialize_ui() -> void:
 		var mapped_input: InputEvent = _get_constant_value(constant_name)
 		var mapped_texture: Texture2D = InputSprite.get_sprite(mapped_input)
 		control_list.set_item_icon(i, mapped_texture)
-	super()
 
 ## What to do when user selects one of the control items
 func _open_control_select_menu(index: int, _click_position: Vector2, mouse_button_index: int) -> void:

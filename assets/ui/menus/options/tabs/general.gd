@@ -66,7 +66,6 @@ func initialize_ui() -> void:
 	vertical_look_sensitivity_value.text = str(vertical_look_sensitivity_slider.value)
 	v_inversion_toggle.button_pressed = GlobalSettings.CAMERA.get(CONSTANTS.INVERT_VERTICAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_VERTICAL)
 	h_inversion_toggle.button_pressed = GlobalSettings.CAMERA.get(CONSTANTS.INVERT_HORIZONTAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_HORIZONTAL)
-	super()
 
 func _on_fov_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:

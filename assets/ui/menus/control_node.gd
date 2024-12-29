@@ -96,6 +96,10 @@ func load_settings() -> void:
 		if setting_category != CONSTANTS.Unknown:
 			if data_received.has(setting_category):
 				if setting_category == CONSTANTS.Controls:
+					# TODO There is no way this is the best way to load in each setting
+					#		The get is being done for each setting regardless of if it is there or not
+					#		Should really be the other way; With the data_recieved being cycled and applied
+					#			Then everything that wasn't there loads the default
 					var recieved_category: Dictionary = data_received.get(setting_category)
 					if recieved_category.has(user_setting):
 						var setting_value = recieved_category.get(user_setting)
@@ -123,67 +127,67 @@ func load_settings() -> void:
 
 # Retrieves the settings file from User:// or returns an empty dictionary if an error occured
 func _get_settings_dictionary() -> Dictionary:
-	var returnDictionary: Dictionary = {}
+	var return_dictionary: Dictionary = {}
 	var file = FileAccess.open(SAVE_FILE, FileAccess.READ)
 	if file != null:
 		var json: JSON = JSON.new()
 		var error: Error = json.parse(file.get_as_text())
 		if error == OK:
-			var retirevedData = json.data
-			var expectedType: Variant.Type = TYPE_DICTIONARY
-			if typeof(retirevedData) == expectedType:
-				var incomingControlSettings: Dictionary = retirevedData.get(CONSTANTS.Controls, {})
-				var incomingCameraSettings: Dictionary = retirevedData.get(CONSTANTS.Camera, {})
-				var incomingDisplaySettings: Dictionary = retirevedData.get(CONSTANTS.Display, {})
-				if !incomingControlSettings.is_empty():
-					var controlSettings: Dictionary = {}
-					var controlKeys: Array = incomingControlSettings.keys()
-					for controlKey in controlKeys:
-						var convertedSetting: ControlSetting = InputEventLibrary.convert_dictionary_to_control_setting(incomingControlSettings.get(controlKey))
-						controlSettings[controlKey] = convertedSetting
-					returnDictionary[CONSTANTS.Controls] = controlSettings
-				if !incomingCameraSettings.is_empty():
-					returnDictionary[CONSTANTS.Camera] = incomingCameraSettings
-				if !incomingDisplaySettings.is_empty():
-					returnDictionary[CONSTANTS.Display] = incomingDisplaySettings
+			var retireved_data = json.data
+			var expected_type: Variant.Type = TYPE_DICTIONARY
+			if typeof(retireved_data) == expected_type:
+				var incoming_control_settings: Dictionary = retireved_data.get(CONSTANTS.Controls, {})
+				var incoming_camera_settings: Dictionary = retireved_data.get(CONSTANTS.Camera, {})
+				var incoming_display_settings: Dictionary = retireved_data.get(CONSTANTS.Display, {})
+				if !incoming_control_settings.is_empty():
+					var control_settings: Dictionary = {}
+					var control_keys: Array = incoming_control_settings.keys()
+					for control_key in control_keys:
+						var convertedSetting: ControlSetting = InputEventLibrary.convert_dictionary_to_control_setting(incoming_control_settings.get(control_key))
+						control_settings[control_key] = convertedSetting
+					return_dictionary[CONSTANTS.Controls] = control_settings
+				if !incoming_camera_settings.is_empty():
+					return_dictionary[CONSTANTS.Camera] = incoming_camera_settings
+				if !incoming_display_settings.is_empty():
+					return_dictionary[CONSTANTS.Display] = incoming_display_settings
 			else:
 				Logger.error(_UNEXPTECTED_TYPE_LOG, [], self)
 	# 7 is could not open error
 	elif FileAccess.get_open_error() != 7:
-		var saveError: Error = FileAccess.get_open_error()
-		Logger.error(_UNABLE_TO_OPEN_LOG, [SAVE_FILE, saveError], self)
-	return returnDictionary
+		var save_error: Error = FileAccess.get_open_error()
+		Logger.error(_UNABLE_TO_OPEN_LOG, [SAVE_FILE, save_error], self)
+	return return_dictionary
 
 # Loads preconfigured default value for the given setting
-func load_default(settingName: String, settingCategory: String) -> void:
-	var globalDefaultCateogry: Dictionary = GlobalSettings.get_default_category(settingCategory)
-	if settingCategory == CONSTANTS.Controls:
-		var defaultSetting: InputEvent = globalDefaultCateogry.get(settingName)
-		if defaultSetting != null:
-			var globalCategory: Dictionary = GlobalSettings.get_category(settingCategory)
-			globalCategory.erase(settingName)
-			globalCategory[settingName] = defaultSetting
+func load_default(setting_name: String, setting_category: String) -> void:
+	var global_default_cateogry: Dictionary = GlobalSettings.get_default_category(setting_category)
+	if setting_category == CONSTANTS.Controls:
+		var default_setting: InputEvent = global_default_cateogry.get(setting_name)
+		if default_setting != null:
+			var global_category: Dictionary = GlobalSettings.get_category(setting_category)
+			global_category.erase(setting_name)
+			global_category[setting_name] = default_setting
 		else:
-			Logger.error(_NO_DEFAULT_LOG, [settingName, settingCategory], self)
+			Logger.error(_NO_DEFAULT_LOG, [setting_name, setting_category], self)
 	else:
-		var defaultValue = globalDefaultCateogry.get(settingName)
-		if defaultValue != null:
-			var globalCategory: Dictionary = GlobalSettings.get_category(settingCategory)
-			globalCategory.erase(settingName)
-			globalCategory[settingName] = defaultValue
+		var default_value = global_default_cateogry.get(setting_name)
+		if default_value != null:
+			var global_category: Dictionary = GlobalSettings.get_category(setting_category)
+			global_category.erase(setting_name)
+			global_category[setting_name] = default_value
 		else:
-			Logger.error(_NO_DEFAULT_LOG, [settingName, settingCategory], self)
+			Logger.error(_NO_DEFAULT_LOG, [setting_name, setting_category], self)
 
-# Reloads Project input settings using GlobalSettings
+## Reloads Project input settings using GlobalSettings
 func _update_state() -> void:
-	var userInputs: Array = GlobalSettings.CONTROLS.keys()
-	for userInput in userInputs:
-		var boundKey: InputEvent = GlobalSettings.CONTROLS.get(userInput)
-		if boundKey != null:
-			InputMap.action_erase_events(userInput)
-			InputMap.action_add_event(userInput, boundKey)
+	var user_inputs: Array = GlobalSettings.CONTROLS.keys()
+	for user_input in user_inputs:
+		var bound_key: InputEvent = GlobalSettings.CONTROLS.get(user_input) as InputEvent
+		if bound_key != null:
+			InputMap.action_erase_events(user_input)
+			InputMap.action_add_event(user_input, bound_key)
 		else:
-			Logger.error(_BAD_USER_INPUT_LOG, [userInput], self)
+			Logger.error(_BAD_USER_INPUT_LOG, [user_input], self)
 
 func _apply_settings() -> void:
 	apply_settings.emit()
