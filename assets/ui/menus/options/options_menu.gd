@@ -1,10 +1,6 @@
 extends Control
 class_name OptionsMenu
 
-# BUG Inversion controls aren't doing anything
-# TODO Using inversion toggles isn't great
-#		Switch to check box and label
-# TODO Scale scroll bars down more at minimum size
 # TODO Get minimum size back to what it was before abandon
 # TODO Add scrollbar creation back in
 # TODO Add scrolling functionality in

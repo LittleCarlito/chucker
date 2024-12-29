@@ -90,7 +90,7 @@ func find_chucker(find_chuck: Node) -> Node:
 func get_horizontal_rotation_amount(event: InputEvent) -> float:
 	var h_inversion: int = -1
 	if GlobalSettings.CAMERA.get(CONSTANTS.INVERT_HORIZONTAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_HORIZONTAL):
-		h_inversion = -1
+		h_inversion = 1
 	var h_sense: float = GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_AIM_SENSITIVITY)
 	var h_rotation_amount: float = h_inversion * (event.relative.x / 1000 * h_sense)
 	return h_rotation_amount

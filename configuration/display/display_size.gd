@@ -2,8 +2,7 @@ extends Object
 class_name DisplaySize
 
 const DISPLAY_OVERRIDE: String = "display_override"
-# TODO Make smaller value once menus are fixed to be scrollable viewports when content exceeds panel
-const MINIUMUM: Vector2i = Vector2i(870, 650)
+const MINIUMUM: Vector2i = Vector2i(870, 570)
 const TEENY: Vector2i = Vector2i(1438, 883)
 const EXTRA_EXTRA_SMALL: Vector2i = Vector2i(2006, 1196)
 const EXTRA_SMALL: Vector2i = Vector2i(2574, 1509)
