@@ -1,7 +1,5 @@
 extends OptionTab
 
-signal value_updated(data_type: UIData.TYPE, value_name: String, value: Object)
-
 # TODO Sort by logically used vs just updated UI varaiables
 @export var motion_blur_check: CheckBox
 @export var bloom_check: CheckBox
@@ -47,6 +45,8 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if visible:
+		# Losing decimals here doesn't matter and int is needed for % usage
+		@warning_ignore("narrowing_conversion")
 		frame_count += delta
 		frame_count = min(process_delay_frame_count, frame_count)
 		if frame_count % process_delay_frame_count == 0:
@@ -58,7 +58,8 @@ func initialize_ui() -> void:
 	super()
 
 func _on_performance_display_check_toggled(toggled_on: bool) -> void:
-	value_updated.emit(UIData.TYPE.DISPLAY, CONSTANTS.PERFORMANCE, toggled_on)
+	var new_entry: Dictionary = {CONSTANTS.PERFORMANCE: toggled_on}
+	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
 
 # TODO See to that this is called from delayed processing wherever it ends up
 func _update_contents() -> void:
@@ -69,5 +70,5 @@ func _update_contents() -> void:
 		display_type_select.select(dropdown_index)
 
 func _handle_resize_request(selected_index: int) -> void:
-	var selected_window_type: int = display_type_select.get_item_id(selected_index)
+	var selected_window_type: Window.Mode = display_type_select.get_item_id(selected_index) as Window.Mode
 	get_window().mode = selected_window_type

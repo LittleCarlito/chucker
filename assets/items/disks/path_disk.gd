@@ -34,7 +34,7 @@ func _ready() -> void:
 
 # BUG When path is short the disk travels too quickly
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 	#if (camera_container.has_camera() && camera_container.is_current()) && !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 			#Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -60,7 +60,7 @@ func set_item_mesh(new_mesh: DiskMesh) -> void:
 		old_mesh.queue_free()
 	disk_mesh = new_mesh
 
-func set_launch_parameters(incoming_data: FlightData) -> void:
+func set_launch_parameters(_incoming_data: FlightData) -> void:
 	#super(incoming_path, incoming_speed, incoming_angle, is_focused)
 	#var throw_curve: Curve3D = Curve3D.new()
 	#for throw_point in incoming_path:
@@ -69,7 +69,7 @@ func set_launch_parameters(incoming_data: FlightData) -> void:
 	#camera_container.toggle_camera()
 	pass
 
-func _body_enter(body_rid: RID, _body: Node3D, _body_shape_index: int, _local_shape_index: int) -> void:
+func _body_enter(_body_rid: RID, _body: Node3D, _body_shape_index: int, _local_shape_index: int) -> void:
 	pass
 	# TODO Refator to use AssetData or group method calls
 	#var owner_rid: RID

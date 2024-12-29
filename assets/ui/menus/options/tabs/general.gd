@@ -1,7 +1,5 @@
 extends OptionTab
 
-signal value_updated(data_type: UIData.TYPE, value_name: String, value: Object)
-
 # Logically used variables
 @export var fov_slider: HSlider
 @export var fov_value: Label
@@ -52,7 +50,7 @@ func _ready() -> void:
 	initialize_ui()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 func initialize_ui() -> void:
@@ -72,41 +70,48 @@ func initialize_ui() -> void:
 
 func _on_fov_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		value_updated.emit(UIData.TYPE.CAMERA, CONSTANTS.PLAYER_FOV, fov_slider.value)
+		var new_entry: Dictionary = {CONSTANTS.PLAYER_FOV: fov_slider.value}
+		value_updated.emit(UIData.TYPE.CAMERA, new_entry)
 
 func _on_fov_slider_value_changed(value: float) -> void:
 	fov_value.text = str(value)
 
 func _on_v_inversion_toggle_toggled(toggled_on: bool) -> void:
-	value_updated.emit(UIData.TYPE.CAMERA, CONSTANTS.INVERT_VERTICAL, toggled_on)
+	var new_entry: Dictionary = {CONSTANTS.INVERT_VERTICAL: toggled_on}
+	value_updated.emit(UIData.TYPE.CAMERA, new_entry)
 
 func _on_h_inversion_toggle_toggled(toggled_on: bool) -> void:
-	value_updated.emit(UIData.TYPE.CAMERA, CONSTANTS.INVERT_HORIZONTAL, toggled_on)
+	var new_entry: Dictionary = {CONSTANTS.INVERT_HORIZONTAL: toggled_on}
+	value_updated.emit(UIData.TYPE.CAMERA, new_entry)
 
 func _on_vertical_aim_sensitivity_slider_value_changed(value: float) -> void:
 	vertical_aim_sensitivity_value.text = str(value)
 
 func _on_vertical_aim_sensitivity_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		value_updated.emit(UIData.TYPE.CAMERA, CONSTANTS.VERTICAL_AIM_SENSITIVITY, vertical_aim_sensitivity_slider.value)
+		var new_entry: Dictionary = {CONSTANTS.VERTICAL_AIM_SENSITIVITY: vertical_aim_sensitivity_slider.value}
+		value_updated.emit(UIData.TYPE.CAMERA, new_entry)
 
 func _on_horizontal_aim_sensitivity_slider_value_changed(value: float) -> void:
 	horizontal_aim_sensitivity_value.text = str(value)
 
 func _on_horizontal_aim_sensitivity_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		value_updated.emit(UIData.TYPE.CAMERA, CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, horizontal_aim_sensitivity_slider.value)
+		var new_entry: Dictionary = {CONSTANTS.HORIZONTAL_AIM_SENSITIVITY: horizontal_aim_sensitivity_slider.value}
+		value_updated.emit(UIData.TYPE.CAMERA, new_entry)
 
 func _on_vertical_look_sensitivity_slider_value_changed(value: float) -> void:
 	vertical_look_sensitivity_value.text = str(value)
 
 func _on_vertical_look_sensitivity_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		value_updated.emit(UIData.TYPE.CAMERA, CONSTANTS.VERTICAL_LOOK_SENSITIVITY, vertical_look_sensitivity_slider.value)
+		var new_entry: Dictionary = {CONSTANTS.VERTICAL_LOOK_SENSITIVITY: vertical_look_sensitivity_slider.value}
+		value_updated.emit(UIData.TYPE.CAMERA, new_entry)
 
 func _on_horizontal_look_sensitivity_slider_value_changed(value: float) -> void:
 	horizontal_look_sensitivity_value.text = str(value)
 
 func _on_horizontal_look_sensitivity_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		value_updated.emit(UIData.TYPE.CAMERA, CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, horizontal_look_sensitivity_slider.value)
+		var new_entry: Dictionary = {CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY: horizontal_look_sensitivity_slider.value}
+		value_updated.emit(UIData.TYPE.CAMERA, new_entry)

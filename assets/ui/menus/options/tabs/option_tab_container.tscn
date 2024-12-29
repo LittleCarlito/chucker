@@ -61,5 +61,7 @@ visible = false
 visible = false
 
 [connection signal="tab_changed" from="VBoxContainer/OptionTabs" to="." method="_handle_tab_change"]
+[connection signal="value_updated" from="VBoxContainer/SubViewportContainer/SubViewport/General" to="." method="_handle_value_selected"]
 [connection signal="value_selected" from="VBoxContainer/SubViewportContainer/SubViewport/Controls" to="." method="_open_control_select_menu"]
 [connection signal="value_updated" from="VBoxContainer/SubViewportContainer/SubViewport/Controls" to="." method="_handle_value_selected"]
+[connection signal="value_updated" from="VBoxContainer/SubViewportContainer/SubViewport/Graphics" to="." method="_handle_value_selected"]

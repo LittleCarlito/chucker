@@ -47,7 +47,7 @@ func _ready() -> void:
 	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 ## Retruns if data storage has an entry for the hole number
@@ -353,6 +353,7 @@ func _is_data_sequential(hole_number: int = CONSTANTS.INT64_MAX) -> bool:
 			is_sequential = NodeUtil.is_sequential(existing_values)
 		else:
 			var formatted_string: String = _NO_DATA + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+			Logger.debug(formatted_string, [], self)
 			is_sequential = false
 	return is_sequential
 
@@ -413,7 +414,7 @@ func reload_course_data(hole_number: int = CONSTANTS.INT64_MAX) -> void:
 		# Using contains data instead of relying on remove return because dictionary can have empty value
 		if _contains_data(hole_number):
 			# Not adjusting hole numbers; If removed hole number changed will cause conflicts/changes depending on reupload method
-			var deleted_data: Dictionary = simple_remove_hole_data(hole_number)
+			simple_remove_hole_data(hole_number)
 		else:
 			var formatted_string: String = _HOLE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + _PROCEEDING_WITH_RELOAD
 			Logger.debug(formatted_string, [str(hole_number)], self)

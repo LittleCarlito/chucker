@@ -82,11 +82,12 @@ func _disable_character_rotation() -> void:
 func _enable_character_rotation() -> void:
 	get_tree().call_group(CONSTANTS.PLAYER, CONSTANTS.ENABLE_ROTATION)
 
+# TODO Loading settings is broken because we were reworking this to group method calls and never tested
 func _apply_settings() -> void:
 	get_tree().call_group(CONSTANTS.GENERAL, CONSTANTS.RELOAD_PROJECT_SETTINGS)
 
 func update_course_data() -> void:
 	get_tree().call_group(CONSTANTS.GENERAL, CONSTANTS.UPDATE_STATE)
 	# TODO Call to make all the hole numbers sequential
-	# TODO OOOOO
+	# TODO Continuation point for COURSE work
 	#GlobalHoleData._set_data_sequential()

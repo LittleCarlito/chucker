@@ -1,13 +1,24 @@
 extends Control
 class_name OptionsMenu
 
-# BUG Saves controls but can't load them anymore
-# BUG Control changes not taking effect
+# TODO OOOOO Look at control changes not affecting player
+#			Appears fine in menu during session
+#			Does not affect player or actual controls
+#			Menu changes persist between sessions
+#				So menu changes appear to be working fine
+# BUG Scaling changes on all of ControlList items when saving/loading a control
+# TODO Look into save/load control worklfow; It isn't working properly
+#		Appears to be saving the file properly just not loading it in
+#		Settings persist in menu during session but not between sessions
+#		FOV worked and took effect!
+#			Even took effect between sessions but did not load what was set properly into the menu
+# BUG Standard camera focus is different after using looking controls on chuck
 # TODO Get minimum size back to what it was before abandon
 # TODO Add scrollbar creation back in
 # TODO Add scrolling functionality in
 
 const _CATEGORY_NOT_FOUND: String = "Category \"%s\" for save setting \"%s\" could not be found. Value \"%s\" will be discarded."
+const _UNSUPPORTED_SIZE: String = "Currently only supporting update entries of size 1; Submit them one entry at a time; \"%s\""
 
 @export var control_select_menu: ControlSelectMenu
 @export var option_tab_container: OptionTabContainer
@@ -37,7 +48,7 @@ func initialize_ui() -> void:
 	_handle_resize()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 func _input(event: InputEvent) -> void:
@@ -95,13 +106,21 @@ func _handle_resize() -> void:
 		option_tab_container._handle_resize(display_size)
 
 ## Handles update signals from menu components
-func _handle_update_signal(update_type: UIData.TYPE, value_name: String, value: Object) -> void:
-	match update_type:
-		UIData.TYPE.CAMERA:
-			camera_settings[value_name] = value
-		UIData.TYPE.DISPLAY:
-			display_settings[value_name] = value
-		UIData.TYPE.CONTROL:
-			control_settings[value_name] = value
-		_:
-			Logger.error(_CATEGORY_NOT_FOUND, [str(update_type), value_name, str(value)], self)
+func _handle_update_signal(update_type: UIData.TYPE, update_entry: Dictionary) -> void:
+	if update_entry.size() == 1:
+		var entry_key: String = update_entry.keys()[0]
+		var entry_value = update_entry.get(entry_key)
+		match update_type:
+			UIData.TYPE.CAMERA:
+				camera_settings[entry_key] = entry_value
+			UIData.TYPE.DISPLAY:
+				display_settings[entry_key] = entry_value
+			UIData.TYPE.CONTROL:
+				control_settings[entry_key] = entry_value
+			_:
+				Logger.error(_CATEGORY_NOT_FOUND, [str(update_type), entry_key, str(entry_value)], self)
+	else:
+		Logger.warn(_UNSUPPORTED_SIZE, [str(update_entry)], self)
+
+func reload_ui() -> void:
+	option_tab_container.reload_ui()

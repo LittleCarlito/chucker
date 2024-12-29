@@ -196,7 +196,7 @@ func _update_state() -> void:
 	asset_data.camera_state = AssetData.get_camera_state(camera_container)
 
 # TODO Should come up with something; Maybe an unequip check and then some default interaction
-func hold_action(delta: float) -> void:
+func hold_action(_delta: float) -> void:
 	pass
 
 func release_action() -> void:

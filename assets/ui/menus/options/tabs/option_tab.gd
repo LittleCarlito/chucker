@@ -1,6 +1,10 @@
 extends Control
 class_name OptionTab
 
+# Abstract class; Implementers use signal
+@warning_ignore("unused_signal")
+signal value_updated(data_type: UIData.TYPE, updated_entry: Dictionary)
+
 var font_update_list: Array[Control]
 var y_scale_update_list: Array[Control]
 var xy_scale_update_list: Array[Control]
@@ -10,7 +14,7 @@ func _ready() -> void:
 	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 func initialize_ui() -> void:
@@ -33,13 +37,8 @@ func handle_font_resize(display_size: DisplaySize.SIZE) -> void:
 			update_control.add_theme_font_size_override(CONSTANTS.FONT_SIZE, font_size)
 
 func handle_icon_resize(display_size: DisplaySize.SIZE) -> void:
-	# ControlList rescaling
-	var icon_scale: float = DisplaySize.ICON_SCALE_MATRIX.get(display_size)
 	# Slider/checkbox rescaling
 	var menu_item_scale: float = DisplaySize.MENU_SCALE_MATRIX.get(display_size)
 	for xy_rescale in xy_scale_update_list:
 		xy_rescale.scale.y = menu_item_scale
 		xy_rescale.scale.x = menu_item_scale
-
-func _reset_variables() -> void:
-	pass

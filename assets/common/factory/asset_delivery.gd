@@ -15,7 +15,7 @@ func _ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 ## Creates new item based off incoming item data
@@ -69,7 +69,7 @@ func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) ->
 		Logger.info(_INVALID_INCOMING_ITEM, [str(incoming_item)], self)
 
 # TODO Implement
-func dump_asset(overflow_item: Node3D) -> void:
+func dump_asset(_overflow_item: Node3D) -> void:
 	# TODO Spawn this into the Levels default spawn area
 	# TODO Should eventually have it dump on top of whatever entity caused it to overflow
 	pass

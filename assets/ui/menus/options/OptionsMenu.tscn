@@ -42,7 +42,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_6pi5a")
 control_select_menu = NodePath("ControlSelectMenu")
-option_tab_container = NodePath("MainContainer/ContentBox/OptionRows/OptionTabs")
+option_tab_container = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer")
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1
@@ -154,7 +154,7 @@ size_flags_vertical = 3
 [node name="Separator" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows"]
 layout_mode = 2
 
-[node name="OptionTabs" parent="MainContainer/ContentBox/OptionRows" instance=ExtResource("8_3pyfr")]
+[node name="OptionTabContainer" parent="MainContainer/ContentBox/OptionRows" instance=ExtResource("8_3pyfr")]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 15.0
@@ -177,7 +177,7 @@ layout_mode = 1
 [connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/BackButton" to="." method="_on_back_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/SaveButton" to="." method="_on_save_menu"]
 [connection signal="close_menu" from="MainContainer/ContentBox/OptionRows/TopOptionBar/CloseColumn/CloseButton" to="." method="_on_close_menu"]
-[connection signal="value_selected" from="MainContainer/ContentBox/OptionRows/OptionTabs" to="." method="_open_control_select_menu"]
-[connection signal="value_updated" from="MainContainer/ContentBox/OptionRows/OptionTabs" to="." method="_handle_update_signal"]
+[connection signal="value_selected" from="MainContainer/ContentBox/OptionRows/OptionTabContainer" to="." method="_open_control_select_menu"]
+[connection signal="value_updated" from="MainContainer/ContentBox/OptionRows/OptionTabContainer" to="." method="_handle_update_signal"]
 [connection signal="menu_closed" from="ControlSelectMenu" to="." method="_control_select_closed"]
 [connection signal="save_input" from="ControlSelectMenu" to="." method="_control_select_set"]

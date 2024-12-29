@@ -45,7 +45,7 @@ func hold_action(delta: float, incoming_basis: Basis) -> void:
 		var speed_multiplier: float = min(GlobalSettings.DISK.MAX_HOLD, held_time) * GlobalSettings.DISK.HOLD_MULTIPLIER
 		var drawn_line: Array[Vector3] = aim_line.draw_aim_line(speed_multiplier)
 		if drawn_line != null:
-			flight_data.flight_path 
+			flight_data.flight_path = drawn_line
 		flight_data.flight_global_basis = incoming_basis
 
 # TODO Refactor to take in global_basis and set it in flight data as well

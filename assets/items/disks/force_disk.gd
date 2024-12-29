@@ -60,7 +60,7 @@ func _process(_delta: float) -> void:
 	if camera_container != null and camera_container.is_current():
 		if !_collided:
 			if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
-				Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED
+				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 			if self.linear_damp_mode != RigidBody3D.DAMP_MODE_COMBINE:
 				self.linear_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
 			if self.angular_damp_mode != RigidBody3D.DAMP_MODE_COMBINE:

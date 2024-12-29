@@ -1,7 +1,6 @@
 extends OptionTab
 class_name ControlsTab
 
-signal value_updated(data_type: UIData.TYPE, value_name: String, value: Object)
 signal value_selected(selected_item: String)
 
 const _UNBOUND_INPUT_LOG: String = "\"%s\" is not bound to an input"
@@ -22,7 +21,7 @@ func _ready() -> void:
 	initialize_ui()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 func initialize_ui() -> void:
@@ -86,7 +85,8 @@ func _save_controls() -> void:
 				var mapped_event: InputEvent = InputEventLibrary.convert_keycode_to_input_event(mapped_keycode)
 				var control_setting: ControlSetting = InputEventLibrary.convert_event_to_control_setting(mapped_event)
 				var control_dictionary: Dictionary = InputEventLibrary.convert_controlsetting_to_dictionary(control_setting)
-				value_updated.emit(UIData.TYPE.CONTROL, constant_name, control_dictionary)
+				var new_entry: Dictionary = {constant_name: control_dictionary}
+				value_updated.emit(UIData.TYPE.CONTROL, new_entry)
 				Logger.debug(_CONTROL_REMAPPED_LOG, [constant_name, constant_value.as_text(), control_setting.input_description], self)
 			else:
 				Logger.error(_NO_KEYCODE_ICON_STRING, [icon_path], self)

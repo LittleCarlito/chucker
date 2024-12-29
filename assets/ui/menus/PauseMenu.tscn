@@ -18,7 +18,7 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7nrxq"]
 bg_color = Color(0.43, 0.362633, 0.2279, 1)
 
-[node name="PauseMenu" type="Control"]
+[node name="PauseMenu" type="Control" node_paths=PackedStringArray("back_timer", "options_menu")]
 process_mode = 2
 layout_mode = 3
 anchors_preset = 15
@@ -27,6 +27,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_mhopn")
+back_timer = NodePath("BackTimer")
+options_menu = NodePath("OptionsMenu")
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1
@@ -137,7 +139,6 @@ size_flags_horizontal = 3
 [node name="OptionsMenu" parent="." instance=ExtResource("7_twhfd")]
 visible = false
 layout_mode = 1
-scroll_color = null
 
 [node name="BackTimer" type="Timer" parent="."]
 wait_time = 0.1

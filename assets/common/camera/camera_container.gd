@@ -59,7 +59,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if _focused:
 		if _idle_rotate:
-			idle_rotate(delta, self.global_position)
+			idle_rotate(delta)
 		else:
 			focus_camera_control(self.global_position)
 
@@ -135,8 +135,7 @@ func _on_camera_timer_timeout() -> void:
 	lose_focus.emit()
 
 # TODO Is getting called and working but only getting called once
-func idle_rotate(delta: float, focus_location: Vector3 = Vector3.INF) -> void:
-	 #TODO Why would you cacluate below in radians and then use the degrees reference when making changes?
+func idle_rotate(delta: float) -> void:
 	# Calculate the rotation angle in radians
 	var rotation_amount: float = (GlobalSettings.CAMERA.IDLE_ROTATE_SPEED * delta)
 	horizontal_pan(rotation_amount)
@@ -262,5 +261,5 @@ func _request_camera(new_parent: Node3D) -> bool:
 	else:
 		# This log is probably gonna be way too loud
 		var formatted_string: String = _NO_INTERNAL_CAMERA + CONSTANTS.LOG_SEPARATOR + CONSTANTS.KEEPING_CAMERA
-		Logger.debug(_NO_INTERNAL_CAMERA, [str(new_parent)], self)
+		Logger.debug(formatted_string, [str(new_parent)], self)
 	return parent_swapped

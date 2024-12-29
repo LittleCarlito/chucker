@@ -1,8 +1,8 @@
 extends Control
 class_name PauseMenu
 
-@onready var back_timer: Timer = $BackTimer
-@onready var options_menu: Control = $OptionsMenu
+@export var back_timer: Timer
+@export var options_menu: OptionsMenu
 
 var sub_menus: Array[Control]
 
@@ -52,3 +52,6 @@ func _load_settings() -> void:
 
 func _on_apply_menu() -> void:
 	apply_settings.emit()
+
+func reload_ui() -> void:
+	options_menu.reload_ui()

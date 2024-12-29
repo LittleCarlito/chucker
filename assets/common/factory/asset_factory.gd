@@ -1,4 +1,5 @@
 extends Node
+class_name AssetFactory
 
 const _camera_container_scene: PackedScene = preload("res://assets/common/camera/camera_container.tscn")
 const _camera_scene: PackedScene = preload("res://assets/common/camera/standard_camera.tscn")
@@ -12,7 +13,7 @@ const _chuck_tee_scene: PackedScene = preload("res://assets/buildings/course/chu
 const _chuck_hole_scene: PackedScene = preload("res://assets/buildings/course/chuck_hole.tscn")
 const _hole_node_scene: PackedScene = preload("res://assets/buildings/course/hole_node.tscn")
 
-var scene_library: Dictionary = {
+const scene_library: Dictionary = {
 	AssetData.TYPE.CAMERA_CONTAINER: _camera_container_scene,
 	AssetData.TYPE.CAMERA: _camera_scene,
 	AssetData.TYPE.FORCE: _force_scene,
@@ -28,15 +29,7 @@ var scene_library: Dictionary = {
 
 const _INSTANTIATE_PACKED_SCENE: String = "_instantiate_packed_scene"
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
-
-func create_asset(asset_type: AssetData.TYPE) -> Node3D:
+static func create_asset(asset_type: AssetData.TYPE) -> Node3D:
 	var new_packed_scene: PackedScene = scene_library.get(asset_type, null)
 	return _instantiate_packed_scene(new_packed_scene)
 
@@ -82,9 +75,9 @@ static func new_pull_disk() -> PullDisk:
 	return new_disk
 
 static func new_player() -> ChuckChucker:
-	var new_player: ChuckChucker = _player_scene.instantiate()
-	_brand(new_player)
-	return new_player
+	var new_chuck: ChuckChucker = _player_scene.instantiate()
+	_brand(new_chuck)
+	return new_chuck
 
 static func new_item_controller() -> ItemContainer:
 	var new_controller: ItemContainer = _item_container_scene.instantiate()

@@ -27,7 +27,7 @@ func _process(_delta: float) -> void:
 	# Use ThrowableItem aim handling
 	pass
 
-func _input(event: InputEvent) -> void:
+func _input(_event: InputEvent) -> void:
 	#handle_input(event)
 	pass
 
