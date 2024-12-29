@@ -30,7 +30,8 @@ enum SIZE {
 	EXTRA_LARGE,
 	EXTRA_EXTRA_LARGE,
 	HUGE,
-	MAXIMUM
+	MAXIMUM,
+	UNKNOWN
 }
 
 const FONT_MATRIX: Dictionary = {

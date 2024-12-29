@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://b2mcgyj4flroy" path="res://resources/Sprites/Menu/PauseTitle.png" id="6_sloq1"]
 [ext_resource type="Texture2D" uid="uid://bfpof2bo3bspx" path="res://resources/Sprites/Menu/ResumeButton_hover.png" id="6_xffti"]
 [ext_resource type="Texture2D" uid="uid://5wlocgrcumg0" path="res://resources/Sprites/Menu/OptionsButton.png" id="7_5lwia"]
-[ext_resource type="PackedScene" uid="uid://buojyeswghm00" path="res://assets/ui/menus/OptionsMenu.tscn" id="7_twhfd"]
+[ext_resource type="PackedScene" uid="uid://buojyeswghm00" path="res://assets/ui/menus/options/OptionsMenu.tscn" id="7_twhfd"]
 [ext_resource type="Texture2D" uid="uid://dhxfryjv41jy" path="res://resources/Sprites/Menu/OptionsButton_pressed.png" id="8_44old"]
 [ext_resource type="Texture2D" uid="uid://dhiufbij66xsn" path="res://resources/Sprites/Menu/OptionsButton_hover.png" id="9_ljt1h"]
 [ext_resource type="Texture2D" uid="uid://c2qrmn1dekoqq" path="res://resources/Sprites/Menu/QuitButton.png" id="9_vceil"]
@@ -137,6 +137,7 @@ size_flags_horizontal = 3
 [node name="OptionsMenu" parent="." instance=ExtResource("7_twhfd")]
 visible = false
 layout_mode = 1
+scroll_color = null
 
 [node name="BackTimer" type="Timer" parent="."]
 wait_time = 0.1

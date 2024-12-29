@@ -1,0 +1,107 @@
+extends Control
+class_name OptionsMenu
+
+# BUG Saves controls but can't load them anymore
+# BUG Control changes not taking effect
+# TODO Get minimum size back to what it was before abandon
+# TODO Add scrollbar creation back in
+# TODO Add scrolling functionality in
+
+const _CATEGORY_NOT_FOUND: String = "Category \"%s\" for save setting \"%s\" could not be found. Value \"%s\" will be discarded."
+
+@export var control_select_menu: ControlSelectMenu
+@export var option_tab_container: OptionTabContainer
+
+enum SETTING_TABS {GENERAL, CONTROLS, GRAPHICS}
+var camera_settings: Dictionary
+var control_settings: Dictionary
+var display_settings: Dictionary
+var save_settings_dictionary: Dictionary
+
+signal close_menu
+signal back_menu
+signal save_settings(updated_settings)
+signal load_settings
+signal apply_settings
+
+var display_size: DisplaySize.SIZE
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	get_tree().get_root().size_changed.connect(_handle_resize)
+	initialize_ui()
+
+func initialize_ui() -> void:
+	control_select_menu.visible = false
+	load_settings.emit()
+	_handle_resize()
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed(CONSTANTS.USER_INPUT.PAUSE) and self.visible:
+		_on_back_menu()
+
+func _on_close_menu() -> void:
+	close_menu.emit()
+	_reset_variables(OptionTabContainer.TAB.GENERAL)
+	initialize_ui()
+
+func _on_back_menu() -> void:
+	back_menu.emit()
+	_reset_variables(OptionTabContainer.TAB.GENERAL)
+	initialize_ui()
+
+func _on_save_menu() -> void:
+	option_tab_container._save_controls()
+	if not control_settings.is_empty():
+		save_settings_dictionary[CONSTANTS.Controls] = control_settings
+	if not camera_settings.is_empty():
+		save_settings_dictionary[CONSTANTS.Camera] = camera_settings
+	if not display_settings.is_empty():
+		save_settings_dictionary[CONSTANTS.Display] = display_settings
+	# Always emit saveSettings even if empty; Returns to defaults then
+	save_settings.emit(save_settings_dictionary)
+	apply_settings.emit()
+	_reset_variables()
+
+func _reset_variables(tab_name: OptionTabContainer.TAB = OptionTabContainer.TAB.UNKNOWN) -> void:
+	save_settings_dictionary.clear()
+	control_settings.clear()
+	camera_settings.clear()
+	display_settings.clear()
+	option_tab_container._reset_variables(tab_name)
+
+func _open_control_select_menu(selected_item: String) -> void:
+		control_select_menu.open_menu(selected_item)
+		process_mode = Node.PROCESS_MODE_DISABLED
+
+func _control_select_closed() -> void:
+	process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+
+## Sets ControlList item to desired control value
+func _control_select_set(control_to_update: String, selected_input: ControlSetting) -> void:
+	option_tab_container._control_select_set(control_to_update, selected_input)
+
+## Updates font in menu according to window size
+func _handle_resize() -> void:
+	# Check if display size changed
+	var temp_display_size: DisplaySize.SIZE = DisplaySize.determine_display_size(get_viewport().get_visible_rect().size)
+	# If changed update menu items
+	if temp_display_size != display_size:
+		display_size = temp_display_size
+		option_tab_container._handle_resize(display_size)
+
+## Handles update signals from menu components
+func _handle_update_signal(update_type: UIData.TYPE, value_name: String, value: Object) -> void:
+	match update_type:
+		UIData.TYPE.CAMERA:
+			camera_settings[value_name] = value
+		UIData.TYPE.DISPLAY:
+			display_settings[value_name] = value
+		UIData.TYPE.CONTROL:
+			control_settings[value_name] = value
+		_:
+			Logger.error(_CATEGORY_NOT_FOUND, [str(update_type), value_name, str(value)], self)

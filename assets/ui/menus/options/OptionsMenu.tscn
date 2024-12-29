@@ -1,0 +1,183 @@
+[gd_scene load_steps=13 format=3 uid="uid://buojyeswghm00"]
+
+[ext_resource type="Script" path="res://assets/ui/menus/options/options_menu.gd" id="1_6pi5a"]
+[ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://assets/ui/menus/MainMenu_theme.tres" id="1_mx8pt"]
+[ext_resource type="Theme" uid="uid://df6ukhlv3h184" path="res://assets/ui/menus/options/OptionsMenu_theme.tres" id="2_dnfin"]
+[ext_resource type="PackedScene" uid="uid://b5pco8trxx8mb" path="res://assets/ui/buttons/CloseButton.tscn" id="3_1rkto"]
+[ext_resource type="Texture2D" uid="uid://bos42s6yyuumw" path="res://resources/Sprites/Menu/OptionsTitle.png" id="4_2xypg"]
+[ext_resource type="PackedScene" uid="uid://bet7qye2parpa" path="res://assets/ui/buttons/BackButton.tscn" id="4_bsnlx"]
+[ext_resource type="PackedScene" uid="uid://cd24psljjeu82" path="res://assets/ui/menus/options/tabs/option_tab_container.tscn" id="8_3pyfr"]
+[ext_resource type="PackedScene" uid="uid://djhanwg2fiofw" path="res://assets/ui/buttons/SaveButton.tscn" id="8_8ua6o"]
+[ext_resource type="PackedScene" uid="uid://br204kkclspff" path="res://assets/ui/menus/ControlSelectMenu.tscn" id="23_4fv4d"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0b3yo"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_10jg1"]
+
+[sub_resource type="GDScript" id="GDScript_bli58"]
+script/source = "extends Control
+
+signal close_menu
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta: float) -> void:
+	pass
+
+func _on_close_menu() -> void:
+	close_menu.emit()
+"
+
+[node name="OptionsMenu" type="Control" node_paths=PackedStringArray("control_select_menu", "option_tab_container")]
+process_mode = 2
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6pi5a")
+control_select_menu = NodePath("ControlSelectMenu")
+option_tab_container = NodePath("MainContainer/ContentBox/OptionRows/OptionTabs")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_mx8pt")
+
+[node name="MainContainer" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(600, 600)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeftMargin" type="MarginContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 2
+theme = ExtResource("1_mx8pt")
+
+[node name="ContentBox" type="VBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 20.0
+theme_override_constants/separation = 0
+
+[node name="TopMargin" type="MarginContainer" parent="MainContainer/ContentBox"]
+layout_mode = 2
+size_flags_vertical = 2
+theme = ExtResource("1_mx8pt")
+
+[node name="OptionRows" type="VBoxContainer" parent="MainContainer/ContentBox"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 20.0
+theme = ExtResource("1_mx8pt")
+theme_override_constants/separation = 0
+
+[node name="TopOptionBar" type="HBoxContainer" parent="MainContainer/ContentBox/OptionRows"]
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("2_dnfin")
+alignment = 2
+
+[node name="BackButton" parent="MainContainer/ContentBox/OptionRows/TopOptionBar" instance=ExtResource("4_bsnlx")]
+z_index = 10
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 5.0
+
+[node name="LeftLabelMargin" type="Panel" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_0b3yo")
+
+[node name="OptionsLabelBackground" type="Panel" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 15.0
+mouse_filter = 2
+theme_type_variation = &"OptionLabel"
+
+[node name="TextureRect" type="TextureRect" parent="MainContainer/ContentBox/OptionRows/TopOptionBar/OptionsLabelBackground"]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -505.0
+offset_right = 507.143
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4_2xypg")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="RightLabelMargin" type="Panel" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_10jg1")
+
+[node name="SaveButton" parent="MainContainer/ContentBox/OptionRows/TopOptionBar" instance=ExtResource("8_8ua6o")]
+z_index = 10
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 5.0
+
+[node name="CloseColumn" type="VBoxContainer" parent="MainContainer/ContentBox/OptionRows/TopOptionBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.75
+
+[node name="CloseButton" parent="MainContainer/ContentBox/OptionRows/TopOptionBar/CloseColumn" instance=ExtResource("3_1rkto")]
+layout_mode = 2
+script = SubResource("GDScript_bli58")
+
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows/TopOptionBar/CloseColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Separator" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows"]
+layout_mode = 2
+
+[node name="OptionTabs" parent="MainContainer/ContentBox/OptionRows" instance=ExtResource("8_3pyfr")]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 15.0
+
+[node name="BottomMargin" type="MarginContainer" parent="MainContainer/ContentBox"]
+layout_mode = 2
+size_flags_vertical = 2
+theme = ExtResource("1_mx8pt")
+
+[node name="RightMargin" type="MarginContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme = ExtResource("1_mx8pt")
+
+[node name="ControlSelectMenu" parent="." instance=ExtResource("23_4fv4d")]
+process_mode = 4
+visible = false
+layout_mode = 1
+
+[connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/BackButton" to="." method="_on_back_menu"]
+[connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/SaveButton" to="." method="_on_save_menu"]
+[connection signal="close_menu" from="MainContainer/ContentBox/OptionRows/TopOptionBar/CloseColumn/CloseButton" to="." method="_on_close_menu"]
+[connection signal="value_selected" from="MainContainer/ContentBox/OptionRows/OptionTabs" to="." method="_open_control_select_menu"]
+[connection signal="value_updated" from="MainContainer/ContentBox/OptionRows/OptionTabs" to="." method="_handle_update_signal"]
+[connection signal="menu_closed" from="ControlSelectMenu" to="." method="_control_select_closed"]
+[connection signal="save_input" from="ControlSelectMenu" to="." method="_control_select_set"]

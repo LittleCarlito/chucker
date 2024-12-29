@@ -1,6 +1,7 @@
-[gd_scene load_steps=17 format=3 uid="uid://brvlr5sg1shae"]
+[gd_scene load_steps=18 format=3 uid="uid://brvlr5sg1shae"]
 
-[ext_resource type="Theme" uid="uid://df6ukhlv3h184" path="res://assets/ui/menus/OptionsMenu_theme.tres" id="1_oubg4"]
+[ext_resource type="Theme" uid="uid://df6ukhlv3h184" path="res://assets/ui/menus/options/OptionsMenu_theme.tres" id="1_oubg4"]
+[ext_resource type="Script" path="res://assets/ui/menus/options/tabs/controls.gd" id="1_wbwny"]
 [ext_resource type="Texture2D" uid="uid://b0h6gar6kg58m" path="res://resources/Sprites/ControlIcons/W_Keycap.png" id="2_8ye5j"]
 [ext_resource type="Texture2D" uid="uid://5p41al6jpyxo" path="res://resources/Sprites/ControlIcons/S_Keycap.png" id="3_7m803"]
 [ext_resource type="Texture2D" uid="uid://daluui0eb6tyk" path="res://resources/Sprites/ControlIcons/Escape_Keycap.png" id="4_g1fa7"]
@@ -17,13 +18,15 @@
 [ext_resource type="Texture2D" uid="uid://c327tgy4fm0us" path="res://resources/Sprites/ControlIcons/Shift_Keycap.png" id="15_tfden"]
 [ext_resource type="Texture2D" uid="uid://da80lnkrg7qwt" path="res://resources/Sprites/ControlIcons/F_Keycap.png" id="16_ch2s1"]
 
-[node name="Controls" type="Control"]
+[node name="Controls" type="Control" node_paths=PackedStringArray("control_list")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_wbwny")
+control_list = NodePath("ControlList")
 
 [node name="ControlsBackground" type="Panel" parent="."]
 layout_mode = 1
@@ -78,3 +81,5 @@ item_13/text = "Sprint"
 item_13/icon = ExtResource("15_tfden")
 item_14/text = "Pick Up"
 item_14/icon = ExtResource("16_ch2s1")
+
+[connection signal="item_clicked" from="ControlList" to="." method="_open_control_select_menu"]
