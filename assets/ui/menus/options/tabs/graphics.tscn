@@ -17,18 +17,18 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_w3ny4")
-motion_blur_check = NodePath("GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows/MotionBlurCheck")
-bloom_check = NodePath("GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows/BloomCheck")
-performance_display_check = NodePath("GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck")
-resolution_label = NodePath("GraphicsColumns/GraphicsRows/ResolutionRows/ResolutionLabel")
-resolution_select = NodePath("GraphicsColumns/GraphicsRows/ResolutionRows/ResolutionSelect")
-display_type_label = NodePath("GraphicsColumns/GraphicsRows/DisplayTypeRows/DisplayTypeLabel")
-display_type_select = NodePath("GraphicsColumns/GraphicsRows/DisplayTypeRows/DisplayTypeSelect")
-monitor_choice_label = NodePath("GraphicsColumns/GraphicsRows/MonitorChoiceRows/MonitorChoiceLabel")
-monitor_choice_select = NodePath("GraphicsColumns/GraphicsRows/MonitorChoiceRows/MonitorChoiceSelect")
-frame_rate_label = NodePath("GraphicsColumns/GraphicsRows/FrameRateRows/FrameRateLabel")
-frame_rate_select = NodePath("GraphicsColumns/GraphicsRows/FrameRateRows/FrameRateSelect")
-graphics_columns = NodePath("GraphicsColumns/GraphicsRows/GraphicCheckColumns")
+motion_blur_check = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/GraphicCheckColumns/VisualCheckRows/MotionBlurCheck")
+bloom_check = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/GraphicCheckColumns/VisualCheckRows/BloomCheck")
+performance_display_check = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck")
+resolution_label = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/ResolutionRows/ResolutionLabel")
+resolution_select = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/ResolutionRows/ResolutionSelect")
+display_type_label = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/DisplayTypeRows/DisplayTypeLabel")
+display_type_select = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/DisplayTypeRows/DisplayTypeSelect")
+monitor_choice_label = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/MonitorChoiceRows/MonitorChoiceLabel")
+monitor_choice_select = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/MonitorChoiceRows/MonitorChoiceSelect")
+frame_rate_label = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/FrameRateRows/FrameRateLabel")
+frame_rate_select = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/FrameRateRows/FrameRateSelect")
+graphics_columns = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/GraphicCheckColumns")
 process_delay_frame_count = 60
 
 [node name="GraphicsBackground" type="Panel" parent="."]
@@ -63,17 +63,23 @@ theme_override_constants/separation = 8
 
 [node name="GraphicSelectTopMargin" type="MarginContainer" parent="GraphicsColumns/GraphicsRows"]
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_constants/margin_top = 3
 
-[node name="ResolutionRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows"]
+[node name="GraphicsOptions" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 15.0
+
+[node name="ResolutionRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows/GraphicsOptions"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="ResolutionLabel" type="Label" parent="GraphicsColumns/GraphicsRows/ResolutionRows"]
+[node name="ResolutionLabel" type="Label" parent="GraphicsColumns/GraphicsRows/GraphicsOptions/ResolutionRows"]
 layout_mode = 2
 text = "Resolution"
 
-[node name="ResolutionSelect" type="OptionButton" parent="GraphicsColumns/GraphicsRows/ResolutionRows"]
+[node name="ResolutionSelect" type="OptionButton" parent="GraphicsColumns/GraphicsRows/GraphicsOptions/ResolutionRows"]
 layout_mode = 2
 selected = 0
 item_count = 3
@@ -84,16 +90,16 @@ popup/item_1/id = 2
 popup/item_2/text = "Res 3"
 popup/item_2/id = 3
 
-[node name="DisplayTypeRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows"]
+[node name="DisplayTypeRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows/GraphicsOptions"]
 layout_mode = 2
 theme = ExtResource("1_i0saw")
 theme_override_constants/separation = 0
 
-[node name="DisplayTypeLabel" type="Label" parent="GraphicsColumns/GraphicsRows/DisplayTypeRows"]
+[node name="DisplayTypeLabel" type="Label" parent="GraphicsColumns/GraphicsRows/GraphicsOptions/DisplayTypeRows"]
 layout_mode = 2
 text = "Display Type"
 
-[node name="DisplayTypeSelect" type="OptionButton" parent="GraphicsColumns/GraphicsRows/DisplayTypeRows"]
+[node name="DisplayTypeSelect" type="OptionButton" parent="GraphicsColumns/GraphicsRows/GraphicsOptions/DisplayTypeRows"]
 layout_mode = 2
 selected = 0
 item_count = 4
@@ -105,16 +111,16 @@ popup/item_2/id = 3
 popup/item_3/text = "Exclusive Fullscreen"
 popup/item_3/id = 4
 
-[node name="MonitorChoiceRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows"]
+[node name="MonitorChoiceRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows/GraphicsOptions"]
 layout_mode = 2
 theme = ExtResource("1_i0saw")
 theme_override_constants/separation = 0
 
-[node name="MonitorChoiceLabel" type="Label" parent="GraphicsColumns/GraphicsRows/MonitorChoiceRows"]
+[node name="MonitorChoiceLabel" type="Label" parent="GraphicsColumns/GraphicsRows/GraphicsOptions/MonitorChoiceRows"]
 layout_mode = 2
 text = "Monitor Select"
 
-[node name="MonitorChoiceSelect" type="OptionButton" parent="GraphicsColumns/GraphicsRows/MonitorChoiceRows"]
+[node name="MonitorChoiceSelect" type="OptionButton" parent="GraphicsColumns/GraphicsRows/GraphicsOptions/MonitorChoiceRows"]
 layout_mode = 2
 selected = 0
 item_count = 2
@@ -123,15 +129,15 @@ popup/item_0/id = 1
 popup/item_1/text = "Need to figure out how to detect monitors"
 popup/item_1/id = 2
 
-[node name="FrameRateRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows"]
+[node name="FrameRateRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows/GraphicsOptions"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="FrameRateLabel" type="Label" parent="GraphicsColumns/GraphicsRows/FrameRateRows"]
+[node name="FrameRateLabel" type="Label" parent="GraphicsColumns/GraphicsRows/GraphicsOptions/FrameRateRows"]
 layout_mode = 2
 text = "FPS Limit"
 
-[node name="FrameRateSelect" type="OptionButton" parent="GraphicsColumns/GraphicsRows/FrameRateRows"]
+[node name="FrameRateSelect" type="OptionButton" parent="GraphicsColumns/GraphicsRows/GraphicsOptions/FrameRateRows"]
 layout_mode = 2
 selected = 0
 item_count = 5
@@ -145,26 +151,26 @@ popup/item_3/id = 3
 popup/item_4/text = "120"
 popup/item_4/id = 4
 
-[node name="GraphicCheckColumns" type="HBoxContainer" parent="GraphicsColumns/GraphicsRows"]
+[node name="GraphicCheckColumns" type="HBoxContainer" parent="GraphicsColumns/GraphicsRows/GraphicsOptions"]
 layout_mode = 2
 theme_override_constants/separation = 40
 
-[node name="VisualCheckRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows/GraphicCheckColumns"]
+[node name="VisualCheckRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows/GraphicsOptions/GraphicCheckColumns"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="MotionBlurCheck" type="CheckBox" parent="GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows"]
+[node name="MotionBlurCheck" type="CheckBox" parent="GraphicsColumns/GraphicsRows/GraphicsOptions/GraphicCheckColumns/VisualCheckRows"]
 layout_mode = 2
 text = "Motion Blur"
 
-[node name="BloomCheck" type="CheckBox" parent="GraphicsColumns/GraphicsRows/GraphicCheckColumns/VisualCheckRows"]
+[node name="BloomCheck" type="CheckBox" parent="GraphicsColumns/GraphicsRows/GraphicsOptions/GraphicCheckColumns/VisualCheckRows"]
 layout_mode = 2
 text = "Bloom"
 
-[node name="DataCheckRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows/GraphicCheckColumns"]
+[node name="DataCheckRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows/GraphicsOptions/GraphicCheckColumns"]
 layout_mode = 2
 
-[node name="PerformanceDisplayCheck" type="CheckBox" parent="GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows"]
+[node name="PerformanceDisplayCheck" type="CheckBox" parent="GraphicsColumns/GraphicsRows/GraphicsOptions/GraphicCheckColumns/DataCheckRows"]
 layout_mode = 2
 text = "Performance Display"
 
@@ -174,5 +180,5 @@ size_flags_horizontal = 3
 size_flags_vertical = 8
 theme_override_styles/panel = SubResource("StyleBoxFlat_d5jjh")
 
-[connection signal="item_selected" from="GraphicsColumns/GraphicsRows/DisplayTypeRows/DisplayTypeSelect" to="." method="_handle_resize_request"]
-[connection signal="toggled" from="GraphicsColumns/GraphicsRows/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck" to="." method="_on_performance_display_check_toggled"]
+[connection signal="item_selected" from="GraphicsColumns/GraphicsRows/GraphicsOptions/DisplayTypeRows/DisplayTypeSelect" to="." method="_handle_resize_request"]
+[connection signal="toggled" from="GraphicsColumns/GraphicsRows/GraphicsOptions/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck" to="." method="_on_performance_display_check_toggled"]

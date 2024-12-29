@@ -1,10 +1,10 @@
 extends Control
 class_name OptionsMenu
 
-# TODO Get resizing calls off delayed process and just on signals; It is jittery
 # TODO Add scrollbar creation back in
 #		Can't get resolution high enough on one monitor on this pc; Can on laptop
 # TODO Add scrolling functionality in
+# TODO Minimum scale of scrollbars needs to be smaller
 
 const _CATEGORY_NOT_FOUND: String = "Category \"%s\" for save setting \"%s\" could not be found. Value \"%s\" will be discarded."
 const _UNSUPPORTED_SIZE: String = "Currently only supporting update entries of size 1; Submit them one entry at a time; \"%s\""
