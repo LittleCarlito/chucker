@@ -1,7 +1,6 @@
-extends Control
+extends OptionTab
 class_name OptionTabContainer
 
-signal value_updated(data_type: UIData.TYPE, new_entry: Dictionary)
 signal value_selected(selected_item: String)
 
 enum TAB {
@@ -24,6 +23,9 @@ func _ready() -> void:
 		general,
 		controls,
 		graphics
+	]
+	font_update_list = [
+		option_tabs
 	]
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -67,6 +69,7 @@ func _handle_tab_change(tab_index: int) -> void:
 			graphics.visible = false
 
 func _handle_resize(display_size: DisplaySize.SIZE = DisplaySize.SIZE.UNKNOWN) -> void:
+	super()
 	if display_size != DisplaySize.SIZE.UNKNOWN:
 		for existing_tab in tab_array:
 			existing_tab._handle_resize(display_size)
