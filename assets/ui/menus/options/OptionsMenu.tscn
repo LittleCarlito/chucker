@@ -43,7 +43,6 @@ grow_vertical = 2
 script = ExtResource("1_6pi5a")
 control_select_menu = NodePath("ControlSelectMenu")
 option_tab_container = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer")
-process_delay_frame_count = 60
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1

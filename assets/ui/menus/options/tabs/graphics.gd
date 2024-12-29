@@ -13,6 +13,8 @@ extends OptionTab
 @export var frame_rate_select: OptionButton
 @export var graphics_columns: HBoxContainer
 
+@export var process_delay_frame_count: int
+var frame_count: int
 var default_graphic_column_count: int
 var dropdown_index: int
 
@@ -40,8 +42,15 @@ func _ready() -> void:
 	initialize_ui()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
+func _process(delta: float) -> void:
+	if visible:
+		# Losing decimals here doesn't matter and int is needed for % usage
+		@warning_ignore("narrowing_conversion")
+		frame_count += max(delta, 1)
+		frame_count = min(process_delay_frame_count, frame_count)
+		if frame_count % process_delay_frame_count == 0:
+			_update_contents()
+			frame_count = 0
 
 func initialize_ui() -> void:
 	performance_display_check.button_pressed = GlobalSettings.DISPLAY.get(CONSTANTS.PERFORMANCE, GlobalSettings.DISPLAY_DEFAULTS.PERFORMANCE)
@@ -50,7 +59,6 @@ func _on_performance_display_check_toggled(toggled_on: bool) -> void:
 	var new_entry: Dictionary = {CONSTANTS.PERFORMANCE: toggled_on}
 	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
 
-# TODO See to that this is called from delayed processing wherever it ends up
 func _update_contents() -> void:
 	# Update dropdown setting value
 	var temp_index: int = display_type_select.get_item_index(get_window().mode)

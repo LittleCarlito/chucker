@@ -1,11 +1,10 @@
 extends Control
 class_name OptionsMenu
 
-# TODO Get minimum size back to what it was before abandon
-#		Can't get resolution high enough on one monitor on this pc; Can on laptop
-# TODO Add scrollbar creation back in
-# TODO Add scrolling functionality in
 # TODO Get resizing calls off delayed process and just on signals; It is jittery
+# TODO Add scrollbar creation back in
+#		Can't get resolution high enough on one monitor on this pc; Can on laptop
+# TODO Add scrolling functionality in
 
 const _CATEGORY_NOT_FOUND: String = "Category \"%s\" for save setting \"%s\" could not be found. Value \"%s\" will be discarded."
 const _UNSUPPORTED_SIZE: String = "Currently only supporting update entries of size 1; Submit them one entry at a time; \"%s\""
@@ -25,8 +24,6 @@ signal save_settings(updated_settings)
 signal load_settings
 signal apply_settings
 
-@export var process_delay_frame_count: int
-var frame_count: int
 var display_size: DisplaySize.SIZE
 
 # Called when the node enters the scene tree for the first time.
@@ -40,15 +37,8 @@ func initialize_ui() -> void:
 	_handle_resize()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	if visible:
-		# Losing decimals here doesn't matter and int is needed for % usage
-		@warning_ignore("narrowing_conversion")
-		frame_count += delta
-		frame_count = min(process_delay_frame_count, frame_count)
-		if frame_count % process_delay_frame_count == 0:
-			_handle_resize()
-			frame_count = 0
+func _process(_delta: float) -> void:
+	pass
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(CONSTANTS.USER_INPUT.PAUSE) and self.visible:
