@@ -22,6 +22,11 @@ var dropdown_index: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	# TODO Get resolution game is being rendered at and set it in the dropdown
+	var initial_render_width: int = ProjectSettings.get_setting("display/window/size/viewport_width")
+	var initial_render_height: int = ProjectSettings.get_setting("display/window/size/viewport_height")
+	var render_string: String = "%d x %d" % [initial_render_width, initial_render_height]
+	Logger.debug(render_string, [], self)
 	default_graphic_column_count = graphics_columns.get_child_count()
 	initialize_ui()
 
@@ -44,6 +49,10 @@ func _on_performance_display_check_toggled(toggled_on: bool) -> void:
 	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
 
 func _update_contents() -> void:
+	var window_width: int = get_window().size.x
+	var window_height: int = get_window().size.y
+	var runtime_string: String = "%d x %d" % [window_width, window_height]
+	Logger.debug(runtime_string, [], self)
 	# Update dropdown setting value
 	var temp_index: int = display_type_select.get_item_index(get_window().mode)
 	if temp_index != dropdown_index:
@@ -52,4 +61,6 @@ func _update_contents() -> void:
 
 func get_height() -> float:
 	return graphics_rows.size.y
-	
+
+func _set_resolution() -> void:
+	pass

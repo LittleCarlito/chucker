@@ -26,7 +26,6 @@ signal enable_rotation
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	get_window().set_min_size(DisplaySize.MINIUMUM)
 	# Create game file structures
 	var base_dir = DirAccess.open(BASE_PATH)
 	base_dir.make_dir(SAVE_DIR)
