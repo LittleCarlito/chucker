@@ -1,4 +1,8 @@
 extends Control
+# TODO Rework this to be a generalized UIControl
+#		Rework all of the scaling stuff to be based on settings in the menu
+#			The settings should be multipliers for UI scaling and/or font scaling
+#		They resizing stuff should only be called/applied to once and not needed on delayed process
 class_name OptionTab
 
 const _OPTION_TAB: String = "OptionTab"
@@ -48,6 +52,8 @@ func handle_icon_resize(display_size: DisplaySize.SIZE) -> void:
 	for xy_rescale in xy_scale_update_list:
 		xy_rescale.scale.y = menu_item_scale
 		xy_rescale.scale.x = menu_item_scale
+	# TODO Each HSlider has a parent container
+	#		Set
 
 ## Returns the height of the most packed object in the tab
 ## Returns 0 if not implemented (or needed)

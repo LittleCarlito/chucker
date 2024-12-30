@@ -23,24 +23,6 @@ var dropdown_index: int
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	default_graphic_column_count = graphics_columns.get_child_count()
-	font_update_list = [
-		motion_blur_check,
-		bloom_check,
-		performance_display_check,
-		resolution_label,
-		resolution_select,
-		display_type_label,
-		display_type_select,
-		monitor_choice_label,
-		monitor_choice_select,
-		frame_rate_label,
-		frame_rate_select
-	]
-	xy_scale_update_list = [
-		bloom_check,
-		performance_display_check,
-		motion_blur_check
-	]
 	initialize_ui()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -67,10 +49,6 @@ func _update_contents() -> void:
 	if temp_index != dropdown_index:
 		dropdown_index = temp_index
 		display_type_select.select(dropdown_index)
-
-func _handle_resize_request(selected_index: int) -> void:
-	var selected_window_type: Window.Mode = display_type_select.get_item_id(selected_index) as Window.Mode
-	get_window().mode = selected_window_type
 
 func get_height() -> float:
 	return graphics_rows.size.y

@@ -25,7 +25,6 @@ viewport_columns = NodePath("VBoxContainer/ViewportColumns")
 tab_viewport_container = NodePath("VBoxContainer/ViewportColumns/TabViewportContainer")
 tab_viewport = NodePath("VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport")
 scrollbar_container = NodePath("VBoxContainer/ViewportColumns/ScrollbarContainer")
-process_delay_frame_count = 10
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -62,7 +61,7 @@ stretch = true
 
 [node name="TabViewport" type="SubViewport" parent="VBoxContainer/ViewportColumns/TabViewportContainer"]
 handle_input_locally = false
-size = Vector2i(1143, 617)
+size = Vector2i(1920, 1044)
 render_target_update_mode = 4
 
 [node name="General" parent="VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport" instance=ExtResource("3_xijr6")]
@@ -75,6 +74,7 @@ visible = false
 
 [node name="ScrollbarContainer" parent="VBoxContainer/ViewportColumns" instance=ExtResource("6_uaq1f")]
 layout_mode = 2
+size_flags_horizontal = 1
 size_flags_stretch_ratio = 0.5
 
 [connection signal="tab_changed" from="VBoxContainer/OptionTabs" to="." method="_handle_tab_change"]

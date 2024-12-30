@@ -1,7 +1,9 @@
 extends Control
 class_name OptionsMenu
 
-# BUG ControlList icons don't appear to be part of resizing logic 
+# TODO Horizontal sliders on xy scale increase need length decreased by corresponding ratio
+# BUG Checkboxes don't appear to be resizing
+# BUG At high width resolutions PAUSE title in pause menu breaks out of background
 # TODO Add scrollbar creation back in
 #		Can't get resolution high enough on one monitor on this pc; Can on laptop
 # TODO Add scrolling functionality in

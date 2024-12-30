@@ -65,17 +65,17 @@ const ICON_SCALE_MATRIX: Dictionary = {
 
 const MENU_SCALE_MATRIX: Dictionary = {
 	DisplaySize.SIZE.TEENY: 1,
-	DisplaySize.SIZE.EXTRA_EXTRA_SMALL: 1.2,
-	DisplaySize.SIZE.EXTRA_SMALL: 1.4,
-	DisplaySize.SIZE.SMALL: 1.6,
-	DisplaySize.SIZE.MEDIUM_SMALL: 1.8,
-	DisplaySize.SIZE.MEDIUM: 2.0,
-	DisplaySize.SIZE.MEDIUM_LARGE: 2.2,
-	DisplaySize.SIZE.LARGE: 2.4,
-	DisplaySize.SIZE.EXTRA_LARGE: 2.6,
-	DisplaySize.SIZE.EXTRA_EXTRA_LARGE: 2.8,
-	DisplaySize.SIZE.HUGE: 3.0,
-	DisplaySize.SIZE.MAXIMUM: 3.2
+	DisplaySize.SIZE.EXTRA_EXTRA_SMALL: 1,
+	DisplaySize.SIZE.EXTRA_SMALL: 1,
+	DisplaySize.SIZE.SMALL: 2,
+	DisplaySize.SIZE.MEDIUM_SMALL: 2,
+	DisplaySize.SIZE.MEDIUM: 2,
+	DisplaySize.SIZE.MEDIUM_LARGE: 3,
+	DisplaySize.SIZE.LARGE: 3,
+	DisplaySize.SIZE.EXTRA_LARGE: 3,
+	DisplaySize.SIZE.EXTRA_EXTRA_LARGE: 4,
+	DisplaySize.SIZE.HUGE: 4,
+	DisplaySize.SIZE.MAXIMUM: 4
 }
 
 ## Determines associated SIZE from given screen_resolution

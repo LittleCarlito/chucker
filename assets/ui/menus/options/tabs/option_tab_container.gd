@@ -21,8 +21,6 @@ enum TAB {
 
 var tab_array: Array[OptionTab]
 var active_tab_index: int
-@export var process_delay_frame_count: int
-var frame_count: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -31,21 +29,17 @@ func _ready() -> void:
 		controls,
 		graphics
 	]
-	font_update_list = [
-		option_tabs
-	]
+	#font_update_list = [
+		#option_tabs
+	#]
+	#xy_scale_update_list = [
+		#scrollbar_container
+	#]
 	_handle_tab_change(0)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	if visible:
-		# Losing decimals here doesn't matter and int is needed for % usage
-		@warning_ignore("narrowing_conversion")
-		frame_count += max(delta, 1)
-		frame_count = min(process_delay_frame_count, frame_count)
-		if frame_count % process_delay_frame_count == 0:
-			frame_count = 0
-			_handle_clipping_tabs()
+func _process(_delta: float) -> void:
+	pass
 
 ## Resets existing variables and sets requested tab if given
 func _reset_variables(incoming_tab: OptionTabContainer.TAB = OptionTabContainer.TAB.UNKNOWN) -> void:
@@ -84,12 +78,6 @@ func _handle_tab_change(tab_index: int) -> void:
 			graphics.visible = false
 	active_tab_index = tab_index
 
-func _handle_resize(display_size: DisplaySize.SIZE = DisplaySize.SIZE.UNKNOWN) -> void:
-	super()
-	if display_size != DisplaySize.SIZE.UNKNOWN:
-		for existing_tab in tab_array:
-			existing_tab._handle_resize(display_size)
-
 func _save_controls() -> void:
 	controls._save_controls()
 
@@ -97,6 +85,8 @@ func reload_ui() -> void:
 	for existing_tab in tab_array:
 		existing_tab.initialize_ui()
 
+# TODO Continue working on this once resolution and UI scaling dropdowns are working
+# TODO Rework this to only be called when resolution or ui/font scaling is changed
 ## TODO Creates scrollbars and darkens background of scrollable tabs
 func _handle_clipping_tabs() -> void:
 	# TODO Iterate through each clipping result
@@ -112,7 +102,6 @@ func _handle_clipping_tabs() -> void:
 		if clipping_results[i] and is_active_tab(i):
 			if !scrollbar_container.has_scrollbar_for(i):
 				var new_scrollbar: VScrollBar = VScrollBar.new()
-				# TODO OOOOO
 				# TODO Scrollbar gets made but _expand doesn't appear to be working
 				scrollbar_container.add_scrollbar(i, new_scrollbar)
 				var clipping_tab: OptionTab = tab_array[i]

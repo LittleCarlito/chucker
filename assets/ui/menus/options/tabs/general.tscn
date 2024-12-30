@@ -167,7 +167,7 @@ layout_mode = 2
 [node name="HorizontalLookSensitvitySliderContainer" type="Panel" parent="ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalLookSensitivityRows/HorizontalLookSensitivityColumns"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 3.0
+size_flags_stretch_ratio = 15.0
 
 [node name="HorizontalLookSensitivitySlider" type="HSlider" parent="ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalLookSensitivityRows/HorizontalLookSensitivityColumns/HorizontalLookSensitvitySliderContainer"]
 layout_mode = 1
@@ -214,7 +214,7 @@ layout_mode = 2
 [node name="VerticalLookSensitvitySliderContainer" type="Panel" parent="ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalLookSensitivityRows/VerticalLookSensitivityColumns"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 3.0
+size_flags_stretch_ratio = 15.0
 
 [node name="VerticalLookSensitivitySlider" type="HSlider" parent="ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalLookSensitivityRows/VerticalLookSensitivityColumns/VerticalLookSensitvitySliderContainer"]
 layout_mode = 1
@@ -261,7 +261,7 @@ layout_mode = 2
 [node name="HorizontalAimSensitvitySliderContainer" type="Panel" parent="ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalAimSensitivityRows/HorizontalAimSensitivityColumns"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 3.0
+size_flags_stretch_ratio = 15.0
 
 [node name="HorizontalAimSensitivitySlider" type="HSlider" parent="ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/HorizontalAimSensitivityRows/HorizontalAimSensitivityColumns/HorizontalAimSensitvitySliderContainer"]
 layout_mode = 1
@@ -308,7 +308,7 @@ layout_mode = 2
 [node name="VerticalAimSensitvitySliderContainer" type="Panel" parent="ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityColumns"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 3.0
+size_flags_stretch_ratio = 15.0
 
 [node name="VerticalAimSensitivitySlider" type="HSlider" parent="ControlsRows/TopOptionColumns/TopSensitivityColumns/TopSliderRows/VerticalAimSensitivityRows/VerticalAimSensitivityColumns/VerticalAimSensitvitySliderContainer"]
 layout_mode = 1

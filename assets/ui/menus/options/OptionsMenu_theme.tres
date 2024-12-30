@@ -11,6 +11,7 @@ Label/font_sizes/font_size = 18
 Panel/styles/panel = SubResource("StyleBoxFlat_3pqj7")
 TabBar/constants/h_separation = 0
 TabBar/constants/outline_size = 4
+TabBar/font_sizes/font_size = 20
 TabContainer/constants/outline_size = 5
 TabContainer/constants/side_margin = 0
 VBoxContainer/styles/SubmenuVBoxContainer = null

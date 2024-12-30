@@ -15,9 +15,12 @@ const _SELECT_ERROR_LOG: String = "Incorrect number of items selected to change 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	font_update_list = [
-		control_list
-	]
+	#font_update_list = [
+		#control_list
+	#]
+	#xy_scale_update_list = [
+		#control_list
+	#]
 	initialize_ui()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

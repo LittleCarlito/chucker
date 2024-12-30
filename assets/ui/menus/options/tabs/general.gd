@@ -24,31 +24,29 @@ class_name GeneralTab
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	font_update_list = [
-		fov_value,
-		horizontal_aim_sensitivity_value,
-		vertical_aim_sensitivity_value,
-		horizontal_look_sensitivity_value,
-		vertical_look_sensitivity_value,
-		v_inversion_toggle,
-		h_inversion_toggle,
-		fov_label,
-		horizontal_look_sensitivity_label,
-		vertical_look_sensitivity_label,
-		horizontal_aim_sensitivity_label,
-		vertical_aim_sensitivity_label
-	]
-	y_scale_update_list = [
-		fov_slider,
-		vertical_aim_sensitivity_slider,
-		vertical_look_sensitivity_slider,
-		horizontal_aim_sensitivity_slider,
-		horizontal_look_sensitivity_slider
-	]
-	xy_scale_update_list = [
-		v_inversion_toggle,
-		h_inversion_toggle
-	]
+	#font_update_list = [
+		#fov_value,
+		#horizontal_aim_sensitivity_value,
+		#vertical_aim_sensitivity_value,
+		#horizontal_look_sensitivity_value,
+		#vertical_look_sensitivity_value,
+		#v_inversion_toggle,
+		#h_inversion_toggle,
+		#fov_label,
+		#horizontal_look_sensitivity_label,
+		#vertical_look_sensitivity_label,
+		#horizontal_aim_sensitivity_label,
+		#vertical_aim_sensitivity_label
+	#]
+	#xy_scale_update_list = [
+		#v_inversion_toggle,
+		#h_inversion_toggle,
+		#fov_slider,
+		#vertical_aim_sensitivity_slider,
+		#vertical_look_sensitivity_slider,
+		#horizontal_aim_sensitivity_slider,
+		#horizontal_look_sensitivity_slider
+	#]
 	initialize_ui()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
