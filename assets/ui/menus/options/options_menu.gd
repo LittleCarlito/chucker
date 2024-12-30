@@ -1,20 +1,17 @@
 extends Control
 class_name OptionsMenu
 
-# TODO Horizontal sliders on xy scale increase need length decreased by corresponding ratio
-# BUG Checkboxes don't appear to be resizing
-# BUG At high width resolutions PAUSE title in pause menu breaks out of background
-# TODO Add scrollbar creation back in
-#		Can't get resolution high enough on one monitor on this pc; Can on laptop
-# TODO Add scrolling functionality in
-# TODO Minimum scale of scrollbars needs to be smaller
-# TODO At higher resolutions the back and save buttons need to be bigger (along with close I'm assuming)
+# TODO Make checkboxes larger
+# TODO Get everything back to working with TabContainer in here
+# TODO ControlSetting menu thing can be moved to control tab
+#			Where current work marker is
+# TODO Should probably start with general cleanup/setup here	
 
 const _CATEGORY_NOT_FOUND: String = "Category \"%s\" for save setting \"%s\" could not be found. Value \"%s\" will be discarded."
 const _UNSUPPORTED_SIZE: String = "Currently only supporting update entries of size 1; Submit them one entry at a time; \"%s\""
 
 @export var control_select_menu: ControlSelectMenu
-@export var option_tab_container: OptionTabContainer
+@export var option_tab_container: TabContainer
 
 enum SETTING_TABS {GENERAL, CONTROLS, GRAPHICS}
 var camera_settings: Dictionary

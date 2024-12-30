@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://buojyeswghm00"]
+[gd_scene load_steps=15 format=3 uid="uid://buojyeswghm00"]
 
 [ext_resource type="Script" path="res://assets/ui/menus/options/options_menu.gd" id="1_6pi5a"]
 [ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://assets/ui/menus/MainMenu_theme.tres" id="1_mx8pt"]
@@ -6,8 +6,10 @@
 [ext_resource type="PackedScene" uid="uid://b5pco8trxx8mb" path="res://assets/ui/buttons/CloseButton.tscn" id="3_1rkto"]
 [ext_resource type="Texture2D" uid="uid://bos42s6yyuumw" path="res://resources/Sprites/Menu/OptionsTitle.png" id="4_2xypg"]
 [ext_resource type="PackedScene" uid="uid://bet7qye2parpa" path="res://assets/ui/buttons/BackButton.tscn" id="4_bsnlx"]
-[ext_resource type="PackedScene" uid="uid://cd24psljjeu82" path="res://assets/ui/menus/options/tabs/option_tab_container.tscn" id="8_3pyfr"]
 [ext_resource type="PackedScene" uid="uid://djhanwg2fiofw" path="res://assets/ui/buttons/SaveButton.tscn" id="8_8ua6o"]
+[ext_resource type="PackedScene" uid="uid://buvmjg7acd3wt" path="res://assets/ui/menus/options/tabs/general.tscn" id="8_d6pxn"]
+[ext_resource type="PackedScene" uid="uid://brvlr5sg1shae" path="res://assets/ui/menus/options/tabs/controls.tscn" id="9_armrt"]
+[ext_resource type="PackedScene" uid="uid://m14crubabs1v" path="res://assets/ui/menus/options/tabs/graphics.tscn" id="10_cbjqr"]
 [ext_resource type="PackedScene" uid="uid://br204kkclspff" path="res://assets/ui/menus/ControlSelectMenu.tscn" id="23_4fv4d"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0b3yo"]
@@ -154,9 +156,25 @@ size_flags_vertical = 3
 [node name="Separator" type="MarginContainer" parent="MainContainer/ContentBox/OptionRows"]
 layout_mode = 2
 
-[node name="OptionTabContainer" parent="MainContainer/ContentBox/OptionRows" instance=ExtResource("8_3pyfr")]
+[node name="OptionTabContainer" type="TabContainer" parent="MainContainer/ContentBox/OptionRows"]
 layout_mode = 2
+size_flags_vertical = 3
 size_flags_stretch_ratio = 15.0
+current_tab = 0
+
+[node name="General" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer" instance=ExtResource("8_d6pxn")]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="Controls" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer" instance=ExtResource("9_armrt")]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="Graphics" parent="MainContainer/ContentBox/OptionRows/OptionTabContainer" instance=ExtResource("10_cbjqr")]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
 
 [node name="BottomMargin" type="MarginContainer" parent="MainContainer/ContentBox"]
 layout_mode = 2
@@ -177,7 +195,5 @@ layout_mode = 1
 [connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/BackButton" to="." method="_on_back_menu"]
 [connection signal="button_up" from="MainContainer/ContentBox/OptionRows/TopOptionBar/SaveButton" to="." method="_on_save_menu"]
 [connection signal="close_menu" from="MainContainer/ContentBox/OptionRows/TopOptionBar/CloseColumn/CloseButton" to="." method="_on_close_menu"]
-[connection signal="value_selected" from="MainContainer/ContentBox/OptionRows/OptionTabContainer" to="." method="_open_control_select_menu"]
-[connection signal="value_updated" from="MainContainer/ContentBox/OptionRows/OptionTabContainer" to="." method="_handle_update_signal"]
 [connection signal="menu_closed" from="ControlSelectMenu" to="." method="_control_select_closed"]
 [connection signal="save_input" from="ControlSelectMenu" to="." method="_control_select_set"]

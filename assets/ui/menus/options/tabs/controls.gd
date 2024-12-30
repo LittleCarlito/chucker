@@ -1,6 +1,9 @@
 extends OptionTab
 class_name ControlsTab
 
+# TODO OOOOO
+# TODO Now that this is in the same viewport ControlSelectMenu is moved into this scene
+
 signal value_selected(selected_item: String)
 
 const _UNBOUND_INPUT_LOG: String = "\"%s\" is not bound to an input"
