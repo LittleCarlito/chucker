@@ -1,12 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://cd24psljjeu82"]
+[gd_scene load_steps=7 format=3 uid="uid://cd24psljjeu82"]
 
 [ext_resource type="Script" path="res://assets/ui/menus/options/tabs/option_tab_container.gd" id="1_5vc7y"]
 [ext_resource type="Theme" uid="uid://df6ukhlv3h184" path="res://assets/ui/menus/options/OptionsMenu_theme.tres" id="2_4c7qd"]
 [ext_resource type="PackedScene" uid="uid://buvmjg7acd3wt" path="res://assets/ui/menus/options/tabs/general.tscn" id="3_xijr6"]
 [ext_resource type="PackedScene" uid="uid://brvlr5sg1shae" path="res://assets/ui/menus/options/tabs/controls.tscn" id="4_ye8ri"]
 [ext_resource type="PackedScene" uid="uid://m14crubabs1v" path="res://assets/ui/menus/options/tabs/graphics.tscn" id="5_mqj3g"]
+[ext_resource type="PackedScene" uid="uid://7f5ci1vw7b4k" path="res://assets/ui/menus/options/tabs/scrollbar_container.tscn" id="6_uaq1f"]
 
-[node name="OptionTabContainer" type="Control" node_paths=PackedStringArray("option_tabs", "general", "controls", "graphics", "viewport_columns", "tab_viewport_container", "tab_viewport")]
+[node name="OptionTabContainer" type="Control" node_paths=PackedStringArray("option_tabs", "general", "controls", "graphics", "viewport_columns", "tab_viewport_container", "tab_viewport", "scrollbar_container")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,6 +22,7 @@ graphics = NodePath("VBoxContainer/ViewportColumns/TabViewportContainer/TabViewp
 viewport_columns = NodePath("VBoxContainer/ViewportColumns")
 tab_viewport_container = NodePath("VBoxContainer/ViewportColumns/TabViewportContainer")
 tab_viewport = NodePath("VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport")
+scrollbar_container = NodePath("VBoxContainer/ViewportColumns/ScrollbarContainer")
 process_delay_frame_count = 60
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
@@ -52,12 +54,12 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-size_flags_stretch_ratio = 15.0
+size_flags_stretch_ratio = 20.0
 stretch = true
 
 [node name="TabViewport" type="SubViewport" parent="VBoxContainer/ViewportColumns/TabViewportContainer"]
 handle_input_locally = false
-size = Vector2i(1152, 617)
+size = Vector2i(1148, 617)
 render_target_update_mode = 4
 
 [node name="General" parent="VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport" instance=ExtResource("3_xijr6")]
@@ -67,6 +69,9 @@ visible = false
 
 [node name="Graphics" parent="VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport" instance=ExtResource("5_mqj3g")]
 visible = false
+
+[node name="ScrollbarContainer" parent="VBoxContainer/ViewportColumns" instance=ExtResource("6_uaq1f")]
+layout_mode = 2
 
 [connection signal="tab_changed" from="VBoxContainer/OptionTabs" to="." method="_handle_tab_change"]
 [connection signal="value_updated" from="VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport/General" to="." method="_handle_value_selected"]

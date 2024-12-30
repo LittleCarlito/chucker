@@ -17,6 +17,7 @@ enum TAB {
 @export var viewport_columns: HBoxContainer
 @export var tab_viewport_container: SubViewportContainer
 @export var tab_viewport: SubViewport
+@export var scrollbar_container: ScrollbarContainer
 
 var tab_array: Array[OptionTab]
 @export var process_delay_frame_count: int
@@ -49,9 +50,7 @@ func _process(delta: float) -> void:
 		frame_count = min(process_delay_frame_count, frame_count)
 		if frame_count % process_delay_frame_count == 0:
 			frame_count = 0
-			var clipping_results: Array[bool] = _detect_clipping_tab()
-			if clipping_results.find(true):
-				_handle_clipping_tabs(clipping_results)
+			_handle_clipping_tabs()
 
 ## Resets existing variables and sets requested tab if given
 func _reset_variables(tab_name: OptionTabContainer.TAB = OptionTabContainer.TAB.UNKNOWN) -> void:
@@ -102,17 +101,28 @@ func reload_ui() -> void:
 	for existing_tab in tab_array:
 		existing_tab.initialize_ui()
 
-# TODO OOOOO
-# TRY TO FIGURE OUT WHEN CHILD IS CLIPPING PARENT
-#		Fix is to start with clipping children off
-#			Detect when child gets bigger than parent
-#				Turn on clipping to hide what overlaps
-#				Create scrollbar for that tab
-#				Darken background for that tab
-#		Once child can fit inside parent without clipping
-#			Turn clipping off
-#			Remove scrollbar
-#			Remove darkening from background
+
+
+## TODO Creates scrollbars and darkens background of scrollable tabs
+func _handle_clipping_tabs() -> void:
+	# TODO Iterate through each clipping result
+	#		If true
+	#			Check if it has a scrollbar
+	#				If not create one within the ViewportColumns
+	#					Ensure it is only visible for that tab
+	#						Ensure its scroll progress/setting is persistent when switching off tab
+	#			Alert the tab its scrollable or set tinting for the tab so its darker
+	var clipping_results: Array[bool] = _detect_clipping_tab()
+	for i in range(clipping_results.size()):
+		if clipping_results[i]:
+			Logger.debug("Tab index %d is clipping", [i], self)
+			if !scrollbar_container.has_scrollbar_for(i):
+				var new_scrollbar: VScrollBar = VScrollBar.new()
+				scrollbar_container.add_scrollbar(i, new_scrollbar)
+				# TODO OOOOO
+				# TODO conver tfrom tab index to Control node to call enable_scroll_mode on
+				# TODO Then need to add logic for when tab is no longer clipping and needs scrollbar/tinting removed
+
 ## Detects if any of the tabs are clipping the viewport
 ## Returns an array of the results, result index corresponding to tab index
 func _detect_clipping_tab() -> Array[bool]:
@@ -123,16 +133,3 @@ func _detect_clipping_tab() -> Array[bool]:
 		var tab_index: int = tab_array.find(existing_tab)
 		clipping_results.append(tab_height > viewport_height)
 	return clipping_results
-
-## TODO Creates scrollbars and darkens background of scrollable tabs
-func _handle_clipping_tabs(clipping_results: Array[bool]) -> void:
-	# TODO Iterate through each clipping result
-	#		If true
-	#			Check if it has a scrollbar
-	#				If not create one within the ViewportColumns
-	#					Ensure it is only visible for that tab
-	#						Ensure its scroll progress/setting is persistent when switching off tab
-	#			Alert the tab its scrollable or set tinting for the tab so its darker
-	for i in range(clipping_results.size()):
-		if clipping_results[i]:
-			Logger.debug("Tab index %d is clipping", [i], self)
