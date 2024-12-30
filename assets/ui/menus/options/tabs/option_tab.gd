@@ -1,9 +1,14 @@
 extends Control
 class_name OptionTab
 
+const _OPTION_TAB: String = "OptionTab"
+const _GET_HEIGHT: String = "get_height"
+
 # Abstract class; Implementers use signal
 @warning_ignore("unused_signal")
 signal value_updated(data_type: UIData.TYPE, updated_entry: Dictionary)
+
+@export var tab_name: String
 
 var font_update_list: Array[Control]
 var y_scale_update_list: Array[Control]
@@ -39,3 +44,8 @@ func handle_icon_resize(display_size: DisplaySize.SIZE) -> void:
 	for xy_rescale in xy_scale_update_list:
 		xy_rescale.scale.y = menu_item_scale
 		xy_rescale.scale.x = menu_item_scale
+
+## Returns the height of the most packed object in the tab
+## Returns 0 if not implemented (or needed)
+func get_height() -> float:
+	return 0

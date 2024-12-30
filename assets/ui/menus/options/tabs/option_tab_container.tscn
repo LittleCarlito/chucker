@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://brvlr5sg1shae" path="res://assets/ui/menus/options/tabs/controls.tscn" id="4_ye8ri"]
 [ext_resource type="PackedScene" uid="uid://m14crubabs1v" path="res://assets/ui/menus/options/tabs/graphics.tscn" id="5_mqj3g"]
 
-[node name="OptionTabs" type="Control" node_paths=PackedStringArray("option_tabs", "general", "controls", "graphics")]
+[node name="OptionTabContainer" type="Control" node_paths=PackedStringArray("option_tabs", "general", "controls", "graphics", "viewport_columns", "tab_viewport_container", "tab_viewport")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -15,9 +15,13 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_5vc7y")
 option_tabs = NodePath("VBoxContainer/OptionTabs")
-general = NodePath("VBoxContainer/SubViewportContainer/SubViewport/General")
-controls = NodePath("VBoxContainer/SubViewportContainer/SubViewport/Controls")
-graphics = NodePath("VBoxContainer/SubViewportContainer/SubViewport/Graphics")
+general = NodePath("VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport/General")
+controls = NodePath("VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport/Controls")
+graphics = NodePath("VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport/Graphics")
+viewport_columns = NodePath("VBoxContainer/ViewportColumns")
+tab_viewport_container = NodePath("VBoxContainer/ViewportColumns/TabViewportContainer")
+tab_viewport = NodePath("VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport")
+process_delay_frame_count = 60
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -40,28 +44,32 @@ tab_1/tooltip = "Controls options"
 tab_2/title = "Graphics"
 tab_2/tooltip = "Graphics options"
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="VBoxContainer"]
-clip_contents = true
+[node name="ViewportColumns" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TabViewportContainer" type="SubViewportContainer" parent="VBoxContainer/ViewportColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 15.0
 stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="VBoxContainer/SubViewportContainer"]
+[node name="TabViewport" type="SubViewport" parent="VBoxContainer/ViewportColumns/TabViewportContainer"]
 handle_input_locally = false
 size = Vector2i(1152, 617)
 render_target_update_mode = 4
 
-[node name="General" parent="VBoxContainer/SubViewportContainer/SubViewport" instance=ExtResource("3_xijr6")]
+[node name="General" parent="VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport" instance=ExtResource("3_xijr6")]
 
-[node name="Controls" parent="VBoxContainer/SubViewportContainer/SubViewport" instance=ExtResource("4_ye8ri")]
+[node name="Controls" parent="VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport" instance=ExtResource("4_ye8ri")]
 visible = false
 
-[node name="Graphics" parent="VBoxContainer/SubViewportContainer/SubViewport" instance=ExtResource("5_mqj3g")]
+[node name="Graphics" parent="VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport" instance=ExtResource("5_mqj3g")]
 visible = false
 
 [connection signal="tab_changed" from="VBoxContainer/OptionTabs" to="." method="_handle_tab_change"]
-[connection signal="value_updated" from="VBoxContainer/SubViewportContainer/SubViewport/General" to="." method="_handle_value_selected"]
-[connection signal="value_selected" from="VBoxContainer/SubViewportContainer/SubViewport/Controls" to="." method="_open_control_select_menu"]
-[connection signal="value_updated" from="VBoxContainer/SubViewportContainer/SubViewport/Controls" to="." method="_handle_value_selected"]
-[connection signal="value_updated" from="VBoxContainer/SubViewportContainer/SubViewport/Graphics" to="." method="_handle_value_selected"]
+[connection signal="value_updated" from="VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport/General" to="." method="_handle_value_selected"]
+[connection signal="value_selected" from="VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport/Controls" to="." method="_open_control_select_menu"]
+[connection signal="value_updated" from="VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport/Controls" to="." method="_handle_value_selected"]
+[connection signal="value_updated" from="VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport/Graphics" to="." method="_handle_value_selected"]

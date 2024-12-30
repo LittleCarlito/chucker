@@ -1,4 +1,5 @@
 extends OptionTab
+class_name GeneralTab
 
 # Logically used variables
 @export var fov_slider: HSlider
@@ -19,6 +20,7 @@ extends OptionTab
 @export var vertical_look_sensitivity_label: Label
 @export var horizontal_aim_sensitivity_label: Label
 @export var vertical_aim_sensitivity_label: Label
+@export var top_slider_rows: VBoxContainer
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -114,3 +116,6 @@ func _on_horizontal_look_sensitivity_slider_drag_ended(value_changed: bool) -> v
 	if value_changed:
 		var new_entry: Dictionary = {CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY: horizontal_look_sensitivity_slider.value}
 		value_updated.emit(UIData.TYPE.CAMERA, new_entry)
+
+func get_height() -> float:
+	return top_slider_rows.size.y

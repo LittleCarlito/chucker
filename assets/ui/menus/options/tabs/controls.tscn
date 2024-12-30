@@ -27,6 +27,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_wbwny")
 control_list = NodePath("ControlList")
+tab_name = "Controls"
 
 [node name="ControlsBackground" type="Panel" parent="."]
 layout_mode = 1

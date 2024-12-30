@@ -1,4 +1,5 @@
 extends OptionTab
+class_name GraphicsTab
 
 @export var motion_blur_check: CheckBox
 @export var bloom_check: CheckBox
@@ -12,6 +13,7 @@ extends OptionTab
 @export var frame_rate_label: Label
 @export var frame_rate_select: OptionButton
 @export var graphics_columns: HBoxContainer
+@export var graphics_rows: VBoxContainer
 
 @export var process_delay_frame_count: int
 var frame_count: int
@@ -69,3 +71,7 @@ func _update_contents() -> void:
 func _handle_resize_request(selected_index: int) -> void:
 	var selected_window_type: Window.Mode = display_type_select.get_item_id(selected_index) as Window.Mode
 	get_window().mode = selected_window_type
+
+func get_height() -> float:
+	return graphics_rows.size.y
+	

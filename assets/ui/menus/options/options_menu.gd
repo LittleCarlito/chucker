@@ -5,6 +5,7 @@ class_name OptionsMenu
 #		Can't get resolution high enough on one monitor on this pc; Can on laptop
 # TODO Add scrolling functionality in
 # TODO Minimum scale of scrollbars needs to be smaller
+# TODO At higher resolutions the back and save buttons need to be bigger (along with close I'm assuming)
 
 const _CATEGORY_NOT_FOUND: String = "Category \"%s\" for save setting \"%s\" could not be found. Value \"%s\" will be discarded."
 const _UNSUPPORTED_SIZE: String = "Currently only supporting update entries of size 1; Submit them one entry at a time; \"%s\""
