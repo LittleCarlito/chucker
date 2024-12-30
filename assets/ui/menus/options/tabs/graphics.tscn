@@ -1,15 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://m14crubabs1v"]
+[gd_scene load_steps=3 format=3 uid="uid://m14crubabs1v"]
 
 [ext_resource type="Theme" uid="uid://df6ukhlv3h184" path="res://assets/ui/menus/options/OptionsMenu_theme.tres" id="1_i0saw"]
 [ext_resource type="Script" path="res://assets/ui/menus/options/tabs/graphics.gd" id="1_w3ny4"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xxd0s"]
-bg_color = Color(0, 0.725223, 0.208173, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d5jjh"]
-bg_color = Color(0.0711474, 0.726915, 0, 1)
-
-[node name="Graphics" type="Control" node_paths=PackedStringArray("motion_blur_check", "bloom_check", "performance_display_check", "resolution_label", "resolution_select", "display_type_label", "display_type_select", "monitor_choice_label", "monitor_choice_select", "frame_rate_label", "frame_rate_select", "graphics_columns", "graphics_rows")]
+[node name="Graphics" type="Control" node_paths=PackedStringArray("motion_blur_check", "bloom_check", "performance_display_check", "resolution_label", "resolution_select", "display_type_label", "display_type_select", "monitor_choice_label", "monitor_choice_select", "frame_rate_label", "frame_rate_select", "graphics_columns", "graphics_rows", "tab_backgroud")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -31,6 +25,7 @@ frame_rate_select = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/Frame
 graphics_columns = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/GraphicCheckColumns")
 graphics_rows = NodePath("GraphicsColumns/GraphicsRows")
 process_delay_frame_count = 60
+tab_backgroud = NodePath("GraphicsBackground")
 tab_name = "Graphics"
 
 [node name="GraphicsBackground" type="Panel" parent="."]
@@ -55,7 +50,7 @@ theme_override_constants/separation = 0
 [node name="GraphicsLeftMargin" type="Panel" parent="GraphicsColumns"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_xxd0s")
+size_flags_vertical = 0
 
 [node name="GraphicsRows" type="VBoxContainer" parent="GraphicsColumns"]
 layout_mode = 2
@@ -178,7 +173,7 @@ text = "Performance Display"
 [node name="GraphicsRightMargin" type="Panel" parent="GraphicsColumns"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_d5jjh")
+size_flags_vertical = 0
 
 [connection signal="item_selected" from="GraphicsColumns/GraphicsRows/GraphicsOptions/DisplayTypeRows/DisplayTypeSelect" to="." method="_handle_resize_request"]
 [connection signal="toggled" from="GraphicsColumns/GraphicsRows/GraphicsOptions/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck" to="." method="_on_performance_display_check_toggled"]

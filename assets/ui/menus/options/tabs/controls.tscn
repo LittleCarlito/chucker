@@ -18,7 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://c327tgy4fm0us" path="res://resources/Sprites/ControlIcons/Shift_Keycap.png" id="15_tfden"]
 [ext_resource type="Texture2D" uid="uid://da80lnkrg7qwt" path="res://resources/Sprites/ControlIcons/F_Keycap.png" id="16_ch2s1"]
 
-[node name="Controls" type="Control" node_paths=PackedStringArray("control_list")]
+[node name="Controls" type="Control" node_paths=PackedStringArray("control_list", "tab_backgroud")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -27,6 +27,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_wbwny")
 control_list = NodePath("ControlList")
+tab_backgroud = NodePath("ControlsBackground")
 tab_name = "Controls"
 
 [node name="ControlsBackground" type="Panel" parent="."]

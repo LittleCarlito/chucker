@@ -156,7 +156,6 @@ layout_mode = 2
 
 [node name="OptionTabContainer" parent="MainContainer/ContentBox/OptionRows" instance=ExtResource("8_3pyfr")]
 layout_mode = 2
-size_flags_vertical = 3
 size_flags_stretch_ratio = 15.0
 
 [node name="BottomMargin" type="MarginContainer" parent="MainContainer/ContentBox"]

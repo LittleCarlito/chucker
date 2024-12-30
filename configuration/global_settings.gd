@@ -79,7 +79,8 @@ static var DISPLAY = DISPLAY_DEFAULTS.duplicate()
 # TODO Refactor FORCE and PATH to use existing ENUMS
 const COLOR: Dictionary = {
 	"FORCE": Color.RED,
-	"PATH": Color.BLUE
+	"PATH": Color.BLUE,
+	"SCROLL": Color(0.686, 0.608, 0.439, 0.624)
 }
 
 # General Default configs

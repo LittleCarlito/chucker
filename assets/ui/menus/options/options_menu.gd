@@ -1,6 +1,7 @@
 extends Control
 class_name OptionsMenu
 
+# BUG ControlList icons don't appear to be part of resizing logic 
 # TODO Add scrollbar creation back in
 #		Can't get resolution high enough on one monitor on this pc; Can on laptop
 # TODO Add scrolling functionality in

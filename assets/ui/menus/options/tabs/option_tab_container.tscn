@@ -14,6 +14,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 script = ExtResource("1_5vc7y")
 option_tabs = NodePath("VBoxContainer/OptionTabs")
 general = NodePath("VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport/General")
@@ -23,7 +25,7 @@ viewport_columns = NodePath("VBoxContainer/ViewportColumns")
 tab_viewport_container = NodePath("VBoxContainer/ViewportColumns/TabViewportContainer")
 tab_viewport = NodePath("VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport")
 scrollbar_container = NodePath("VBoxContainer/ViewportColumns/ScrollbarContainer")
-process_delay_frame_count = 60
+process_delay_frame_count = 10
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -49,17 +51,18 @@ tab_2/tooltip = "Graphics options"
 [node name="ViewportColumns" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 0
 
 [node name="TabViewportContainer" type="SubViewportContainer" parent="VBoxContainer/ViewportColumns"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-size_flags_stretch_ratio = 20.0
+size_flags_stretch_ratio = 70.0
 stretch = true
 
 [node name="TabViewport" type="SubViewport" parent="VBoxContainer/ViewportColumns/TabViewportContainer"]
 handle_input_locally = false
-size = Vector2i(1148, 617)
+size = Vector2i(1143, 617)
 render_target_update_mode = 4
 
 [node name="General" parent="VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport" instance=ExtResource("3_xijr6")]
@@ -72,6 +75,7 @@ visible = false
 
 [node name="ScrollbarContainer" parent="VBoxContainer/ViewportColumns" instance=ExtResource("6_uaq1f")]
 layout_mode = 2
+size_flags_stretch_ratio = 0.5
 
 [connection signal="tab_changed" from="VBoxContainer/OptionTabs" to="." method="_handle_tab_change"]
 [connection signal="value_updated" from="VBoxContainer/ViewportColumns/TabViewportContainer/TabViewport/General" to="." method="_handle_value_selected"]

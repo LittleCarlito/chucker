@@ -116,6 +116,3 @@ func _on_horizontal_look_sensitivity_slider_drag_ended(value_changed: bool) -> v
 	if value_changed:
 		var new_entry: Dictionary = {CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY: horizontal_look_sensitivity_slider.value}
 		value_updated.emit(UIData.TYPE.CAMERA, new_entry)
-
-func get_height() -> float:
-	return top_slider_rows.size.y

@@ -20,15 +20,9 @@ enum TAB {
 @export var scrollbar_container: ScrollbarContainer
 
 var tab_array: Array[OptionTab]
+var active_tab_index: int
 @export var process_delay_frame_count: int
 var frame_count: int
-
-# TODO OOOOO
-# TODO Make method comparing sizes to figure out if tab clipping viewport
-# TODO Make delay_process call to method just created to check for clipping
-# TODO Update clipping method to create scrollbar when clipping
-# TODO Determine how to add filter when scrolling is enabled for darker view
-#		Or let tab know so it changes its look accordingly
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -40,6 +34,7 @@ func _ready() -> void:
 	font_update_list = [
 		option_tabs
 	]
+	_handle_tab_change(0)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -53,10 +48,10 @@ func _process(delta: float) -> void:
 			_handle_clipping_tabs()
 
 ## Resets existing variables and sets requested tab if given
-func _reset_variables(tab_name: OptionTabContainer.TAB = OptionTabContainer.TAB.UNKNOWN) -> void:
+func _reset_variables(incoming_tab: OptionTabContainer.TAB = OptionTabContainer.TAB.UNKNOWN) -> void:
 	reload_ui()
-	if tab_name != OptionTabContainer.TAB.UNKNOWN:
-		_handle_tab_change(tab_name)
+	if incoming_tab != OptionTabContainer.TAB.UNKNOWN:
+		_handle_tab_change(incoming_tab)
 
 func _open_control_select_menu(selected_item: String) -> void:
 		value_selected.emit(selected_item)
@@ -87,6 +82,7 @@ func _handle_tab_change(tab_index: int) -> void:
 			general.visible = false
 			controls.visible = false
 			graphics.visible = false
+	active_tab_index = tab_index
 
 func _handle_resize(display_size: DisplaySize.SIZE = DisplaySize.SIZE.UNKNOWN) -> void:
 	super()
@@ -101,8 +97,6 @@ func reload_ui() -> void:
 	for existing_tab in tab_array:
 		existing_tab.initialize_ui()
 
-
-
 ## TODO Creates scrollbars and darkens background of scrollable tabs
 func _handle_clipping_tabs() -> void:
 	# TODO Iterate through each clipping result
@@ -114,22 +108,28 @@ func _handle_clipping_tabs() -> void:
 	#			Alert the tab its scrollable or set tinting for the tab so its darker
 	var clipping_results: Array[bool] = _detect_clipping_tab()
 	for i in range(clipping_results.size()):
-		if clipping_results[i]:
-			Logger.debug("Tab index %d is clipping", [i], self)
+		# TODO Add and tab is active check to this conditional
+		if clipping_results[i] and is_active_tab(i):
 			if !scrollbar_container.has_scrollbar_for(i):
 				var new_scrollbar: VScrollBar = VScrollBar.new()
-				scrollbar_container.add_scrollbar(i, new_scrollbar)
 				# TODO OOOOO
-				# TODO conver tfrom tab index to Control node to call enable_scroll_mode on
+				# TODO Scrollbar gets made but _expand doesn't appear to be working
+				scrollbar_container.add_scrollbar(i, new_scrollbar)
+				var clipping_tab: OptionTab = tab_array[i]
+				clipping_tab.clipping_mode()
 				# TODO Then need to add logic for when tab is no longer clipping and needs scrollbar/tinting removed
 
 ## Detects if any of the tabs are clipping the viewport
 ## Returns an array of the results, result index corresponding to tab index
 func _detect_clipping_tab() -> Array[bool]:
 	var clipping_results: Array[bool] = []
+	clipping_results.resize(tab_array.size())
 	var viewport_height: float = tab_viewport.size.y
 	for existing_tab in tab_array:
 		var tab_height: float = existing_tab.get_height()
 		var tab_index: int = tab_array.find(existing_tab)
-		clipping_results.append(tab_height > viewport_height)
+		clipping_results[tab_index] = (tab_height > viewport_height)
 	return clipping_results
+
+func is_active_tab(incoming_index: int) -> bool:
+	return active_tab_index == incoming_index

@@ -3,6 +3,7 @@ class_name ScrollbarContainer
 
 const _SCROLLBAR_ALREADY_EXISTS: String = "A scrollbar entry already exists for tab index \"%d\""
 const _NO_SCROLLBAR: String = "No scrollbar entry exists for tab index \"%d\""
+const _CHILD_NOT_FOUND: String = "Child node \"%s\" could not be found to be removed"
 
 @export var expanded_thickness: int
 
@@ -14,16 +15,16 @@ func _ready() -> void:
 	_check_contents()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 ## Sets minmimum x value to expanded_thickness variable
-func expand() -> void:
+func _expand() -> void:
 	set_custom_minimum_size(Vector2(expanded_thickness, 0))
 	_expanded = true
 
 ## Removes custom minmimum
-func constrict() -> void:
+func _constrict() -> void:
 	set_custom_minimum_size(Vector2(0, 0))
 	_expanded = false
 
@@ -35,6 +36,11 @@ func has_scrollbar_for(tab_index: int) -> bool:
 func add_scrollbar(tab_index: int, new_scrollbar: VScrollBar) -> void:
 	if !has_scrollbar_for(tab_index):
 		scrollbar_library[tab_index] = new_scrollbar
+		# TODO Set anchor points to fill the parent
+		# TODO Expand is setting the minimum value (but the grayness of the node doesn't appear so I'm skeptical)
+		#		new_scrollbar needs to have same logic applied to it as "full rect" does from the editor
+		new_scrollbar.set_anchors_and_offsets_preset(LayoutPreset.PRESET_FULL_RECT)
+		add_child(new_scrollbar)
 	else:
 		Logger.debug(_SCROLLBAR_ALREADY_EXISTS, [tab_index], self)
 	_check_contents()
@@ -44,7 +50,7 @@ func remove_scrollbar(tab_index: int) -> void:
 	if has_scrollbar_for(tab_index):
 		var scrollbar_entry: VScrollBar = scrollbar_library.get(tab_index) as VScrollBar
 		scrollbar_library.erase(tab_index)
-		scrollbar_entry.queue_free()
+		_remove_scrollbar_child(scrollbar_entry)
 	else:
 		Logger.debug(_NO_SCROLLBAR, [tab_index], self)
 	_check_contents()
@@ -60,6 +66,15 @@ func visible_tab(tab_index: int) -> void:
 func _check_contents() -> void:
 	var child_count: int = get_child_count()
 	if child_count > 0 and not _expanded:
-		expand()
+		_expand()
 	elif child_count == 0 and _expanded:
-		constrict()
+		_constrict()
+
+## Removes associated library entry child node from the ScrollBarContainer
+func _remove_scrollbar_child(scrollbar_entry: VScrollBar) -> void:
+	var children_nodes: Array = get_children()
+	if children_nodes.has(scrollbar_entry):
+		remove_child(scrollbar_entry)
+		scrollbar_entry.queue_free()
+	else:
+		Logger.debug(_CHILD_NOT_FOUND, [str(scrollbar_entry)], self)
