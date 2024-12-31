@@ -2,7 +2,6 @@ extends OptionTab
 class_name GraphicsTab
 
 # TODO OOOOO
-# TODO Get monitor select working
 # TODO Delay setting all the settings until save is selected
 # TODO Ensure settings are saved to saveSettings file
 # TODO Ensure settings are persisted through sessions
@@ -31,12 +30,8 @@ var dropdown_index: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	# TODO Change below to detect project setting and set box instead
-	# Set to match what is hard coded in project settings
-	ui_scaling_dropdown.select(4)
 	default_graphic_column_count = graphics_columns.get_child_count()
 	initialize_ui()
-	_set_available_displays()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -51,9 +46,11 @@ func _process(delta: float) -> void:
 
 func initialize_ui() -> void:
 	performance_display_check.button_pressed = GlobalSettings.DISPLAY.get(CONSTANTS.PERFORMANCE, GlobalSettings.DISPLAY_DEFAULTS.PERFORMANCE)
+	_set_available_displays()
+	_set_ui_scaling_value()
 
 # TODO Eventually see if this can be replaced with attached signals
-## TODO Detects changes to the gamestate and updates UI elements accordingly
+## Detects changes to the gamestate and updates UI elements accordingly
 func _update_contents() -> void:
 	# Update dropdown setting value
 	var temp_index: int = display_type_select.get_item_index(get_window().mode)
@@ -114,3 +111,18 @@ func _set_current_display() -> void:
 ## Detects what display the window is on and returns its index
 func _detect_current_display() -> int:
 	return DisplayServer.window_get_current_screen(get_window().get_window_id())
+
+## Determines what the closest setting in the dropdown is to the project default scaling is
+## Sets that value in the dropdown
+func _set_ui_scaling_value() -> void:
+	var ui_scaling: float = ProjectSettings.get_setting("display/window/stretch/scale")
+	var match_found: bool = false
+	for i in range(ui_scaling_dropdown.item_count):
+		var scale_value: float = ui_scaling_dropdown.get_item_text(i) as float
+		if scale_value == ui_scaling:
+			ui_scaling_dropdown.select(i)
+			match_found = true
+	if not match_found:
+		var new_index: int = ui_scaling_dropdown.item_count + 1
+		ui_scaling_dropdown.add_item(str(ui_scaling), new_index)
+		ui_scaling_dropdown.select(new_index)
