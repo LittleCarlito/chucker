@@ -1,9 +1,6 @@
 extends OptionTab
 class_name GraphicsTab
 
-# TODO Add UI Sclaing option for higher resolutions
-#		get_tree().root.content_scale_factor
-
 @export var motion_blur_check: CheckBox
 @export var bloom_check: CheckBox
 @export var performance_display_check: CheckBox
@@ -24,6 +21,7 @@ var dropdown_index: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	ui_scaling_dropdown.select(4)
 	default_graphic_column_count = graphics_columns.get_child_count()
 	initialize_ui()
 
@@ -55,6 +53,12 @@ func _update_contents() -> void:
 func get_height() -> float:
 	return graphics_rows.size.y
 
+## Handles changes to the UI scaling dropdown
 func _update_scaling(incoming_index: int) -> void:
 	var selected_scale: float = ui_scaling_dropdown.get_item_text(incoming_index) as float
 	get_tree().root.set_content_scale_factor(selected_scale)
+
+## Handles changes to the display type dropdown
+func _update_window_type(incoming_index: int) -> void:
+	var requested_mode: Window.Mode = display_type_select.get_item_id(incoming_index) as Window.Mode
+	get_window().set_mode(requested_mode)

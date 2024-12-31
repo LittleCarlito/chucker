@@ -1,7 +1,6 @@
 extends Control
 class_name OptionsMenu
 
-# TODO Make checkboxes larger
 # TODO Get everything back to working with TabContainer in here
 # TODO ControlSetting menu thing can be moved to control tab
 #			Where current work marker is
@@ -54,12 +53,12 @@ func _input(event: InputEvent) -> void:
 
 func _on_close_menu() -> void:
 	close_menu.emit()
-	_reset_variables(OptionTabContainer.TAB.GENERAL)
+	_reset_variables()
 	initialize_ui()
 
 func _on_back_menu() -> void:
 	back_menu.emit()
-	_reset_variables(OptionTabContainer.TAB.GENERAL)
+	_reset_variables()
 	initialize_ui()
 
 func _on_save_menu() -> void:
@@ -75,13 +74,13 @@ func _on_save_menu() -> void:
 	apply_settings.emit()
 	_reset_variables()
 
-func _reset_variables(tab_name: OptionTabContainer.TAB = OptionTabContainer.TAB.UNKNOWN) -> void:
+func _reset_variables() -> void:
 	save_settings_dictionary.clear()
 	control_settings.clear()
 	camera_settings.clear()
 	display_settings.clear()
 	if is_instance_valid(option_tab_container):
-		option_tab_container.set_current_tab(tab_name)
+		option_tab_container.set_current_tab(0)
 
 func _open_control_select_menu(selected_item: String) -> void:
 		control_select_menu.open_menu(selected_item)

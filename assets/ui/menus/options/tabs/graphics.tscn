@@ -3,7 +3,7 @@
 [ext_resource type="Theme" uid="uid://df6ukhlv3h184" path="res://assets/ui/menus/options/OptionsMenu_theme.tres" id="1_i0saw"]
 [ext_resource type="Script" path="res://assets/ui/menus/options/tabs/graphics.gd" id="1_w3ny4"]
 
-[node name="Graphics" type="Control" node_paths=PackedStringArray("motion_blur_check", "bloom_check", "performance_display_check", "display_type_label", "display_type_select", "monitor_choice_label", "monitor_choice_select", "frame_rate_label", "frame_rate_select", "graphics_columns", "graphics_rows", "ui_scaling_dropdown", "tab_backgroud")]
+[node name="Graphics" type="Control" node_paths=PackedStringArray("motion_blur_check", "bloom_check", "performance_display_check", "display_type_label", "display_type_select", "monitor_choice_label", "monitor_choice_select", "frame_rate_label", "frame_rate_select", "graphics_columns", "graphics_rows", "ui_scaling_dropdown")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -24,8 +24,6 @@ graphics_columns = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/Graphi
 graphics_rows = NodePath("GraphicsColumns/GraphicsRows")
 ui_scaling_dropdown = NodePath("GraphicsColumns/GraphicsRows/GraphicsOptions/UIScalingRows/UIScalingDropdown")
 process_delay_frame_count = 60
-tab_backgroud = NodePath("GraphicsBackground")
-tab_name = "Graphics"
 
 [node name="GraphicsBackground" type="Panel" parent="."]
 layout_mode = 1
@@ -186,6 +184,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 0
 size_flags_stretch_ratio = 1.5
 
-[connection signal="item_selected" from="GraphicsColumns/GraphicsRows/GraphicsOptions/DisplayTypeRows/DisplayTypeSelect" to="." method="_handle_resize_request"]
+[connection signal="item_selected" from="GraphicsColumns/GraphicsRows/GraphicsOptions/DisplayTypeRows/DisplayTypeSelect" to="." method="_update_window_type"]
 [connection signal="item_selected" from="GraphicsColumns/GraphicsRows/GraphicsOptions/UIScalingRows/UIScalingDropdown" to="." method="_update_scaling"]
 [connection signal="toggled" from="GraphicsColumns/GraphicsRows/GraphicsOptions/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck" to="." method="_on_performance_display_check_toggled"]
