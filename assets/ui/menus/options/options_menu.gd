@@ -32,16 +32,17 @@ var display_size: DisplaySize.SIZE
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	initialize_ui()
 	tab_array = [
 		general_tab,
 		controls_tab,
 		graphics_tab
 	]
+	initialize_ui()
 
 func initialize_ui() -> void:
 	control_select_menu.visible = false
 	load_settings.emit()
+	reload_ui()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:

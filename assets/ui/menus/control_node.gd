@@ -65,7 +65,6 @@ func _close_menu() -> void:
 # Handling of save setting signals from sub menus
 func _on_pause_menu_save_settings(save_settings: Dictionary) -> void:
 	save_to_settings(save_settings)
-	load_settings()
 
 # Deletes existing setting save file and saves recieved dictionary to new file
 func save_to_settings(save_settings: Dictionary) -> void:
@@ -86,6 +85,8 @@ func save_to_settings(save_settings: Dictionary) -> void:
 	else:
 		Logger.error(_EMPTY_SAVE_LOG,[save_settings], self)
 
+# TODO OOOOO
+# BUG Control changes are only taking effect after quitting and loading
 # Loads from settings file or default dictionaries if no file/setting
 func load_settings() -> void:
 	var user_settings: Array[String] = GlobalSettings.CONFIGURABLE_SETTINGS
@@ -95,10 +96,6 @@ func load_settings() -> void:
 		if setting_category != CONSTANTS.Unknown:
 			if data_received.has(setting_category):
 				if setting_category == CONSTANTS.Controls:
-					# TODO There is no way this is the best way to load in each setting
-					#		The get is being done for each setting regardless of if it is there or not
-					#		Should really be the other way; With the data_recieved being cycled and applied
-					#			Then everything that wasn't there loads the default
 					var recieved_category: Dictionary = data_received.get(setting_category)
 					if recieved_category.has(user_setting):
 						var setting_value = recieved_category.get(user_setting)
