@@ -100,11 +100,9 @@ text = "Monitor Select"
 [node name="MonitorChoiceSelect" type="OptionButton" parent="GraphicsColumns/GraphicsRows/GraphicsOptions/MonitorChoiceRows"]
 layout_mode = 2
 selected = 0
-item_count = 2
-popup/item_0/text = "Only enable if fullscreen"
-popup/item_0/id = 1
-popup/item_1/text = "Need to figure out how to detect monitors"
-popup/item_1/id = 2
+fit_to_longest_item = false
+item_count = 1
+popup/item_0/text = "Placeholder"
 
 [node name="FrameRateRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows/GraphicsOptions"]
 layout_mode = 2
@@ -185,6 +183,7 @@ size_flags_vertical = 0
 size_flags_stretch_ratio = 1.5
 
 [connection signal="item_selected" from="GraphicsColumns/GraphicsRows/GraphicsOptions/DisplayTypeRows/DisplayTypeSelect" to="." method="_update_window_type"]
+[connection signal="item_selected" from="GraphicsColumns/GraphicsRows/GraphicsOptions/MonitorChoiceRows/MonitorChoiceSelect" to="." method="_move_window"]
 [connection signal="item_selected" from="GraphicsColumns/GraphicsRows/GraphicsOptions/FrameRateRows/FrameRateSelect" to="." method="_update_fps_lock"]
 [connection signal="item_selected" from="GraphicsColumns/GraphicsRows/GraphicsOptions/UIScalingRows/UIScalingDropdown" to="." method="_update_scaling"]
 [connection signal="toggled" from="GraphicsColumns/GraphicsRows/GraphicsOptions/GraphicCheckColumns/DataCheckRows/PerformanceDisplayCheck" to="." method="_on_performance_display_check_toggled"]

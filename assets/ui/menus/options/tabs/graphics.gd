@@ -6,6 +6,10 @@ class_name GraphicsTab
 # TODO Delay setting all the settings until save is selected
 # TODO Ensure settings are saved to saveSettings file
 # TODO Ensure settings are persisted through sessions
+# TODO Have dropdowns update when things like window size are changed BUT if the user sets the value in the dropdown it shoudlnt' be overriden
+#		User should be allowed to keep their set setting and save it while expanding and shrinking window
+
+const _DISPLAY_NUMBER: String = "Display %d"
 
 @export var motion_blur_check: CheckBox
 @export var bloom_check: CheckBox
@@ -27,9 +31,12 @@ var dropdown_index: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	# TODO Change below to detect project setting and set box instead
+	# Set to match what is hard coded in project settings
 	ui_scaling_dropdown.select(4)
 	default_graphic_column_count = graphics_columns.get_child_count()
 	initialize_ui()
+	_set_available_displays()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -45,12 +52,16 @@ func _process(delta: float) -> void:
 func initialize_ui() -> void:
 	performance_display_check.button_pressed = GlobalSettings.DISPLAY.get(CONSTANTS.PERFORMANCE, GlobalSettings.DISPLAY_DEFAULTS.PERFORMANCE)
 
+# TODO Eventually see if this can be replaced with attached signals
+## TODO Detects changes to the gamestate and updates UI elements accordingly
 func _update_contents() -> void:
 	# Update dropdown setting value
 	var temp_index: int = display_type_select.get_item_index(get_window().mode)
 	if temp_index != dropdown_index:
 		dropdown_index = temp_index
 		display_type_select.select(dropdown_index)
+	_set_available_displays()
+	_set_current_display()
 
 func get_height() -> float:
 	return graphics_rows.size.y
@@ -79,7 +90,27 @@ func _update_fps_lock(incoming_index: int) -> void:
 		frame_lock = selected_value as int
 	Engine.set_max_fps(frame_lock)
 
-## TODO Handles changes to the selected monitor dropdown and moves game window
-func _update_selected_monitor(incoming_index: int) -> void:
-	# TODO Implement
-	pass
+## Handles changes to the selected monitor dropdown and moves game window
+func _move_window(display_id: int) -> void:
+	var current_window: Window = get_window()
+	var previous_mode: Window.Mode = current_window.mode
+	current_window.set_mode(Window.MODE_WINDOWED)
+	DisplayServer.window_set_current_screen(display_id, current_window.get_window_id())
+	current_window.set_mode(previous_mode)
+
+## Detects available displays and sets them as values in selection dropdown
+func _set_available_displays() -> void:
+	monitor_choice_select.clear()
+	var display_count: int = DisplayServer.get_screen_count()
+	for i in display_count:
+		var item_label: String = _DISPLAY_NUMBER % (i + 1)
+		monitor_choice_select.add_item(item_label, i)
+
+## Detects what display the window is on and sets it in the dropdown list
+func _set_current_display() -> void:
+	var current_index: int = _detect_current_display()
+	monitor_choice_select.select(current_index)
+
+## Detects what display the window is on and returns its index
+func _detect_current_display() -> int:
+	return DisplayServer.window_get_current_screen(get_window().get_window_id())
