@@ -1,10 +1,10 @@
 extends Control
 class_name OptionsMenu
 
-# TODO Get everything back to working with TabContainer in here
-# TODO ControlSetting menu thing can be moved to control tab
-#			Where current work marker is
-# TODO Should probably start with general cleanup/setup here	
+# TODO OOOOO
+# BUG When leaving menu tab should reset to General
+# TODO Get all the tab settings working again
+# TODO Start by fixing general; The control senstivitiy stuff isn't working
 
 const _CATEGORY_NOT_FOUND: String = "Category \"%s\" for save setting \"%s\" could not be found. Value \"%s\" will be discarded."
 const _UNSUPPORTED_SIZE: String = "Currently only supporting update entries of size 1; Submit them one entry at a time; \"%s\""
@@ -53,8 +53,8 @@ func _input(event: InputEvent) -> void:
 		_on_back_menu()
 
 func _on_close_menu() -> void:
-	close_menu.emit()
 	_reset_variables()
+	close_menu.emit()
 	initialize_ui()
 
 func _on_back_menu() -> void:
@@ -80,8 +80,7 @@ func _reset_variables() -> void:
 	control_settings.clear()
 	camera_settings.clear()
 	display_settings.clear()
-	if is_instance_valid(option_tab_container):
-		option_tab_container.set_current_tab(0)
+	option_tab_container.set_current_tab(0)
 
 func _open_control_select_menu(selected_item: String) -> void:
 		control_select_menu.open_menu(selected_item)
