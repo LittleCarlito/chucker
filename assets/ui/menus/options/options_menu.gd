@@ -1,11 +1,6 @@
 extends Control
 class_name OptionsMenu
 
-# TODO OOOOO
-# BUG When leaving menu tab should reset to General
-# TODO Get all the tab settings working again
-# TODO Start by fixing general; The control senstivitiy stuff isn't working
-
 const _CATEGORY_NOT_FOUND: String = "Category \"%s\" for save setting \"%s\" could not be found. Value \"%s\" will be discarded."
 const _UNSUPPORTED_SIZE: String = "Currently only supporting update entries of size 1; Submit them one entry at a time; \"%s\""
 

@@ -9,6 +9,7 @@ const DECREASE: String = "decrease"
 const SUCCESSFUL: String = "Successful"
 const FAILURE: String = "Failure"
 const FONT_SIZE: String = "font_size"
+const UNLIMITED: String = "Unlimited"
 # TODO Refactor these out to Logger or a Log Constants file
 const KEEPING_CAMERA: String = "Not transferring camera"
 const NULL_PARAMETER_STRING: String = "Null parameter given"

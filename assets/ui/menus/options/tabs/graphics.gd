@@ -1,6 +1,12 @@
 extends OptionTab
 class_name GraphicsTab
 
+# TODO OOOOO
+# TODO Get monitor select working
+# TODO Delay setting all the settings until save is selected
+# TODO Ensure settings are saved to saveSettings file
+# TODO Ensure settings are persisted through sessions
+
 @export var motion_blur_check: CheckBox
 @export var bloom_check: CheckBox
 @export var performance_display_check: CheckBox
@@ -39,10 +45,6 @@ func _process(delta: float) -> void:
 func initialize_ui() -> void:
 	performance_display_check.button_pressed = GlobalSettings.DISPLAY.get(CONSTANTS.PERFORMANCE, GlobalSettings.DISPLAY_DEFAULTS.PERFORMANCE)
 
-func _on_performance_display_check_toggled(toggled_on: bool) -> void:
-	var new_entry: Dictionary = {CONSTANTS.PERFORMANCE: toggled_on}
-	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
-
 func _update_contents() -> void:
 	# Update dropdown setting value
 	var temp_index: int = display_type_select.get_item_index(get_window().mode)
@@ -53,6 +55,10 @@ func _update_contents() -> void:
 func get_height() -> float:
 	return graphics_rows.size.y
 
+func _on_performance_display_check_toggled(toggled_on: bool) -> void:
+	var new_entry: Dictionary = {CONSTANTS.PERFORMANCE: toggled_on}
+	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
+
 ## Handles changes to the UI scaling dropdown
 func _update_scaling(incoming_index: int) -> void:
 	var selected_scale: float = ui_scaling_dropdown.get_item_text(incoming_index) as float
@@ -62,3 +68,18 @@ func _update_scaling(incoming_index: int) -> void:
 func _update_window_type(incoming_index: int) -> void:
 	var requested_mode: Window.Mode = display_type_select.get_item_id(incoming_index) as Window.Mode
 	get_window().set_mode(requested_mode)
+
+## Handles changes to the FPS lock dropdown
+func _update_fps_lock(incoming_index: int) -> void:
+	var frame_lock: int
+	var selected_value: String = frame_rate_select.get_item_text(incoming_index)
+	if selected_value == CONSTANTS.UNLIMITED:
+		frame_lock = 0
+	else:
+		frame_lock = selected_value as int
+	Engine.set_max_fps(frame_lock)
+
+## TODO Handles changes to the selected monitor dropdown and moves game window
+func _update_selected_monitor(incoming_index: int) -> void:
+	# TODO Implement
+	pass
