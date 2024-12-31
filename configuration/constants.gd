@@ -185,6 +185,10 @@ const MIN_VERTICAL_ROTATION: String = "MIN_VERTICAL_ROTATION"
 
 const Display: String = "Display"
 const PERFORMANCE: String = "PERFORMANCE"
+const UI_SCALE: String = "UI_Scale"
+const WINDOW_MODE: String = "Window_Mode"
+const FPS_LOCK: String = "FPS_Lock"
+const SET_DISPLAY: String = "Set_Display"
 
 const Unknown: String = "Unknown"
 

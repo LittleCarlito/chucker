@@ -23,7 +23,6 @@ signal load_settings
 signal apply_settings
 
 var tab_array: Array[OptionTab]
-var display_size: DisplaySize.SIZE
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

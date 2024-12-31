@@ -1,10 +1,6 @@
 extends OptionTab
 class_name ControlsTab
 
-# TODO OOOOO
-# TODO ConstrolSelectMenu is going to stay in OptionsMenu
-#			For display/cancelling input purposes
-
 signal value_selected(selected_item: String)
 
 const _UNBOUND_INPUT_LOG: String = "\"%s\" is not bound to an input"

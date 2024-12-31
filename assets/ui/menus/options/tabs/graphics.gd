@@ -2,7 +2,13 @@ extends OptionTab
 class_name GraphicsTab
 
 # TODO OOOOO
-# TODO Delay setting all the settings until save is selected
+# TODO Values are saving just need to get them loading now
+# TODO Delayed process changes should still result in signals
+# TODO Save button shouldn't take you back to general tab
+# TODO Make an Apply button for Graphics settings
+#		Delay setting all the settings until Apply is selected
+# TODO Load current Graphics values in and set them before visible so there isn't a delay
+# TODO Make sure non-saved changes are reset when menu closes
 # TODO Ensure settings are saved to saveSettings file
 # TODO Ensure settings are persisted through sessions
 # TODO Have dropdowns update when things like window size are changed BUT if the user sets the value in the dropdown it shoudlnt' be overriden
@@ -44,12 +50,15 @@ func _process(delta: float) -> void:
 			_update_contents()
 			frame_count = 0
 
+# TODO New values you are persisting need to be loaded in here for viewing
+# TODO You need to be sure they are being saved to file
+#			If a category doesn't exist you will have to create one
+# TODO Make sure they are being loaded in to GlobalSettings at startup and on save
 func initialize_ui(_ready_loadup: bool = false) -> void:
 	performance_display_check.button_pressed = GlobalSettings.DISPLAY.get(CONSTANTS.PERFORMANCE, GlobalSettings.DISPLAY_DEFAULTS.PERFORMANCE)
 	_set_available_displays()
 	_set_ui_scaling_value(_ready_loadup)
 
-# TODO Eventually see if this can be replaced with attached signals
 ## Detects changes to the gamestate and updates UI elements accordingly
 func _update_contents() -> void:
 	# Update dropdown setting value
@@ -57,6 +66,8 @@ func _update_contents() -> void:
 	if temp_index != dropdown_index:
 		dropdown_index = temp_index
 		display_type_select.select(dropdown_index)
+		var new_entry: Dictionary = {CONSTANTS.WINDOW_MODE: dropdown_index}
+		value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
 	_set_available_displays()
 	_set_current_display()
 
@@ -70,11 +81,17 @@ func _on_performance_display_check_toggled(toggled_on: bool) -> void:
 ## Handles changes to the UI scaling dropdown
 func _update_scaling(incoming_index: int) -> void:
 	var selected_scale: float = ui_scaling_dropdown.get_item_text(incoming_index) as float
+	var new_entry: Dictionary = {CONSTANTS.UI_SCALE: selected_scale}
+	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
+	# TODO Eventually save this for Apply
 	get_tree().root.set_content_scale_factor(selected_scale)
 
 ## Handles changes to the display type dropdown
 func _update_window_type(incoming_index: int) -> void:
 	var requested_mode: Window.Mode = display_type_select.get_item_id(incoming_index) as Window.Mode
+	var new_entry: Dictionary = {CONSTANTS.WINDOW_MODE: incoming_index}
+	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
+	# TODO Eventually save this for Apply
 	get_window().set_mode(requested_mode)
 
 ## Handles changes to the FPS lock dropdown
@@ -85,12 +102,19 @@ func _update_fps_lock(incoming_index: int) -> void:
 		frame_lock = 0
 	else:
 		frame_lock = selected_value as int
+	var new_entry: Dictionary = {CONSTANTS.FPS_LOCK: frame_lock}
+	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
+	# TODO Eventually save this for Apply
 	Engine.set_max_fps(frame_lock)
 
 ## Handles changes to the selected monitor dropdown and moves game window
 func _move_window(display_id: int) -> void:
 	var current_window: Window = get_window()
 	var previous_mode: Window.Mode = current_window.mode
+	var display_name: String = monitor_choice_select.get_item_text(display_id)
+	var new_entry: Dictionary = {CONSTANTS.SET_DISPLAY: display_name}
+	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
+	# TODO Eventually save this for Apply
 	current_window.set_mode(Window.MODE_WINDOWED)
 	DisplayServer.window_set_current_screen(display_id, current_window.get_window_id())
 	current_window.set_mode(previous_mode)
@@ -106,6 +130,9 @@ func _set_available_displays() -> void:
 ## Detects what display the window is on and sets it in the dropdown list
 func _set_current_display() -> void:
 	var current_index: int = _detect_current_display()
+	var display_name: String = monitor_choice_select.get_item_text(current_index)
+	var new_entry: Dictionary = {CONSTANTS.SET_DISPLAY: display_name}
+	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
 	monitor_choice_select.select(current_index)
 
 ## Detects what display the window is on and returns its index
