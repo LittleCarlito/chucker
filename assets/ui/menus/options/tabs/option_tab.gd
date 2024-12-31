@@ -30,6 +30,10 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	pass
 
+## Reloads UI variables from global values
+func initialize_ui() -> void:
+	pass
+
 ## Resize UI objects
 func _handle_resize(display_size: DisplaySize.SIZE = DisplaySize.SIZE.UNKNOWN) -> void:
 	var window_size: DisplaySize.SIZE

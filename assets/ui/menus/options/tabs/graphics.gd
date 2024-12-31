@@ -1,11 +1,12 @@
 extends OptionTab
 class_name GraphicsTab
 
+# TODO Add UI Sclaing option for higher resolutions
+#		get_tree().root.content_scale_factor
+
 @export var motion_blur_check: CheckBox
 @export var bloom_check: CheckBox
 @export var performance_display_check: CheckBox
-@export var resolution_label: Label
-@export var resolution_select: OptionButton
 @export var display_type_label: Label
 @export var display_type_select: OptionButton
 @export var monitor_choice_label: Label
@@ -14,6 +15,7 @@ class_name GraphicsTab
 @export var frame_rate_select: OptionButton
 @export var graphics_columns: HBoxContainer
 @export var graphics_rows: VBoxContainer
+@export var ui_scaling_dropdown: OptionButton
 
 @export var process_delay_frame_count: int
 var frame_count: int
@@ -22,11 +24,6 @@ var dropdown_index: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	# TODO Get resolution game is being rendered at and set it in the dropdown
-	var initial_render_width: int = ProjectSettings.get_setting("display/window/size/viewport_width")
-	var initial_render_height: int = ProjectSettings.get_setting("display/window/size/viewport_height")
-	var render_string: String = "%d x %d" % [initial_render_width, initial_render_height]
-	Logger.debug(render_string, [], self)
 	default_graphic_column_count = graphics_columns.get_child_count()
 	initialize_ui()
 
@@ -49,10 +46,6 @@ func _on_performance_display_check_toggled(toggled_on: bool) -> void:
 	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
 
 func _update_contents() -> void:
-	var window_width: int = get_window().size.x
-	var window_height: int = get_window().size.y
-	var runtime_string: String = "%d x %d" % [window_width, window_height]
-	Logger.debug(runtime_string, [], self)
 	# Update dropdown setting value
 	var temp_index: int = display_type_select.get_item_index(get_window().mode)
 	if temp_index != dropdown_index:
@@ -62,5 +55,6 @@ func _update_contents() -> void:
 func get_height() -> float:
 	return graphics_rows.size.y
 
-func _set_resolution() -> void:
-	pass
+func _update_scaling(incoming_index: int) -> void:
+	var selected_scale: float = ui_scaling_dropdown.get_item_text(incoming_index) as float
+	get_tree().root.set_content_scale_factor(selected_scale)

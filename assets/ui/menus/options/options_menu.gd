@@ -12,6 +12,9 @@ const _UNSUPPORTED_SIZE: String = "Currently only supporting update entries of s
 
 @export var control_select_menu: ControlSelectMenu
 @export var option_tab_container: TabContainer
+@export var general_tab: GeneralTab
+@export var controls_tab: ControlsTab
+@export var graphics_tab: GraphicsTab
 
 enum SETTING_TABS {GENERAL, CONTROLS, GRAPHICS}
 var camera_settings: Dictionary
@@ -25,17 +28,21 @@ signal save_settings(updated_settings)
 signal load_settings
 signal apply_settings
 
+var tab_array: Array[OptionTab]
 var display_size: DisplaySize.SIZE
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	get_tree().get_root().size_changed.connect(_handle_resize)
 	initialize_ui()
+	tab_array = [
+		general_tab,
+		controls_tab,
+		graphics_tab
+	]
 
 func initialize_ui() -> void:
 	control_select_menu.visible = false
 	load_settings.emit()
-	_handle_resize()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -56,7 +63,7 @@ func _on_back_menu() -> void:
 	initialize_ui()
 
 func _on_save_menu() -> void:
-	option_tab_container._save_controls()
+	controls_tab._save_controls()
 	if not control_settings.is_empty():
 		save_settings_dictionary[CONSTANTS.Controls] = control_settings
 	if not camera_settings.is_empty():
@@ -73,7 +80,8 @@ func _reset_variables(tab_name: OptionTabContainer.TAB = OptionTabContainer.TAB.
 	control_settings.clear()
 	camera_settings.clear()
 	display_settings.clear()
-	option_tab_container._reset_variables(tab_name)
+	if is_instance_valid(option_tab_container):
+		option_tab_container.set_current_tab(tab_name)
 
 func _open_control_select_menu(selected_item: String) -> void:
 		control_select_menu.open_menu(selected_item)
@@ -81,19 +89,6 @@ func _open_control_select_menu(selected_item: String) -> void:
 
 func _control_select_closed() -> void:
 	process_mode = Node.PROCESS_MODE_WHEN_PAUSED
-
-## Sets ControlList item to desired control value
-func _control_select_set(control_to_update: String, selected_input: ControlSetting) -> void:
-	option_tab_container._control_select_set(control_to_update, selected_input)
-
-## Updates font in menu according to window size
-func _handle_resize() -> void:
-	# Check if display size changed
-	var temp_display_size: DisplaySize.SIZE = DisplaySize.determine_display_size(get_viewport().get_visible_rect().size)
-	# If changed update menu items
-	if temp_display_size != display_size:
-		display_size = temp_display_size
-		option_tab_container._handle_resize(display_size)
 
 ## Handles update signals from menu components
 func _handle_update_signal(update_type: UIData.TYPE, update_entry: Dictionary) -> void:
@@ -113,4 +108,5 @@ func _handle_update_signal(update_type: UIData.TYPE, update_entry: Dictionary) -
 		Logger.warn(_UNSUPPORTED_SIZE, [str(update_entry)], self)
 
 func reload_ui() -> void:
-	option_tab_container.reload_ui()
+	for existing_tab in tab_array:
+		existing_tab.initialize_ui()

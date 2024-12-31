@@ -34,7 +34,7 @@ func _on_close_menu() -> void:
 	close_menu.emit()
 "
 
-[node name="OptionsMenu" type="Control" node_paths=PackedStringArray("control_select_menu", "option_tab_container")]
+[node name="OptionsMenu" type="Control" node_paths=PackedStringArray("control_select_menu", "general_tab", "controls_tab", "graphics_tab")]
 process_mode = 2
 layout_mode = 3
 anchors_preset = 15
@@ -44,7 +44,9 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_6pi5a")
 control_select_menu = NodePath("ControlSelectMenu")
-option_tab_container = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer")
+general_tab = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/General")
+controls_tab = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Controls")
+graphics_tab = NodePath("MainContainer/ContentBox/OptionRows/OptionTabContainer/Graphics")
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1
