@@ -109,3 +109,7 @@ func _handle_update_signal(update_type: UIData.TYPE, update_entry: Dictionary) -
 func reload_ui() -> void:
 	for existing_tab in tab_array:
 		existing_tab.initialize_ui()
+
+## Passes selectected controls from ControlSelectMenu to Controls tab
+func _handle_control_selected(control_to_update: Variant, selected_input: Variant) -> void:
+	controls_tab._control_select_set(control_to_update, selected_input)

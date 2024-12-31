@@ -2,7 +2,8 @@ extends OptionTab
 class_name ControlsTab
 
 # TODO OOOOO
-# TODO Now that this is in the same viewport ControlSelectMenu is moved into this scene
+# TODO ConstrolSelectMenu is going to stay in OptionsMenu
+#			For display/cancelling input purposes
 
 signal value_selected(selected_item: String)
 
@@ -37,7 +38,6 @@ func _open_control_select_menu(index: int, _click_position: Vector2, mouse_butto
 	if mouse_button_index == MOUSE_BUTTON_LEFT:
 		value_selected.emit(control_list.get_item_text(index))
 
-# TODO Connect this to signal from ControlSelectMenu
 ## Sets ControlList item to desired control value
 func _control_select_set(control_to_update: String, selected_input: ControlSetting) -> void:
 	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED

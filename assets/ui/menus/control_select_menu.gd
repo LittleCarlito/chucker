@@ -1,6 +1,8 @@
 extends Control
 class_name ControlSelectMenu
 
+# TODO Update this class
+
 const INPUT_NOT_FOUND: String = "Input \"%s\" could not be mapped to a texture"
 const INPUT_LABEL: String = "New binding for \"%s\""
 
