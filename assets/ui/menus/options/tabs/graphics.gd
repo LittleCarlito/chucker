@@ -31,7 +31,7 @@ var dropdown_index: int
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	default_graphic_column_count = graphics_columns.get_child_count()
-	initialize_ui()
+	initialize_ui(true)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -44,10 +44,10 @@ func _process(delta: float) -> void:
 			_update_contents()
 			frame_count = 0
 
-func initialize_ui() -> void:
+func initialize_ui(_ready_loadup: bool = false) -> void:
 	performance_display_check.button_pressed = GlobalSettings.DISPLAY.get(CONSTANTS.PERFORMANCE, GlobalSettings.DISPLAY_DEFAULTS.PERFORMANCE)
 	_set_available_displays()
-	_set_ui_scaling_value()
+	_set_ui_scaling_value(_ready_loadup)
 
 # TODO Eventually see if this can be replaced with attached signals
 ## Detects changes to the gamestate and updates UI elements accordingly
@@ -114,7 +114,7 @@ func _detect_current_display() -> int:
 
 ## Determines what the closest setting in the dropdown is to the project default scaling is
 ## Sets that value in the dropdown
-func _set_ui_scaling_value() -> void:
+func _set_ui_scaling_value(_ready_loadup: bool = false) -> void:
 	var ui_scaling: float = ProjectSettings.get_setting("display/window/stretch/scale")
 	var match_found: bool = false
 	for i in range(ui_scaling_dropdown.item_count):
@@ -125,4 +125,5 @@ func _set_ui_scaling_value() -> void:
 	if not match_found:
 		var new_index: int = ui_scaling_dropdown.item_count + 1
 		ui_scaling_dropdown.add_item(str(ui_scaling), new_index)
-		ui_scaling_dropdown.select(new_index)
+		if not _ready_loadup:
+			ui_scaling_dropdown.select(new_index)
