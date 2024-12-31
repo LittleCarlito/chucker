@@ -85,9 +85,7 @@ func save_to_settings(save_settings: Dictionary) -> void:
 	else:
 		Logger.error(_EMPTY_SAVE_LOG,[save_settings], self)
 
-# TODO OOOOO
-# BUG Control changes are only taking effect after quitting and loading
-# Loads from settings file or default dictionaries if no file/setting
+## Loads from settings file or default dictionaries if no file/setting
 func load_settings() -> void:
 	var user_settings: Array[String] = GlobalSettings.CONFIGURABLE_SETTINGS
 	var data_received: Dictionary = _get_settings_dictionary()
@@ -119,6 +117,7 @@ func load_settings() -> void:
 				load_default(user_setting, setting_category)
 		else:
 			Logger.error(_NO_CATEGORY_LOG, [user_setting], self)
+	reload_project_settings()
 	pause_menu.reload_ui()
 
 # Retrieves the settings file from User:// or returns an empty dictionary if an error occured
@@ -175,7 +174,7 @@ func load_default(setting_name: String, setting_category: String) -> void:
 			Logger.error(_NO_DEFAULT_LOG, [setting_name, setting_category], self)
 
 ## Reloads Project input settings using GlobalSettings
-func _update_state() -> void:
+func reload_project_settings() -> void:
 	var user_inputs: Array = GlobalSettings.CONTROLS.keys()
 	for user_input in user_inputs:
 		var bound_key: InputEvent = GlobalSettings.CONTROLS.get(user_input) as InputEvent

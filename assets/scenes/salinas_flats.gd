@@ -65,6 +65,7 @@ func _ready() -> void:
 	var hole_location: Vector3 = Vector3(0, 5, -80)
 	AssetDelivery.spawn_asset(hole_data, self, hole_location)
 	update_course_data()
+	_apply_settings()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
