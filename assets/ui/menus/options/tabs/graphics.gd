@@ -2,7 +2,7 @@ extends OptionTab
 class_name GraphicsTab
 
 # TODO OOOOO
-# TODO Values are saving just need to get them loading now
+# TODO Values are being loaded just need to have them applied
 # TODO Delayed process changes should still result in signals
 # TODO Save button shouldn't take you back to general tab
 # TODO Make an Apply button for Graphics settings
@@ -50,14 +50,27 @@ func _process(delta: float) -> void:
 			_update_contents()
 			frame_count = 0
 
-# TODO New values you are persisting need to be loaded in here for viewing
-# TODO You need to be sure they are being saved to file
-#			If a category doesn't exist you will have to create one
-# TODO Make sure they are being loaded in to GlobalSettings at startup and on save
 func initialize_ui(_ready_loadup: bool = false) -> void:
-	performance_display_check.button_pressed = GlobalSettings.DISPLAY.get(CONSTANTS.PERFORMANCE, GlobalSettings.DISPLAY_DEFAULTS.PERFORMANCE)
 	_set_available_displays()
 	_set_ui_scaling_value(_ready_loadup)
+	# Load performance display value
+	performance_display_check.button_pressed = GlobalSettings.DISPLAY.get(CONSTANTS.PERFORMANCE, GlobalSettings.DISPLAY_DEFAULTS.PERFORMANCE)
+	# Set UI scale value if available
+	var set_ui_scale: float = GlobalSettings.DISPLAY.get(CONSTANTS.UI_SCALE)
+	if set_ui_scale != null and set_ui_scale != CONSTANTS.INT16_MAX:
+		ui_scaling_dropdown.select(set_ui_scale)
+	# Set Window mode if available
+	var set_window_mode: int = GlobalSettings.DISPLAY.get(CONSTANTS.WINDOW_MODE)
+	if set_window_mode != null and set_window_mode != CONSTANTS.INT16_MAX:
+		display_type_select.select(set_window_mode)
+	# Set FPS lock if available
+	var set_fps_lock: int = GlobalSettings.DISPLAY.get(CONSTANTS.FPS_LOCK)
+	if set_fps_lock != null and set_fps_lock != CONSTANTS.INT16_MAX:
+		frame_rate_select.select(set_fps_lock)
+	# Set display if available
+	var set_display: int = GlobalSettings.DISPLAY.get(CONSTANTS.SET_DISPLAY)
+	if set_display != null and set_display != CONSTANTS.INT16_MAX:
+		monitor_choice_select.select(set_display)
 
 ## Detects changes to the gamestate and updates UI elements accordingly
 func _update_contents() -> void:
@@ -81,7 +94,7 @@ func _on_performance_display_check_toggled(toggled_on: bool) -> void:
 ## Handles changes to the UI scaling dropdown
 func _update_scaling(incoming_index: int) -> void:
 	var selected_scale: float = ui_scaling_dropdown.get_item_text(incoming_index) as float
-	var new_entry: Dictionary = {CONSTANTS.UI_SCALE: selected_scale}
+	var new_entry: Dictionary = {CONSTANTS.UI_SCALE: incoming_index}
 	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
 	# TODO Eventually save this for Apply
 	get_tree().root.set_content_scale_factor(selected_scale)
@@ -102,7 +115,7 @@ func _update_fps_lock(incoming_index: int) -> void:
 		frame_lock = 0
 	else:
 		frame_lock = selected_value as int
-	var new_entry: Dictionary = {CONSTANTS.FPS_LOCK: frame_lock}
+	var new_entry: Dictionary = {CONSTANTS.FPS_LOCK: incoming_index}
 	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
 	# TODO Eventually save this for Apply
 	Engine.set_max_fps(frame_lock)
@@ -112,7 +125,7 @@ func _move_window(display_id: int) -> void:
 	var current_window: Window = get_window()
 	var previous_mode: Window.Mode = current_window.mode
 	var display_name: String = monitor_choice_select.get_item_text(display_id)
-	var new_entry: Dictionary = {CONSTANTS.SET_DISPLAY: display_name}
+	var new_entry: Dictionary = {CONSTANTS.SET_DISPLAY: display_id}
 	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
 	# TODO Eventually save this for Apply
 	current_window.set_mode(Window.MODE_WINDOWED)
@@ -131,7 +144,7 @@ func _set_available_displays() -> void:
 func _set_current_display() -> void:
 	var current_index: int = _detect_current_display()
 	var display_name: String = monitor_choice_select.get_item_text(current_index)
-	var new_entry: Dictionary = {CONSTANTS.SET_DISPLAY: display_name}
+	var new_entry: Dictionary = {CONSTANTS.SET_DISPLAY: current_index}
 	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
 	monitor_choice_select.select(current_index)
 
