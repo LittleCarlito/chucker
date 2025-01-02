@@ -57,6 +57,7 @@ func _on_back_menu() -> void:
 	initialize_ui()
 
 func _on_save_menu() -> void:
+	display_settings = graphics_tab.applied_changes
 	controls_tab._save_controls()
 	if not control_settings.is_empty():
 		save_settings_dictionary[CONSTANTS.Controls] = control_settings
@@ -67,14 +68,14 @@ func _on_save_menu() -> void:
 	# Always emit saveSettings even if empty; Returns to defaults then
 	save_settings.emit(save_settings_dictionary)
 	apply_settings.emit()
-	_reset_variables()
+	_reset_variables(option_tab_container.current_tab)
 
-func _reset_variables() -> void:
+func _reset_variables(selected_tab: int = 0) -> void:
 	save_settings_dictionary.clear()
 	control_settings.clear()
 	camera_settings.clear()
 	display_settings.clear()
-	option_tab_container.set_current_tab(0)
+	option_tab_container.set_current_tab(selected_tab)
 
 func _open_control_select_menu(selected_item: String) -> void:
 		control_select_menu.open_menu(selected_item)

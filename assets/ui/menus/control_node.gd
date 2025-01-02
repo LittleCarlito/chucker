@@ -93,6 +93,7 @@ func load_settings() -> void:
 		var setting_category: String = GlobalSettings.extract_category(user_setting)
 		if setting_category != CONSTANTS.Unknown:
 			if data_received.has(setting_category):
+				# Controls loading handling
 				if setting_category == CONSTANTS.Controls:
 					var recieved_category: Dictionary = data_received.get(setting_category)
 					if recieved_category.has(user_setting):
@@ -102,6 +103,29 @@ func load_settings() -> void:
 						var global_category: Dictionary = GlobalSettings.get_category(setting_category)
 						global_category.erase(user_setting)
 						global_category[user_setting] = control_input
+					else:
+						load_default(user_setting, setting_category)
+				# Display loading handling
+				elif setting_category == CONSTANTS.Display:
+					var recieved_category: Dictionary = data_received.get(setting_category)
+					if recieved_category.has(user_setting):
+						var setting_value = recieved_category.get(user_setting)
+						match user_setting:
+							CONSTANTS.UI_SCALE:
+								get_tree().root.set_content_scale_factor(setting_value)
+							CONSTANTS.WINDOW_MODE:
+								get_window().set_mode(setting_value)
+							CONSTANTS.FPS_LOCK:
+								Engine.set_max_fps(setting_value)
+							CONSTANTS.SET_DISPLAY:
+								var current_window: Window = get_window()
+								var previous_mode: Window.Mode = current_window.mode
+								current_window.set_mode(Window.MODE_WINDOWED)
+								DisplayServer.window_set_current_screen(setting_value, current_window.get_window_id())
+								current_window.set_mode(previous_mode)
+							CONSTANTS.PERFORMANCE:
+								# TODO Implement some display for this
+								pass
 					else:
 						load_default(user_setting, setting_category)
 				else:

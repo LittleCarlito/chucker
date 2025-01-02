@@ -2,6 +2,7 @@ extends Node3D
 
 @onready var control_node: ControlNode = $ControlNode
 @export var item_data: AssetData
+@export var kickoff_timer: Timer
 
 # TODO Get Course objects to integrate data with Global Hole Data
 # TODO Make set controls work
@@ -64,8 +65,8 @@ func _ready() -> void:
 	var hole_data: AssetData = AssetData.create_item_data(AssetData.TYPE.HOLE)
 	var hole_location: Vector3 = Vector3(0, 5, -80)
 	AssetDelivery.spawn_asset(hole_data, self, hole_location)
-	update_course_data()
-	_apply_settings()
+	kickoff_timer.start()
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -92,3 +93,8 @@ func update_course_data() -> void:
 	# TODO Call to make all the hole numbers sequential
 	# TODO Continuation point for COURSE work
 	#GlobalHoleData._set_data_sequential()
+
+func _kickoff_data_load() -> void:
+	update_course_data()
+	control_node.load_settings()
+	_apply_settings()

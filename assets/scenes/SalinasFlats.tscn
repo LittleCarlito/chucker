@@ -19,9 +19,10 @@ size = Vector3(50, 3, 200)
 [sub_resource type="BoxShape3D" id="BoxShape3D_o6chi"]
 size = Vector3(50, 3, 200)
 
-[node name="SalinasFlats" type="Node3D" groups=["General", "Level"]]
+[node name="SalinasFlats" type="Node3D" node_paths=PackedStringArray("kickoff_timer") groups=["General", "Level"]]
 script = ExtResource("1_nouo6")
 item_data = SubResource("Resource_24efs")
+kickoff_timer = NodePath("KickoffTimer")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.719722, -0.202133, 0.664185, -0.671976, 0.0376311, 0.739617, -0.174495, -0.978635, -0.108745, 26.7919, 21.2915, -22.7111)
@@ -46,4 +47,7 @@ environment = ExtResource("5_ll0n0")
 [node name="ControlNode" parent="." instance=ExtResource("7_inl8g")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50.6695, -6.53482)
 
+[node name="KickoffTimer" type="Timer" parent="."]
+
 [connection signal="apply_settings" from="ControlNode" to="." method="_apply_settings"]
+[connection signal="timeout" from="KickoffTimer" to="." method="_kickoff_data_load"]

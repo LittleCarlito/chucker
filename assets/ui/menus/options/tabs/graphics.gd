@@ -2,6 +2,7 @@ extends OptionTab
 class_name GraphicsTab
 
 # TODO OOOOO
+# TODO 
 # TODO Values are being loaded just need to have them applied
 # TODO Delayed process changes should still result in signals
 # TODO Save button shouldn't take you back to general tab
@@ -16,7 +17,8 @@ class_name GraphicsTab
 
 const _UI_SCALE: String = "display/window/stretch/scale"
 const _DISPLAY_NUMBER: String = "Display %d"
-
+const _USER_SET_CHANGE: String = "User set change found for %s in intermediate change dictionary"
+const _DISCARDING_DETECTED: String = "Discaring detected value \"%s\""
 
 @export var motion_blur_check: CheckBox
 @export var bloom_check: CheckBox
@@ -35,6 +37,7 @@ const _DISPLAY_NUMBER: String = "Display %d"
 var frame_count: int
 var default_graphic_column_count: int
 var dropdown_index: int
+var applied_changes: Dictionary = {}
 var intermediate_changes: Dictionary = {}
 var detected_changes: Dictionary = {}
 
@@ -82,25 +85,25 @@ func _update_contents() -> void:
 	_set_available_displays()
 	_set_current_display()
 
-func get_height() -> float:
-	return graphics_rows.size.y
-
 func _on_performance_display_check_toggled(toggled_on: bool) -> void:
-	intermediate_changes[CONSTANTS.PERFORMANCE] = toggled_on
+	var apply_callable: Callable = func(): applied_changes[CONSTANTS.PERFORMANCE] = toggled_on
+	intermediate_changes[CONSTANTS.PERFORMANCE] = apply_callable
 
 ## Handles changes to the UI scaling dropdown
 func _update_scaling(incoming_index: int) -> void:
 	var selected_scale: float = ui_scaling_dropdown.get_item_text(incoming_index) as float
-	intermediate_changes[CONSTANTS.UI_SCALE] = selected_scale
-	# TODO Eventually save this for Apply
-	#get_tree().root.set_content_scale_factor(selected_scale)
+	var apply_callable: Callable = func(): 
+		get_tree().root.set_content_scale_factor(selected_scale)
+		applied_changes[CONSTANTS.UI_SCALE] = selected_scale
+	intermediate_changes[CONSTANTS.UI_SCALE] = apply_callable
 
 ## Handles changes to the display type dropdown
 func _update_window_type(incoming_index: int) -> void:
 	var requested_mode: Window.Mode = display_type_select.get_item_id(incoming_index) as Window.Mode
-	intermediate_changes[CONSTANTS.WINDOW_MODE] = requested_mode
-	# TODO Eventually save this for Apply
-	#get_window().set_mode(requested_mode)
+	var apply_callable: Callable = func():
+		get_window().set_mode(requested_mode)
+		applied_changes[CONSTANTS.WINDOW_MODE] = requested_mode
+	intermediate_changes[CONSTANTS.WINDOW_MODE] = apply_callable
 
 ## Handles changes to the FPS lock dropdown
 func _update_fps_lock(incoming_index: int) -> void:
@@ -110,20 +113,21 @@ func _update_fps_lock(incoming_index: int) -> void:
 		frame_lock = 0
 	else:
 		frame_lock = selected_value as int
-	intermediate_changes[CONSTANTS.FPS_LOCK] = frame_lock
-	# TODO Eventually save this for Apply
-	#Engine.set_max_fps(frame_lock)
+	var apply_callable: Callable = func():
+		Engine.set_max_fps(frame_lock)
+		applied_changes[CONSTANTS.FPS_LOCK] = frame_lock
+	intermediate_changes[CONSTANTS.FPS_LOCK] = apply_callable
 
 ## Handles changes to the selected monitor dropdown and moves game window
 func _move_window(display_id: int) -> void:
-	var display_name: String = monitor_choice_select.get_item_text(display_id)
-	intermediate_changes[CONSTANTS.SET_DISPLAY] = display_id
-	# TODO Eventually save this for Apply
-	#var current_window: Window = get_window()
-	#var previous_mode: Window.Mode = current_window.mode
-	#current_window.set_mode(Window.MODE_WINDOWED)
-	#DisplayServer.window_set_current_screen(display_id, current_window.get_window_id())
-	#current_window.set_mode(previous_mode)
+	var apply_callable: Callable = func():
+		var current_window: Window = get_window()
+		var previous_mode: Window.Mode = current_window.mode
+		current_window.set_mode(Window.MODE_WINDOWED)
+		DisplayServer.window_set_current_screen(display_id, current_window.get_window_id())
+		current_window.set_mode(previous_mode)
+		applied_changes[CONSTANTS.SET_DISPLAY] = display_id
+	intermediate_changes[CONSTANTS.SET_DISPLAY] = apply_callable
 
 ## Detects available displays and sets them as values in selection dropdown
 func _set_available_displays() -> void:
@@ -139,15 +143,14 @@ func _set_available_displays() -> void:
 ## Detects what display the window is on and sets it in the dropdown list
 func _set_current_display() -> void:
 	var current_index: int = _detect_current_display()
-	var display_name: String = monitor_choice_select.get_item_text(current_index)
 	var existing_set_display: int = intermediate_changes.get(CONSTANTS.SET_DISPLAY, CONSTANTS.INT16_MAX)
-	var existing_detected_display: int = detected_changes.get(CONSTANTS.SET_DISPLAY, CONSTANTS.INT16_MAX)
 	var currently_selected: int = monitor_choice_select.selected
 	# If there is no explicitly set display
 	if existing_set_display == CONSTANTS.INT16_MAX:
 		# if current set index isn't what window actually is
 		if current_index != currently_selected:
-			detected_changes[CONSTANTS.SET_DISPLAY] = current_index
+			var apply_callable: Callable = func(): applied_changes[CONSTANTS.SET_DISPLAY] = current_index
+			detected_changes[CONSTANTS.SET_DISPLAY] = apply_callable
 			monitor_choice_select.select(current_index)
 
 
@@ -190,3 +193,25 @@ func _set_ui_scaling_value(_ready_loadup: bool = false) -> void:
 		ui_scaling_dropdown.add_item(str(ui_scaling), new_index)
 		if not _ready_loadup:
 			ui_scaling_dropdown.select(new_index)
+
+## Applies intermediate and detected settings
+func _apply_settings() -> void:
+	var detected_change_keys: Array = detected_changes.keys()
+	for change_key in detected_change_keys:
+		var change_key_value = detected_changes.get(change_key)
+		if !intermediate_changes.has(change_key):
+			intermediate_changes[change_key] = change_key
+		else:
+			var formatted_string: String = _USER_SET_CHANGE + CONSTANTS.LOG_SEPARATOR + _DISCARDING_DETECTED
+			Logger.debug(formatted_string, [change_key, str(change_key_value)], self)
+	var intermediate_keys: Array = intermediate_changes.keys()
+	for intermediate_key in intermediate_keys:
+		var intermediate_change: Callable = intermediate_changes.get(intermediate_key) as Callable
+		intermediate_change.call()
+
+func reset_intermediate() -> void:
+	intermediate_changes = {}
+	detected_changes = {}
+
+func reset_applied() -> void:
+	applied_changes = {}
