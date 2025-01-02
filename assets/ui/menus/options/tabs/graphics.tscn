@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://m14crubabs1v"]
+[gd_scene load_steps=6 format=3 uid="uid://m14crubabs1v"]
 
 [ext_resource type="Theme" uid="uid://df6ukhlv3h184" path="res://assets/ui/menus/options/OptionsMenu_theme.tres" id="1_i0saw"]
 [ext_resource type="Script" path="res://assets/ui/menus/options/tabs/graphics.gd" id="1_w3ny4"]
+[ext_resource type="Texture2D" uid="uid://bn5gajat6plfo" path="res://resources/Sprites/Menu/ApplyButton.png" id="3_2ai8c"]
+[ext_resource type="Texture2D" uid="uid://drnrlhsx0gk46" path="res://resources/Sprites/Menu/ApplyButton_pressed.png" id="4_gvggt"]
+[ext_resource type="Texture2D" uid="uid://bs2ljvi7mkkto" path="res://resources/Sprites/Menu/ApplyButton_hover.png" id="5_3uym0"]
 
 [node name="Graphics" type="Control" node_paths=PackedStringArray("motion_blur_check", "bloom_check", "performance_display_check", "display_type_label", "display_type_select", "monitor_choice_label", "monitor_choice_select", "frame_rate_label", "frame_rate_select", "graphics_columns", "graphics_rows", "ui_scaling_dropdown")]
 layout_mode = 3
@@ -64,7 +67,7 @@ theme_override_constants/margin_top = 3
 [node name="GraphicsOptions" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 15.0
+size_flags_stretch_ratio = 5.0
 theme_override_constants/separation = 5
 
 [node name="DisplayTypeRows" type="VBoxContainer" parent="GraphicsColumns/GraphicsRows/GraphicsOptions"]
@@ -175,6 +178,22 @@ layout_mode = 2
 [node name="PerformanceDisplayCheck" type="CheckBox" parent="GraphicsColumns/GraphicsRows/GraphicsOptions/GraphicCheckColumns/DataCheckRows"]
 layout_mode = 2
 text = "Performance Display"
+
+[node name="ApplyButton" type="TextureButton" parent="GraphicsColumns/GraphicsRows"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+texture_normal = ExtResource("3_2ai8c")
+texture_pressed = ExtResource("4_gvggt")
+texture_hover = ExtResource("5_3uym0")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="GraphicSelectBottomMargin" type="MarginContainer" parent="GraphicsColumns/GraphicsRows"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 10.0
+theme_override_constants/margin_top = 3
 
 [node name="GraphicsRightMargin" type="Panel" parent="GraphicsColumns"]
 layout_mode = 2
