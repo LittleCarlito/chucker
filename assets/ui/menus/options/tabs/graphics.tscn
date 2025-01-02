@@ -182,7 +182,7 @@ text = "Performance Display"
 [node name="ApplyButton" type="TextureButton" parent="GraphicsColumns/GraphicsRows"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 2.0
+size_flags_stretch_ratio = 4.0
 texture_normal = ExtResource("3_2ai8c")
 texture_pressed = ExtResource("4_gvggt")
 texture_hover = ExtResource("5_3uym0")
@@ -192,7 +192,7 @@ stretch_mode = 5
 [node name="GraphicSelectBottomMargin" type="MarginContainer" parent="GraphicsColumns/GraphicsRows"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 10.0
+size_flags_stretch_ratio = 6.0
 theme_override_constants/margin_top = 3
 
 [node name="GraphicsRightMargin" type="Panel" parent="GraphicsColumns"]

@@ -14,7 +14,9 @@ class_name GraphicsTab
 # TODO Have dropdowns update when things like window size are changed BUT if the user sets the value in the dropdown it shoudlnt' be overriden
 #		User should be allowed to keep their set setting and save it while expanding and shrinking window
 
+const _UI_SCALE: String = "display/window/stretch/scale"
 const _DISPLAY_NUMBER: String = "Display %d"
+
 
 @export var motion_blur_check: CheckBox
 @export var bloom_check: CheckBox
@@ -33,6 +35,8 @@ const _DISPLAY_NUMBER: String = "Display %d"
 var frame_count: int
 var default_graphic_column_count: int
 var dropdown_index: int
+var intermediate_changes: Dictionary = {}
+var detected_changes: Dictionary = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -55,22 +59,16 @@ func initialize_ui(_ready_loadup: bool = false) -> void:
 	_set_ui_scaling_value(_ready_loadup)
 	# Load performance display value
 	performance_display_check.button_pressed = GlobalSettings.DISPLAY.get(CONSTANTS.PERFORMANCE, GlobalSettings.DISPLAY_DEFAULTS.PERFORMANCE)
-	# Set UI scale value if available
-	var set_ui_scale: float = GlobalSettings.DISPLAY.get(CONSTANTS.UI_SCALE)
-	if set_ui_scale != null and set_ui_scale != CONSTANTS.INT16_MAX:
-		ui_scaling_dropdown.select(set_ui_scale)
 	# Set Window mode if available
-	var set_window_mode: int = GlobalSettings.DISPLAY.get(CONSTANTS.WINDOW_MODE)
-	if set_window_mode != null and set_window_mode != CONSTANTS.INT16_MAX:
-		display_type_select.select(set_window_mode)
+	var set_window_mode: Window.Mode = get_window().mode
+	var mode_index: int = display_type_select.get_item_index(set_window_mode)
+	display_type_select.select(mode_index)
 	# Set FPS lock if available
-	var set_fps_lock: int = GlobalSettings.DISPLAY.get(CONSTANTS.FPS_LOCK)
-	if set_fps_lock != null and set_fps_lock != CONSTANTS.INT16_MAX:
+	var set_fps_lock: int = _get_fps_limit_index()
+	if set_fps_lock != CONSTANTS.INT16_MAX:
 		frame_rate_select.select(set_fps_lock)
 	# Set display if available
-	var set_display: int = GlobalSettings.DISPLAY.get(CONSTANTS.SET_DISPLAY)
-	if set_display != null and set_display != CONSTANTS.INT16_MAX:
-		monitor_choice_select.select(set_display)
+	monitor_choice_select.select(_detect_current_display())
 
 ## Detects changes to the gamestate and updates UI elements accordingly
 func _update_contents() -> void:
@@ -88,24 +86,21 @@ func get_height() -> float:
 	return graphics_rows.size.y
 
 func _on_performance_display_check_toggled(toggled_on: bool) -> void:
-	var new_entry: Dictionary = {CONSTANTS.PERFORMANCE: toggled_on}
-	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
+	intermediate_changes[CONSTANTS.PERFORMANCE] = toggled_on
 
 ## Handles changes to the UI scaling dropdown
 func _update_scaling(incoming_index: int) -> void:
 	var selected_scale: float = ui_scaling_dropdown.get_item_text(incoming_index) as float
-	var new_entry: Dictionary = {CONSTANTS.UI_SCALE: incoming_index}
-	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
+	intermediate_changes[CONSTANTS.UI_SCALE] = selected_scale
 	# TODO Eventually save this for Apply
-	get_tree().root.set_content_scale_factor(selected_scale)
+	#get_tree().root.set_content_scale_factor(selected_scale)
 
 ## Handles changes to the display type dropdown
 func _update_window_type(incoming_index: int) -> void:
 	var requested_mode: Window.Mode = display_type_select.get_item_id(incoming_index) as Window.Mode
-	var new_entry: Dictionary = {CONSTANTS.WINDOW_MODE: incoming_index}
-	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
+	intermediate_changes[CONSTANTS.WINDOW_MODE] = requested_mode
 	# TODO Eventually save this for Apply
-	get_window().set_mode(requested_mode)
+	#get_window().set_mode(requested_mode)
 
 ## Handles changes to the FPS lock dropdown
 func _update_fps_lock(incoming_index: int) -> void:
@@ -115,47 +110,75 @@ func _update_fps_lock(incoming_index: int) -> void:
 		frame_lock = 0
 	else:
 		frame_lock = selected_value as int
-	var new_entry: Dictionary = {CONSTANTS.FPS_LOCK: incoming_index}
-	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
+	intermediate_changes[CONSTANTS.FPS_LOCK] = frame_lock
 	# TODO Eventually save this for Apply
-	Engine.set_max_fps(frame_lock)
+	#Engine.set_max_fps(frame_lock)
 
 ## Handles changes to the selected monitor dropdown and moves game window
 func _move_window(display_id: int) -> void:
-	var current_window: Window = get_window()
-	var previous_mode: Window.Mode = current_window.mode
 	var display_name: String = monitor_choice_select.get_item_text(display_id)
-	var new_entry: Dictionary = {CONSTANTS.SET_DISPLAY: display_id}
-	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
+	intermediate_changes[CONSTANTS.SET_DISPLAY] = display_id
 	# TODO Eventually save this for Apply
-	current_window.set_mode(Window.MODE_WINDOWED)
-	DisplayServer.window_set_current_screen(display_id, current_window.get_window_id())
-	current_window.set_mode(previous_mode)
+	#var current_window: Window = get_window()
+	#var previous_mode: Window.Mode = current_window.mode
+	#current_window.set_mode(Window.MODE_WINDOWED)
+	#DisplayServer.window_set_current_screen(display_id, current_window.get_window_id())
+	#current_window.set_mode(previous_mode)
 
 ## Detects available displays and sets them as values in selection dropdown
 func _set_available_displays() -> void:
-	monitor_choice_select.clear()
 	var display_count: int = DisplayServer.get_screen_count()
-	for i in display_count:
-		var item_label: String = _DISPLAY_NUMBER % (i + 1)
-		monitor_choice_select.add_item(item_label, i)
+	var current_selection_count: int = monitor_choice_select.item_count
+	var only_placeholder: bool = monitor_choice_select.item_count == 1 and (monitor_choice_select.get_item_text(0) == CONSTANTS.PLACEHOLDER)
+	if display_count != current_selection_count or only_placeholder:
+		monitor_choice_select.clear()
+		for i in display_count:
+			var item_label: String = _DISPLAY_NUMBER % (i + 1)
+			monitor_choice_select.add_item(item_label, i)
 
 ## Detects what display the window is on and sets it in the dropdown list
 func _set_current_display() -> void:
 	var current_index: int = _detect_current_display()
 	var display_name: String = monitor_choice_select.get_item_text(current_index)
-	var new_entry: Dictionary = {CONSTANTS.SET_DISPLAY: current_index}
-	value_updated.emit(UIData.TYPE.DISPLAY, new_entry)
-	monitor_choice_select.select(current_index)
+	var existing_set_display: int = intermediate_changes.get(CONSTANTS.SET_DISPLAY, CONSTANTS.INT16_MAX)
+	var existing_detected_display: int = detected_changes.get(CONSTANTS.SET_DISPLAY, CONSTANTS.INT16_MAX)
+	var currently_selected: int = monitor_choice_select.selected
+	# If there is no explicitly set display
+	if existing_set_display == CONSTANTS.INT16_MAX:
+		# if current set index isn't what window actually is
+		if current_index != currently_selected:
+			detected_changes[CONSTANTS.SET_DISPLAY] = current_index
+			monitor_choice_select.select(current_index)
+
 
 ## Detects what display the window is on and returns its index
 func _detect_current_display() -> int:
 	return DisplayServer.window_get_current_screen(get_window().get_window_id())
 
+## Detects current FPS limit and gets associated dropdown index
+## Returns INT16_MAX if no match is found
+func _get_fps_limit_index() -> int:
+	var match_index: int = CONSTANTS.INT16_MAX
+	var max_fps: int = Engine.max_fps
+	for i in range(frame_rate_select.item_count):
+		var dropdown_string: String = frame_rate_select.get_item_text(i)
+		var dropdown_value: float
+		if dropdown_string != CONSTANTS.UNLIMITED:
+			dropdown_value = dropdown_string as float
+		else:
+			dropdown_value = 0
+		if max_fps == dropdown_value:
+			match_index = i
+			break
+	if match_index == CONSTANTS.INT16_MAX:
+		const _NO_INDEX_MATCH: String = "No %s index could be matched to value \"%s\""
+		Logger.debug(_NO_INDEX_MATCH, [CONSTANTS.FPS_LOCK, str(max_fps)], self)
+	return match_index
+
 ## Determines what the closest setting in the dropdown is to the project default scaling is
 ## Sets that value in the dropdown
 func _set_ui_scaling_value(_ready_loadup: bool = false) -> void:
-	var ui_scaling: float = ProjectSettings.get_setting("display/window/stretch/scale")
+	var ui_scaling: float = ProjectSettings.get_setting(_UI_SCALE)
 	var match_found: bool = false
 	for i in range(ui_scaling_dropdown.item_count):
 		var scale_value: float = ui_scaling_dropdown.get_item_text(i) as float

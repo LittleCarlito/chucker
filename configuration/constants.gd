@@ -1,6 +1,7 @@
 extends Node
 class_name CONSTANTS
 
+const PLACEHOLDER: String = "Placeholder"
 const BLOCKING_VALUE: String = "BLOCKING"
 const HIGHER: String = "higher"
 const LOWER: String = "lower"
