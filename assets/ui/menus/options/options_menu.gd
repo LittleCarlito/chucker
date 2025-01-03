@@ -59,16 +59,13 @@ func _on_back_menu() -> void:
 ## Handles menu save signals
 func _on_save_menu() -> void:
 	# Save to configuration files
-	ConfigFileHandler._save_to_override(graphics_tab.applied_changes)
-	ConfigFileHandler._save_to_user_settings(general_tab.applied_changes)
+	# TODO Convert Controls settings to override.cfg
+	# TODO Change the ConfigFileHandler calls to be combined to be passing in one Dictionary
+	ConfigFileHandler.save_to_override(controls_tab.applied_changes)
+	ConfigFileHandler.save_to_override(graphics_tab.applied_changes)
+	ConfigFileHandler.save_to_user_settings(general_tab.applied_changes)
 	# Alert config handlers to refresh their data
 	get_tree().call_group(CONSTANTS.CONFIG_HANDLER, CONSTANTS.RELOAD_PROJECT_SETTINGS)
-	# TODO OOOOO
-	# TODO Get General tab using applied_changes as well
-	#		Should only put a setting in applied change when save is clicked
-	#			Menu exists without saving should just drop the change
-	# TODO Change below to _save_to_override the general_tab.applied_changes dictionary
-	# TODO Change the ConfigFileHandler calls to be combined to be passing in one Dictionary
 	if not control_settings.is_empty():
 		save_settings_dictionary[CONSTANTS.Controls] = control_settings
 	if not camera_settings.is_empty():
@@ -86,6 +83,9 @@ func _reset_variables(selected_tab: int = 0) -> void:
 	camera_settings.clear()
 	display_settings.clear()
 	option_tab_container.set_current_tab(selected_tab)
+	controls_tab.full_reset()
+	general_tab.full_reset()
+	graphics_tab.full_reset()	
 
 func _open_control_select_menu(selected_item: String) -> void:
 		control_select_menu.open_menu(selected_item)

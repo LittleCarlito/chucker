@@ -121,7 +121,7 @@ func load_settings() -> void:
 								get_window().set_mode(setting_value)
 							ApplicationConfig.FPS_LOCK:
 								Engine.set_max_fps(setting_value)
-							DisplayConfig.SET_DISPLAY:
+							DisplayConfig.WINDOW_INITIAL_SCREEN:
 								var current_window: Window = get_window()
 								var previous_mode: Window.Mode = current_window.mode
 								current_window.set_mode(Window.MODE_WINDOWED)

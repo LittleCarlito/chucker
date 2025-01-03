@@ -16,43 +16,20 @@ const OVERRIDE_FILE: String = SAVE_DIR + "override.cfg"
 const USER_SETTINGS_FILE: String = SAVE_DIR + "user_settings.cfg"
 # Application configs
 const _MAX_FPS: String = "run/max_fps"
-# Debug configs
-const _DISPLAY_PERFORMANCE: String = "settings/stdout/print_fps"
-# Display configs
-const _WINDOW_MODE:String = "window/size/mode"
-const _WINDOW_SCALE: String = "window/stretch/scale"
-const _WINDOW_BORDERLESS: String = "window/size/borderless"
-const _WINDOW_INITIAL_POSITION: String = "window/size/initial_position_type" # 2 is centered on other screen; 1 is centered on Primary screen
-const _WINDOW_INITIAL_SCREEN: String = "window/size/initial_screen" # INTIIAL_POSITION MUST but 2 for this to work; Determines what screen window is on
 
 const CONFIG_LIBRARY: Dictionary = {
-	ApplicationConfig.NAME: {
-		ApplicationConfig.FPS_LOCK: _MAX_FPS
-		},
-	DebugConfig.NAME: {
-		DebugConfig.PERFORMANCE: _DISPLAY_PERFORMANCE
-		},
-	DisplayConfig.NAME: {
-		DisplayConfig.WINDOW_MODE: _WINDOW_MODE,
-		DisplayConfig.UI_SCALE: _WINDOW_SCALE,
-		DisplayConfig.WINDOW_BORDERLESS: _WINDOW_BORDERLESS,
-		DisplayConfig.WINDOW_INITIAL_POSITION: _WINDOW_INITIAL_POSITION,
-		DisplayConfig.WINDOW_INITIAL_SCREEN: _WINDOW_INITIAL_SCREEN
-	},
-	CameraConfig.NAME: {
-		CameraConfig.PLAYER_FOV: CameraConfig.PLAYER_FOV,
-		CameraConfig.INVERT_VERTICAL: CameraConfig.INVERT_VERTICAL,
-		CameraConfig.INVERT_HORIZONTAL: CameraConfig.INVERT_HORIZONTAL,
-		CameraConfig.VERTICAL_AIM_SENSITIVITY: CameraConfig.VERTICAL_AIM_SENSITIVITY,
-		CameraConfig.HORIZONTAL_AIM_SENSITIVITY: CameraConfig.HORIZONTAL_AIM_SENSITIVITY,
-		CameraConfig.VERTICAL_LOOK_SENSITIVITY: CameraConfig.VERTICAL_LOOK_SENSITIVITY,
-		CameraConfig.HORIZONTAL_LOOK_SENSITIVITY: CameraConfig.HORIZONTAL_LOOK_SENSITIVITY
+	ApplicationConfig.NAME: ApplicationConfig.CONFIG_LIBRARY,
+	DebugConfig.NAME: DebugConfig.CONFIG_LIBRARY,
+	DisplayConfig.NAME: DisplayConfig.CONFIG_LIBRARY,
+	CameraConfig.NAME: CameraConfig.CONFIG_LIBRARY,
+	InputConfig.NAME: {
+		# TODO Implement InputConfig 
 	}
 }
 
 
 ## Appends incoming settings to exsting user_settings.cfg
-static func _save_to_user_settings(incoming_settings: Dictionary) -> void:
+static func save_to_user_settings(incoming_settings: Dictionary) -> void:
 	# See if file exists
 	var user_settings_file: ConfigFile = ConfigFile.new()
 	if FileAccess.file_exists(USER_SETTINGS_FILE):
@@ -79,7 +56,7 @@ static func _save_to_user_settings(incoming_settings: Dictionary) -> void:
 		Logger.debug(_NO_OVERRIDE_RESULTS, [str(incoming_settings)], null)
 
 ## Appends incoming settings to existing override.cfg
-static func _save_to_override(incoming_settings: Dictionary) -> void:
+static func save_to_override(incoming_settings: Dictionary) -> void:
 	# See if file exists
 	var override_file: ConfigFile = ConfigFile.new()
 	if FileAccess.file_exists(OVERRIDE_FILE):
@@ -90,6 +67,7 @@ static func _save_to_override(incoming_settings: Dictionary) -> void:
 			if error != OK:
 				override_file = ConfigFile.new()
 				DirAccess.remove_absolute(OVERRIDE_FILE)
+	# TODO Need to add support for control overrides
 	# Get supported override categories and their keys
 	var application_library: Dictionary = CONFIG_LIBRARY.get(ApplicationConfig.NAME) as Dictionary
 	var debug_library: Dictionary = CONFIG_LIBRARY.get(DebugConfig.NAME) as Dictionary

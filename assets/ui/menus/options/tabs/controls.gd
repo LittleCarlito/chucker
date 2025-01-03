@@ -13,6 +13,8 @@ const _SELECT_ERROR_LOG: String = "Incorrect number of items selected to change 
 
 @export var control_list: ItemList
 
+# TODO Convert this to no longer emit() changes but to use applied dictionary
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	initialize_ui()
@@ -81,8 +83,7 @@ func _save_controls() -> void:
 				var mapped_event: InputEvent = InputEventLibrary.convert_keycode_to_input_event(mapped_keycode)
 				var control_setting: ControlSetting = InputEventLibrary.convert_event_to_control_setting(mapped_event)
 				var control_dictionary: Dictionary = InputEventLibrary.convert_controlsetting_to_dictionary(control_setting)
-				var new_entry: Dictionary = {constant_name: control_dictionary}
-				value_updated.emit(UIData.TYPE.CONTROL, new_entry)
+				applied_changes[constant_name] = control_dictionary
 				Logger.debug(_CONTROL_REMAPPED_LOG, [constant_name, constant_value.as_text(), control_setting.input_description], self)
 			else:
 				Logger.error(_NO_KEYCODE_ICON_STRING, [icon_path], self)
@@ -126,3 +127,9 @@ func _get_constant_value(constant_name: String) -> InputEvent:
 
 func _reset_variables() -> void:
 	control_list.deselect_all()
+
+func full_reset() -> void:
+	_reset_variables()
+	super()
+	reset_intermediate()
+	reset_applied()

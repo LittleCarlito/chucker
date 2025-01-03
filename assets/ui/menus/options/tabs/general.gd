@@ -1,9 +1,6 @@
 extends OptionTab
 class_name GeneralTab
 
-# TODO OOOOO
-# TODO Convert these settings to override.cfg
-
 # Logically used variables
 @export var fov_slider: HSlider
 @export var fov_value: Label

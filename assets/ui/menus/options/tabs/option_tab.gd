@@ -49,3 +49,7 @@ func reset_applied() -> void:
 ## Reloads UI variables from global values
 func initialize_ui() -> void:
 	pass
+
+func full_reset() -> void:
+	reset_intermediate()
+	reset_applied()

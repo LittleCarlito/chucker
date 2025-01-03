@@ -49,6 +49,16 @@ const DEFAULTS: Dictionary = {
 	INVERT_VERTICAL: false
 }
 
+const CONFIG_LIBRARY: Dictionary = {
+	PLAYER_FOV: PLAYER_FOV,
+	INVERT_VERTICAL: INVERT_VERTICAL,
+	INVERT_HORIZONTAL: INVERT_HORIZONTAL,
+	VERTICAL_AIM_SENSITIVITY: VERTICAL_AIM_SENSITIVITY,
+	HORIZONTAL_AIM_SENSITIVITY: HORIZONTAL_AIM_SENSITIVITY,
+	VERTICAL_LOOK_SENSITIVITY: VERTICAL_LOOK_SENSITIVITY,
+	HORIZONTAL_LOOK_SENSITIVITY: HORIZONTAL_LOOK_SENSITIVITY
+}
+
 var _user_data: ConfigFile
 
 func _ready() -> void:
@@ -123,6 +133,8 @@ func get_player_focus_offset() -> Vector3:
 func get_stationary_focus_offset() -> Vector3:
 	return _get_category_value(CameraConfig.NAME, CameraConfig.TEE_FOCUS_OFFSET)
 
+# TODO Get this in a generalized spot so input can use it
+# TODO Get Graphics tab using it and DefaultLibrary
 ## Returns the configured value for the category
 func _get_category_value(category_name: String, category_key: String):
 	var category_value

@@ -81,7 +81,7 @@ func _update_window_type(incoming_index: int) -> void:
 		get_window().set_mode(requested_mode)
 		applied_changes[DisplayConfig.WINDOW_MODE] = requested_mode
 		if requested_mode == Window.MODE_WINDOWED:
-			applied_changes[DisplayConfig.WINDOW_BORDERLESS] = DisplayConfig.BORDERLESS_VALUE
+			applied_changes[DisplayConfig.WINDOW_BORDERLESS] = DisplayConfig.DEFAULTS.window_borderless
 	intermediate_changes[DisplayConfig.WINDOW_MODE] = apply_callable
 
 ## Handles changes to the FPS lock dropdown
@@ -106,8 +106,8 @@ func _move_window(display_id: int) -> void:
 		DisplayServer.window_set_current_screen(display_id, current_window.get_window_id())
 		current_window.set_mode(previous_mode)
 		applied_changes[DisplayConfig.WINDOW_INITIAL_SCREEN] = display_id
-		applied_changes[DisplayConfig.WINDOW_INITIAL_POSITION] = DisplayConfig.WINDOW_INITIAL_POSITION_VALUE
-	intermediate_changes[DisplayConfig.SET_DISPLAY] = apply_callable
+		applied_changes[DisplayConfig.WINDOW_INITIAL_POSITION] = DisplayConfig.DEFAULTS.window_initial_position
+	intermediate_changes[DisplayConfig.WINDOW_INITIAL_SCREEN] = apply_callable
 
 ## Detects the window mode and updates it if no conflicting setting found
 func _set_window_mode() -> void:
@@ -120,7 +120,7 @@ func _set_window_mode() -> void:
 		var apply_callable: Callable = func():
 			applied_changes[DisplayConfig.WINDOW_MODE] = dropdown_value
 			if dropdown_value == Window.MODE_WINDOWED:
-				applied_changes[DisplayConfig.WINDOW_BORDERLESS] = DisplayConfig.BORDERLESS_VALUE			
+				applied_changes[DisplayConfig.WINDOW_BORDERLESS] = DisplayConfig.DEFAULTS.window_borderless			
 		detected_changes[DisplayConfig.WINDOW_MODE] = apply_callable
 
 ## Detects available displays and sets them as values in selection dropdown
@@ -137,7 +137,7 @@ func _set_available_displays() -> void:
 ## Detects what display the window is on and sets it in the dropdown list
 func _set_current_display() -> void:
 	var current_index: int = _detect_current_display()
-	var has_exising_change: bool = intermediate_changes.has(DisplayConfig.SET_DISPLAY)
+	var has_exising_change: bool = intermediate_changes.has(DisplayConfig.WINDOW_INITIAL_SCREEN)
 	var currently_selected: int = monitor_choice_select.selected
 	# If there is no explicitly set display
 	if !has_exising_change:
@@ -146,8 +146,8 @@ func _set_current_display() -> void:
 			var apply_callable: Callable = func(): 
 				applied_changes[DisplayConfig.WINDOW_INITIAL_SCREEN] = current_index
 				if current_index != 0:
-					applied_changes[DisplayConfig.WINDOW_INITIAL_POSITION] = DisplayConfig.WINDOW_INITIAL_POSITION_VALUE
-			detected_changes[DisplayConfig.SET_DISPLAY] = apply_callable
+					applied_changes[DisplayConfig.WINDOW_INITIAL_POSITION] = DisplayConfig.DEFAULTS.window_initial_position
+			detected_changes[DisplayConfig.WINDOW_INITIAL_SCREEN] = apply_callable
 			monitor_choice_select.select(current_index)
 
 ## Detects what display the window is on and returns its index
@@ -156,7 +156,7 @@ func _detect_current_display() -> int:
 
 ## Detects if fps is being displayed
 func _detect_fps_display() -> bool:
-	return ProjectSettings.has_setting(ConfigFileHandler._DISPLAY_PERFORMANCE)
+	return ProjectSettings.has_setting(DebugConfig._DISPLAY_PERFORMANCE)
 
 ## Detects current FPS limit and gets associated dropdown index
 ## Returns INT16_MAX if no match is found
