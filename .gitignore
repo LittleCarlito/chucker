@@ -8,3 +8,5 @@ docs/
 .godot/
 /android/
 *.tmp
+# Build folder
+/target/
