@@ -42,6 +42,7 @@ const IS_CURRENT: String = "is_current"
 const LOCATION_LOG: String = "\"%s\" global position \"%s\""
 # TODO Refactor other users to use this instead
 const RETURNING_UNKNOWN_LOG: String = "Returning unknown"
+const RETURNING_INT16_MAX: String = "Returning INT16_MAX"
 const PICKED_UP_LOG: String = "%s has been picked up"
 const DEACTIVATE_LOG: String = "%s is deactivating"
 const LOG_SEPARATOR: String = "; "
@@ -83,6 +84,7 @@ const CONTROLS: String = "Controls"
 const COURSE: String = "Course"
 const TEE_BOX: String = "TeeBox"
 const CAMERA_CONTAINER: String = "CameraContainer"
+const CONFIG_HANDLER: String = "ConfigHandler"
 # Group methods
 const HOLD_ACTION: String = "hold_action"
 const RELEASE_ACTION: String = "release_action"
@@ -165,40 +167,14 @@ const INPUT_DESCRIPTION_STRING: String = "input_description"
 
 const TEE_CAMERA: String = "TeeboxCamera"
 const Camera: String = "Camera"
-const PLAYER_FOV: String = "PLAYER_FOV"
-const STATIONARY_FOV: String = "STATIONARY_FOV"
-const IN_ADJUST: String = "IN_ADJUST"
-const OUT_ADJUST: String = "OUT_ADJUST"
-const PLAYER_FOCUS_OFFSET: String = "PLAYER_FOCUS_OFFSET"
-const TEE_FOCUS_OFFSET: String = "TEE_FOCUS_OFFSET"
+
 
 const Controls: String = "Controls"
-const HORIZONTAL_AIM_SENSITIVITY: String = "HORIZONTAL_AIM_SENSITIVITY"
-const HORIZONTAL_LOOK_SENSITIVITY: String = "HORIZONTAL_LOOK_SENSITIVITY"
-const VERTICAL_AIM_SENSITIVITY: String = "VERTICAL_AIM_SENSITIVITY"
-const VERTICAL_LOOK_SENSITIVITY: String = "VERTICAL_LOOK_SENSITIVITY"
-const INVERT_HORIZONTAL: String = "INVERT_HORIZONTAL"
-const INVERT_VERTICAL: String = "INVERT_VERTICAL"
-const MAX_HORIZONTAL_ROTATION: String = "MAX_HORIZONTAL_ROTATION"
-const MIN_HORIZONTAL_ROTATION: String = "MIN_HORIZONTAL_ROTATION"
-const MAX_VERTICAL_ROTATION: String = "MAX_VERTICAL_ROTATION"
-const MIN_VERTICAL_ROTATION: String = "MIN_VERTICAL_ROTATION"
 
-const Display: String = "Display"
-const PERFORMANCE: String = "PERFORMANCE"
-const UI_SCALE: String = "UI_Scale"
-const WINDOW_BORDERLESS: String = "window_borderless"
-const BORDERLESS_VALUE: bool = false
-const WINDOW_INITIAL_POSITION: String = "window_initial_position"
-const WINDOW_INITIAL_POSITION_VALUE: int = 2
-const WINDOW_INITIAL_SCREEN: String = "window_initial_screen"
-const WINDOW_MODE: String = "Window_Mode"
-const FPS_LOCK: String = "FPS_Lock"
-const SET_DISPLAY: String = "Set_Display"
+
 
 const Unknown: String = "Unknown"
 
-const SETTING_LABELS: Array[String] = [Camera, Controls, Display]
 
 # TODO Move this to a MathConstants file
 

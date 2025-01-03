@@ -62,9 +62,9 @@ func _handle_camera_controls() -> void:
 	if is_rotation_enabled():
 		# Left and right rotation inputs
 		if Input.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_LEFT):
-			self.rotate_y(deg_to_rad(GlobalSettings.CAMERA.ROTATE_SPEED))
+			self.rotate_y(deg_to_rad(CameraConfig.get_rotate_speed()))
 		if Input.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_RIGHT):
-			self.rotate_y(deg_to_rad(-GlobalSettings.CAMERA.ROTATE_SPEED))
+			self.rotate_y(deg_to_rad(-CameraConfig.get_rotate_speed()))
 
 ## Actions when disk is thrown
 func _handle_player_action(delta: float) -> void:
@@ -173,7 +173,7 @@ func _handle_looking(event: InputEvent) -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	elif event is InputEventMouseMotion and (Input.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY) and item_container.is_unequipped()):
 		## Determine amount to rotate camera
-		var horizontal_rotate_amount: float = deg_to_rad(event.relative.x) * GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
+		var horizontal_rotate_amount: float = deg_to_rad(event.relative.x) * CameraConfig.get_horizontal_look_sens()
 		camera_container.horizontal_pan(horizontal_rotate_amount, self.global_position)
 	elif event.is_action_released(CONSTANTS.USER_INPUT.PRIMARY) and item_container.is_unequipped():
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -181,14 +181,14 @@ func _handle_looking(event: InputEvent) -> void:
 
 func _can_horizontally_rotate(rotation_amount:float) -> bool:
 	var potential_horizontal_roation: float = camera_container.get_horizontal_rotation() + rotation_amount
-	var max_horizontal_value: float = GlobalSettings.CAMERA.get(CONSTANTS.MAX_HORIZONTAL_ROTATION, GlobalSettings.CAMERA_DEFAULTS.MAX_HORIZONTAL_ROTATION)
-	var min_horizontal_value: float = GlobalSettings.CAMERA.get(CONSTANTS.MIN_HORIZONTAL_ROTATION, GlobalSettings.CAMERA_DEFAULTS.MIN_HORIZONTAL_ROTATION)
+	var max_horizontal_value: float = CameraConfig.get_max_horizontal_rotation()
+	var min_horizontal_value: float = CameraConfig.get_min_horizontal_rotation()
 	return (potential_horizontal_roation > min_horizontal_value) and (potential_horizontal_roation < max_horizontal_value)
 
 func _can_vertically_rotate(rotation_amount:float) -> bool:
 	var potential_vertical_roation: float = camera_container.get_vertical_rotation() + rotation_amount
-	var max_vertical_value: float = GlobalSettings.CAMERA.get(CONSTANTS.MAX_VERTICAL_ROTATION, GlobalSettings.CAMERA_DEFAULTS.MAX_VERTICAL_ROTATION)
-	var min_vertical_value: float = GlobalSettings.CAMERA.get(CONSTANTS.MIN_VERTICAL_ROTATION, GlobalSettings.CAMERA_DEFAULTS.MIN_VERTICAL_ROTATION)
+	var max_vertical_value: float = CameraConfig.get_max_vertical_rotation()
+	var min_vertical_value: float = CameraConfig.get_min_vertical_rotation()
 	return (potential_vertical_roation > min_vertical_value) and (potential_vertical_roation < max_vertical_value)
 
 # TODO Need to go through methods in and affecting this class and determine which need to have this method called after
@@ -240,7 +240,7 @@ func _give_camera(new_item: Node3D) -> void:
 		Logger.debug(formatted_string, [str(new_item)], self)
 
 func _get_focus_point() -> Vector3:
-	var focus_point: Vector3 = self.position + GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOCUS_OFFSET, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOCUS_OFFSET)
+	var focus_point: Vector3 = self.position + CameraConfig.get_player_focus_offset()
 	return focus_point
 
 func _return_camera(incoming_camera: Camera3D) -> void:

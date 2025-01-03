@@ -5,6 +5,7 @@ const _RETURNING_UNKNOWN_LOG: String = "; Returning value for Unknown"
 const _EXTRACT_KEYCODE_STRING: String = "extract_keycode"
 const _EXTRACT_INPUT_TYPE_STRING: String = "extract_input_type"
 
+# TODO Convert this to a cfg file
 const INPUT_ICONS: Dictionary = {
 	KEY_A: "res://resources/Sprites/ControlIcons/A_Keycap.png",
 	KEY_B: "res://resources/Sprites/ControlIcons/B_Keycap.png",

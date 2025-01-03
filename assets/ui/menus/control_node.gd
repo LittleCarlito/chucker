@@ -69,10 +69,9 @@ func _on_pause_menu_save_settings(save_settings: Dictionary) -> void:
 
 # Deletes existing setting save file and saves recieved dictionary to new file
 func save_to_settings(save_settings: Dictionary) -> void:
-	var display_settings: Dictionary = save_settings.get(CONSTANTS.Display, {}) as Dictionary
+	var display_settings: Dictionary = save_settings.get(DisplayConfig.NAME, {}) as Dictionary
 	if !display_settings.is_empty():
-		save_settings.erase(CONSTANTS.Display)
-		CustomConfigHandler._save_to_override(display_settings)
+		save_settings.erase(DisplayConfig.NAME)
 	# If settings file already exists delete it
 	if FileAccess.file_exists(JSON_SAVE_FILE):
 		DirAccess.remove_absolute(JSON_SAVE_FILE)
@@ -111,24 +110,24 @@ func load_settings() -> void:
 					else:
 						load_default(user_setting, setting_category)
 				# Display loading handling
-				elif setting_category == CONSTANTS.Display:
+				elif setting_category == DisplayConfig.NAME:
 					var recieved_category: Dictionary = data_received.get(setting_category)
 					if recieved_category.has(user_setting):
 						var setting_value = recieved_category.get(user_setting)
 						match user_setting:
-							CONSTANTS.UI_SCALE:
+							DisplayConfig.UI_SCALE:
 								get_tree().root.set_content_scale_factor(setting_value)
-							CONSTANTS.WINDOW_MODE:
+							DisplayConfig.WINDOW_MODE:
 								get_window().set_mode(setting_value)
-							CONSTANTS.FPS_LOCK:
+							ApplicationConfig.FPS_LOCK:
 								Engine.set_max_fps(setting_value)
-							CONSTANTS.SET_DISPLAY:
+							DisplayConfig.SET_DISPLAY:
 								var current_window: Window = get_window()
 								var previous_mode: Window.Mode = current_window.mode
 								current_window.set_mode(Window.MODE_WINDOWED)
 								DisplayServer.window_set_current_screen(setting_value, current_window.get_window_id())
 								current_window.set_mode(previous_mode)
-							CONSTANTS.PERFORMANCE:
+							DebugConfig.PERFORMANCE:
 								# TODO Implement some display for this
 								pass
 					else:
@@ -162,7 +161,7 @@ func _get_settings_dictionary() -> Dictionary:
 			if typeof(retireved_data) == expected_type:
 				var incoming_control_settings: Dictionary = retireved_data.get(CONSTANTS.Controls, {})
 				var incoming_camera_settings: Dictionary = retireved_data.get(CONSTANTS.Camera, {})
-				var incoming_display_settings: Dictionary = retireved_data.get(CONSTANTS.Display, {})
+				var incoming_display_settings: Dictionary = retireved_data.get(DisplayConfig.NAME, {})
 				if !incoming_control_settings.is_empty():
 					var control_settings: Dictionary = {}
 					var control_keys: Array = incoming_control_settings.keys()
@@ -173,7 +172,7 @@ func _get_settings_dictionary() -> Dictionary:
 				if !incoming_camera_settings.is_empty():
 					return_dictionary[CONSTANTS.Camera] = incoming_camera_settings
 				if !incoming_display_settings.is_empty():
-					return_dictionary[CONSTANTS.Display] = incoming_display_settings
+					return_dictionary[DisplayConfig.NAME] = incoming_display_settings
 			else:
 				Logger.error(_UNEXPTECTED_TYPE_LOG, [], self)
 	# 7 is could not open error

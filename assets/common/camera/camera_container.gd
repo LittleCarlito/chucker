@@ -224,19 +224,19 @@ func is_current() -> bool:
 
 func reset_zoom() -> void:
 	if internal_camera != null:
-		internal_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOV, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOV)
+		internal_camera.fov = CameraConfig.get_fov_value()
 	else:
 		Logger.debug(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.RESET_ZOOM], self)
 
 func zoom_in() -> void:
 	if internal_camera != null:
-		internal_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOV, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOV) - GlobalSettings.CAMERA.IN_ADJUST
+		internal_camera.fov = CameraConfig.get_fov_value() - CameraConfig.get_in_adjust()
 	else:
 		Logger.debug(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.ZOOM_IN], self)
 
 func zoom_out() -> void:
 	if internal_camera != null:
-		internal_camera.fov = GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOV, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOV) + GlobalSettings.CAMERA.OUT_ADJUST
+		internal_camera.fov = CameraConfig.get_fov_value() + CameraConfig.get_out_adjust()
 	else:
 		Logger.debug(CONSTANTS.NULL_CAMERA_LOG, [CONSTANTS.ZOOM_OUT], self)
 

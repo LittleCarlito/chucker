@@ -25,30 +25,30 @@ const DISK: Dictionary = {
 	"MAX_SPEED_REDUCE": .75
 }
 
-const CAMERA_DEFAULTS: Dictionary = {
-	"PAN_SPEED": .15,
-	"ROTATE_SPEED": 4,
-	"IDLE_ROTATE_SPEED": 25.0,
-	"SHOT_WATCH_TIME": 5,
-	"MIN_HEIGHT": 4,
-	CONSTANTS.PLAYER_FOCUS_OFFSET: Vector3(0, 0, -10),
-	CONSTANTS.TEE_FOCUS_OFFSET: Vector3(0, 2, 0),
-	CONSTANTS.MAX_HORIZONTAL_ROTATION: 1,
-	CONSTANTS.MIN_HORIZONTAL_ROTATION: -1,
-	CONSTANTS.MAX_VERTICAL_ROTATION: .3,
-	CONSTANTS.MIN_VERTICAL_ROTATION: -.7,
-	CONSTANTS.PLAYER_FOV: 90,
-	CONSTANTS.STATIONARY_FOV: 75,
-	CONSTANTS.IN_ADJUST: 20,
-	CONSTANTS.OUT_ADJUST: 5,
-	CONSTANTS.HORIZONTAL_AIM_SENSITIVITY: .3,
-	CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY: 1.5,
-	CONSTANTS.VERTICAL_AIM_SENSITIVITY: .3,
-	CONSTANTS.VERTICAL_LOOK_SENSITIVITY: 1.5,
-	CONSTANTS.INVERT_HORIZONTAL: false,
-	CONSTANTS.INVERT_VERTICAL: false
-}
-static var CAMERA = CAMERA_DEFAULTS.duplicate()
+#const CAMERA_DEFAULTS: Dictionary = {
+	#CONSTANTS.PAN_SPEED: .15,
+	#CONSTANTS.ROTATE_SPEED: 4,
+	#CONSTANTS.IDLE_ROTATE_SPEED: 25.0,
+	#CONSTANTS.SHOT_WATCH_TIME: 5,
+	#CONSTANTS.MIN_HEIGHT: 4,
+	#CONSTANTS.PLAYER_FOCUS_OFFSET: Vector3(0, 0, -10),
+	#CONSTANTS.TEE_FOCUS_OFFSET: Vector3(0, 2, 0),
+	#CONSTANTS.MAX_HORIZONTAL_ROTATION: 1,
+	#CONSTANTS.MIN_HORIZONTAL_ROTATION: -1,
+	#CONSTANTS.MAX_VERTICAL_ROTATION: .3,
+	#CONSTANTS.MIN_VERTICAL_ROTATION: -.7,
+	#CONSTANTS.PLAYER_FOV: 90,
+	#CONSTANTS.STATIONARY_FOV: 75,
+	#CONSTANTS.IN_ADJUST: 20,
+	#CONSTANTS.OUT_ADJUST: 5,
+	#CONSTANTS.HORIZONTAL_AIM_SENSITIVITY: .3,
+	#CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY: 1.5,
+	#CONSTANTS.VERTICAL_AIM_SENSITIVITY: .3,
+	#CONSTANTS.VERTICAL_LOOK_SENSITIVITY: 1.5,
+	#CONSTANTS.INVERT_HORIZONTAL: false,
+	#CONSTANTS.INVERT_VERTICAL: false
+#}
+#static var CAMERA = CAMERA_DEFAULTS.duplicate()
 
 var CONTROL_DEFAULTS: Dictionary = {
 	CONSTANTS.USER_INPUT.ROTATE_LEFT: InputEventLibrary.A_KEY,
@@ -71,15 +71,15 @@ var CONTROL_DEFAULTS: Dictionary = {
 }
 var CONTROLS: Dictionary = CONTROL_DEFAULTS.duplicate()
 
-const DISPLAY_DEFAULTS: Dictionary = {
-	# The values saved on file and set here should be index values
-	CONSTANTS.UI_SCALE: CONSTANTS.INT16_MAX,
-	CONSTANTS.WINDOW_MODE: CONSTANTS.INT16_MAX,
-	CONSTANTS.FPS_LOCK: CONSTANTS.INT16_MAX,
-	CONSTANTS.SET_DISPLAY: CONSTANTS.INT16_MAX,
-	CONSTANTS.PERFORMANCE: false
-}
-static var DISPLAY = DISPLAY_DEFAULTS.duplicate()
+#const DISPLAY_DEFAULTS: Dictionary = {
+	## The values saved on file and set here should be index values
+	#CONSTANTS.UI_SCALE: CONSTANTS.INT16_MAX,
+	#CONSTANTS.WINDOW_MODE: CONSTANTS.INT16_MAX,
+	#CONSTANTS.FPS_LOCK: CONSTANTS.INT16_MAX,
+	#CONSTANTS.SET_DISPLAY: CONSTANTS.INT16_MAX,
+	#CONSTANTS.PERFORMANCE: false
+#}
+#static var DISPLAY = DISPLAY_DEFAULTS.duplicate()
 
 # TODO Refactor FORCE and PATH to use existing ENUMS
 const COLOR: Dictionary = {
@@ -105,22 +105,22 @@ const SALINAS_DEFAULTS: Dictionary = {
 
 const CONFIGURABLE_SETTINGS: Array[String] = [
 	# Graphics tab
-	CONSTANTS.SET_DISPLAY,
-	CONSTANTS.FPS_LOCK,
-	CONSTANTS.UI_SCALE,
-	CONSTANTS.WINDOW_MODE,
-	CONSTANTS.PERFORMANCE,
+	#CONSTANTS.SET_DISPLAY,
+	#CONSTANTS.FPS_LOCK,
+	#CONSTANTS.UI_SCALE,
+	#CONSTANTS.WINDOW_MODE,
+	#CONSTANTS.PERFORMANCE,
 	# General tab
-	CONSTANTS.PLAYER_FOV,
-	CONSTANTS.HORIZONTAL_AIM_SENSITIVITY,
-	CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY,
-	CONSTANTS.VERTICAL_AIM_SENSITIVITY,
-	CONSTANTS.VERTICAL_LOOK_SENSITIVITY,
-	CONSTANTS.INVERT_HORIZONTAL,
-	CONSTANTS.INVERT_VERTICAL,
-	# TODO Not actually configurable
-	CONSTANTS.IN_ADJUST,
-	CONSTANTS.OUT_ADJUST,
+	#CONSTANTS.PLAYER_FOV,
+	#CONSTANTS.HORIZONTAL_AIM_SENSITIVITY,
+	#CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY,
+	#CONSTANTS.VERTICAL_AIM_SENSITIVITY,
+	#CONSTANTS.VERTICAL_LOOK_SENSITIVITY,
+	#CONSTANTS.INVERT_HORIZONTAL,
+	#CONSTANTS.INVERT_VERTICAL,
+	## TODO Not actually configurable
+	#CONSTANTS.IN_ADJUST,
+	#CONSTANTS.OUT_ADJUST,
 	# Controls tab
 	CONSTANTS.USER_INPUT.ROTATE_LEFT,
 	CONSTANTS.USER_INPUT.ROTATE_RIGHT,
@@ -143,11 +143,11 @@ const CONFIGURABLE_SETTINGS: Array[String] = [
 
 func extract_category(setting_name: String) -> String:
 	var return_string: String
-	if CAMERA.has(setting_name):
-		return_string = CONSTANTS.Camera
-	elif DISPLAY.has(setting_name):
-		return_string = CONSTANTS.Display
-	elif CONTROLS.has(setting_name):
+	#if CAMERA.has(setting_name):
+		#return_string = CONSTANTS.Camera
+	#if DISPLAY.has(setting_name):
+		#return_string = CONSTANTS.Display
+	if CONTROLS.has(setting_name):
 		return_string = CONSTANTS.Controls
 	else:
 		return_string = CONSTANTS.Unknown
@@ -157,12 +157,12 @@ func extract_category(setting_name: String) -> String:
 func get_category(category_name: String) -> Dictionary:
 	var return_dictionary: Dictionary
 	match category_name:
-		CONSTANTS.Camera:
-			return_dictionary = CAMERA
+		#CONSTANTS.Camera:
+			#return_dictionary = CAMERA
 		CONSTANTS.Controls:
 			return_dictionary = CONTROLS
-		CONSTANTS.Display:
-			return_dictionary = DISPLAY
+		#CONSTANTS.Display:
+			#return_dictionary = DISPLAY
 		_:
 			return_dictionary = {}
 			Logger.error(MISSING_CATEGORY_LOG, [category_name, _GET_CATEGORY, return_dictionary], self)
@@ -171,12 +171,12 @@ func get_category(category_name: String) -> Dictionary:
 func get_default_category(category_name: String) -> Dictionary:
 	var return_dictionary: Dictionary
 	match category_name:
-		CONSTANTS.Camera:
-			return_dictionary = CAMERA_DEFAULTS
+		#CONSTANTS.Camera:
+			#return_dictionary = CAMERA_DEFAULTS
 		CONSTANTS.Controls:
 			return_dictionary = CONTROL_DEFAULTS
-		CONSTANTS.Display:
-			return_dictionary = DISPLAY_DEFAULTS
+		#CONSTANTS.Display:
+			#return_dictionary = DISPLAY_DEFAULTS
 		_:
 			return_dictionary = {}
 			Logger.error(MISSING_CATEGORY_LOG, [category_name, _GET_DEFAULT_CATEGORY, return_dictionary], self)

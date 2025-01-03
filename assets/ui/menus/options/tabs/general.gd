@@ -1,6 +1,9 @@
 extends OptionTab
 class_name GeneralTab
 
+# TODO OOOOO
+# TODO Convert these settings to override.cfg
+
 # Logically used variables
 @export var fov_slider: HSlider
 @export var fov_value: Label
@@ -31,63 +34,59 @@ func _process(_delta: float) -> void:
 	pass
 
 func initialize_ui() -> void:
-	fov_slider.value = GlobalSettings.CAMERA.get(CONSTANTS.PLAYER_FOV, GlobalSettings.CAMERA_DEFAULTS.PLAYER_FOV)
+	# Set fov elements
+	fov_slider.value = CameraConfig.get_fov_value()
 	fov_value.text = str(fov_slider.value)
-	horizontal_aim_sensitivity_slider.value = GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_AIM_SENSITIVITY)
+	# Set aim/look elements
+	horizontal_aim_sensitivity_slider.value = CameraConfig.get_horizontal_aim_sens()
 	horizontal_aim_sensitivity_value.text = str(horizontal_aim_sensitivity_slider.value)
-	vertical_aim_sensitivity_slider.value = GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_AIM_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.VERTICAL_AIM_SENSITIVITY)
+	vertical_aim_sensitivity_slider.value = CameraConfig.get_vertical_aim_sense()
 	vertical_aim_sensitivity_value.text = str(vertical_aim_sensitivity_slider.value)
-	horizontal_look_sensitivity_slider.value = GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
+	horizontal_look_sensitivity_slider.value = CameraConfig.get_horizontal_look_sens()
 	horizontal_look_sensitivity_value.text = str(horizontal_look_sensitivity_slider.value)
-	vertical_look_sensitivity_slider.value = GlobalSettings.CAMERA.get(CONSTANTS.VERTICAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.VERTICAL_LOOK_SENSITIVITY)
+	vertical_look_sensitivity_slider.value = CameraConfig.get_vertical_look_sense()
 	vertical_look_sensitivity_value.text = str(vertical_look_sensitivity_slider.value)
-	v_inversion_toggle.button_pressed = GlobalSettings.CAMERA.get(CONSTANTS.INVERT_VERTICAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_VERTICAL)
-	h_inversion_toggle.button_pressed = GlobalSettings.CAMERA.get(CONSTANTS.INVERT_HORIZONTAL, GlobalSettings.CAMERA_DEFAULTS.INVERT_HORIZONTAL)
+	# Set inversion elements
+	v_inversion_toggle.button_pressed = CameraConfig.is_vertical_invert()
+	h_inversion_toggle.button_pressed = CameraConfig.is_horizontal_invert()
 
 func _on_fov_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		var new_entry: Dictionary = {CONSTANTS.PLAYER_FOV: fov_slider.value}
-		value_updated.emit(UIData.TYPE.CAMERA, new_entry)
+		applied_changes[CameraConfig.PLAYER_FOV] = fov_slider.value
 
 func _on_fov_slider_value_changed(value: float) -> void:
 	fov_value.text = str(value)
 
 func _on_v_inversion_toggle_toggled(toggled_on: bool) -> void:
-	var new_entry: Dictionary = {CONSTANTS.INVERT_VERTICAL: toggled_on}
-	value_updated.emit(UIData.TYPE.CAMERA, new_entry)
+	applied_changes[CameraConfig.INVERT_VERTICAL] = toggled_on
 
 func _on_h_inversion_toggle_toggled(toggled_on: bool) -> void:
-	var new_entry: Dictionary = {CONSTANTS.INVERT_HORIZONTAL: toggled_on}
-	value_updated.emit(UIData.TYPE.CAMERA, new_entry)
+	applied_changes[CameraConfig.INVERT_HORIZONTAL] = toggled_on
 
 func _on_vertical_aim_sensitivity_slider_value_changed(value: float) -> void:
 	vertical_aim_sensitivity_value.text = str(value)
 
 func _on_vertical_aim_sensitivity_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		var new_entry: Dictionary = {CONSTANTS.VERTICAL_AIM_SENSITIVITY: vertical_aim_sensitivity_slider.value}
-		value_updated.emit(UIData.TYPE.CAMERA, new_entry)
+		applied_changes[CameraConfig.VERTICAL_AIM_SENSITIVITY] = vertical_aim_sensitivity_slider.value
 
 func _on_horizontal_aim_sensitivity_slider_value_changed(value: float) -> void:
 	horizontal_aim_sensitivity_value.text = str(value)
 
 func _on_horizontal_aim_sensitivity_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		var new_entry: Dictionary = {CONSTANTS.HORIZONTAL_AIM_SENSITIVITY: horizontal_aim_sensitivity_slider.value}
-		value_updated.emit(UIData.TYPE.CAMERA, new_entry)
+		applied_changes[CameraConfig.HORIZONTAL_AIM_SENSITIVITY] = horizontal_aim_sensitivity_slider.value
 
 func _on_vertical_look_sensitivity_slider_value_changed(value: float) -> void:
 	vertical_look_sensitivity_value.text = str(value)
 
 func _on_vertical_look_sensitivity_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		var new_entry: Dictionary = {CONSTANTS.VERTICAL_LOOK_SENSITIVITY: vertical_look_sensitivity_slider.value}
-		value_updated.emit(UIData.TYPE.CAMERA, new_entry)
+		applied_changes[CameraConfig.VERTICAL_LOOK_SENSITIVITY] = vertical_look_sensitivity_slider.value
 
 func _on_horizontal_look_sensitivity_slider_value_changed(value: float) -> void:
 	horizontal_look_sensitivity_value.text = str(value)
 
 func _on_horizontal_look_sensitivity_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		var new_entry: Dictionary = {CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY: horizontal_look_sensitivity_slider.value}
-		value_updated.emit(UIData.TYPE.CAMERA, new_entry)
+		applied_changes[CameraConfig.HORIZONTAL_LOOK_SENSITIVITY] = horizontal_look_sensitivity_slider.value

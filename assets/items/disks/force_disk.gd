@@ -70,7 +70,7 @@ func _input(event: InputEvent) -> void:
 	# Looking controls
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and camera_container != null and camera_container.is_current():
 		if event is InputEventMouseMotion:
-			var horizontal_rotation_amount: float = deg_to_rad(event.relative.x) * GlobalSettings.CAMERA.get(CONSTANTS.HORIZONTAL_LOOK_SENSITIVITY, GlobalSettings.CAMERA_DEFAULTS.HORIZONTAL_LOOK_SENSITIVITY)
+			var horizontal_rotation_amount: float = deg_to_rad(event.relative.x) * CameraConfig.get_horizontal_look_sens()
 			camera_container.horizontal_pan(horizontal_rotation_amount, self.global_position)
 
 func set_internal_type(new_internal_type: AssetData.TYPE) -> void:

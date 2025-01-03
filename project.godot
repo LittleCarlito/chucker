@@ -31,6 +31,7 @@ InputSprite="*res://configuration/sprite/input_sprite.gd"
 GlobalSettings="*res://configuration/global_settings.gd"
 AssetDelivery="*res://assets/common/factory/asset_delivery.gd"
 GlobalHoleData="*res://assets/buildings/course/data/global_hole_data.gd"
+CameraConfig="*res://configuration/camera/camera_config.gd"
 
 [display]
 
