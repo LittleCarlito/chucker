@@ -13,7 +13,8 @@ const _NO_CATEGORY_LOG: String = "Category could not be extracted for \"%s\"; No
 # TODO Move to file utility
 const BASE_PATH: String = "user://"
 const SAVE_DIR: String = BASE_PATH + "settings/"
-const SAVE_FILE: String = SAVE_DIR + "user_settings.json"
+const JSON_SAVE_FILE: String = SAVE_DIR + "user_settings.json"
+const OVERRIDE_FILE: String = SAVE_DIR + "override.cfg"
 
 @export var scorecard: ScorecardView
 @export var pause_menu: PauseMenu
@@ -68,22 +69,26 @@ func _on_pause_menu_save_settings(save_settings: Dictionary) -> void:
 
 # Deletes existing setting save file and saves recieved dictionary to new file
 func save_to_settings(save_settings: Dictionary) -> void:
+	var display_settings: Dictionary = save_settings.get(CONSTANTS.Display, {}) as Dictionary
+	if !display_settings.is_empty():
+		save_settings.erase(CONSTANTS.Display)
+		CustomConfigHandler._save_to_override(display_settings)
 	# If settings file already exists delete it
-	if FileAccess.file_exists(SAVE_FILE):
-		DirAccess.remove_absolute(SAVE_FILE)
+	if FileAccess.file_exists(JSON_SAVE_FILE):
+		DirAccess.remove_absolute(JSON_SAVE_FILE)
 	if !save_settings.is_empty():
 		# Convert settings Dictionary to JSON
 		var setting_json: String = JSON.stringify(save_settings)
 		# Write to settings file
-		var file = FileAccess.open(SAVE_FILE, FileAccess.WRITE)
+		var file = FileAccess.open(JSON_SAVE_FILE, FileAccess.WRITE)
 		if file != null:
 			file.store_string(setting_json)
 			file.close()
 		else:
 			var saveError: Error = FileAccess.get_open_error()
-			Logger.error(_UNABLE_TO_OPEN_LOG, [SAVE_FILE, saveError], self)
+			Logger.debug(_UNABLE_TO_OPEN_LOG, [JSON_SAVE_FILE, saveError], self)
 	else:
-		Logger.error(_EMPTY_SAVE_LOG,[save_settings], self)
+		Logger.debug(_EMPTY_SAVE_LOG,[save_settings], self)
 
 ## Loads from settings file or default dictionaries if no file/setting
 func load_settings() -> void:
@@ -147,7 +152,7 @@ func load_settings() -> void:
 # Retrieves the settings file from User:// or returns an empty dictionary if an error occured
 func _get_settings_dictionary() -> Dictionary:
 	var return_dictionary: Dictionary = {}
-	var file = FileAccess.open(SAVE_FILE, FileAccess.READ)
+	var file = FileAccess.open(JSON_SAVE_FILE, FileAccess.READ)
 	if file != null:
 		var json: JSON = JSON.new()
 		var error: Error = json.parse(file.get_as_text())
@@ -174,7 +179,7 @@ func _get_settings_dictionary() -> Dictionary:
 	# 7 is could not open error
 	elif FileAccess.get_open_error() != 7:
 		var save_error: Error = FileAccess.get_open_error()
-		Logger.error(_UNABLE_TO_OPEN_LOG, [SAVE_FILE, save_error], self)
+		Logger.error(_UNABLE_TO_OPEN_LOG, [JSON_SAVE_FILE, save_error], self)
 	return return_dictionary
 
 # Loads preconfigured default value for the given setting
