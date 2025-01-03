@@ -160,4 +160,5 @@ jolt_3d/collisions/areas_detect_static_bodies=true
 
 [rendering]
 
+textures/vram_compression/import_etc2_astc=true
 anti_aliasing/quality/msaa_3d=2
