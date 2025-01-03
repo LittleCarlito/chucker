@@ -1,19 +1,7 @@
 extends OptionTab
 class_name GraphicsTab
 
-# TODO OOOOO
-# TODO 
-# TODO Values are being loaded just need to have them applied
-# TODO Delayed process changes should still result in signals
-# TODO Save button shouldn't take you back to general tab
-# TODO Make an Apply button for Graphics settings
-#		Delay setting all the settings until Apply is selected
-# TODO Load current Graphics values in and set them before visible so there isn't a delay
-# TODO Make sure non-saved changes are reset when menu closes
-# TODO Ensure settings are saved to saveSettings file
-# TODO Ensure settings are persisted through sessions
-# TODO Have dropdowns update when things like window size are changed BUT if the user sets the value in the dropdown it shoudlnt' be overriden
-#		User should be allowed to keep their set setting and save it while expanding and shrinking window
+# TODO Add revert screen after clicking apply
 
 const _UI_SCALE: String = "display/window/stretch/scale"
 const _DISPLAY_NUMBER: String = "Display %d"
@@ -224,7 +212,6 @@ func _apply_settings() -> void:
 			Logger.debug(formatted_string, [change_key, str(change_key_value)], self)
 	var intermediate_keys: Array = intermediate_changes.keys()
 	for intermediate_key in intermediate_keys:
-		# TODO A Window_Mode String got passed into intermediate_changes and borked up here
 		var intermediate_change: Callable = intermediate_changes.get(intermediate_key) as Callable
 		intermediate_change.call()
 
