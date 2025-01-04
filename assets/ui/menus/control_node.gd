@@ -113,20 +113,8 @@ func load_settings() -> void:
 				elif setting_category == DisplayConfig.NAME:
 					var recieved_category: Dictionary = data_received.get(setting_category)
 					if recieved_category.has(user_setting):
-						var setting_value = recieved_category.get(user_setting)
+						#var setting_value = recieved_category.get(user_setting)
 						match user_setting:
-							DisplayConfig.UI_SCALE:
-								get_tree().root.set_content_scale_factor(setting_value)
-							DisplayConfig.WINDOW_MODE:
-								get_window().set_mode(setting_value)
-							ApplicationConfig.FPS_LOCK:
-								Engine.set_max_fps(setting_value)
-							DisplayConfig.WINDOW_INITIAL_SCREEN:
-								var current_window: Window = get_window()
-								var previous_mode: Window.Mode = current_window.mode
-								current_window.set_mode(Window.MODE_WINDOWED)
-								DisplayServer.window_set_current_screen(setting_value, current_window.get_window_id())
-								current_window.set_mode(previous_mode)
 							DebugConfig.PERFORMANCE:
 								# TODO Implement some display for this
 								pass
@@ -145,7 +133,6 @@ func load_settings() -> void:
 				load_default(user_setting, setting_category)
 		else:
 			Logger.error(_NO_CATEGORY_LOG, [user_setting], self)
-	reload_project_settings()
 	pause_menu.reload_ui()
 
 # Retrieves the settings file from User:// or returns an empty dictionary if an error occured
@@ -200,17 +187,6 @@ func load_default(setting_name: String, setting_category: String) -> void:
 			global_category[setting_name] = default_value
 		else:
 			Logger.error(_NO_DEFAULT_LOG, [setting_name, setting_category], self)
-
-## Reloads Project input settings using GlobalSettings
-func reload_project_settings() -> void:
-	var user_inputs: Array = GlobalSettings.CONTROLS.keys()
-	for user_input in user_inputs:
-		var bound_key: InputEvent = GlobalSettings.CONTROLS.get(user_input) as InputEvent
-		if bound_key != null:
-			InputMap.action_erase_events(user_input)
-			InputMap.action_add_event(user_input, bound_key)
-		else:
-			Logger.error(_BAD_USER_INPUT_LOG, [user_input], self)
 
 func _apply_settings() -> void:
 	apply_settings.emit()

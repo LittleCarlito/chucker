@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://btbtiiilcdji5" path="res://assets/ui/views/ScorecardView.tscn" id="2_rw607"]
 [ext_resource type="PackedScene" uid="uid://dmpnac8ay0j1d" path="res://assets/ui/menus/PauseMenu.tscn" id="3_w8mbf"]
 
-[node name="ControlNode" type="Node3D" node_paths=PackedStringArray("scorecard", "pause_menu") groups=["General"]]
+[node name="ControlNode" type="Node3D" node_paths=PackedStringArray("scorecard", "pause_menu") groups=["ConfigHandler", "General"]]
 script = ExtResource("1_5pady")
 scorecard = NodePath("ScorecardView")
 pause_menu = NodePath("PauseMenu")

@@ -153,3 +153,4 @@ func _get_category_value(category_name: String, category_key: String):
 ## usually called via group CONFIG_HANDLER method calls
 func reload_project_settings() -> void:
 	_user_data = ConfigFileHandler.get_user_setting_file()
+	

@@ -1,6 +1,7 @@
 extends Node
 
 const NO_MATCH_FOUND_LOG: String = "Matching icon for input \"%s\" could not be found; Returning blank keycap"
+const _NO_KEYCODE_MATCH: String = "No icon found matching keycode \"%s\""
 const _RETURNING_UNKNOWN_LOG: String = "; Returning value for Unknown"
 const _EXTRACT_KEYCODE_STRING: String = "extract_keycode"
 const _EXTRACT_INPUT_TYPE_STRING: String = "extract_input_type"
@@ -82,7 +83,7 @@ const INPUT_ICONS: Dictionary = {
 	KEY_UNKNOWN: "res://resources/Sprites/ControlIcons/Blank_Keycap.png"
 }
 
-var UNKNOWN_PATH: String = "res://resources/Sprites/ControlIcons/Blank_Keycap.png"
+const UNKNOWN_PATH: String = "res://resources/Sprites/ControlIcons/Blank_Keycap.png"
 var UNKNOWN_TEXTURE: Texture2D = load(UNKNOWN_PATH)
 
 # Called when the node enters the scene tree for the first time.
@@ -105,6 +106,16 @@ func get_sprite(event: InputEvent) -> Texture2D:
 	if (incoming_keycode != KEY_UNKNOWN) && (matched_input_keycode == KEY_UNKNOWN):
 		Logger.error(NO_MATCH_FOUND_LOG, [str(event)], self)
 	return load(INPUT_ICONS.get(matched_input_keycode))
+
+## Returns the input sprite associated with the given keycode
+func get_sprite_from_keycode(incoming_keycode: int) -> Texture2D:
+	var return_texture: Texture2D
+	if INPUT_ICONS.has(incoming_keycode):
+		return_texture = load(INPUT_ICONS.get(incoming_keycode))
+	if return_texture == null:
+		var formatted_string = _NO_KEYCODE_MATCH + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
+		Logger.error(formatted_string, [str(incoming_keycode)], self)
+	return return_texture
 
 func extract_keycode(event: InputEvent) -> int:
 	var return_value: int

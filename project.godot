@@ -32,6 +32,7 @@ GlobalSettings="*res://configuration/global_settings.gd"
 AssetDelivery="*res://assets/common/factory/asset_delivery.gd"
 GlobalHoleData="*res://assets/buildings/course/data/global_hole_data.gd"
 CameraConfig="*res://configuration/handler/camera_config.gd"
+InputConfig="*res://configuration/handler/input_config.gd"
 
 [display]
 
@@ -52,6 +53,7 @@ TeeBox="Nodes serving as hole starting locations"
 Course="Hole nodes that compose the course"
 Hole="Objects that mark the end of a hole"
 CameraContainer="Contains all CameraContainer nodes"
+ConfigHandler="Handles config files and values"
 
 [input]
 

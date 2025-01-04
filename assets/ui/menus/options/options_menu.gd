@@ -61,8 +61,11 @@ func _on_save_menu() -> void:
 	# Save to configuration files
 	# TODO Convert Controls settings to override.cfg
 	# TODO Change the ConfigFileHandler calls to be combined to be passing in one Dictionary
-	ConfigFileHandler.save_to_override(controls_tab.applied_changes)
+	# BUG Applied changes coming in here after setting a control was empty
+	controls_tab.save_controls()
 	ConfigFileHandler.save_to_override(graphics_tab.applied_changes)
+	ConfigFileHandler.delete_file_category(ConfigFileHandler.FILE_TYPE.USER_SETTING, InputConfig.NAME)
+	ConfigFileHandler.save_to_user_settings(controls_tab.applied_changes)
 	ConfigFileHandler.save_to_user_settings(general_tab.applied_changes)
 	# Alert config handlers to refresh their data
 	get_tree().call_group(CONSTANTS.CONFIG_HANDLER, CONSTANTS.RELOAD_PROJECT_SETTINGS)
