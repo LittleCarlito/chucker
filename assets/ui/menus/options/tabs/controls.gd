@@ -1,8 +1,6 @@
 extends OptionTab
 class_name ControlsTab
 
-# TODO Ensure values put in appliedSettings are InputEvents
-
 signal value_selected(selected_item: String)
 
 const _UNBOUND_INPUT_LOG: String = "\"%s\" is not bound to an input"
@@ -14,16 +12,6 @@ const _UNBIND_LOG: String = "Input \"%s\" key has been rebound"
 const _SELECT_ERROR_LOG: String = "Incorrect number of items selected to change control input; \"%s\" items selected"
 
 @export var control_list: ItemList
-
-# TODO OOOOO
-# BUG Controls can't be set back to default values once changed
-# TODO Get this menu loading after InputConfig has finished its startup
-# TODO Set icons in ControlList at startup
-# TODO Saving changed input
-#		Creates user_setting.cfg entry for that setting and key
-#		Triggers loading of user_setting.cfg file to InputMap
-#			Only map controls that have changed
-#			Only reloads InputMap doesn't need to reload ControlList
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -83,17 +71,17 @@ func _assign_blank_keycap(index: int) -> void:
 func save_controls() -> void:
 	for control_list_index in control_list.item_count:
 		var constant_name: String = _get_constant_name(control_list.get_item_text(control_list_index))
-		var constant_value: InputEvent = _get_default_value(constant_name)
-		var constant_icon_path: String = InputSprite.get_sprite(constant_value).resource_path
+		var mapped_value: InputEvent = InputMap.action_get_events(constant_name)[0]
+		var mapped_icon_path: String = InputSprite.get_sprite(mapped_value).resource_path
 		var icon_path: String = control_list.get_item_icon(control_list_index).resource_path
-		if constant_icon_path != icon_path:
+		if mapped_icon_path != icon_path:
 			var mapped_keycode: int = InputSprite.INPUT_ICONS.find_key(icon_path)
 			if mapped_keycode != null:
 				var mapped_event: InputEvent = InputEventLibrary.convert_keycode_to_input_event(mapped_keycode)
 				var control_setting: ControlSetting = InputEventLibrary.convert_event_to_control_setting(mapped_event)
 				#var control_dictionary: Dictionary = InputEventLibrary.convert_controlsetting_to_dictionary(control_setting)
 				applied_changes[constant_name] = mapped_event
-				Logger.debug(_CONTROL_REMAPPED_LOG, [constant_name, constant_value.as_text(), control_setting.input_description], self)
+				Logger.debug(_CONTROL_REMAPPED_LOG, [constant_name, mapped_value.as_text(), control_setting.input_description], self)
 			else:
 				Logger.error(_NO_KEYCODE_ICON_STRING, [icon_path], self)
 
@@ -124,12 +112,9 @@ func _get_constant_name(item_text: String) -> String:
 		Logger.warn(_MISSING_CONSTANT_LOG, [item_text, constant_value], self)
 	return constant_value
 
-
 func _reset_variables() -> void:
 	control_list.deselect_all()
 
 func full_reset() -> void:
 	_reset_variables()
 	super()
-	reset_intermediate()
-	reset_applied()
