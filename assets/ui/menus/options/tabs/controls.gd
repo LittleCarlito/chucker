@@ -33,6 +33,7 @@ func _open_control_select_menu(index: int, _click_position: Vector2, mouse_butto
 	if mouse_button_index == MOUSE_BUTTON_LEFT:
 		value_selected.emit(control_list.get_item_text(index))
 
+# TODO Need to chnage selected_input to InputEvent that was picked and set it in applied_settings
 ## Sets ControlList item to desired control value
 func _control_select_set(control_to_update: String, selected_input: ControlSetting) -> void:
 	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
@@ -94,16 +95,6 @@ func _get_control_index(constant_name: String) -> int:
 		if item_text == constant_item_text:
 			return control_setting
 	return CONSTANTS.INT32_MAX
-
-## Checks default control dictionaries for stored value of constantName
-## If not found returns UNKNOWN_KEY InputEvent
-func _get_default_value(constant_name: String) -> InputEvent:
-	# Check GlobalSettings for control constant with matching name
-	var mapped_value: InputEvent = GlobalSettings.CONTROL_DEFAULTS.get(constant_name, InputEventLibrary.UNKNOWN_KEY)
-	if mapped_value == InputEventLibrary.UNKNOWN_KEY:
-		# Log key is not bound and return UKNOWN value
-		Logger.debug(_UNBOUND_INPUT_LOG, [constant_name], self)
-	return mapped_value
 
 ## Converts the itemText to its assoicated GLOBAL_SETTINGS input name
 func _get_constant_name(item_text: String) -> String:

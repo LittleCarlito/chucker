@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://assets/ui/menus/control_node.gd" id="1_5pady"]
 [ext_resource type="PackedScene" uid="uid://btbtiiilcdji5" path="res://assets/ui/views/ScorecardView.tscn" id="2_rw607"]
-[ext_resource type="PackedScene" uid="uid://dmpnac8ay0j1d" path="res://assets/ui/menus/PauseMenu.tscn" id="3_w8mbf"]
+[ext_resource type="PackedScene" uid="uid://dmpnac8ay0j1d" path="res://assets/ui/menus/pause_menu.tscn" id="3_w8mbf"]
 
 [node name="ControlNode" type="Node3D" node_paths=PackedStringArray("scorecard", "pause_menu") groups=["ConfigHandler", "General"]]
 script = ExtResource("1_5pady")
@@ -17,5 +17,3 @@ visible = false
 
 [connection signal="apply_settings" from="PauseMenu" to="." method="_apply_settings"]
 [connection signal="close_menu" from="PauseMenu" to="." method="_close_menu"]
-[connection signal="load_settings" from="PauseMenu" to="." method="load_settings"]
-[connection signal="save_settings" from="PauseMenu" to="." method="_on_pause_menu_save_settings"]

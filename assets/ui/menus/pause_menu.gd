@@ -7,8 +7,6 @@ class_name PauseMenu
 var sub_menus: Array[Control]
 
 signal close_menu
-signal save_settings(save_settings_dicitionary)
-signal load_settings
 signal apply_settings
 
 # Called when the node enters the scene tree for the first time.
@@ -43,12 +41,6 @@ func _on_submenu_back() -> void:
 		sub_menu.visible = false
 	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 	back_timer.start()
-
-func _on_save_menu(save_settings_dicitionary: Dictionary) -> void:
-	save_settings.emit(save_settings_dicitionary)
-
-func _load_settings() -> void:
-	load_settings.emit()
 
 func _on_apply_menu() -> void:
 	apply_settings.emit()

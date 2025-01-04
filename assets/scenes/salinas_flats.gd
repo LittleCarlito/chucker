@@ -96,5 +96,4 @@ func update_course_data() -> void:
 
 func _kickoff_data_load() -> void:
 	update_course_data()
-	control_node.load_settings()
 	_apply_settings()

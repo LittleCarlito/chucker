@@ -18,8 +18,6 @@ var save_settings_dictionary: Dictionary
 
 signal close_menu
 signal back_menu
-signal save_settings(updated_settings)
-signal load_settings
 signal apply_settings
 
 var tab_array: Array[OptionTab]
@@ -35,7 +33,6 @@ func _ready() -> void:
 
 func initialize_ui() -> void:
 	control_select_menu.visible = false
-	load_settings.emit()
 	reload_ui()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -76,7 +73,6 @@ func _on_save_menu() -> void:
 	if not display_settings.is_empty():
 		save_settings_dictionary[DisplayConfig.NAME] = display_settings
 	# Always emit saveSettings even if empty; Returns to defaults then
-	save_settings.emit(save_settings_dictionary)
 	apply_settings.emit()
 	_reset_variables(option_tab_container.current_tab)
 
@@ -96,23 +92,6 @@ func _open_control_select_menu(selected_item: String) -> void:
 
 func _control_select_closed() -> void:
 	process_mode = Node.PROCESS_MODE_WHEN_PAUSED
-
-## Handles update signals from menu components
-func _handle_update_signal(update_type: UIData.TYPE, update_entry: Dictionary) -> void:
-	if update_entry.size() == 1:
-		var entry_key: String = update_entry.keys()[0]
-		var entry_value = update_entry.get(entry_key)
-		match update_type:
-			UIData.TYPE.CAMERA:
-				camera_settings[entry_key] = entry_value
-			UIData.TYPE.DISPLAY:
-				display_settings[entry_key] = entry_value
-			UIData.TYPE.CONTROL:
-				control_settings[entry_key] = entry_value
-			_:
-				Logger.error(_CATEGORY_NOT_FOUND, [str(update_type), entry_key, str(entry_value)], self)
-	else:
-		Logger.warn(_UNSUPPORTED_SIZE, [str(update_entry)], self)
 
 func reload_ui() -> void:
 	for existing_tab in tab_array:
