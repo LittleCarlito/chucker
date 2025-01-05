@@ -15,7 +15,7 @@ const _SELECT_ERROR_LOG: String = "Incorrect number of items selected to change 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	InputConfig.connect("reload_values", initialize_ui)
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -67,7 +67,7 @@ func _update_selected_icons(new_icon: Texture2D) -> void:
 ## Applys blank keycap texture to the passed in index of control_list
 func _assign_blank_keycap(index: int) -> void:
 	var constant_name: String = InputConfig.INPUT_LABEL.get(control_list.get_item_text(index))
-	applied_changes[constant_name] = InputConfig.UNKNOWN_KEY
+	applied_changes[constant_name] = InputConfig.get_unknown_key()
 	control_list.set_item_icon(index, InputSprite.UNKNOWN_TEXTURE)
 
 func _reset_variables() -> void:

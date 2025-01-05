@@ -44,6 +44,7 @@ const DISABLE_ROTATION: String = "disable_rotation"
 const ENABLE_ROTATION: String = "enable_rotation"
 # TODO Implement this on items that use GlobalSettings for runtime logic; Not used but UI objects for update calls
 const RELOAD_PROJECT_SETTINGS: String = "reload_project_settings"
+const RELOAD_DATA: String = "_reload_data"
 # TODO General items need to implement this for after launch attempts
 const UPDATE_STATE: String = "_update_state"
 # TODO Rework these to be ALTER_HOLE_NUMBER and ALTER_HOLE_NODE_NUMBER; These should only be on TeeBox assets

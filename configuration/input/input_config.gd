@@ -1,7 +1,5 @@
 extends Node
 
-signal reload_values
-
 const _NO_FILE_FOUND: String = "No user_settings file found; Using default controls"
 
 const NAME: String = "input"
@@ -112,26 +110,26 @@ const INPUT_LABEL: Dictionary = {
 	"Sprint": USER_INPUT.SPRINT
 }
 
-var _user_settings: ConfigFile
-var UNKNOWN_KEY: InputEventKey = InputEventKey.new()
 
 func _ready() -> void:
-	UNKNOWN_KEY.physical_keycode = KEY_UNKNOWN
 	add_to_group(GroupData.CONFIG_HANDLER)
-	reload_project_settings()
+	call_deferred("reload_project_settings")
 
 ## Reloads Project input settings using GlobalSettings
 func reload_project_settings() -> void:
 	# Get user settings file
-	_user_settings = ConfigFileHandler.get_user_setting_file()
+	var input_dictionary: Dictionary = UserSettingData.get_category(NAME)
 	# Iterate through existing settings and apply controls
-	if _user_settings.has_section(InputConfig.NAME):
-		var update_controls: Array = _user_settings.get_section_keys(InputConfig.NAME)
+	if !input_dictionary.is_empty():
+		var update_controls: Array = input_dictionary.keys()
 		for update_control in update_controls:
-			var bound_input: InputEvent = _user_settings.get_value(InputConfig.NAME, update_control)
+			var bound_input: InputEvent = input_dictionary.get(update_control)
 			InputMap.action_erase_events(update_control)
 			InputMap.action_add_event(update_control, bound_input)
-		# TODO Need to tell ConfigHandlers to reload data
-		reload_values.emit()
 	else:
 		Logger.debug(_NO_FILE_FOUND, [], self)
+
+func get_unknown_key() -> InputEventKey:
+	var unknown_key: InputEventKey = InputEventKey.new()
+	unknown_key.physical_keycode = KEY_UNKNOWN
+	return unknown_key

@@ -70,7 +70,9 @@ func _on_save_menu() -> void:
 	ConfigFileHandler.save_to_user_settings(controls_tab.applied_changes)
 	ConfigFileHandler.save_to_user_settings(general_tab.applied_changes)
 	# Alert config handlers to refresh their data
+	get_tree().call_group(GroupData.CONFIG_HANDLER, GroupData.RELOAD_DATA)
 	get_tree().call_group(GroupData.CONFIG_HANDLER, GroupData.RELOAD_PROJECT_SETTINGS)
+
 	# Always emit saveSettings even if empty; Returns to defaults then
 	apply_settings.emit()
 	_reset_variables(option_tab_container.current_tab)

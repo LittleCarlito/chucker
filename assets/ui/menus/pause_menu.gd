@@ -34,6 +34,7 @@ func _on_quit() -> void:
 
 func _on_options_menu() -> void:
 	self.process_mode = Node.PROCESS_MODE_DISABLED
+	options_menu.initialize_ui()
 	options_menu.visible = true
 
 func _on_submenu_back() -> void:

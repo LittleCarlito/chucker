@@ -59,11 +59,8 @@ const CONFIG_LIBRARY: Dictionary = {
 	HORIZONTAL_LOOK_SENSITIVITY: HORIZONTAL_LOOK_SENSITIVITY
 }
 
-var _user_data: ConfigFile
-
 func _ready() -> void:
 	add_to_group(GroupData.CONFIG_HANDLER)
-	reload_project_settings()
 
 ## Retrieves the configured fov value
 func get_fov_value() -> int:
@@ -137,20 +134,16 @@ func get_stationary_focus_offset() -> Vector3:
 # TODO Get Graphics tab using it and DefaultLibrary
 ## Returns the configured value for the category
 func _get_category_value(category_name: String, category_key: String):
+	var category_dictionary: Dictionary = UserSettingData.get_category(category_name, true)
 	var category_value
-	if _user_data.has_section_key(category_name, category_key):
-		category_value = _user_data.get_value(category_name, category_key)
+	if category_dictionary.has(category_key):
+		category_value = category_dictionary.get(category_key)
 	else:
-		var category_dictionary: Dictionary = DefaultLibrary.DEFAULTS.get(category_name, {}) as Dictionary
-		if !category_dictionary.is_empty():
-			if category_dictionary.has(category_key):
-				category_value = category_dictionary.get(category_key)
+		var category_default_dictionary: Dictionary = DefaultLibrary.DEFAULTS.get(category_name, {}) as Dictionary
+		if !category_default_dictionary.is_empty():
+			if category_default_dictionary.has(category_key):
+				category_value = category_default_dictionary.get(category_key)
 	if category_value == null:
 		var formatted_string: String = _NO_CATEGORY_MATCH + Logger.LOG_SEPARATOR + Logger.RETURNING_INT16_MAX
 		Logger.debug(formatted_string, [category_name, category_key], self)
 	return category_value
-
-## usually called via group CONFIG_HANDLER method calls
-func reload_project_settings() -> void:
-	_user_data = ConfigFileHandler.get_user_setting_file()
-	

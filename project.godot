@@ -32,6 +32,7 @@ AssetDelivery="*res://assets/common/factory/asset_delivery.gd"
 GlobalHoleData="*res://assets/buildings/course/data/global_hole_data.gd"
 CameraConfig="*res://configuration/camera_config.gd"
 InputConfig="*res://configuration/input/input_config.gd"
+UserSettingData="*res://configuration/handler/user_setting_data.gd"
 
 [display]
 
