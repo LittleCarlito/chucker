@@ -63,12 +63,61 @@ const CONFIG_LIBRARY: Dictionary = {
 	ROTATE_DOWN: ROTATE_DOWN
 }
 
+# TODO USER_INPUT should be migrated to INPUT_LABEL and they should be renamed to INPUT_LIBRARY
+#			Move all this to InputConfig
+# Keys are how it is handled in code
+# Values are how project settings handle those behaviors
+const USER_INPUT: Dictionary = {
+	"FORWARD": "move_forward",
+	"BACKWARD": "move_backward",
+	"ROTATE_LEFT": "rotate_left",
+	"STRAFE_LEFT": "move_left",
+	"ROTATE_RIGHT": "rotate_right",
+	"STRAFE_RIGHT": "move_right",
+	"ROTATE_UP": "rotate_up",
+	"ROTATE_DOWN": "rotate_down",
+	"JUMP": "move_jump",
+	"CROUCH": "move_crouch",
+	"SPRINT": "move_sprint",
+	"INTERACT": "player_interact",
+	"PRIMARY": "player_primary",
+	"SECONDARY": "player_secondary",
+	"SCORE": "menu_score",
+	"PAUSE": "menu_pause",
+	"DEBUG": "admin_debug"
+}
+
+# Keys are how we display input type on UI
+# Values are how project settings handle those behaviors
+const INPUT_LABEL: Dictionary = {
+	# Menu labels
+	"Scorecard": USER_INPUT.SCORE,
+	"Pause": USER_INPUT.PAUSE,
+	# Action labels
+	"Primary Action": USER_INPUT.PRIMARY,
+	"Secondary Action": USER_INPUT.SECONDARY,
+	"Pick Up": USER_INPUT.INTERACT,
+	# Rotate labels
+	"Rotate Left": USER_INPUT.ROTATE_LEFT,
+	"Rotate Right": USER_INPUT.ROTATE_RIGHT,
+	"Rotate Up": USER_INPUT.ROTATE_UP,
+	"Rotate Down": USER_INPUT.ROTATE_DOWN,
+	# Control labels
+	"Forward": USER_INPUT.FORWARD,
+	"Backward": USER_INPUT.BACKWARD,
+	"Strafe Left": USER_INPUT.STRAFE_LEFT,
+	"Strafe Right": USER_INPUT.STRAFE_RIGHT,
+	"Jump": USER_INPUT.JUMP, 
+	"Crouch": USER_INPUT.CROUCH,
+	"Sprint": USER_INPUT.SPRINT
+}
+
 var _user_settings: ConfigFile
 var UNKNOWN_KEY: InputEventKey = InputEventKey.new()
 
 func _ready() -> void:
 	UNKNOWN_KEY.physical_keycode = KEY_UNKNOWN
-	add_to_group(CONSTANTS.CONFIG_HANDLER)
+	add_to_group(GroupData.CONFIG_HANDLER)
 	reload_project_settings()
 
 ## Reloads Project input settings using GlobalSettings

@@ -131,8 +131,8 @@ static func _load_file(file_path: String) -> ConfigFile:
 		if error != OK:
 			Logger.error(_LOAD_FAIL, [file_path], null)
 	else:
-		var formatted_string: String = _FILE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
-		Logger.warn(formatted_string, [file_path], null)
+		var formatted_string: String = _FILE_NOT_FOUND + Logger.LOG_SEPARATOR + Logger.RETURNING_NULL_LOG
+		Logger.debug(formatted_string, [file_path], null)
 	return return_file
 
 ## Deletes the given category from the desired file if it exists
@@ -149,8 +149,8 @@ static func delete_file_category(file_type: FILE_TYPE, file_category: String) ->
 			updating_file.save(PATH_LIBRARY.get(file_type))
 			Logger.debug(_CATEGORY_ERASED, [file_category, str(file_type)], null)
 		else:
-			var formatted_string: String = _MISSING_CATEGORY + CONSTANTS.LOG_SEPARATOR + _NOT_DELETING
+			var formatted_string: String = _MISSING_CATEGORY + Logger.LOG_SEPARATOR + _NOT_DELETING
 			Logger.debug(formatted_string, [str(file_type), file_category, str(file_type), file_category], null)
 	else:
-		var formatted_string: String = _FILE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + _NOT_DELETING
+		var formatted_string: String = _FILE_NOT_FOUND + Logger.LOG_SEPARATOR + _NOT_DELETING
 		Logger.debug(formatted_string, [str(file_type), str(file_type), file_category], null)

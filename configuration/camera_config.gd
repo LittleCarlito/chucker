@@ -62,7 +62,7 @@ const CONFIG_LIBRARY: Dictionary = {
 var _user_data: ConfigFile
 
 func _ready() -> void:
-	add_to_group(CONSTANTS.CONFIG_HANDLER)
+	add_to_group(GroupData.CONFIG_HANDLER)
 	reload_project_settings()
 
 ## Retrieves the configured fov value
@@ -146,7 +146,7 @@ func _get_category_value(category_name: String, category_key: String):
 			if category_dictionary.has(category_key):
 				category_value = category_dictionary.get(category_key)
 	if category_value == null:
-		var formatted_string: String = _NO_CATEGORY_MATCH + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_INT16_MAX
+		var formatted_string: String = _NO_CATEGORY_MATCH + Logger.LOG_SEPARATOR + Logger.RETURNING_INT16_MAX
 		Logger.debug(formatted_string, [category_name, category_key], self)
 	return category_value
 

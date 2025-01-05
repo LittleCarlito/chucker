@@ -26,13 +26,12 @@ buses/default_bus_layout=""
 DrawUtil="*res://utils/draw_util.gd"
 NodeUtil="*res://utils/node_util.gd"
 Logger="*res://utils/logger.gd"
-InputEventLibrary="*res://configuration/input/input_event_library.gd"
-InputSprite="*res://configuration/sprite/input_sprite.gd"
+InputSprite="*res://configuration/input/input_sprite.gd"
 GlobalSettings="*res://configuration/global_settings.gd"
 AssetDelivery="*res://assets/common/factory/asset_delivery.gd"
 GlobalHoleData="*res://assets/buildings/course/data/global_hole_data.gd"
-CameraConfig="*res://configuration/handler/camera_config.gd"
-InputConfig="*res://configuration/handler/input_config.gd"
+CameraConfig="*res://configuration/camera_config.gd"
+InputConfig="*res://configuration/input/input_config.gd"
 
 [display]
 

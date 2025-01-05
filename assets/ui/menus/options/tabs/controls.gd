@@ -11,8 +11,6 @@ const _UPDATE_CONTROL_LOG: String = "Updating control \"%s\" to input \"%s\""
 const _UNBIND_LOG: String = "Input \"%s\" key has been rebound"
 const _SELECT_ERROR_LOG: String = "Incorrect number of items selected to change control input; \"%s\" items selected"
 
-# TODO Can't handle saving unbound inputs; Saves default value back in
-
 @export var control_list: ItemList
 
 # Called when the node enters the scene tree for the first time.
@@ -26,14 +24,14 @@ func _process(_delta: float) -> void:
 func initialize_ui() -> void:
 	# Load in icons for set controls
 	for i in control_list.item_count:
-		var constant_name: String = CONSTANTS.INPUT_LABEL.get(control_list.get_item_text(i))
+		var constant_name: String = InputConfig.INPUT_LABEL.get(control_list.get_item_text(i))
 		var mapped_texture: Texture2D = InputSprite.get_sprite(InputMap.action_get_events(constant_name)[0])
 		control_list.set_item_icon(i, mapped_texture)
 
 ## What to do when user selects one of the control items
 func _open_control_select_menu(index: int, _click_position: Vector2, mouse_button_index: int) -> void:
 	if mouse_button_index == MOUSE_BUTTON_LEFT:
-		var constant_name: String = CONSTANTS.INPUT_LABEL.get(control_list.get_item_text(index))
+		var constant_name: String = InputConfig.INPUT_LABEL.get(control_list.get_item_text(index))
 		value_selected.emit(constant_name)
 
 ## Sets ControlList item to desired control value
@@ -68,7 +66,7 @@ func _update_selected_icons(new_icon: Texture2D) -> void:
 
 ## Applys blank keycap texture to the passed in index of control_list
 func _assign_blank_keycap(index: int) -> void:
-	var constant_name: String = CONSTANTS.INPUT_LABEL.get(control_list.get_item_text(index))
+	var constant_name: String = InputConfig.INPUT_LABEL.get(control_list.get_item_text(index))
 	applied_changes[constant_name] = InputConfig.UNKNOWN_KEY
 	control_list.set_item_icon(index, InputSprite.UNKNOWN_TEXTURE)
 

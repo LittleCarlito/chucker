@@ -42,9 +42,9 @@ func _input(event: InputEvent) -> void:
 	_handle_looking(event)
 	## Rotate input control
 	# TODO Add support for track pad scrolling to rotate disk up
-	if event.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_UP) || event.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_DOWN):
+	if event.is_action_pressed(InputConfig.USER_INPUT.ROTATE_UP) || event.is_action_pressed(InputConfig.USER_INPUT.ROTATE_DOWN):
 		var rotation_adjust: float = GlobalSettings.DISK.ROTATE_ADJUST
-		if event.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_DOWN):
+		if event.is_action_pressed(InputConfig.USER_INPUT.ROTATE_DOWN):
 			rotation_adjust *= -1
 		_handle_rotation(rotation_adjust)
 
@@ -54,31 +54,31 @@ func _handle_jump(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 	# Handle jump
-	if Input.is_action_just_pressed(CONSTANTS.USER_INPUT.JUMP) and is_on_floor() and is_movement_enabled():
+	if Input.is_action_just_pressed(InputConfig.USER_INPUT.JUMP) and is_on_floor() and is_movement_enabled():
 		velocity.y = GlobalSettings.PLAYER.JUMP_FORCE
 
 ## Rotation and aiming logic
 func _handle_camera_controls() -> void:
 	if is_rotation_enabled():
 		# Left and right rotation inputs
-		if Input.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_LEFT):
+		if Input.is_action_pressed(InputConfig.USER_INPUT.ROTATE_LEFT):
 			self.rotate_y(deg_to_rad(CameraConfig.get_rotate_speed()))
-		if Input.is_action_pressed(CONSTANTS.USER_INPUT.ROTATE_RIGHT):
+		if Input.is_action_pressed(InputConfig.USER_INPUT.ROTATE_RIGHT):
 			self.rotate_y(deg_to_rad(-CameraConfig.get_rotate_speed()))
 
 ## Actions when disk is thrown
 func _handle_player_action(delta: float) -> void:
 	if item_container.is_equipped():
-		if Input.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY):
+		if Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY):
 			item_container.hold_action(delta)
-		if Input.is_action_just_released(CONSTANTS.USER_INPUT.PRIMARY):
+		if Input.is_action_just_released(InputConfig.USER_INPUT.PRIMARY):
 			item_container.release_action()
 
 # TODO FrontDetect should be made its own scene with this in its script
 ## Handle player pressing interact button
 func _handle_player_interact() -> void:
 	# Detect obejects in front of the character
-	if Input.is_action_just_pressed(CONSTANTS.USER_INPUT.INTERACT) and front_detection.is_colliding():
+	if Input.is_action_just_pressed(InputConfig.USER_INPUT.INTERACT) and front_detection.is_colliding():
 		var colliding_count = front_detection.get_collision_count()
 		for n in colliding_count:
 			var colliding_object = front_detection.get_collider(0)
@@ -110,9 +110,9 @@ func _handle_movement(delta: float) -> void:
 	# Handle jump
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-	if Input.is_action_just_pressed(CONSTANTS.USER_INPUT.JUMP) and is_on_floor() and is_movement_enabled():
+	if Input.is_action_just_pressed(InputConfig.USER_INPUT.JUMP) and is_on_floor() and is_movement_enabled():
 		velocity.y = GlobalSettings.PLAYER.JUMP_FORCE
-	var input_dir = Input.get_vector(CONSTANTS.USER_INPUT.STRAFE_LEFT, CONSTANTS.USER_INPUT.STRAFE_RIGHT, CONSTANTS.USER_INPUT.FORWARD, CONSTANTS.USER_INPUT.BACKWARD)
+	var input_dir = Input.get_vector(InputConfig.USER_INPUT.STRAFE_LEFT, InputConfig.USER_INPUT.STRAFE_RIGHT, InputConfig.USER_INPUT.FORWARD, InputConfig.USER_INPUT.BACKWARD)
 	if(is_on_floor()):
 		var direction = (self.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		if direction:
@@ -121,7 +121,7 @@ func _handle_movement(delta: float) -> void:
 				velocity.z = 0
 			else:
 				var sprint_addition: float = 0.0
-				if Input.is_action_pressed(CONSTANTS.USER_INPUT.SPRINT):
+				if Input.is_action_pressed(InputConfig.USER_INPUT.SPRINT):
 					sprint_addition = GlobalSettings.PLAYER.SPRINT_SPEED
 					camera_container.zoom_out()
 				elif camera_container.has_camera():
@@ -149,16 +149,16 @@ func reload_project_settings() -> void:
 	camera_container.reset_zoom()
 
 func _handle_looking(event: InputEvent) -> void:
-	if event.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
+	if event.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		disable_movement()
 		if camera_container.is_current():
 			camera_container.zoom_in()
-	elif event.is_action_released(CONSTANTS.USER_INPUT.SECONDARY):
+	elif event.is_action_released(InputConfig.USER_INPUT.SECONDARY):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		camera_container.snap_back(self.global_basis)
 		enable_movement()
-	elif event is InputEventMouseMotion and Input.is_action_pressed(CONSTANTS.USER_INPUT.SECONDARY):
+	elif event is InputEventMouseMotion and Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
 		var v_rotation_amount: float = NodeUtil.get_vertical_rotation_amount(event)
 		var h_rotation_amount: float = NodeUtil.get_horizontal_rotation_amount(event)
 		if _can_horizontally_rotate(h_rotation_amount):
@@ -169,13 +169,13 @@ func _handle_looking(event: InputEvent) -> void:
 			_handle_rotation(v_rotation_amount)
 	# Third person viewing self
 	# Only occurs when unequipped and primary is held
-	elif event.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY) and item_container.is_unequipped():
+	elif event.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and item_container.is_unequipped():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	elif event is InputEventMouseMotion and (Input.is_action_pressed(CONSTANTS.USER_INPUT.PRIMARY) and item_container.is_unequipped()):
+	elif event is InputEventMouseMotion and (Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and item_container.is_unequipped()):
 		## Determine amount to rotate camera
 		var horizontal_rotate_amount: float = deg_to_rad(event.relative.x) * CameraConfig.get_horizontal_look_sens()
 		camera_container.horizontal_pan(horizontal_rotate_amount, self.global_position)
-	elif event.is_action_released(CONSTANTS.USER_INPUT.PRIMARY) and item_container.is_unequipped():
+	elif event.is_action_released(InputConfig.USER_INPUT.PRIMARY) and item_container.is_unequipped():
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		camera_container.snap_back(self.global_basis)
 
@@ -221,11 +221,11 @@ func equip_item(new_item: Node3D) -> void:
 	_update_state()
 
 func _give_camera(new_item: Node3D) -> void:
-	if new_item is CameraContainer or new_item.has_method(CONSTANTS.GET_CAMERA_CONTAINER):
+	if new_item is CameraContainer or new_item.has_method(GroupData.GET_CAMERA_CONTAINER):
 		var pulled_camera_container: CameraContainer
 		if new_item is not CameraContainer:
 			# TODO Implement _get_camera_container on assets that you would want to ahve the camera while equipped (might be none, maybe do one for fun)
-			pulled_camera_container = new_item.call(CONSTANTS.GET_CAMERA_CONTAINER)
+			pulled_camera_container = new_item.call(GroupData.GET_CAMERA_CONTAINER)
 			if pulled_camera_container == null:
 				Logger.debug(_EMPTY_CAMERA_CONTAINER, [str(new_item)], self) 
 		else:
@@ -233,10 +233,10 @@ func _give_camera(new_item: Node3D) -> void:
 		if pulled_camera_container != null:
 			camera_container.give_camera(pulled_camera_container)
 		else:
-			var formatted_string: String = _NO_CAMERA_CONTAINER_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.KEEPING_CAMERA
+			var formatted_string: String = _NO_CAMERA_CONTAINER_LOG + Logger.LOG_SEPARATOR + Logger.KEEPING_CAMERA
 			Logger.debug(formatted_string, [str(new_item)], self)
 	else:
-		var formatted_string: String = _NO_CAMERA_CONTAINER_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.KEEPING_CAMERA
+		var formatted_string: String = _NO_CAMERA_CONTAINER_LOG + Logger.LOG_SEPARATOR + Logger.KEEPING_CAMERA
 		Logger.debug(formatted_string, [str(new_item)], self)
 
 func _get_focus_point() -> Vector3:

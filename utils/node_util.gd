@@ -106,22 +106,22 @@ func get_vertical_rotation_amount(event: InputEvent) -> float:
 ## Gets the index of the nearest value greater than the desired value
 ## Returns found index or INT64_MAX
 func get_nearest_greater_index(desired_value: int, search_array: Array[int]) -> int:
-	var start_value: int = CONSTANTS.INT64_MAX
+	var start_value: int = NUMBERS.INT64_MAX
 	for existing_number in search_array:
-		if existing_number > desired_value and start_value == CONSTANTS.INT64_MAX:
+		if existing_number > desired_value and start_value == NUMBERS.INT64_MAX:
 			start_value = search_array.find(existing_number)
 	return start_value
 
 ## Determines if given array of ints is sequential
 func is_sequential(incoming_data: Array[int]) -> bool:
 	var non_sequential_index: int = get_first_non_sequential_index(incoming_data)
-	return true if non_sequential_index != CONSTANTS.INT64_MAX else false
+	return true if non_sequential_index != NUMBERS.INT64_MAX else false
 
 ## Returns the first non sequential index in the array
 ## Values are expected to be +1 their index (no 0 references allowed)
 ## If whole array is sequential returns INT64_MAX
 func get_first_non_sequential_index(incoming_data: Array[int]) -> int:
-	var return_index: int = CONSTANTS.INT64_MAX
+	var return_index: int = NUMBERS.INT64_MAX
 	for i in incoming_data.size():
 		if i + 1 != incoming_data[i]:
 			return_index = i

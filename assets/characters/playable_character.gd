@@ -22,27 +22,27 @@ func _physics_process(delta: float) -> void:
 
 ## Handles player action input
 func _handle_player_action(_delta: float) -> void:
-	Logger.error(CONSTANTS.UNIMPLEMENTED_LOG, [_HANDLE_PLAYER_ACTION], self)
+	Logger.error(Logger.UNIMPLEMENTED_LOG, [_HANDLE_PLAYER_ACTION], self)
 
 ## Handles camera/aiming related actions
 func _handle_camera_controls() -> void:
-	Logger.error(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _HANDLE_CAMERA_CONTROLS], self)
+	Logger.error(Logger.UNIMPLEMENTED_LOG, [self.name, _HANDLE_CAMERA_CONTROLS], self)
 
 ## Handle player pressing interact button
 func _handle_player_interact() -> void:
-	Logger.error(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _HANDLE_PLAYER_INTERACT], self)
+	Logger.error(Logger.UNIMPLEMENTED_LOG, [self.name, _HANDLE_PLAYER_INTERACT], self)
 
 ## Detects and executes movements
 func _handle_movement(_delta: float) -> void:
-	Logger.error(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _HANDLE_MOVEMENT], self)
+	Logger.error(Logger.UNIMPLEMENTED_LOG, [self.name, _HANDLE_MOVEMENT], self)
 
 ## Unequips the currently equipped item
 func unequip_item() -> void:
-	Logger.error(CONSTANTS.UNIMPLEMENTED_LOG, [self.name, _UNEQUIP_ITEM], self)
+	Logger.error(Logger.UNIMPLEMENTED_LOG, [self.name, _UNEQUIP_ITEM], self)
 
 ## Returns the height of Chuck
 func get_height() -> float:
-	Logger.error(CONSTANTS.UNIMPLEMENTED_LOG + _RETURNING_ZERO, [self.name, _GET_HEIGHT], self)
+	Logger.error(Logger.UNIMPLEMENTED_LOG + _RETURNING_ZERO, [self.name, _GET_HEIGHT], self)
 	return 0
 
 func is_movement_disabled() -> bool:

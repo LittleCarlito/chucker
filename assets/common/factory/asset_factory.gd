@@ -40,7 +40,7 @@ static func _instantiate_packed_scene(incoming_scene: PackedScene) -> Node3D:
 		_brand(new_node)
 		return_node = new_node
 	else:
-		var formatted_string: String = CONSTANTS.NULL_PARAMETER_STRING + CONSTANTS.LOG_SEPARATOR + CONSTANTS.CANNOT_ACTION_STRING + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
+		var formatted_string: String = Logger.NULL_PARAMETER_STRING + Logger.LOG_SEPARATOR + Logger.CANNOT_ACTION_STRING + Logger.LOG_SEPARATOR + Logger.RETURNING_NULL_LOG
 		Logger.debug(formatted_string, [_INSTANTIATE_PACKED_SCENE], null)
 	return return_node
 

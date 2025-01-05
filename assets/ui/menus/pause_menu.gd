@@ -18,7 +18,7 @@ func _process(_delta: float) -> void:
 	pass
 	
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed(CONSTANTS.USER_INPUT.PAUSE) and self.visible and back_timer.is_stopped():
+	if event.is_action_pressed(InputConfig.USER_INPUT.PAUSE) and self.visible and back_timer.is_stopped():
 		close_menu.emit()
 
 func _on_close_menu() -> void:

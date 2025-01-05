@@ -1,11 +1,13 @@
 extends Node
 
+# TODO Convert this file to a cfg or something
+
 const MISSING_CATEGORY_LOG: String = "Name \"%s\" could not be mapped to a category in method \"%s\"; Returning \"%s\""
 const _EXTRACT_CATEGORY: String = "extract_category"
 const _GET_CATEGORY: String = "get_category"
 const _GET_DEFAULT_CATEGORY: String = "get_default_category"
 
-# TODO Need to move all this to appropriate existing locations
+# TODO Get the rest of these to user_settings.cfg and a config handler
 
 const PLAYER: Dictionary = {
 	"RUN_SPEED": 5.0,
@@ -39,7 +41,7 @@ const COLOR: Dictionary = {
 const DEFAULTS: Dictionary = {
 	"COLOR": Color.CHARTREUSE,
 	"ITEM": AssetData.TYPE.FORCE,
-	"GROUP": CONSTANTS.ENVIRONMENT
+	"GROUP": GroupData.ENVIRONMENT
 }
 
 # Called when the node enters the scene tree for the first time.

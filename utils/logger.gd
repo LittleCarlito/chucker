@@ -1,5 +1,42 @@
 extends Node3D
 
+const KEEPING_CAMERA: String = "Not transferring camera"
+const NULL_PARAMETER_STRING: String = "Null parameter given"
+const CANNOT_ACTION_STRING: String = "Cannot %s"
+const ILLEGAL_STATE_STRING: String = "Illegal state has been reached %s"
+const EXISTING_DATA_MISSING: String = "%s \"%s\" was expected to exist but returned null from %s"
+const FOR_METHOD_LOG: String = "For method %s"
+const METHOD_LOG: String = "\"%s\"; \"%s\""
+const NULL_LOG: String = "\"%s\" is null"
+const ITEM_OWNER_LOG: String = "item_owner \"%s\""
+const UNIMPLEMENTED_LOG: String = "UNIMPLEMENTED METHOD; All %s Objects must implement \"%s\""
+const UNSUPPORTED_TYPE_LOG: String = "%s recieved an unsupported type \"%s\""
+const RETURNING_NULL_LOG: String = "Returning null"
+const RETURNING_FALSE_LOG: String = "Returning false"
+const RETURNING_ZERO_LOG: String = "Returning 0"
+const NULL_CAMERA_LOG: String = "has no camera and cannot %s"
+const ALREADY_EXISTS_LOG: String = "%s already exists"
+const NOT_FOUND_LOG: String = "No %s could be found"
+const HOLE_NODE_DATA: String = "HoleNodeData"
+const TOGGLE_CAMERA: String = "toggle_camera"
+const DISABLE_CAMERA: String = "disable_camera"
+const ENABLE_CAMERA: String = "enable_camera"
+const RESET_ZOOM: String = "reset_zoom"
+const ZOOM_IN: String = "zoom_in"
+const ZOOM_OUT: String = "zoom_out"
+const GET_CAMERA: String = "get_camera"
+const IS_CURRENT: String = "is_current"
+const LOCATION_LOG: String = "\"%s\" global position \"%s\""
+# TODO Refactor other users to use this instead
+const RETURNING_UNKNOWN_LOG: String = "Returning unknown"
+const RETURNING_INT16_MAX: String = "Returning INT16_MAX"
+const PICKED_UP_LOG: String = "%s has been picked up"
+const DEACTIVATE_LOG: String = "%s is deactivating"
+const LOG_SEPARATOR: String = "; "
+const OR_SEPARATOR: String = " OR "
+const EITHER_STARTER: String = "Either "
+const NO_METHOD_FOUND: String = "No method \"%s\" found on object \"%s\""
+
 enum LEVEL {
 	DEBUG,
 	INFO,

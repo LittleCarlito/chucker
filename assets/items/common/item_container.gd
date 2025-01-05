@@ -41,22 +41,22 @@ func unequip_item() -> void:
 # TODO Figure out a default 0ing, min, or max value for Basis to allow defaulting
 func hold_action(delta: float) -> void:
 	if is_equipped():
-		if equipped_item.has_method(CONSTANTS.HOLD_ACTION):
-			equipped_item.call(CONSTANTS.HOLD_ACTION, delta, self.global_basis)
+		if equipped_item.has_method(GroupData.HOLD_ACTION):
+			equipped_item.call(GroupData.HOLD_ACTION, delta, self.global_basis)
 		else:
-			Logger.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), CONSTANTS.HOLD_ACTION], self)
+			Logger.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), GroupData.HOLD_ACTION], self)
 	else:
-		Logger.debug(_ITEM_CONTAINER_UNEQUIPPED, [CONSTANTS.HOLD_ACTION], self)
+		Logger.debug(_ITEM_CONTAINER_UNEQUIPPED, [GroupData.HOLD_ACTION], self)
 
 # TODO Figure out a default 0ing, min, or max value for Basis to allow defaulting
 func release_action() -> void:
 	if is_equipped():
-		if equipped_item.has_method(CONSTANTS.RELEASE_ACTION):
-			equipped_item.call(CONSTANTS.RELEASE_ACTION, self.global_basis)
+		if equipped_item.has_method(GroupData.RELEASE_ACTION):
+			equipped_item.call(GroupData.RELEASE_ACTION, self.global_basis)
 		else:
-			Logger.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), CONSTANTS.RELEASE_ACTION], self)
+			Logger.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), GroupData.RELEASE_ACTION], self)
 	else:
-		Logger.debug(_ITEM_CONTAINER_UNEQUIPPED, [CONSTANTS.RELEASE_ACTION], self)
+		Logger.debug(_ITEM_CONTAINER_UNEQUIPPED, [GroupData.RELEASE_ACTION], self)
 
 func is_equipped() -> bool:
 	return equipped_item != null

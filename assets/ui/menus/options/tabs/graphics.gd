@@ -5,6 +5,7 @@ class_name GraphicsTab
 
 const _UI_SCALE: String = "display/window/stretch/scale"
 const _DISPLAY_NUMBER: String = "Display %d"
+const _UNLIMITED: String = "Unlimited"
 
 @export var motion_blur_check: CheckBox
 @export var bloom_check: CheckBox
@@ -51,7 +52,7 @@ func initialize_ui() -> void:
 	display_type_select.select(mode_index)
 	# Set FPS lock if available
 	var set_fps_lock: int = _get_fps_limit_index()
-	if set_fps_lock != CONSTANTS.INT16_MAX:
+	if set_fps_lock != NUMBERS.INT16_MAX:
 		frame_rate_select.select(set_fps_lock)
 	# Set display if available
 	monitor_choice_select.select(_detect_current_display())
@@ -88,7 +89,7 @@ func _update_window_type(incoming_index: int) -> void:
 func _update_fps_lock(incoming_index: int) -> void:
 	var frame_lock: int
 	var selected_value: String = frame_rate_select.get_item_text(incoming_index)
-	if selected_value == CONSTANTS.UNLIMITED:
+	if selected_value == _UNLIMITED:
 		frame_lock = 0
 	else:
 		frame_lock = selected_value as int
@@ -127,7 +128,7 @@ func _set_window_mode() -> void:
 func _set_available_displays() -> void:
 	var display_count: int = DisplayServer.get_screen_count()
 	var current_selection_count: int = monitor_choice_select.item_count
-	var only_placeholder: bool = monitor_choice_select.item_count == 1 and (monitor_choice_select.get_item_text(0) == CONSTANTS.PLACEHOLDER)
+	var only_placeholder: bool = monitor_choice_select.item_count == 1 and (monitor_choice_select.get_item_text(0) == DefaultLibrary.PLACEHOLDER)
 	if display_count != current_selection_count or only_placeholder:
 		monitor_choice_select.clear()
 		for i in display_count:
@@ -161,19 +162,19 @@ func _detect_fps_display() -> bool:
 ## Detects current FPS limit and gets associated dropdown index
 ## Returns INT16_MAX if no match is found
 func _get_fps_limit_index() -> int:
-	var match_index: int = CONSTANTS.INT16_MAX
+	var match_index: int = NUMBERS.INT16_MAX
 	var max_fps: int = Engine.max_fps
 	for i in range(frame_rate_select.item_count):
 		var dropdown_string: String = frame_rate_select.get_item_text(i)
 		var dropdown_value: float
-		if dropdown_string != CONSTANTS.UNLIMITED:
+		if dropdown_string != _UNLIMITED:
 			dropdown_value = dropdown_string as float
 		else:
 			dropdown_value = 0
 		if max_fps == dropdown_value:
 			match_index = i
 			break
-	if match_index == CONSTANTS.INT16_MAX:
+	if match_index == NUMBERS.INT16_MAX:
 		const _NO_INDEX_MATCH: String = "No %s index could be matched to value \"%s\""
 		Logger.debug(_NO_INDEX_MATCH, [ApplicationConfig.FPS_LOCK, str(max_fps)], self)
 	return match_index

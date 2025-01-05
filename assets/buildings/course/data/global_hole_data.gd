@@ -3,6 +3,8 @@ extends Node
 # TODO If this class causes things to run slowly it is internal usage of methods doing things like contains repeatedly (leading to super high n values on complex calls)
 #			Fix by adding non checking methods to call that don't iterate through data storage but just assume existance is known before call
 
+const _INCREASE: String = "increase"
+const _DECREASE: String = "decrease"
 # TODO Simplify these
 const _UNEXPECTED_NODE_VALUE: String = "Node value \"%s\" was %s than expected"
 const _SEQUENTIAL_DEBUG_LOG: String = "Sequential order for hole \"%s\" is \"%s\""
@@ -40,7 +42,7 @@ const _SEQUENTIAL_ORDER: String = "sequential_order"
 ## Dictionary of dictionaries
 ## First key is hole number, key for next dictionary is node number
 var hole_data: Dictionary = {}
-var invalid_keys: Dictionary = {0: CONSTANTS.BLOCKING_VALUE, null: CONSTANTS.BLOCKING_VALUE}
+var invalid_keys: Dictionary = {0: DefaultLibrary.PLACEHOLDER, null: DefaultLibrary.PLACEHOLDER}
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -65,13 +67,13 @@ func simple_add_hole_data(incoming_hole_number: int, incoming_data: HoleNodeData
 				if(_create_base_hole(incoming_hole_number, incoming_data)):
 					data_added = true
 				else:
-					var formatted_string: String = _BASE_CREATION_FAILURE + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+					var formatted_string: String = _BASE_CREATION_FAILURE + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
 					Logger.debug(formatted_string, [str(incoming_hole_number), str(incoming_data.node_number)], self)
 			else:
-				var formatted_string: String = _NOT_BASE_CREATION_NODE + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+				var formatted_string: String = _NOT_BASE_CREATION_NODE + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
 				Logger.debug(formatted_string, [str(incoming_data.node_number)], self)
 		else:
-			var formatted_string: String = _HOLE_ALREADY_EXISTS + CONSTANTS.LOG_SEPARATOR + _NOT_ADDING_DATA + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+			var formatted_string: String = _HOLE_ALREADY_EXISTS + Logger.LOG_SEPARATOR + _NOT_ADDING_DATA + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
 			Logger.debug(formatted_string, [str(incoming_hole_number)], self)
 	return data_added
 
@@ -86,7 +88,7 @@ func dynamic_add_hole_data(incoming_hole_number:int, incoming_data: HoleNodeData
 		if(simple_add_hole_data(incoming_hole_number, incoming_data)):
 			data_added = true
 		else:
-			var formatted_string: String = _HOLE_DATA_ADD_FAIL + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+			var formatted_string: String = _HOLE_DATA_ADD_FAIL + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
 			Logger.debug(formatted_string, [str(incoming_hole_number), str(incoming_data)], self)
 	return data_added
 
@@ -99,7 +101,7 @@ func simple_remove_hole_data(incoming_hole_number: int) -> Dictionary:
 		return_dictionary = hole_data.get(incoming_hole_number)
 		hole_data.erase(incoming_hole_number)
 	else:
-		var formatted_string: String = _HOLE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + _REMOVE_DATA_LOG
+		var formatted_string: String = _HOLE_NOT_FOUND + Logger.LOG_SEPARATOR + _REMOVE_DATA_LOG
 		Logger.deug(formatted_string, [incoming_hole_number], self)
 	return return_dictionary
 
@@ -124,7 +126,7 @@ func simple_remove_hole_node_data(hole_number: int, node_number: int) -> HoleNod
 		existing_hole_data.erase(node_number)
 		Logger.debug(_NODE_DATA_DELETED, [node_number, hole_number], self)
 	else:
-		var formatted_string: String = _HOLE_NOT_FOUND + CONSTANTS.OR_SEPARATOR + _NODE_NOT_FOUND_FOR_HOLE
+		var formatted_string: String = _HOLE_NOT_FOUND + Logger.OR_SEPARATOR + _NODE_NOT_FOUND_FOR_HOLE
 		Logger.warn(formatted_string, [str(hole_number), str(node_number), str(hole_number)], self)
 	return found_data
 
@@ -146,15 +148,15 @@ func simple_add_node_data(hole_number: int, incoming_data: HoleNodeData) -> bool
 				existing_hole_data[incoming_data.node_number] = incoming_data
 				data_updated = true
 			else:
-				var formatted_string: String = _HOLE_NODE_ALREADY_EXISTS + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+				var formatted_string: String = _HOLE_NODE_ALREADY_EXISTS + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
 				Logger.debug(formatted_string, [str(hole_number), str(incoming_data.node_number)], self)
 		else:
-			var base_creation_debug_log: String = _HOLE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + _BASE_CREATION_ATTEMPT_STRING
+			var base_creation_debug_log: String = _HOLE_NOT_FOUND + Logger.LOG_SEPARATOR + _BASE_CREATION_ATTEMPT_STRING
 			Logger.debug(base_creation_debug_log, [str(hole_number)], self)
 			if(_create_base_hole(hole_number, incoming_data)):
 				data_updated = true
 			else:
-				var formatted_string: String = _BASE_CREATION_FAILURE + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+				var formatted_string: String = _BASE_CREATION_FAILURE + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
 				Logger.debug(formatted_string, [str(hole_number), str(incoming_data.node_number)], self)
 	return data_updated
 
@@ -178,7 +180,7 @@ func dyanmic_add_node_data(hole_number: int, incoming_hole_node_data: HoleNodeDa
 			if(_create_base_hole(hole_number, incoming_hole_node_data)):
 				data_updated = true
 			else:
-				var formatted_string: String = _BASE_CREATION_FAILURE + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+				var formatted_string: String = _BASE_CREATION_FAILURE + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
 				Logger.debug(formatted_string, [str(hole_number), str(incoming_hole_node_data.node_number)], self)
 	return data_updated
 
@@ -203,15 +205,15 @@ func get_next_node_number_for_hole(hole_number: int) -> int:
 			# Get the next sequential node value for the requested hole
 			return_node_number = node_numbers[node_numbers.size() - 1] + 1
 		else:
-			var formatted_string: String  = _NO_EXISTING_NODES + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_ZERO_LOG
+			var formatted_string: String  = _NO_EXISTING_NODES + Logger.LOG_SEPARATOR + Logger.RETURNING_ZERO_LOG
 			Logger.warn(formatted_string, [str(hole_number)], self)
 	else:
-		var formatted_string: String = _HOLE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_ZERO_LOG
+		var formatted_string: String = _HOLE_NOT_FOUND + Logger.LOG_SEPARATOR + Logger.RETURNING_ZERO_LOG
 		Logger.warn(formatted_string, [str(hole_number)], self)
 	return return_node_number
 
 ## Verifies data is valid and that data storage has an entry for the requested values
-func verify_and_contains_data(hole_number: int, hole_node_number: int = CONSTANTS.INT64_MAX) -> bool:
+func verify_and_contains_data(hole_number: int, hole_node_number: int = NUMBERS.INT64_MAX) -> bool:
 	var contains_valid_data: bool = true
 	if _verify_incoming_values(hole_number, hole_node_number):
 		if !_contains_data(hole_number, hole_node_number):
@@ -221,25 +223,25 @@ func verify_and_contains_data(hole_number: int, hole_node_number: int = CONSTANT
 	return contains_valid_data
 
 ## Returns if data source contains data for incoming hole_number and hole_node_number if provided
-func _contains_data(hole_number: int, hole_node_number:int = CONSTANTS.INT64_MAX) -> bool:
+func _contains_data(hole_number: int, hole_node_number:int = NUMBERS.INT64_MAX) -> bool:
 	var contains_data: bool = true
 	if hole_data.has(hole_number):
-		if hole_node_number != CONSTANTS.INT64_MAX:
+		if hole_node_number != NUMBERS.INT64_MAX:
 			var existing_hole_data: Dictionary = hole_data.get(hole_number) as Dictionary
 			if !existing_hole_data.has(hole_node_number):
-				var formatted_string: String = _NODE_NOT_FOUND_FOR_HOLE + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+				var formatted_string: String = _NODE_NOT_FOUND_FOR_HOLE + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
 				Logger.debug(formatted_string, [str(hole_node_number), str(hole_number)], self)
 				contains_data = false
 		else:
 			Logger.debug(_HOLE_NODE_NOT_GIVEN_STRING, [str(hole_number), str(contains_data)], self)
 	else:
-		var formatted_string: String = _HOLE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+		var formatted_string: String = _HOLE_NOT_FOUND + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
 		Logger.debug(formatted_string, [str(hole_number)], self)
 		contains_data = false
 	return contains_data
 
 ## Verifies incoming hole and node numbers don't violate data constraints
-func _verify_incoming_values(incoming_hole_number: int, incoming_node_number: int = CONSTANTS.INT64_MAX) -> bool:
+func _verify_incoming_values(incoming_hole_number: int, incoming_node_number: int = NUMBERS.INT64_MAX) -> bool:
 	var valid_parameters: bool = true
 	if invalid_keys.has(incoming_hole_number):
 		var hole_number_string: String = _HOLE_NUMBER_STRING % _HOLE_NUMBER_STRING
@@ -270,10 +272,10 @@ func _create_base_hole(hole_number: int, incoming_data: HoleNodeData) -> bool:
 			hole_data[hole_number] = hole_node_dictionary
 			node_added = true
 		else:
-			var formatted_string: String = _NOT_BASE_CREATION_NODE + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+			var formatted_string: String = _NOT_BASE_CREATION_NODE + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
 			Logger.warn(formatted_string, [], self)
 	else:
-		var formatted_string: String = _HOLE_ALREADY_EXISTS + CONSTANTS.LOG_SEPARATOR + _NOT_ADDING_DATA
+		var formatted_string: String = _HOLE_ALREADY_EXISTS + Logger.LOG_SEPARATOR + _NOT_ADDING_DATA
 		Logger.debug(formatted_string, [str(hole_number)], self)
 	return node_added
 
@@ -289,7 +291,7 @@ func _alter_hole_node_number(alter_value:int, hole_number: int, start_value: int
 			resize_index = existing_node_numbers.find(start_value)
 		else:
 			resize_index = NodeUtil.get_nearest_greater_index(start_value, existing_node_numbers)
-		if resize_index != CONSTANTS.INT64_MAX:
+		if resize_index != NUMBERS.INT64_MAX:
 			existing_node_numbers = existing_node_numbers.slice(resize_index)
 			var removed_data_array: Array[HoleNodeData] = []
 			for node_number in existing_node_numbers:
@@ -299,14 +301,14 @@ func _alter_hole_node_number(alter_value:int, hole_number: int, start_value: int
 			for updated_data_entry in removed_data_array:
 				# TODO This might not work but hopefully this reference was updated by simple_remove calls above and now we are adding fresh records
 				existing_hole_data[updated_data_entry.node_number] = updated_data_entry
-			get_tree().call_group(CONSTANTS.TEE_BOX, CONSTANTS.INCREASE_NODE_NUMBER, hole_data, start_value)
+			get_tree().call_group(GroupData.TEE_BOX, GroupData.INCREASE_NODE_NUMBER, hole_data, start_value)
 		else:
-			var formatted_string: String = _NO_NODE_AT_OR_GREATER + CONSTANTS.LOG_SEPARATOR + _NO_ACTION_RELOAD
-			var action_type: String = CONSTANTS.INCREASE if alter_value > 0 else CONSTANTS.DECREASE
+			var formatted_string: String = _NO_NODE_AT_OR_GREATER + Logger.LOG_SEPARATOR + _NO_ACTION_RELOAD
+			var action_type: String = _INCREASE if alter_value > 0 else _DECREASE
 			Logger.debug(formatted_string, [str(start_value), str(hole_number), action_type], self)
 	else:
-		var formatted_string: String = _HOLE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + _NO_ACTION_RELOAD
-		var action_type: String = CONSTANTS.INCREASE if alter_value > 0 else CONSTANTS.DECREASE
+		var formatted_string: String = _HOLE_NOT_FOUND + Logger.LOG_SEPARATOR + _NO_ACTION_RELOAD
+		var action_type: String = _INCREASE if alter_value > 0 else _DECREASE
 		Logger.debug(formatted_string, [str(hole_number), str(start_value), action_type], self)
 
 ## Alters hole number stored for each key in data storage by the value given
@@ -319,7 +321,7 @@ func _alter_hole_number(alter_value: int, start_value: int = 0) -> void:
 		update_index_start = existing_values.find(start_value)
 	else:
 		update_index_start = NodeUtil.get_nearest_greater_index(start_value, existing_values)
-	if update_index_start != CONSTANTS.INT64_MAX:
+	if update_index_start != NUMBERS.INT64_MAX:
 		existing_values = existing_values.slice(update_index_start)
 		var removed_hole_data: Dictionary = {}
 		for existing_value in existing_values:
@@ -327,24 +329,24 @@ func _alter_hole_number(alter_value: int, start_value: int = 0) -> void:
 			removed_hole_data[existing_value] = existing_hole_data
 		for existing_hole in removed_hole_data.keys():
 			hole_data[existing_hole + alter_value] = removed_hole_data.get(existing_hole)
-		get_tree().call_group(CONSTANTS.TEE_BOX, CONSTANTS.INCREASE_HOLE_NUMBER, start_value)
+		get_tree().call_group(GroupData.TEE_BOX, GroupData.INCREASE_HOLE_NUMBER, start_value)
 	else:
-		var formatted_string: String = _NO_HOLE_OR_GREATER + CONSTANTS.LOG_SEPARATOR + _NO_ACTION_RELOAD
-		var action_type: String = CONSTANTS.INCREASE if alter_value > 0 else CONSTANTS.DECREASE
+		var formatted_string: String = _NO_HOLE_OR_GREATER + Logger.LOG_SEPARATOR + _NO_ACTION_RELOAD
+		var action_type: String = _INCREASE if alter_value > 0 else _DECREASE
 		Logger.debug(formatted_string, [start_value, action_type], self)
 
 ## Checks if hole numbers or node numbers for a specific hole are sequential based off given parameters
 ## If nothing given for node number hole numbers will be checked
-func _is_data_sequential(hole_number: int = CONSTANTS.INT64_MAX) -> bool:
+func _is_data_sequential(hole_number: int = NUMBERS.INT64_MAX) -> bool:
 	var is_sequential: bool = true
 	var existing_values: Array[int]
-	if hole_number != CONSTANTS.INT64_MAX:
+	if hole_number != NUMBERS.INT64_MAX:
 		if _contains_data(hole_number):
 			var existing_hole_node_data: Dictionary = hole_data.get(hole_number) as Dictionary
 			existing_values = existing_hole_node_data.keys()
 			is_sequential = NodeUtil.is_sequential(existing_values)
 		else:
-			var formatted_string: String = _HOLE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+			var formatted_string: String = _HOLE_NOT_FOUND + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
 			Logger.debug(formatted_string, [str(hole_number)], self)
 			is_sequential = false
 	else:
@@ -352,15 +354,15 @@ func _is_data_sequential(hole_number: int = CONSTANTS.INT64_MAX) -> bool:
 			existing_values = hole_data.keys()
 			is_sequential = NodeUtil.is_sequential(existing_values)
 		else:
-			var formatted_string: String = _NO_DATA + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_FALSE_LOG
+			var formatted_string: String = _NO_DATA + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
 			Logger.debug(formatted_string, [], self)
 			is_sequential = false
 	return is_sequential
 
 ## Sets the given hole or hole numbers to be sequential in order, getting rid of empty values
 ## If hole number is given makes nodes for that hole sequential, if no hole number is given makes hole numbers sequential
-func _set_data_sequential(hole_number: int = CONSTANTS.INT64_MAX) -> void:
-	if hole_number != CONSTANTS.INT64_MAX:
+func _set_data_sequential(hole_number: int = NUMBERS.INT64_MAX) -> void:
+	if hole_number != NUMBERS.INT64_MAX:
 		if _contains_data(hole_number):
 			var updated_nodes: Dictionary = {}
 			var existing_hole_node_data: Dictionary = hole_data.get(hole_number) as Dictionary
@@ -377,15 +379,15 @@ func _set_data_sequential(hole_number: int = CONSTANTS.INT64_MAX) -> void:
 					non_sequential_data.node_number = new_node_number
 					existing_hole_node_data[non_sequential_data.node_number] = non_sequential_data
 				else:
-					var formatted_string: String = CONSTANTS.ILLEGAL_STATE_STRING + CONSTANTS.LOG_SEPARATOR + CONSTANTS.EXISTING_DATA_MISSING
+					var formatted_string: String = Logger.ILLEGAL_STATE_STRING + Logger.LOG_SEPARATOR + Logger.EXISTING_DATA_MISSING
 					Logger.error(formatted_string, [_HOLE_NODE_DATA, str(non_sequential_value)], self)
 			if !updated_nodes.is_empty():
-				get_tree().call_group(CONSTANTS.TEE_BOX, CONSTANTS.ALTER_HOLE_NODE_NUMBERS , hole_number, updated_nodes)
+				get_tree().call_group(GroupData.TEE_BOX, GroupData.ALTER_HOLE_NODE_NUMBERS , hole_number, updated_nodes)
 			else:
-				var formatted_string: String = _NO_NON_SEQUENTIAL_FOUND + CONSTANTS.LOG_SEPARATOR + _NOT_RE_ORDERING
+				var formatted_string: String = _NO_NON_SEQUENTIAL_FOUND + Logger.LOG_SEPARATOR + _NOT_RE_ORDERING
 				Logger.debug(formatted_string, [_HOLE_NODE_DATA, str(hole_number)], self)
 		else:
-			var formatted_string: String = _HOLE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + _NOT_RE_ORDERING
+			var formatted_string: String = _HOLE_NOT_FOUND + Logger.LOG_SEPARATOR + _NOT_RE_ORDERING
 			Logger.debug(formatted_string, [str(hole_number)], self)
 	else:
 		var updated_holes: Dictionary = {}
@@ -399,28 +401,28 @@ func _set_data_sequential(hole_number: int = CONSTANTS.INT64_MAX) -> void:
 				updated_holes[non_sequential_value] = n + 1
 				hole_data[n + 1] = non_sequential_data
 			else:
-				var formatted_string: String = CONSTANTS.ILLEGAL_STATE_STRING + CONSTANTS.LOG_SEPARATOR + CONSTANTS.EXISTING_DATA_MISSING
+				var formatted_string: String = Logger.ILLEGAL_STATE_STRING + Logger.LOG_SEPARATOR + Logger.EXISTING_DATA_MISSING
 				Logger.error(formatted_string, [_HOLE_DATA, str(non_sequential_value)], self)
 		if !updated_holes.is_empty():
-			get_tree().call_group(CONSTANTS.TEE_BOX, CONSTANTS.ALTER_HOLE_NUMBERS, updated_holes)
+			get_tree().call_group(GroupData.TEE_BOX, GroupData.ALTER_HOLE_NUMBERS, updated_holes)
 		else:
-			var formatted_string: String = _NO_NON_SEQUENTIAL_FOUND + CONSTANTS.LOG_SEPARATOR + _NOT_RE_ORDERING
+			var formatted_string: String = _NO_NON_SEQUENTIAL_FOUND + Logger.LOG_SEPARATOR + _NOT_RE_ORDERING
 			Logger.debug(formatted_string, [_HOLE_DATA, _GLOBAL_HOLE_DATA], self)
 
 ## Purges data storage and tell assets to re calculate and upload their course data
 ## If hole_number if provided; does it just for that specific hole otherwise reloads all course data
-func reload_course_data(hole_number: int = CONSTANTS.INT64_MAX) -> void:
-	if hole_number != CONSTANTS.INT64_MAX:
+func reload_course_data(hole_number: int = NUMBERS.INT64_MAX) -> void:
+	if hole_number != NUMBERS.INT64_MAX:
 		# Using contains data instead of relying on remove return because dictionary can have empty value
 		if _contains_data(hole_number):
 			# Not adjusting hole numbers; If removed hole number changed will cause conflicts/changes depending on reupload method
 			simple_remove_hole_data(hole_number)
 		else:
-			var formatted_string: String = _HOLE_NOT_FOUND + CONSTANTS.LOG_SEPARATOR + _PROCEEDING_WITH_RELOAD
+			var formatted_string: String = _HOLE_NOT_FOUND + Logger.LOG_SEPARATOR + _PROCEEDING_WITH_RELOAD
 			Logger.debug(formatted_string, [str(hole_number)], self)
 	else:
 		_clear_all_data()
-	get_tree().call_group(CONSTANTS.TEE_BOX, CONSTANTS.RELOAD_COURSE_DATA, hole_number)
+	get_tree().call_group(GroupData.TEE_BOX, GroupData.RELOAD_COURSE_DATA, hole_number)
 
 ## Clears all entries in data storage
 func _clear_all_data() -> void:

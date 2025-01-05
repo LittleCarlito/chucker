@@ -8,6 +8,7 @@ const _LAUNCH_NOT_SET: String = "Launch parameters coulnd't be set on \"%s\"; Wi
 const _EMPTY_FLIGHT_PATH: String = "Flight data had an empty flight path; Flight data: \"%s\""
 const _INVALID_INCOMING_ITEM: String = "Incoming item \"%s\" is invalid for asset creation and could not be equipped"
 const _REQUIRES_ONE_VECTOR: String = "Requires at least one Vector3"
+const _FAILURE: String = "Failure"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -39,14 +40,14 @@ func create_and_launch(flight_data: FlightData, item_data: AssetData) -> void:
 			new_asset.global_position = flight_data.flight_path[0]
 			if(_set_launch_parameters(new_asset, flight_data)):
 				if not _launch_asset(new_asset):
-					Logger.debug(_LAUNCH_RESULT_STRING, [str(new_asset), CONSTANTS.FAILURE], self)
+					Logger.debug(_LAUNCH_RESULT_STRING, [str(new_asset), _FAILURE], self)
 				# Regardless of flight result have the items in th given data group update their status data
 				if item_data.group_name != null:
-					get_tree().call_group(item_data.group_name, CONSTANTS.UPDATE_STATE)
+					get_tree().call_group(item_data.group_name, GroupData.UPDATE_STATE)
 			else:
 				Logger.debug(_LAUNCH_NOT_SET, [str(new_asset)], self)
 		else:
-			var formatted_string: String = _EMPTY_FLIGHT_PATH + CONSTANTS.LOG_SEPARATOR + _REQUIRES_ONE_VECTOR
+			var formatted_string: String = _EMPTY_FLIGHT_PATH + Logger.LOG_SEPARATOR + _REQUIRES_ONE_VECTOR
 			Logger.debug(formatted_string, [str(flight_data)], self)
 			pass
 	else:
@@ -77,34 +78,34 @@ func dump_asset(_overflow_item: Node3D) -> void:
 # TODO Make sure that nodes check for AssetData in their _ready and add themselves to the group if one exists there
 func spawn_asset(asset_data: AssetData, spawn_parent: Node3D, spawn_location: Vector3 = Vector3(0, 1, 0)) -> void:
 	var created_node: Node3D = AssetFactory.create_asset(asset_data.internal_type)
-	if created_node.has_method(CONSTANTS.SET_ASSET_DATA):
-		created_node.call(CONSTANTS.SET_ASSET_DATA, asset_data)
+	if created_node.has_method(GroupData.SET_ASSET_DATA):
+		created_node.call(GroupData.SET_ASSET_DATA, asset_data)
 	spawn_parent.add_child(created_node)
 	created_node.global_position = spawn_location
 
 static func _set_asset_data(incoming_asset: Node3D, incoming_data: AssetData) -> bool:
 	var data_set: bool = false
-	if incoming_asset.has_method(CONSTANTS.SET_ASSET_DATA):
-		incoming_asset.call(CONSTANTS.SET_ASSET_DATA, incoming_data)
+	if incoming_asset.has_method(GroupData.SET_ASSET_DATA):
+		incoming_asset.call(GroupData.SET_ASSET_DATA, incoming_data)
 		data_set = true
 	else:
-		Logger.debug(CONSTANTS.NO_METHOD_FOUND, [CONSTANTS.SET_ASSET_DATA, str(incoming_asset)], null)
+		Logger.debug(Logger.NO_METHOD_FOUND, [Logger.SET_ASSET_DATA, str(incoming_asset)], null)
 	return data_set
 
 static func _set_launch_parameters(incoming_asset: Node3D, incoming_data: FlightData) -> bool:
 	var data_set: bool = false
-	if incoming_asset.has_method(CONSTANTS.SET_FLIGHT_DATA):
-		incoming_asset.call(CONSTANTS.SET_FLIGHT_DATA, incoming_data)
+	if incoming_asset.has_method(GroupData.SET_FLIGHT_DATA):
+		incoming_asset.call(GroupData.SET_FLIGHT_DATA, incoming_data)
 		data_set = true
 	else:
-		Logger.debug(CONSTANTS.NO_METHOD_FOUND, [CONSTANTS.SET_FLIGHT_DATA, str(incoming_asset)], null)
+		Logger.debug(Logger.NO_METHOD_FOUND, [Logger.SET_FLIGHT_DATA, str(incoming_asset)], null)
 	return data_set
 
 static func _launch_asset(incoming_asset: Node3D) -> bool:
 	var asset_launched: bool = false
-	if incoming_asset.has_method(CONSTANTS.LAUNCH):
-		incoming_asset.call(CONSTANTS.LAUNCH)
+	if incoming_asset.has_method(GroupData.LAUNCH):
+		incoming_asset.call(GroupData.LAUNCH)
 		asset_launched = true
 	else:
-		Logger.debug(CONSTANTS.NO_METHOD_FOUND, [CONSTANTS.LAUNCH, str(incoming_asset)], null)
+		Logger.debug(Logger.NO_METHOD_FOUND, [Logger.LAUNCH, str(incoming_asset)], null)
 	return asset_launched	

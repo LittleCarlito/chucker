@@ -22,6 +22,15 @@ signal apply_settings
 
 var tab_array: Array[OptionTab]
 
+# TODO OOOOO
+# TODO Add Reset button at bottom of the menu
+# TODO Add Confirm prompt box before actually resetting
+# TODO After Apply on Graphics tab add confirm settings with countdown to reversion
+# TODO Add resolution support changing back in
+#		Requires restart and only takes effect then
+#			For code then only write to override.cfg and don't do any other changes
+# TODO Add ability to use tab, shift+tab, and enter to navigate the menu
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	tab_array = [
@@ -40,7 +49,7 @@ func _process(_delta: float) -> void:
 	pass
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed(CONSTANTS.USER_INPUT.PAUSE) and self.visible:
+	if event.is_action_pressed(InputConfig.USER_INPUT.PAUSE) and self.visible:
 		_on_back_menu()
 
 func _on_close_menu() -> void:
@@ -56,16 +65,12 @@ func _on_back_menu() -> void:
 ## Handles menu save signals
 func _on_save_menu() -> void:
 	# Save to configuration files
-	# BUG On save blank keycaps are being overriden with default values
-	# TODO Convert Controls settings to user_settings.cfg
-	# TODO Change the ConfigFileHandler calls to be combined to be passing in one Dictionary
-	# BUG Applied changes coming in here after setting a control was empty
 	ConfigFileHandler.save_to_override(graphics_tab.applied_changes)
 	ConfigFileHandler.delete_file_category(ConfigFileHandler.FILE_TYPE.USER_SETTING, InputConfig.NAME)
 	ConfigFileHandler.save_to_user_settings(controls_tab.applied_changes)
 	ConfigFileHandler.save_to_user_settings(general_tab.applied_changes)
 	# Alert config handlers to refresh their data
-	get_tree().call_group(CONSTANTS.CONFIG_HANDLER, CONSTANTS.RELOAD_PROJECT_SETTINGS)
+	get_tree().call_group(GroupData.CONFIG_HANDLER, GroupData.RELOAD_PROJECT_SETTINGS)
 	# Always emit saveSettings even if empty; Returns to defaults then
 	apply_settings.emit()
 	_reset_variables(option_tab_container.current_tab)

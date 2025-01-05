@@ -31,7 +31,7 @@ func _apply_settings() -> void:
 		if !intermediate_changes.has(change_key):
 			intermediate_changes[change_key] = change_key_value
 		else:
-			var formatted_string: String = _USER_SET_CHANGE + CONSTANTS.LOG_SEPARATOR + _DISCARDING_DETECTED
+			var formatted_string: String = _USER_SET_CHANGE + Logger.LOG_SEPARATOR + _DISCARDING_DETECTED
 			Logger.debug(formatted_string, [change_key, str(change_key_value)], self)
 	# Apply all intermediate settings
 	var intermediate_keys: Array = intermediate_changes.keys()

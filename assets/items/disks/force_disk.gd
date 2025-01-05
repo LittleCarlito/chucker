@@ -84,7 +84,7 @@ func get_item_type() -> AssetData.TYPE:
 	if asset_data != null:
 		return asset_data.internal_type
 	else:
-		var formatted_string: String = _NO_ITEM_DATA_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_UNKNOWN_LOG
+		var formatted_string: String = _NO_ITEM_DATA_LOG + Logger.LOG_SEPARATOR + Logger.RETURNING_UNKNOWN_LOG
 		Logger.warn(formatted_string, [], self)
 		return AssetData.TYPE.UNKNOWN
 
@@ -111,13 +111,13 @@ func get_disk_camera() -> Camera3D:
 	if camera_container != null:
 		return_camera = camera_container.get_camera()
 	else:
-		var formatted_string: String = CONSTANTS.NULL_CAMERA_LOG + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
+		var formatted_string: String = Logger.NULL_CAMERA_LOG + Logger.LOG_SEPARATOR + Logger.RETURNING_NULL_LOG
 		Logger.error(formatted_string, [_GET_DISK_CAMERA], self)
 	return return_camera
 
 func set_disk_camera(new_camera: Camera3D) -> void:
 	if camera_container == null:
-		var formatted_string: String = CONSTANTS.NULL_CAMERA_LOG + CONSTANTS.LOG_SEPARATOR + _CREATING_CAMERA_LOG
+		var formatted_string: String = Logger.NULL_CAMERA_LOG + Logger.LOG_SEPARATOR + _CREATING_CAMERA_LOG
 		Logger.warn(formatted_string, [_SET_DISK_CAMERA], self)
 		_create_camera_container()
 	camera_container.set_camera(new_camera)
@@ -146,7 +146,7 @@ func _create_camera_container() -> void:
 		camera_container = new_camera_container
 		camera_container.connect(_LOSE_FOCUS, _return_camera_to_owner)
 	else:
-		Logger.warn(CONSTANTS.ALREADY_EXISTS_LOG, [CONSTANTS.CAMERA_CONTAINER], self)
+		Logger.warn(Logger.ALREADY_EXISTS_LOG, [Logger.CAMERA_CONTAINER], self)
 
 func _update_state() -> void:
 	asset_data.camera_state = AssetData.get_camera_state(camera_container)
@@ -183,15 +183,15 @@ func _return_camera_to_owner() -> void:
 	var has_custom_group: bool = asset_data != null and !asset_data.group_name.is_empty()
 	var has_camera: bool = camera_container != null and camera_container.has_camera()
 	if has_camera and has_custom_group:
-		get_tree().call_group(asset_data.group_name, CONSTANTS.RETURN_CAMERA, camera_container.get_camera())
+		get_tree().call_group(asset_data.group_name, GroupData.RETURN_CAMERA, camera_container.get_camera())
 	else:
 		Logger.debug(_CANT_RETURN_LOG, [str(self)], self)
 
 func _submit_camera_request() -> void:
 	if asset_data != null and !asset_data.group_name.is_empty():
 		_create_camera_container()
-		get_tree().call_group(asset_data.group_name, CONSTANTS.REQUEST_CAMERA, camera_container)
+		get_tree().call_group(asset_data.group_name, GroupData.REQUEST_CAMERA, camera_container)
 	else:
 
-		var formatted_string: String = _NO_GROUP_LOG + CONSTANTS.LOG_SEPARATOR + _NOT_SUBMITTING
+		var formatted_string: String = _NO_GROUP_LOG + Logger.LOG_SEPARATOR + _NOT_SUBMITTING
 		Logger.debug(formatted_string, [], self)

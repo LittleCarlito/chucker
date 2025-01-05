@@ -5,7 +5,7 @@ const _NO_KEYCODE_MATCH: String = "No icon found matching keycode \"%s\""
 const _RETURNING_UNKNOWN_LOG: String = "; Returning value for Unknown"
 const _EXTRACT_KEYCODE_STRING: String = "extract_keycode"
 
-# TODO Convert this to a cfg file
+# TODO Convert input iconts to sprite map thing so this can be removed
 const INPUT_ICONS: Dictionary = {
 	KEY_A: "res://resources/Sprites/ControlIcons/A_Keycap.png",
 	KEY_B: "res://resources/Sprites/ControlIcons/B_Keycap.png",
@@ -104,7 +104,7 @@ func get_sprite_from_keycode(incoming_keycode: int) -> Texture2D:
 	if INPUT_ICONS.has(incoming_keycode):
 		return_texture = load(INPUT_ICONS.get(incoming_keycode))
 	if return_texture == null:
-		var formatted_string = _NO_KEYCODE_MATCH + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
+		var formatted_string = _NO_KEYCODE_MATCH + Logger.LOG_SEPARATOR + Logger.RETURNING_NULL_LOG
 		Logger.error(formatted_string, [str(incoming_keycode)], self)
 	return return_texture
 
@@ -115,6 +115,6 @@ func extract_keycode(event: InputEvent) -> int:
 	elif event is InputEventKey:
 		return_value = event.physical_keycode
 	else:
-		Logger.error(CONSTANTS.UNSUPPORTED_TYPE_LOG + _RETURNING_UNKNOWN_LOG, [_EXTRACT_KEYCODE_STRING, str(event)], self)
+		Logger.error(Logger.UNSUPPORTED_TYPE_LOG + _RETURNING_UNKNOWN_LOG, [_EXTRACT_KEYCODE_STRING, str(event)], self)
 		return_value = KEY_UNKNOWN
 	return return_value
