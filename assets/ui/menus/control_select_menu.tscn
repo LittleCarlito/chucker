@@ -12,7 +12,7 @@ bg_color = Color(0.6, 0.505882, 0.317647, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_714ji"]
 bg_color = Color(0.695503, 0.695503, 0.695503, 1)
 
-[node name="ControlSelectMenu" type="Control"]
+[node name="ControlSelectMenu" type="Control" node_paths=PackedStringArray("waiting_title", "input_icon_display", "set_input_label")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,6 +20,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_otl4h")
+waiting_title = NodePath("ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground/InputDisplayCenter/WaitingTitle")
+input_icon_display = NodePath("ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground/InputDisplayCenter/InputIconDisplay")
+set_input_label = NodePath("ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/SetInputBackground/SetInputLabel")
 
 [node name="ControlSelectBackground" type="Panel" parent="."]
 layout_mode = 1

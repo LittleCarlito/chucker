@@ -10,11 +10,6 @@ const _UNEXPTECTED_TYPE_LOG: String = "Save file object was not expected type"
 const _BAD_USER_INPUT_LOG: String = "Value from USER_INPUT \"%s\" could not be mapped to a GLOBAL_SETTING"
 const _NO_DEFAULT_LOG: String = "Global default value for settingName \"%s\" in category \"%s\" could not be found; Not updating control"
 const _NO_CATEGORY_LOG: String = "Category could not be extracted for \"%s\"; No control is being updated"
-# TODO Move to file utility
-const BASE_PATH: String = "user://"
-const SAVE_DIR: String = BASE_PATH + "settings/"
-const JSON_SAVE_FILE: String = SAVE_DIR + "user_settings.json"
-const OVERRIDE_FILE: String = SAVE_DIR + "override.cfg"
 
 @export var scorecard: ScorecardView
 @export var pause_menu: PauseMenu
@@ -27,9 +22,7 @@ signal enable_rotation
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	# Create game file structures
-	var base_dir = DirAccess.open(BASE_PATH)
-	base_dir.make_dir(SAVE_DIR)
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:

@@ -56,22 +56,16 @@ func _on_back_menu() -> void:
 ## Handles menu save signals
 func _on_save_menu() -> void:
 	# Save to configuration files
-	# TODO Convert Controls settings to override.cfg
+	# BUG On save blank keycaps are being overriden with default values
+	# TODO Convert Controls settings to user_settings.cfg
 	# TODO Change the ConfigFileHandler calls to be combined to be passing in one Dictionary
 	# BUG Applied changes coming in here after setting a control was empty
-	controls_tab.save_controls()
 	ConfigFileHandler.save_to_override(graphics_tab.applied_changes)
 	ConfigFileHandler.delete_file_category(ConfigFileHandler.FILE_TYPE.USER_SETTING, InputConfig.NAME)
 	ConfigFileHandler.save_to_user_settings(controls_tab.applied_changes)
 	ConfigFileHandler.save_to_user_settings(general_tab.applied_changes)
 	# Alert config handlers to refresh their data
 	get_tree().call_group(CONSTANTS.CONFIG_HANDLER, CONSTANTS.RELOAD_PROJECT_SETTINGS)
-	if not control_settings.is_empty():
-		save_settings_dictionary[CONSTANTS.Controls] = control_settings
-	if not camera_settings.is_empty():
-		save_settings_dictionary[CONSTANTS.Camera] = camera_settings
-	if not display_settings.is_empty():
-		save_settings_dictionary[DisplayConfig.NAME] = display_settings
 	# Always emit saveSettings even if empty; Returns to defaults then
 	apply_settings.emit()
 	_reset_variables(option_tab_container.current_tab)
@@ -98,5 +92,5 @@ func reload_ui() -> void:
 		existing_tab.initialize_ui()
 
 ## Passes selectected controls from ControlSelectMenu to Controls tab
-func _handle_control_selected(control_to_update: Variant, selected_input: Variant) -> void:
-	controls_tab._control_select_set(control_to_update, selected_input)
+func _handle_control_selected(control_to_update: Variant, selected_input: Variant, input_texture: Variant) -> void:
+	controls_tab._control_select_set(control_to_update, selected_input, input_texture)

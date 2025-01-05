@@ -4,7 +4,6 @@ const NO_MATCH_FOUND_LOG: String = "Matching icon for input \"%s\" could not be 
 const _NO_KEYCODE_MATCH: String = "No icon found matching keycode \"%s\""
 const _RETURNING_UNKNOWN_LOG: String = "; Returning value for Unknown"
 const _EXTRACT_KEYCODE_STRING: String = "extract_keycode"
-const _EXTRACT_INPUT_TYPE_STRING: String = "extract_input_type"
 
 # TODO Convert this to a cfg file
 const INPUT_ICONS: Dictionary = {
@@ -96,16 +95,8 @@ func _process(_delta: float) -> void:
 	pass
 
 func get_sprite(event: InputEvent) -> Texture2D:
-	var possible_inputs: Array = InputEventLibrary.ALL_INPUTS.values()
-	var matched_input_keycode: int = KEY_UNKNOWN
 	var incoming_keycode: int = extract_keycode(event)
-	for possible_input in possible_inputs:
-		var possible_keycode: int = extract_keycode(possible_input)
-		if possible_keycode == incoming_keycode:
-			matched_input_keycode = possible_keycode
-	if (incoming_keycode != KEY_UNKNOWN) && (matched_input_keycode == KEY_UNKNOWN):
-		Logger.error(NO_MATCH_FOUND_LOG, [str(event)], self)
-	return load(INPUT_ICONS.get(matched_input_keycode))
+	return load(INPUT_ICONS.get(incoming_keycode))
 
 ## Returns the input sprite associated with the given keycode
 func get_sprite_from_keycode(incoming_keycode: int) -> Texture2D:
@@ -127,16 +118,3 @@ func extract_keycode(event: InputEvent) -> int:
 		Logger.error(CONSTANTS.UNSUPPORTED_TYPE_LOG + _RETURNING_UNKNOWN_LOG, [_EXTRACT_KEYCODE_STRING, str(event)], self)
 		return_value = KEY_UNKNOWN
 	return return_value
-
-func extract_input_type(event: InputEvent) -> InputEventLibrary.INPUT_TYPE:
-	var return_type: InputEventLibrary.INPUT_TYPE
-	if event is InputEventMouseButton:
-		return_type = InputEventLibrary.INPUT_TYPE.MOUSE
-	elif event is InputEventKey:
-		return_type = InputEventLibrary.INPUT_TYPE.KEYBOARD
-	elif event is InputEventJoypadButton:
-		return_type = InputEventLibrary.INPUT_TYPE.JOYSTICK
-	else:
-		Logger.error(CONSTANTS.UNSUPPORTED_TYPE_LOG + _RETURNING_UNKNOWN_LOG, [_EXTRACT_INPUT_TYPE_STRING, str(event)], self)
-		return_type = InputEventLibrary.INPUT_TYPE.UNKNOWN
-	return return_type

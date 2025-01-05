@@ -114,6 +114,8 @@ const MENU: Dictionary = {
 	}
 }
 
+# TODO USER_INPUT should be migrated to INPUT_LABEL and they should be renamed to INPUT_LIBRARY
+#			Move all this to InputConfig
 # Keys are how it is handled in code
 # Values are how project settings handle those behaviors
 const USER_INPUT: Dictionary = {

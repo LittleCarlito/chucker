@@ -11,6 +11,8 @@ const _UPDATE_CONTROL_LOG: String = "Updating control \"%s\" to input \"%s\""
 const _UNBIND_LOG: String = "Input \"%s\" key has been rebound"
 const _SELECT_ERROR_LOG: String = "Incorrect number of items selected to change control input; \"%s\" items selected"
 
+# TODO Can't handle saving unbound inputs; Saves default value back in
+
 @export var control_list: ItemList
 
 # Called when the node enters the scene tree for the first time.
@@ -24,39 +26,39 @@ func _process(_delta: float) -> void:
 func initialize_ui() -> void:
 	# Load in icons for set controls
 	for i in control_list.item_count:
-		var constant_name: String = _get_constant_name(control_list.get_item_text(i))
+		var constant_name: String = CONSTANTS.INPUT_LABEL.get(control_list.get_item_text(i))
 		var mapped_texture: Texture2D = InputSprite.get_sprite(InputMap.action_get_events(constant_name)[0])
 		control_list.set_item_icon(i, mapped_texture)
 
 ## What to do when user selects one of the control items
 func _open_control_select_menu(index: int, _click_position: Vector2, mouse_button_index: int) -> void:
 	if mouse_button_index == MOUSE_BUTTON_LEFT:
-		value_selected.emit(control_list.get_item_text(index))
+		var constant_name: String = CONSTANTS.INPUT_LABEL.get(control_list.get_item_text(index))
+		value_selected.emit(constant_name)
 
-# TODO Need to chnage selected_input to InputEvent that was picked and set it in applied_settings
 ## Sets ControlList item to desired control value
-func _control_select_set(control_to_update: String, selected_input: ControlSetting) -> void:
-	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
-	Logger.debug(_UPDATE_CONTROL_LOG, [control_to_update, selected_input.input_description], self)
-	var new_texture: Texture2D = load(InputSprite.INPUT_ICONS.get(selected_input.keycode, InputSprite.UNKNOWN_PATH))
-	if new_texture != InputSprite.UNKNOWN_TEXTURE:
-		var selected_icons: PackedInt32Array = control_list.get_selected_items()
-		if selected_icons.size() == 1:
-			_unbind_input(selected_input)
-			_update_selected_icons(new_texture)
-		else:
-			Logger.error(_SELECT_ERROR_LOG, [str(selected_icons.size())], self)
+func _control_select_set(control_to_update: String, selected_input: InputEvent, input_texture: Texture2D) -> void:
+	_unbind_input(input_texture.resource_path)
+	_update_selected_icons(input_texture)
+	applied_changes[control_to_update] = selected_input
 
- ## Unbinds the control with the matching keycode
-func _unbind_input(selected_input: ControlSetting) -> void:
+## Unbinds the control with the matching keycode
+func _unbind_input(incoming_icon_path: String) -> void:
 	# Check control list for matching items and unbind
-	var incoming_input_path: String = InputSprite.INPUT_ICONS.get(selected_input.keycode)
 	for control_list_index in control_list.item_count:
 		var icon_path: String = control_list.get_item_icon(control_list_index).resource_path
-		if icon_path == incoming_input_path:
+		if icon_path == incoming_icon_path:
 			var input_description: String = control_list.get_item_text(control_list_index)
 			Logger.debug(_UNBIND_LOG, [input_description], self)
 			_assign_blank_keycap(control_list_index)
+	# Check applied_changes for matching items and unbind
+	var applied_keys: Array = applied_changes.keys()
+	for applied_key in applied_keys:
+		var applied_input: InputEvent = applied_changes.get(applied_key) as InputEvent
+		var applied_keycode: int = InputSprite.extract_keycode(applied_input)
+		var applied_path: String = InputSprite.INPUT_ICONS[applied_keycode]
+		if applied_path == incoming_icon_path:
+			applied_changes.erase(applied_key)
 
 ## Updates selected icons in control_list to the passed in texture
 func _update_selected_icons(new_icon: Texture2D) -> void:
@@ -66,42 +68,9 @@ func _update_selected_icons(new_icon: Texture2D) -> void:
 
 ## Applys blank keycap texture to the passed in index of control_list
 func _assign_blank_keycap(index: int) -> void:
+	var constant_name: String = CONSTANTS.INPUT_LABEL.get(control_list.get_item_text(index))
+	applied_changes[constant_name] = InputConfig.UNKNOWN_KEY
 	control_list.set_item_icon(index, InputSprite.UNKNOWN_TEXTURE)
-
-## Compares control_list items to set controls and saves the updated controls to ControlSetting
-func save_controls() -> void:
-	for control_list_index in control_list.item_count:
-		var constant_name: String = _get_constant_name(control_list.get_item_text(control_list_index))
-		var mapped_value: InputEvent = InputMap.action_get_events(constant_name)[0]
-		var mapped_icon_path: String = InputSprite.get_sprite(mapped_value).resource_path
-		var icon_path: String = control_list.get_item_icon(control_list_index).resource_path
-		if mapped_icon_path != icon_path:
-			var mapped_keycode: int = InputSprite.INPUT_ICONS.find_key(icon_path)
-			if mapped_keycode != null:
-				var mapped_event: InputEvent = InputEventLibrary.convert_keycode_to_input_event(mapped_keycode)
-				var control_setting: ControlSetting = InputEventLibrary.convert_event_to_control_setting(mapped_event)
-				#var control_dictionary: Dictionary = InputEventLibrary.convert_controlsetting_to_dictionary(control_setting)
-				applied_changes[constant_name] = mapped_event
-				Logger.debug(_CONTROL_REMAPPED_LOG, [constant_name, mapped_value.as_text(), control_setting.input_description], self)
-			else:
-				Logger.error(_NO_KEYCODE_ICON_STRING, [icon_path], self)
-
-## Returns the index in control_list for the provided GLOBAL_SETTINGS name
-## If not found returns INT32_MAX
-func _get_control_index(constant_name: String) -> int:
-	var constant_item_text: String = CONSTANTS.INPUT_LABEL.find_key(constant_name)
-	for control_setting in control_list.item_count:
-		var item_text: String = control_list.get_item_text(control_setting)
-		if item_text == constant_item_text:
-			return control_setting
-	return CONSTANTS.INT32_MAX
-
-## Converts the itemText to its assoicated GLOBAL_SETTINGS input name
-func _get_constant_name(item_text: String) -> String:
-	var constant_value: String = CONSTANTS.INPUT_LABEL.get(item_text, "")
-	if constant_value == "":
-		Logger.warn(_MISSING_CONSTANT_LOG, [item_text, constant_value], self)
-	return constant_value
 
 func _reset_variables() -> void:
 	control_list.deselect_all()

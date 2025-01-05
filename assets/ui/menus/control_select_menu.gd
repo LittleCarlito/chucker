@@ -6,17 +6,17 @@ class_name ControlSelectMenu
 const INPUT_NOT_FOUND: String = "Input \"%s\" could not be mapped to a texture"
 const INPUT_LABEL: String = "New binding for \"%s\""
 
-@onready var waiting_title: TextureRect = $ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground/InputDisplayCenter/WaitingTitle
-@onready var input_icon_display: TextureRect = $ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground/InputDisplayCenter/InputIconDisplay
-@onready var set_input_label: Label = $ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/SetInputBackground/SetInputLabel
+@export var waiting_title: TextureRect
+@export var input_icon_display: TextureRect
+@export var set_input_label: Label
 
 var control_to_update: String
 var detect_left_click: bool = false
 var cursor_off_menu: bool = false
 var press_count: int = 0 
-var selected_input: ControlSetting = null
+var selected_input: InputEvent = null
 
-signal save_input(controlToUpdate, selectedInput)
+signal save_input(controlToUpdate, selectedInput, inputTexture)
 signal menu_closed
 
 func _input(event: InputEvent) -> void:
@@ -36,7 +36,7 @@ func _input(event: InputEvent) -> void:
 func _set_icon_texture(event: InputEvent) -> void:
 	var input_texture: Texture2D = InputSprite.get_sprite(event)
 	input_icon_display.texture = input_texture
-	selected_input = InputEventLibrary.convert_event_to_control_setting(event)
+	selected_input = event
 	waiting_title.visible = false
 
 func reset_ui() -> void:
@@ -66,7 +66,7 @@ func _cursor_on_menu() -> void:
 
 func _save_input() -> void:
 	if selected_input != null:
-		save_input.emit(control_to_update, selected_input)
+		save_input.emit(control_to_update, selected_input, input_icon_display.texture)
 	close_menu()
 
 func open_menu(incoming_control: String) -> void:

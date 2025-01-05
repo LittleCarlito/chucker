@@ -14,7 +14,6 @@ const _LOAD_FAIL: String = "Failure loading from path %s"
 # File pathways
 const BASE_PATH: String = "user://"
 const SAVE_DIR: String = BASE_PATH + "settings/"
-const JSON_SAVE_FILE: String = SAVE_DIR + "user_settings.json"
 const OVERRIDE_FILE: String = SAVE_DIR + "override.cfg"
 const USER_SETTINGS_FILE: String = SAVE_DIR + "user_settings.cfg"
 # Application configs
@@ -29,6 +28,11 @@ const PATH_LIBRARY = {
 	FILE_TYPE.OVERRIDE: OVERRIDE_FILE,
 	FILE_TYPE.USER_SETTING: USER_SETTINGS_FILE
 }
+
+func _ready() -> void:
+	# Create game file structures
+	var base_dir = DirAccess.open(BASE_PATH)
+	base_dir.make_dir(SAVE_DIR)
 
 ## Appends incoming settings to exsting user_settings.cfg
 ## Deletes existing category data if parameter requesting it is passed in

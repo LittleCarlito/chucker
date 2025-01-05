@@ -2,9 +2,7 @@ extends Node
 
 signal reload_values
 
-const _MISSING_INPUT: String = "user_settings.cfg doesn't have \"%s\", \"%s\" category, key combination"
 const _NO_FILE_FOUND: String = "No user_settings file found; Using default controls"
-const _NO_MATCH_FOUND: String = "No input keycode match found for incoming input \"%s\""
 
 const NAME: String = "input"
 const ADMIN_DEBUG: String = "admin_debug"
@@ -66,8 +64,10 @@ const CONFIG_LIBRARY: Dictionary = {
 }
 
 var _user_settings: ConfigFile
+var UNKNOWN_KEY: InputEventKey = InputEventKey.new()
 
 func _ready() -> void:
+	UNKNOWN_KEY.physical_keycode = KEY_UNKNOWN
 	add_to_group(CONSTANTS.CONFIG_HANDLER)
 	reload_project_settings()
 
@@ -86,43 +86,3 @@ func reload_project_settings() -> void:
 		reload_values.emit()
 	else:
 		Logger.debug(_NO_FILE_FOUND, [], self)
-
-## Returns the mapped keycode for the given input
-## If InputMap is returning null returns user_setting.cfg value; otherwise the default value
-## Returns INT16_MAX if not match found
-func get_mapped_keycode(incoming_input: String, surpress_logs: bool = false) -> int:
-	var mapped_input_keycode: int = CONSTANTS.INT16_MAX
-	var input_map_value: InputEvent
-	if InputMap.has_action(incoming_input):
-		input_map_value = InputMap.get(incoming_input)
-		if input_map_value != null:
-			mapped_input_keycode = InputSprite.extract_keycode(input_map_value)
-		else:
-			input_map_value = _get_user_mapped_input(incoming_input, surpress_logs)
-			if input_map_value != null:
-				mapped_input_keycode = InputSprite.extract_keycode(input_map_value)
-			else:
-				if DEFAULTS.has(incoming_input):
-					mapped_input_keycode = DEFAULTS.get(incoming_input)
-	else:
-		input_map_value = _get_user_mapped_input(incoming_input, surpress_logs)
-		if input_map_value != null:
-			mapped_input_keycode = InputSprite.extract_keycode(input_map_value)
-		else:
-			if DEFAULTS.has(incoming_input):
-					mapped_input_keycode = DEFAULTS.get(incoming_input)
-	if mapped_input_keycode == CONSTANTS.INT16_MAX and !surpress_logs:
-		var formatted_string: String = _NO_MATCH_FOUND + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_INT16_MAX
-		Logger.debug(formatted_string, [incoming_input], self)
-	return mapped_input_keycode
-
-## Checks user_settings.cfg for incoming_input mapped value and returns keycode
-## Returns null if no match found
-func _get_user_mapped_input(incoming_input: String, surpress_logs: bool = false) -> InputEvent:
-	var user_mapped_input: InputEvent
-	if _user_settings.has_section_key(NAME, incoming_input):
-		_user_settings.get_value(NAME, incoming_input)
-	elif !surpress_logs:
-		var formatted_string: String = _MISSING_INPUT + CONSTANTS.LOG_SEPARATOR + CONSTANTS.RETURNING_NULL_LOG
-		Logger.debug(formatted_string, [NAME, incoming_input], self)
-	return user_mapped_input
