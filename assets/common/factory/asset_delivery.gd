@@ -54,7 +54,6 @@ func create_and_launch(flight_data: FlightData, item_data: AssetData) -> void:
 		Logger.debug(_INVALID_INCOMING_ITEM, [str(item_data)], self)
 
 ## TODO Equips incoming owner with internal type found inside given item
-# BUG Spawns at the foot of item_owner
 func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) -> void:
 	# TODO Should create the ChargeDisk and add it to the group for the passed in Chuck
 	#		Should add the new disk as a child to ChuckChucker

@@ -264,3 +264,6 @@ func _request_camera(new_parent: Node3D) -> bool:
 		var formatted_string: String = _NO_INTERNAL_CAMERA + Logger.LOG_SEPARATOR + Logger.KEEPING_CAMERA
 		Logger.debug(formatted_string, [str(new_parent)], self)
 	return parent_swapped
+
+func get_look_direction() -> Vector3:
+	return self.get_global_transform().basis.z 

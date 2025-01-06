@@ -14,6 +14,7 @@ var asset_data: AssetData
 var stopwatch: Stopwatch = Stopwatch.new()
 var height: float
 
+# BUG Right clicking looking around controls feel odd
 # BUG Standard camera focus is different after using looking controls on chuck
 # TODO Get ChuckChucker, mesh, and collision into a scene as BaseCharacter
 #		Then make another scene off that one with controls in the script and a camera at creation called ControllableCharacter
@@ -46,7 +47,7 @@ func _input(event: InputEvent) -> void:
 		var rotation_adjust: float = GameConfig.DEFAULTS.rotate_adjust
 		if event.is_action_pressed(InputConfig.USER_INPUT.ROTATE_DOWN):
 			rotation_adjust *= -1
-		_handle_rotation(rotation_adjust)
+		item_container._handle_x_rotation(rotation_adjust)
 
 ## Actions to be performed when MOVE_JUMP is pressed
 func _handle_jump(delta: float) -> void:
@@ -84,26 +85,6 @@ func _handle_player_interact() -> void:
 			var colliding_object = front_detection.get_collider(0)
 			if colliding_object != null and colliding_object is ForceDisk:
 				AssetDelivery.create_and_give_item(self, colliding_object)
-
-# TODO Redo this to use clamp() inseach of the checking logic
-## Rotates contained item by given amount
-func _handle_rotation(rotation_amount: float) -> void:
-	var is_min_rotate: bool = rotation_amount > 0 and item_container.rotation_degrees.x < GameConfig.DEFAULTS.max_launch_rotation
-	var is_max_rotate: bool = rotation_amount < 0 and item_container.rotation_degrees.x > GameConfig.DEFAULTS.min_launch_rotation
-	if is_min_rotate or is_max_rotate:
-		var projected_rotation: float
-		if rotation_amount > 0:
-			projected_rotation = rad_to_deg(rotation_amount + item_container.rotation.x)
-			if projected_rotation > GameConfig.DEFAULTS.max_launch_rotation:
-				item_container.rotation_degrees.x = GameConfig.DEFAULTS.max_launch_rotation
-			else:
-				item_container.rotate_x(rotation_amount)
-		else:
-			projected_rotation = rad_to_deg(rotation_amount + item_container.rotation.x)
-			if projected_rotation < GameConfig.DEFAULTS.min_launch_rotation:
-				item_container.rotation_degrees.x = GameConfig.DEFAULTS.min_launch_rotation
-			else:
-				item_container.rotate_x(rotation_amount)
 
 ## Detects and executes movements
 func _handle_movement(delta: float) -> void:
@@ -149,27 +130,27 @@ func reload_project_settings() -> void:
 	camera_container.reset_zoom()
 
 func _handle_looking(event: InputEvent) -> void:
-	if event.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-		disable_movement()
-		if camera_container.is_current():
-			camera_container.zoom_in()
-	elif event.is_action_released(InputConfig.USER_INPUT.SECONDARY):
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		camera_container.snap_back(self.global_basis)
-		enable_movement()
-	elif event is InputEventMouseMotion and Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
-		var v_rotation_amount: float = NodeUtil.get_vertical_rotation_amount(event)
-		var h_rotation_amount: float = NodeUtil.get_horizontal_rotation_amount(event)
-		if _can_horizontally_rotate(h_rotation_amount):
-			camera_container.horizontal_rotate(h_rotation_amount)
-		if _can_vertically_rotate(v_rotation_amount):
-			camera_container.veritcal_rotate(v_rotation_amount)
-		if item_container.is_equipped():
-			_handle_rotation(v_rotation_amount)
+	# Only handle aiming mouse movements when not equipped
+	if !is_equipped():
+		# When secondary is pressed
+		if event.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
+			_handle_zoom_in()
+			disable_movement()
+		# When secondary is released
+		elif event.is_action_released(InputConfig.USER_INPUT.SECONDARY):
+			_handle_zoom_out()
+			enable_movement()
+		# When secondary is pressend and it is movement
+		elif event is InputEventMouseMotion and Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
+			var v_rotation_amount: float = NodeUtil.get_vertical_rotation_amount(event)
+			var h_rotation_amount: float = NodeUtil.get_horizontal_rotation_amount(event)
+			if _can_horizontally_rotate(h_rotation_amount):
+				camera_container.horizontal_rotate(h_rotation_amount)
+			if _can_vertically_rotate(v_rotation_amount):
+				camera_container.veritcal_rotate(v_rotation_amount)
 	# Third person viewing self
 	# Only occurs when unequipped and primary is held
-	elif event.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and item_container.is_unequipped():
+	if event.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and item_container.is_unequipped():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	elif event is InputEventMouseMotion and (Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and item_container.is_unequipped()):
 		## Determine amount to rotate camera
@@ -178,6 +159,22 @@ func _handle_looking(event: InputEvent) -> void:
 	elif event.is_action_released(InputConfig.USER_INPUT.PRIMARY) and item_container.is_unequipped():
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		camera_container.snap_back(self.global_basis)
+
+func _handle_zoom_in() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	if camera_container.is_current():
+		camera_container.zoom_in()
+
+func _handle_zoom_out() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	camera_container.snap_back(self.global_basis)
+
+func _handle_turn_horizontal(rotate_amount: float) -> void:
+	## Determine amount to rotate camera
+	var previous_orientation: Transform3D = camera_container.global_transform
+	var horizontal_rotate_amount: float = rotate_amount * CameraConfig.get_horizontal_look_sens()
+	self.global_rotation_degrees.y += horizontal_rotate_amount * 12
+	camera_container.global_transform = previous_orientation
 
 func _can_horizontally_rotate(rotation_amount:float) -> bool:
 	var potential_horizontal_roation: float = camera_container.get_horizontal_rotation() + rotation_amount
@@ -218,6 +215,8 @@ func equip_item(new_item: Node3D) -> void:
 	displaced_item = item_container.equip_item(new_item)
 	if displaced_item != null:
 		AssetDelivery.dump_asset(displaced_item)
+	if new_item.has_signal(ThrowableItem.AIM):
+		new_item.connect(ThrowableItem.AIM, item_container._handle_aiming)
 	_update_state()
 
 func _give_camera(new_item: Node3D) -> void:
@@ -245,3 +244,6 @@ func _get_focus_point() -> Vector3:
 
 func _return_camera(incoming_camera: Camera3D) -> void:
 	camera_container.set_camera(incoming_camera)
+
+func is_equipped() -> bool:
+	return item_container.is_equipped()

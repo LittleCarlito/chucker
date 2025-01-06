@@ -1,5 +1,4 @@
-# TODO Refactor this to use ECS structure instead of inheritance
-extends Node3D
+extends ThrowableItem
 class_name ChargeDisk
 
 const _FLIGHT_DATA_NOT_SET: String = "FlightData not set; Cannot set flight global basis"
@@ -29,6 +28,24 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
+
+func _input(event: InputEvent) -> void:
+	_handle_aiming(event)
+
+func _handle_aiming(event: InputEvent) -> void:
+	# When secondary is pressed
+	if event.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
+		aim.emit(AIM_TYPE.ZOOM_IN, 0)
+	# When secondary is released
+	elif event.is_action_released(InputConfig.USER_INPUT.SECONDARY):
+		aim.emit(AIM_TYPE.ZOOM_OUT, 0)
+	elif event is InputEventMouseMotion and Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
+		var v_rotation_amount: float = NodeUtil.get_vertical_rotation_amount(event)
+		var h_rotation_amount: float = NodeUtil.get_horizontal_rotation_amount(event)
+		if v_rotation_amount != -1:
+			aim.emit(AIM_TYPE.VERTIAL_LOOK, v_rotation_amount)
+		if h_rotation_amount != -1:
+			aim.emit(AIM_TYPE.HORIZONTAL_LOOK, h_rotation_amount * 10)
 
 # TODO Refactor to take in global_basis and set it in flight data as well
 # TODO Figure out default value for Basis
@@ -75,7 +92,7 @@ func release_action(incoming_basis: Basis) -> void:
 		#item_owner.unequip_item()
 
 func reset_launch_parameters() -> void:
-	flight_data = null
+	flight_data = FlightData.new()
 
 func _set_asset_data(incoming_data: AssetData) -> void:
 	asset_data = incoming_data

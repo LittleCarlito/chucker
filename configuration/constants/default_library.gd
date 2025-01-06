@@ -3,6 +3,7 @@ class_name DefaultLibrary
 
 const PLACEHOLDER: String = "Placeholder"
 
+
 ## Stores references to each config types default dictionary for automated searches
 const DEFAULTS: Dictionary = {
 	CameraConfig.NAME: CameraConfig.DEFAULTS,
