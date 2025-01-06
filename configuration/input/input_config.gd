@@ -1,6 +1,5 @@
 extends Node
-
-const _NO_FILE_FOUND: String = "No user_settings file found; Using default controls"
+class_name InputConfig
 
 const NAME: String = "input"
 const ADMIN_DEBUG: String = "admin_debug"
@@ -61,8 +60,7 @@ const CONFIG_LIBRARY: Dictionary = {
 	ROTATE_DOWN: ROTATE_DOWN
 }
 
-# TODO USER_INPUT should be migrated to INPUT_LABEL and they should be renamed to INPUT_LIBRARY
-#			Move all this to InputConfig
+# TODO Reword to be combined with INPUT_LABEL as INPUT_LIBRARY
 # Keys are how it is handled in code
 # Values are how project settings handle those behaviors
 const USER_INPUT: Dictionary = {
@@ -110,26 +108,10 @@ const INPUT_LABEL: Dictionary = {
 	"Sprint": USER_INPUT.SPRINT
 }
 
-
 func _ready() -> void:
 	add_to_group(GroupData.CONFIG_HANDLER)
-	call_deferred("reload_project_settings")
 
-## Reloads Project input settings using GlobalSettings
-func reload_project_settings() -> void:
-	# Get user settings file
-	var input_dictionary: Dictionary = UserSettingData.get_category(NAME)
-	# Iterate through existing settings and apply controls
-	if !input_dictionary.is_empty():
-		var update_controls: Array = input_dictionary.keys()
-		for update_control in update_controls:
-			var bound_input: InputEvent = input_dictionary.get(update_control)
-			InputMap.action_erase_events(update_control)
-			InputMap.action_add_event(update_control, bound_input)
-	else:
-		Logger.debug(_NO_FILE_FOUND, [], self)
-
-func get_unknown_key() -> InputEventKey:
+static func get_unknown_key() -> InputEventKey:
 	var unknown_key: InputEventKey = InputEventKey.new()
 	unknown_key.physical_keycode = KEY_UNKNOWN
 	return unknown_key

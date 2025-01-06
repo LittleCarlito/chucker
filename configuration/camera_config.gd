@@ -1,4 +1,5 @@
 extends Node
+class_name CameraConfig
 
 const _NO_CATEGORY_MATCH: String = "No configuration match or default match could be found for incoming category name \"%s\" and key \"%s\""
 
@@ -63,87 +64,69 @@ func _ready() -> void:
 	add_to_group(GroupData.CONFIG_HANDLER)
 
 ## Retrieves the configured fov value
-func get_fov_value() -> int:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.PLAYER_FOV)
+static func get_fov_value() -> int:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.PLAYER_FOV)
 
 ## Retrieves the configured stationary fov value
-func get_stationary_fov_value() -> int:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.STATIONARY_FOV)
+static func get_stationary_fov_value() -> int:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.STATIONARY_FOV)
 
 ## Retrieves the configured horizontal aim sense value
-func get_horizontal_aim_sens() -> float:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.HORIZONTAL_AIM_SENSITIVITY)
+static func get_horizontal_aim_sens() -> float:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.HORIZONTAL_AIM_SENSITIVITY)
 
 ## Retrieves the configured horizontal look sense value
-func get_horizontal_look_sens() -> float:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.HORIZONTAL_LOOK_SENSITIVITY)
+static func get_horizontal_look_sens() -> float:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.HORIZONTAL_LOOK_SENSITIVITY)
 
 ## Retrieves the configured veritical aim sense value
-func get_vertical_aim_sense() -> float:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.VERTICAL_AIM_SENSITIVITY)
+static func get_vertical_aim_sense() -> float:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.VERTICAL_AIM_SENSITIVITY)
 
 ## Retrieves the configured veritical look sense value
-func get_vertical_look_sense() -> float:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.VERTICAL_LOOK_SENSITIVITY)
+static func get_vertical_look_sense() -> float:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.VERTICAL_LOOK_SENSITIVITY)
 
 ## Retrieves the configured veritical inversion value
-func is_vertical_invert() -> bool:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.INVERT_VERTICAL)
+static func is_vertical_invert() -> bool:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.INVERT_VERTICAL)
 
 ## Retrieves the configured horizontal inversion value
-func is_horizontal_invert() -> bool:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.INVERT_HORIZONTAL)
+static func is_horizontal_invert() -> bool:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.INVERT_HORIZONTAL)
 
 ## Retrieves the configured rotation speed value
-func get_rotate_speed() -> float:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.ROTATE_SPEED)
+static func get_rotate_speed() -> float:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.ROTATE_SPEED)
 
 ## Retrieves the configured max horizontal rotation value
-func get_max_horizontal_rotation() -> float:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.MAX_HORIZONTAL_ROTATION)
+static func get_max_horizontal_rotation() -> float:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.MAX_HORIZONTAL_ROTATION)
 
 ## Retrieves the configured min horizontal rotation value
-func get_min_horizontal_rotation() -> float:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.MIN_HORIZONTAL_ROTATION)
+static func get_min_horizontal_rotation() -> float:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.MIN_HORIZONTAL_ROTATION)
 
 ## Retrieves the configured max vertical rotation value
-func get_max_vertical_rotation() -> float:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.MAX_VERTICAL_ROTATION)
+static func get_max_vertical_rotation() -> float:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.MAX_VERTICAL_ROTATION)
 
 ## Retrieves the configured min vertical rotation value
-func get_min_vertical_rotation() -> float:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.MIN_VERTICAL_ROTATION)
+static func get_min_vertical_rotation() -> float:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.MIN_VERTICAL_ROTATION)
 
 ## Retrieves the configured out adjust value
-func get_in_adjust() -> float:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.IN_ADJUST)
+static func get_in_adjust() -> float:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.IN_ADJUST)
 
 ## Retrieves the configured in adjust value
-func get_out_adjust() -> float:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.OUT_ADJUST)
+static func get_out_adjust() -> float:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.OUT_ADJUST)
 
 ## Retrieves the configured player focus value
-func get_player_focus_offset() -> Vector3:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.PLAYER_FOCUS_OFFSET)
+static func get_player_focus_offset() -> Vector3:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.PLAYER_FOCUS_OFFSET)
 
 ## Retrieves the configured stationary focus value
-func get_stationary_focus_offset() -> Vector3:
-	return _get_category_value(CameraConfig.NAME, CameraConfig.TEE_FOCUS_OFFSET)
-
-# TODO Get this in a generalized spot so input can use it
-# TODO Get Graphics tab using it and DefaultLibrary
-## Returns the configured value for the category
-func _get_category_value(category_name: String, category_key: String):
-	var category_dictionary: Dictionary = UserSettingData.get_category(category_name, true)
-	var category_value
-	if category_dictionary.has(category_key):
-		category_value = category_dictionary.get(category_key)
-	else:
-		var category_default_dictionary: Dictionary = DefaultLibrary.DEFAULTS.get(category_name, {}) as Dictionary
-		if !category_default_dictionary.is_empty():
-			if category_default_dictionary.has(category_key):
-				category_value = category_default_dictionary.get(category_key)
-	if category_value == null:
-		var formatted_string: String = _NO_CATEGORY_MATCH + Logger.LOG_SEPARATOR + Logger.RETURNING_INT16_MAX
-		Logger.debug(formatted_string, [category_name, category_key], self)
-	return category_value
+static func get_stationary_focus_offset() -> Vector3:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.TEE_FOCUS_OFFSET)
