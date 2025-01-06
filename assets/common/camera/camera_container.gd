@@ -123,7 +123,7 @@ func start_focus(incoming_global_basis: Basis, incoming_location: Vector3 = Vect
 		_focus_location = incoming_location
 	_focused = true
 	_idle_rotate = true
-	camera_timer.start(GlobalSettings.CAMERA.SHOT_WATCH_TIME)
+	camera_timer.start(CameraConfig.get_shot_watch_time())
 
 func is_focused() -> bool:
 	return _focused and _focus_location != Vector3.INF
@@ -138,7 +138,7 @@ func _on_camera_timer_timeout() -> void:
 # TODO Is getting called and working but only getting called once
 func idle_rotate(delta: float) -> void:
 	# Calculate the rotation angle in radians
-	var rotation_amount: float = (GlobalSettings.CAMERA.IDLE_ROTATE_SPEED * delta)
+	var rotation_amount: float = (CameraConfig.get_idle_rotate_speed() * delta)
 	horizontal_pan(rotation_amount)
 
 func get_camera() -> Camera3D:

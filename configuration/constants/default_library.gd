@@ -9,5 +9,6 @@ const DEFAULTS: Dictionary = {
 	DisplayConfig.NAME: DisplayConfig.DEFAULTS,
 	DebugConfig.NAME: DebugConfig.DEFAULTS,
 	ApplicationConfig.NAME: ApplicationConfig.DEFAULTS,
-	InputConfig.NAME: InputConfig.DEFAULTS
+	InputConfig.NAME: InputConfig.DEFAULTS,
+	GameConfig.NAME: GameConfig.DEFAULTS
 }

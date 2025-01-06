@@ -33,14 +33,14 @@ const CREATION_MATRIX: Dictionary = {
 }
 
 const ITEM_COLOR: Dictionary = {
-	AssetData.TYPE.FORCE: GlobalSettings.COLOR.FORCE,
-	AssetData.TYPE.PATH: GlobalSettings.COLOR.PATH,
-	AssetData.TYPE.UNKNOWN: GlobalSettings.DEFAULTS.COLOR
+	AssetData.TYPE.FORCE: GameConfig.DEFAULTS.force_color,
+	AssetData.TYPE.PATH: GameConfig.DEFAULTS.path_color,
+	AssetData.TYPE.UNKNOWN: GameConfig.DEFAULTS.color
 }
 
 ## Creates an AssetData rescource based off given parameters
 ## Defaults creation type to incoming_internal type if none or UNKNOWN given for creation_type
-static func create_item_data(incoming_internal: AssetData.TYPE, incoming_state: AssetData.ITEM_STATE = AssetData.ITEM_STATE.DISABLED, incoming_camera_state: AssetData.CAMERA_STATE = AssetData.CAMERA_STATE.EXISTS, incoming_create: AssetData.TYPE = AssetData.TYPE.UNKNOWN, incoming_group: String = GlobalSettings.DEFAULTS.GROUP) -> AssetData:
+static func create_item_data(incoming_internal: AssetData.TYPE, incoming_state: AssetData.ITEM_STATE = AssetData.ITEM_STATE.DISABLED, incoming_camera_state: AssetData.CAMERA_STATE = AssetData.CAMERA_STATE.EXISTS, incoming_create: AssetData.TYPE = AssetData.TYPE.UNKNOWN, incoming_group: String = GameConfig.DEFAULTS.group) -> AssetData:
 	var new_data: AssetData = AssetData.new()
 	new_data.internal_type = incoming_internal
 	new_data.item_state = incoming_state
@@ -53,7 +53,7 @@ static func create_item_data(incoming_internal: AssetData.TYPE, incoming_state: 
 ## Takes in type and returns corresponding color
 ## Returns UNKNOWN COLOR_DEFAULT from GlobalSettings if type is not known
 static func get_item_color(incoming_type: AssetData.TYPE) -> Color:
-	return ITEM_COLOR.get(incoming_type, GlobalSettings.DEFAULTS.COLOR)
+	return ITEM_COLOR.get(incoming_type, GameConfig.DEFAULTS.color)
 
 ## Takes CameraController and determines the AssetData.CAMERA_STATE equivalent given that CameraContainers properties
 static func get_camera_state(camera_container: CameraContainer = null) -> AssetData.CAMERA_STATE:

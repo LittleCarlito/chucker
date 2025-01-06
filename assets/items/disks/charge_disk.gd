@@ -41,8 +41,8 @@ func hold_action(delta: float, incoming_basis: Basis) -> void:
 	# If right click isn't held while holding left click calculate throw distance
 	elif not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
 		var held_time: float = stopwatch.isHeld(delta)
-		charge_view.set_progress((held_time / GlobalSettings.DISK.MAX_HOLD) * 100)
-		var speed_multiplier: float = min(GlobalSettings.DISK.MAX_HOLD, held_time) * GlobalSettings.DISK.HOLD_MULTIPLIER
+		charge_view.set_progress((held_time / GameConfig.DEFAULTS.max_hold) * 100)
+		var speed_multiplier: float = min(GameConfig.DEFAULTS.max_hold, held_time) * GameConfig.DEFAULTS.hold_multiplier
 		var drawn_line: Array[Vector3] = aim_line.draw_aim_line(speed_multiplier)
 		if drawn_line != null:
 			flight_data.flight_path = drawn_line
@@ -55,11 +55,11 @@ func release_action(incoming_basis: Basis) -> void:
 	if not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
 		charge_view.set_progress(-1)
 		var final_time: float = stopwatch.reset()
-		var speed_multiplier: float = min(GlobalSettings.DISK.MAX_HOLD, final_time) * GlobalSettings.DISK.HOLD_MULTIPLIER
+		var speed_multiplier: float = min(GameConfig.DEFAULTS.max_hold, final_time) * GameConfig.DEFAULTS.hold_multiplier
 		flight_data.flight_path = aim_line.draw_aim_line(speed_multiplier)
 		# TODO Added this last multiplier bit in from force disks method (should be done by caller) don't know if its necessary though
 		#		If it is should be simplified into the calculation above instead of 2 separate lines
-		var final_speed: float = GlobalSettings.DISK.LAUNCH_SPEED * speed_multiplier
+		var final_speed: float = GameConfig.DEFAULTS.launch_speed * speed_multiplier
 		flight_data = FlightData.create_flight_data(final_speed, incoming_basis, flight_data.flight_path, flight_data.focus_flight)
 		# TODO Launcd disk needs to be refactored into this class
 		if flight_data != null:

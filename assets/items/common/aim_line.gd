@@ -18,10 +18,10 @@ func draw_aim_line(multiplier: float, x_offset: float = 0) -> Array[Vector3]:
 	var parent_rotation: float = NodeUtil.get_parent_x_rotation(self)
 	var height: float = self.global_position.y
 	#var height: float = NodeUtil.get_parent_heights(self)
-	var throw_speed: float = GlobalSettings.DISK.LAUNCH_SPEED * multiplier
+	var throw_speed: float = GameConfig.DEFAULTS.launch_speed * multiplier
 	# move_and_slide() is a liar so this will always be an approximation
 	var z_distance: float = NodeUtil.calculate_range(height, gravity, parent_rotation, throw_speed)
-	var gravity_adjust: float = gravity * GlobalSettings.DISK.GRAVITY_MULTIPLIER
+	var gravity_adjust: float = gravity * GameConfig.DEFAULTS.gravity_multiplier
 	# Handle aimNode
 	aim_node.position = self.global_position
 	aim_node.basis = self.global_basis

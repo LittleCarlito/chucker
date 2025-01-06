@@ -43,7 +43,7 @@ func _input(event: InputEvent) -> void:
 	## Rotate input control
 	# TODO Add support for track pad scrolling to rotate disk up
 	if event.is_action_pressed(InputConfig.USER_INPUT.ROTATE_UP) || event.is_action_pressed(InputConfig.USER_INPUT.ROTATE_DOWN):
-		var rotation_adjust: float = GlobalSettings.DISK.ROTATE_ADJUST
+		var rotation_adjust: float = GameConfig.DEFAULTS.rotate_adjust
 		if event.is_action_pressed(InputConfig.USER_INPUT.ROTATE_DOWN):
 			rotation_adjust *= -1
 		_handle_rotation(rotation_adjust)
@@ -55,7 +55,7 @@ func _handle_jump(delta: float) -> void:
 		velocity += get_gravity() * delta
 	# Handle jump
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.JUMP) and is_on_floor() and is_movement_enabled():
-		velocity.y = GlobalSettings.PLAYER.JUMP_FORCE
+		velocity.y = GameConfig.DEFAULTS.jump_force
 
 ## Rotation and aiming logic
 func _handle_camera_controls() -> void:
@@ -88,20 +88,20 @@ func _handle_player_interact() -> void:
 # TODO Redo this to use clamp() inseach of the checking logic
 ## Rotates contained item by given amount
 func _handle_rotation(rotation_amount: float) -> void:
-	var is_min_rotate: bool = rotation_amount > 0 and item_container.rotation_degrees.x < GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION
-	var is_max_rotate: bool = rotation_amount < 0 and item_container.rotation_degrees.x > GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION
+	var is_min_rotate: bool = rotation_amount > 0 and item_container.rotation_degrees.x < GameConfig.DEFAULTS.max_launch_rotation
+	var is_max_rotate: bool = rotation_amount < 0 and item_container.rotation_degrees.x > GameConfig.DEFAULTS.min_launch_rotation
 	if is_min_rotate or is_max_rotate:
 		var projected_rotation: float
 		if rotation_amount > 0:
 			projected_rotation = rad_to_deg(rotation_amount + item_container.rotation.x)
-			if projected_rotation > GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION:
-				item_container.rotation_degrees.x = GlobalSettings.PLAYER.MAX_LAUNCH_ROTATION
+			if projected_rotation > GameConfig.DEFAULTS.max_launch_rotation:
+				item_container.rotation_degrees.x = GameConfig.DEFAULTS.max_launch_rotation
 			else:
 				item_container.rotate_x(rotation_amount)
 		else:
 			projected_rotation = rad_to_deg(rotation_amount + item_container.rotation.x)
-			if projected_rotation < GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION:
-				item_container.rotation_degrees.x = GlobalSettings.PLAYER.MIN_LAUNCH_ROTATION
+			if projected_rotation < GameConfig.DEFAULTS.min_launch_rotation:
+				item_container.rotation_degrees.x = GameConfig.DEFAULTS.min_launch_rotation
 			else:
 				item_container.rotate_x(rotation_amount)
 
@@ -111,7 +111,7 @@ func _handle_movement(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.JUMP) and is_on_floor() and is_movement_enabled():
-		velocity.y = GlobalSettings.PLAYER.JUMP_FORCE
+		velocity.y = GameConfig.DEFAULTS.jump_force
 	var input_dir = Input.get_vector(InputConfig.USER_INPUT.STRAFE_LEFT, InputConfig.USER_INPUT.STRAFE_RIGHT, InputConfig.USER_INPUT.FORWARD, InputConfig.USER_INPUT.BACKWARD)
 	if(is_on_floor()):
 		var direction = (self.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
@@ -122,16 +122,16 @@ func _handle_movement(delta: float) -> void:
 			else:
 				var sprint_addition: float = 0.0
 				if Input.is_action_pressed(InputConfig.USER_INPUT.SPRINT):
-					sprint_addition = GlobalSettings.PLAYER.SPRINT_SPEED
+					sprint_addition = GameConfig.DEFAULTS.sprint_speed
 					camera_container.zoom_out()
 				elif camera_container.has_camera():
 					camera_container.reset_zoom()
-				velocity.x = direction.x * (GlobalSettings.PLAYER.RUN_SPEED + sprint_addition)
-				velocity.z = direction.z * (GlobalSettings.PLAYER.RUN_SPEED + sprint_addition)
+				velocity.x = direction.x * (GameConfig.DEFAULTS.run_speed + sprint_addition)
+				velocity.z = direction.z * (GameConfig.DEFAULTS.run_speed + sprint_addition)
 		# Otherwise set velocity to start slowing down
 		else:
-			velocity.x = move_toward(velocity.x, 0, GlobalSettings.PLAYER.RUN_SPEED)
-			velocity.z = move_toward(velocity.z, 0, GlobalSettings.PLAYER.RUN_SPEED)
+			velocity.x = move_toward(velocity.x, 0, GameConfig.DEFAULTS.run_speed)
+			velocity.z = move_toward(velocity.z, 0, GameConfig.DEFAULTS.run_speed)
 	move_and_slide()
 	# Keep camera up
 	#camera_container.position = lerp(camera_container.position, position, GlobalSettings.CAMERA.PAN_SPEED)

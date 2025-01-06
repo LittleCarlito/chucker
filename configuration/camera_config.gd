@@ -63,6 +63,14 @@ const CONFIG_LIBRARY: Dictionary = {
 func _ready() -> void:
 	add_to_group(GroupData.CONFIG_HANDLER)
 
+## Retrieves the configured idle rotate speed value
+static func get_idle_rotate_speed() -> float:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.IDLE_ROTATE_SPEED)
+
+## Retrieves the configured shot watch time value
+static func get_shot_watch_time() -> float:
+	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.SHOT_WATCH_TIME)
+
 ## Retrieves the configured fov value
 static func get_fov_value() -> int:
 	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.PLAYER_FOV)

@@ -27,7 +27,7 @@ func create_and_launch(flight_data: FlightData, item_data: AssetData) -> void:
 		item_type = item_data.internal_type
 	var group_name: String = item_data.group_name
 	if group_name == null || group_name.is_empty():
-		group_name = GlobalSettings.DEFAULTS.GROUP
+		group_name = GameConfig.DEFAULTS.group
 		Logger.debug(_NO_GROUP_PROVIDED, [group_name], self)
 	var associated_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(item_data.creation_type, item_data.internal_type)
 	var new_asset_data: AssetData = AssetData.create_item_data(item_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, associated_creation_type, group_name)
