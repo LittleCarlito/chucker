@@ -45,6 +45,8 @@ func _on_tee_box_area_body_exited(body: Node3D) -> void:
 
 # TODO In here is where activation stuff occurs
 func _handle_body(body: Node3D, enable_body_cam: bool) -> void:
+	# TODO Re-enable once disk throw camera collision stuff is working again
+	# TODO Then get this working transferring active when disks are launched out
 	if body is ChuckChucker:
 		if enable_body_cam:
 			body.camera_container.enable_camera()

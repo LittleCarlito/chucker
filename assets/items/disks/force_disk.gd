@@ -21,7 +21,6 @@ class_name ForceDisk
 	#			Each disk type and ChuckChucker type should have a "item_lose_focus" method
 	#				Item one will set camera current to false and queue_free self
 	#				ChuckChucker type will enable camera and movement
-	# TODO Get aiming from CameraContainer working properly in ChargeDisk
 	# TODO Instead of queue_freeing objects work on pooling and reusing them
 	# TODO Look into using Entity Component System (ECS) over OOP
 	#		How godot (and game dev in general) is done
@@ -50,7 +49,7 @@ const _LOSE_FOCUS: String = "lose_focus"
 var asset_data: AssetData
 var flight_data: FlightData
 var camera_container: CameraContainer
-var _collided: bool
+var _collided: bool = false
 
 func _ready() -> void:
 	if asset_data == null:
@@ -61,14 +60,7 @@ func _ready() -> void:
 	_update_state()
 
 func _process(_delta: float) -> void:
-	if camera_container != null and camera_container.is_current():
-		if !_collided:
-			if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
-				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-			if self.linear_damp_mode != RigidBody3D.DAMP_MODE_COMBINE:
-				self.linear_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
-			if self.angular_damp_mode != RigidBody3D.DAMP_MODE_COMBINE:
-				self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
+	pass
 
 func _input(event: InputEvent) -> void:
 	# Looking controls
@@ -147,8 +139,7 @@ func _create_camera_container() -> void:
 	if camera_container == null:
 		var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
 		self.add_child(new_camera_container)
-		camera_container = new_camera_container
-		camera_container.connect(_LOSE_FOCUS, _return_camera_to_owner)
+		_set_camera_container(new_camera_container)
 	else:
 		Logger.warn(Logger.ALREADY_EXISTS_LOG, [Logger.CAMERA_CONTAINER], self)
 
@@ -165,8 +156,10 @@ func _launch() -> void:
 	if flight_data != null:
 		self.global_basis = flight_data.flight_global_basis
 		self.linear_velocity = -self.global_transform.basis.z * flight_data.flight_speed
+		self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
 		if flight_data.focus_flight:
 			_submit_camera_request()
+			camera_container.set_current()
 			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	else:
@@ -187,7 +180,7 @@ func _return_camera_to_owner() -> void:
 	var has_custom_group: bool = asset_data != null and !asset_data.group_name.is_empty()
 	var has_camera: bool = camera_container != null and camera_container.has_camera()
 	if has_camera and has_custom_group:
-		get_tree().call_group(asset_data.group_name, GroupData.RETURN_CAMERA, camera_container.get_camera())
+		get_tree().call_group(asset_data.group_name, GroupData.TRANSFER_AND_ENABLE, camera_container.get_camera())
 	else:
 		Logger.debug(_CANT_RETURN_LOG, [str(self)], self)
 

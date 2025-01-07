@@ -10,7 +10,7 @@ const GIVE_CAMERA: String = "_give_camera" # (requesting_owner: Node3D)
 # TODO CameraContainer needs to implement this to attempt to give ones of its instances of itself to the requesting_owner
 #			Will need to update in the future to ask for specific camera
 const REQUEST_CAMERA: String = "_request_camera" # (requesting_owner: Node3D)
-const RETURN_CAMERA: String = "_return_camera" # (incoming_camera: Camera3D)
+const TRANSFER_AND_ENABLE: String = "_transfer_and_enable" # (incoming_camera: Camera3D)
 # TODO Implement this method in all assets that can be picked up and have a camera transferred to them
 const GET_CAMERA_CONTAINER: String = "_get_camera_container"
 # TODO All holders of AssetData need getters and setters created

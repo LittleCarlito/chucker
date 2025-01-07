@@ -42,10 +42,10 @@ func unequip_item() -> void:
 	self.rotation_degrees.x = 0
 
 # TODO Figure out a default 0ing, min, or max value for Basis to allow defaulting
-func hold_action(delta: float) -> void:
+func hold_action(delta: float, incoming_focus: bool = false) -> void:
 	if is_equipped():
 		if equipped_item.has_method(GroupData.HOLD_ACTION):
-			equipped_item.call(GroupData.HOLD_ACTION, delta, self.global_basis)
+			equipped_item.call(GroupData.HOLD_ACTION, delta, self.global_basis, incoming_focus)
 		else:
 			Logger.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), GroupData.HOLD_ACTION], self)
 	else:

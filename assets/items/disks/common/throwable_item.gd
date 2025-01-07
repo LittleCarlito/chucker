@@ -1,8 +1,11 @@
 extends Node3D
 class_name ThrowableItem
 
+# Abstract class
+@warning_ignore("unused_signal")
 signal aim(aim_type, adjustment_value)
 
+const LAUNCHED: String = "launched"
 const AIM: String = "aim"
 
 enum AIM_TYPE {
@@ -18,5 +21,5 @@ func _ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass

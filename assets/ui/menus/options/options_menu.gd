@@ -22,7 +22,6 @@ signal apply_settings
 
 var tab_array: Array[OptionTab]
 
-# TODO OOOOO
 # TODO Add Reset button at bottom of the menu
 # TODO Add Confirm prompt box before actually resetting
 # TODO After Apply on Graphics tab add confirm settings with countdown to reversion

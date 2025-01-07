@@ -1,6 +1,8 @@
 extends ThrowableItem
 class_name ChargeDisk
 
+signal launched
+
 const _FLIGHT_DATA_NOT_SET: String = "FlightData not set; Cannot set flight global basis"
 
 @export var charge_view: ChargeView
@@ -49,7 +51,8 @@ func _handle_aiming(event: InputEvent) -> void:
 
 # TODO Refactor to take in global_basis and set it in flight data as well
 # TODO Figure out default value for Basis
-func hold_action(delta: float, incoming_basis: Basis) -> void:
+func hold_action(delta: float, incoming_basis: Basis, incoming_focus: bool) -> void:
+	flight_data.focus_flight = incoming_focus
 	# If right click is pressed while holding left reset throw
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.SECONDARY):
 		stopwatch.reset()
@@ -82,6 +85,7 @@ func release_action(incoming_basis: Basis) -> void:
 		if flight_data != null:
 			# TODO Make sure that item_data contains the group_name of the entity throwing it
 			AssetDelivery.create_and_launch(flight_data, asset_data)
+			launched.emit()
 			pick_up()
 		else:
 			Logger.error(FlightData.LAUNCH_NOT_READY_LOG, [], self)

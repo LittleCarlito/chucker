@@ -10,6 +10,7 @@ const DEFAULTS: Dictionary = {
 	"jump_force": 4.5, 
 	"max_launch_rotation": 67,
 	"min_launch_rotation": -25,
+	"rotation_multiplier": 4,
 	# Disk values
 	"launch_speed": 10,
 	"max_hold": 2,

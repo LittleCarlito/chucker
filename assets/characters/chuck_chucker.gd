@@ -9,22 +9,28 @@ const _EMPTY_CAMERA_CONTAINER: String = "CameraContainer from \"%s\" returned nu
 @export var front_detection: ShapeCast3D
 @export var camera_container: CameraContainer
 @export var item_container: ItemContainer
+@export var focusing_throws: bool
 
 var asset_data: AssetData
 var stopwatch: Stopwatch = Stopwatch.new()
 var height: float
+var _initial_camera_orientation: Transform3D
+var _just_launched: bool = false
 
-# BUG Right clicking looking around controls feel odd
-# BUG Standard camera focus is different after using looking controls on chuck
+# TODO OOOOO
+# TODO Enable movement after landing timer finishes
+# TODO Get camera following charge disk after launch
 # TODO Get ChuckChucker, mesh, and collision into a scene as BaseCharacter
 #		Then make another scene off that one with controls in the script and a camera at creation called ControllableCharacter
 
 func _ready() -> void:
+	_initial_camera_orientation = camera_container.global_transform
 	self.add_to_group(self.name)
 	camera_container.add_to_group(self.name)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	height = chuck_mesh.get_aabb().size.y
 	camera_container.populate_camera_control(_get_focus_point())
+	camera_container.set_current()
 	if asset_data == null:
 		asset_data = AssetData.create_item_data(AssetData.TYPE.PLAYER)
 	asset_data.group_name = self.name
@@ -71,7 +77,7 @@ func _handle_camera_controls() -> void:
 func _handle_player_action(delta: float) -> void:
 	if item_container.is_equipped():
 		if Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY):
-			item_container.hold_action(delta)
+			item_container.hold_action(delta, focusing_throws)
 		if Input.is_action_just_released(InputConfig.USER_INPUT.PRIMARY):
 			item_container.release_action()
 
@@ -139,7 +145,8 @@ func _handle_looking(event: InputEvent) -> void:
 		# When secondary is released
 		elif event.is_action_released(InputConfig.USER_INPUT.SECONDARY):
 			_handle_zoom_out()
-			enable_movement()
+			if !_just_launched:
+				enable_movement()
 		# When secondary is pressend and it is movement
 		elif event is InputEventMouseMotion and Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
 			var v_rotation_amount: float = NodeUtil.get_vertical_rotation_amount(event)
@@ -158,7 +165,7 @@ func _handle_looking(event: InputEvent) -> void:
 		camera_container.horizontal_pan(horizontal_rotate_amount, self.global_position)
 	elif event.is_action_released(InputConfig.USER_INPUT.PRIMARY) and item_container.is_unequipped():
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		camera_container.snap_back(self.global_basis)
+		camera_container.snap_back(self.global_rotation.z)
 
 func _handle_zoom_in() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -167,13 +174,13 @@ func _handle_zoom_in() -> void:
 
 func _handle_zoom_out() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	camera_container.snap_back(self.global_basis)
+	camera_container.snap_back(self.global_rotation.z)
 
 func _handle_turn_horizontal(rotate_amount: float) -> void:
 	## Determine amount to rotate camera
 	var previous_orientation: Transform3D = camera_container.global_transform
 	var horizontal_rotate_amount: float = rotate_amount * CameraConfig.get_horizontal_look_sens()
-	self.global_rotation_degrees.y += horizontal_rotate_amount * 12
+	self.global_rotation_degrees.y += horizontal_rotate_amount * GameConfig.DEFAULTS.rotation_multiplier
 	camera_container.global_transform = previous_orientation
 
 func _can_horizontally_rotate(rotation_amount:float) -> bool:
@@ -189,6 +196,7 @@ func _can_vertically_rotate(rotation_amount:float) -> bool:
 	return (potential_vertical_roation > min_vertical_value) and (potential_vertical_roation < max_vertical_value)
 
 # TODO Need to go through methods in and affecting this class and determine which need to have this method called after
+#		Only should set enum state and not change enablement of movement or anything like that
 func _update_state() -> void:
 	asset_data.camera_state = AssetData.get_camera_state(camera_container)
 
@@ -196,19 +204,24 @@ func _update_state() -> void:
 func hold_action(_delta: float) -> void:
 	pass
 
+# TODO Need to rework to consider if launch was focused or not
+#		If not a focused launch nothing should be disbled when thrown
+#			In fact checks should be made to ensure player can move and rotate
 func release_action() -> void:
-	# TODO Should probably be doing something with the unequip_item() where camera is offered up to the item_container
-	#		If something spawns it will need to grab and reparent the camera
-	disable_movement()
-	disable_rotation()
 	# TODO Expecting this will break; Doesn't lead to any code; Should probably be a call to item_container
-	item_container.unequip_item()
+	unequip_item()
 	# TODO This should then update the status of the character if the item took the camera with it
 	_update_state()
+	_just_launched = true
+	# If the camera was released for the launch disable movement
+	if asset_data.camera_state != AssetData.CAMERA_STATE.ACTIVE:
+		disable_movement()
+		disable_rotation()
 
 ## Stores new_item internally and attempts to give it internal camera if possible
 ## Returns item that was equipped if one was previously
 func equip_item(new_item: Node3D) -> void:
+	disable_movement()
 	var displaced_item: Node3D = null
 	_give_camera(new_item)
 	# Returns the equipped item if there was one
@@ -217,7 +230,14 @@ func equip_item(new_item: Node3D) -> void:
 		AssetDelivery.dump_asset(displaced_item)
 	if new_item.has_signal(ThrowableItem.AIM):
 		new_item.connect(ThrowableItem.AIM, item_container._handle_aiming)
+	if new_item.has_signal(ThrowableItem.LAUNCHED):
+		new_item.connect(ThrowableItem.LAUNCHED, release_action)
 	_update_state()
+
+func unequip_item(alter_movement: bool = false) -> void:
+	if alter_movement and is_movement_disabled():
+		enable_movement()
+	item_container.unequip_item()
 
 func _give_camera(new_item: Node3D) -> void:
 	if new_item is CameraContainer or new_item.has_method(GroupData.GET_CAMERA_CONTAINER):
@@ -242,7 +262,11 @@ func _get_focus_point() -> Vector3:
 	var focus_point: Vector3 = self.position + CameraConfig.get_player_focus_offset()
 	return focus_point
 
-func _return_camera(incoming_camera: Camera3D) -> void:
+func _transfer_and_enable(incoming_camera: Camera3D) -> void:
+	if is_movement_disabled():
+		enable_movement()
+	if is_rotation_disabled():
+		enable_rotation()
 	camera_container.set_camera(incoming_camera)
 
 func is_equipped() -> bool:

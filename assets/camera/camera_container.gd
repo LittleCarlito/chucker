@@ -34,9 +34,10 @@ const _REPARENT_CAMERA: String = "reparent_camera"
 const _FOCUS_CAMERA_CONTROL: String = "focus_camera_control"
 const _CAMERA: String = "Camera"
 
-@onready var camera_control: Node3D = $CameraControl
-@onready var camera_timer: Timer = $CameraTimer
+@export var camera_control: Node3D
+@export var camera_timer: Timer
 var internal_camera: Camera3D
+var _initial_orientation: Vector3
 
 signal lose_focus
 
@@ -55,6 +56,7 @@ const CAMERA = {
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	camera_timer.one_shot = true
+	_initial_orientation = self.rotation
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -107,11 +109,10 @@ func veritcal_rotate(rotation_amount: float) -> void:
 func get_vertical_rotation() -> float:
 	return camera_control.rotation.x
 
-func snap_back(new_basis: Basis, focus_position: Vector3 = Vector3.INF) -> void:
-	self.global_basis = new_basis
-	camera_control.global_basis = self.global_basis
-	if focus_position != Vector3.INF:
-		focus_camera_control(focus_position)
+func snap_back(incoming_z_rotation: float = NUMBERS.FLOAT16_MAX) -> void:
+	var z_rotation: float = 0.0 if incoming_z_rotation != NUMBERS.FLOAT16_MAX else incoming_z_rotation
+	camera_control.rotation = Vector3(-.2, 0, z_rotation)
+	self.rotation = _initial_orientation
 	reset_zoom()
 
 func has_camera() -> bool:
@@ -253,7 +254,8 @@ func _request_camera(new_parent: Node3D) -> bool:
 		elif new_parent.has_method(GroupData.GET_CAMERA_CONTAINER):
 			parent_camera_container = new_parent.call(GroupData.GET_CAMERA_CONTAINER) as CameraContainer
 		if parent_camera_container != null:
-			parent_camera_container.set_camera(internal_camera)
+			internal_camera.reparent(parent_camera_container.camera_control)
+			parent_camera_container.internal_camera = internal_camera
 			internal_camera = null
 			parent_swapped = true
 		else:
@@ -267,3 +269,7 @@ func _request_camera(new_parent: Node3D) -> bool:
 
 func get_look_direction() -> Vector3:
 	return self.get_global_transform().basis.z 
+
+func set_current() -> void:
+	if internal_camera != null:
+		internal_camera.current = true

@@ -1,8 +1,8 @@
 extends Node
 class_name AssetFactory
 
-const _camera_container_scene: PackedScene = preload("res://assets/common/camera/camera_container.tscn")
-const _camera_scene: PackedScene = preload("res://assets/common/camera/standard_camera.tscn")
+const _camera_container_scene: PackedScene = preload("res://assets/camera/camera_container.tscn")
+const _camera_scene: PackedScene = preload("res://assets/camera/standard_camera.tscn")
 const _force_scene: PackedScene = preload("res://assets/items/disks/ForceDisk.tscn")
 const _path_scene: PackedScene = preload("res://assets/items/disks/PathDisk.tscn")
 const _charge_scene: PackedScene = preload("res://assets/items/disks/ChargeDisk.tscn")

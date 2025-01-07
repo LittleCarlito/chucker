@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://assets/items/disks/path_disk.gd" id="1_3o2g5"]
 [ext_resource type="PackedScene" uid="uid://jvw5pa8yws2g" path="res://assets/items/disks/common/disk_mesh.tscn" id="2_ed5vx"]
-[ext_resource type="PackedScene" uid="uid://uyfdjyipfutg" path="res://assets/common/camera/camera_container.tscn" id="3_gxbhy"]
+[ext_resource type="PackedScene" uid="uid://uyfdjyipfutg" path="res://assets/camera/camera_container.tscn" id="3_gxbhy"]
 [ext_resource type="PackedScene" uid="uid://b7qyj227lvqus" path="res://assets/items/disks/common/disk_collision.tscn" id="4_d36lp"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6l2g0"]
