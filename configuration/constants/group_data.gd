@@ -6,6 +6,7 @@ const SYNC_ASSET: String = "sync_asset"
 # TODO Need to implement this method in all assets that contain CameraContainer
 const SET_CAMERA: String = "set_camera" # (incoming_camera: Camera3D, focus_point: Vector3 = Vecotr3.INF)
 const HAS_CAMERA: String = "has_camera"
+const LOSE_FOCUS: String = "lose_focus"
 # TODO Need to implement this in objects that will initiate transferring of cameras (ChuckChucker, PathDisk)
 const GIVE_CAMERA: String = "_give_camera" # (requesting_owner: Node3D)
 # TODO CameraContainer needs to implement this to attempt to give ones of its instances of itself to the requesting_owner

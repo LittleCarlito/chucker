@@ -4,6 +4,8 @@ class_name ThrowableItem
 # Abstract class
 @warning_ignore("unused_signal")
 signal aim(aim_type, adjustment_value)
+@warning_ignore("unused_signal")
+signal launched
 
 const LAUNCHED: String = "launched"
 const AIM: String = "aim"

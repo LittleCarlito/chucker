@@ -1,13 +1,15 @@
-[gd_scene load_steps=5 format=3 uid="uid://blyknk2r5fcfp"]
+[gd_scene load_steps=6 format=3 uid="uid://blyknk2r5fcfp"]
 
 [ext_resource type="CylinderMesh" uid="uid://cblsbpedig3hu" path="res://assets/items/disks/common/DiskMesh_blue.tres" id="1_7ppud"]
 [ext_resource type="Script" path="res://assets/items/disks/pull_disk.gd" id="2_ebead"]
 [ext_resource type="PackedScene" uid="uid://cfpse6r2su0ua" path="res://assets/ui/views/ChargeView.tscn" id="3_v64oc"]
 [ext_resource type="PackedScene" uid="uid://bsh3ij28tbgvr" path="res://assets/ui/action/PullDraw.tscn" id="4_w350m"]
+[ext_resource type="PackedScene" uid="uid://ctgyvj14lfkpj" path="res://assets/items/common/aim_line.tscn" id="5_g0tay"]
 
-[node name="PullDisk" type="MeshInstance3D" node_paths=PackedStringArray("pull_draw", "charge_view")]
+[node name="PullDisk" type="MeshInstance3D" node_paths=PackedStringArray("aim_line", "pull_draw", "charge_view")]
 mesh = ExtResource("1_7ppud")
 script = ExtResource("2_ebead")
+aim_line = NodePath("AimLine")
 pull_draw = NodePath("PullDraw")
 charge_view = NodePath("ChargeView")
 
@@ -15,3 +17,5 @@ charge_view = NodePath("ChargeView")
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 1.16, 0.655, 0)
 
 [node name="PullDraw" parent="." instance=ExtResource("4_w350m")]
+
+[node name="AimLine" parent="." instance=ExtResource("5_g0tay")]

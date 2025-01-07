@@ -1,8 +1,6 @@
 extends ThrowableItem
 class_name ChargeDisk
 
-signal launched
-
 const _FLIGHT_DATA_NOT_SET: String = "FlightData not set; Cannot set flight global basis"
 
 @export var charge_view: ChargeView
@@ -81,19 +79,12 @@ func release_action(incoming_basis: Basis) -> void:
 		#		If it is should be simplified into the calculation above instead of 2 separate lines
 		var final_speed: float = GameConfig.DEFAULTS.launch_speed * speed_multiplier
 		flight_data = FlightData.create_flight_data(final_speed, incoming_basis, flight_data.flight_path, flight_data.focus_flight)
-		# TODO Launcd disk needs to be refactored into this class
-		if flight_data != null:
-			# TODO Make sure that item_data contains the group_name of the entity throwing it
-			AssetDelivery.create_and_launch(flight_data, asset_data)
-			launched.emit()
-			pick_up()
-		else:
-			Logger.error(FlightData.LAUNCH_NOT_READY_LOG, [], self)
-		self.rotation.x = 0
-		# TODO this should be calling something within a group instead
-		#item_owner.disable_movement()
-		#item_owner.disable_rotation()
-		#item_owner.unequip_item()
+		# TODO Make sure that item_data contains the group_name of the entity throwing it
+		var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, asset_data)
+		# TODO Since moving this camera position is fucked; Check out setting focus in create and launch; probably needs to be done as separate call after
+		launched_disk.global_position = flight_data.flight_path[0]
+		launched.emit()
+		pick_up()
 
 func reset_launch_parameters() -> void:
 	flight_data = FlightData.new()

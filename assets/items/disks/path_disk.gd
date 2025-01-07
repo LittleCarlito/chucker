@@ -1,6 +1,7 @@
 extends Node3D
 class_name PathDisk
 
+# TODO Get CameraContainer out of here and created through a method like ForceDisk
 # TODO Refactor to use AimLine AssetData FlightData and DiskFactory
 # BUG Can steal mouse if thrown over the edge
 # TODO Flickering when swapdisk disk switch happens
@@ -25,6 +26,8 @@ const _BODY_ENTER: String = "body_enter"
 @export var path_follow: PathFollow3D
 var flight_data: FlightData
 var asset_data: AssetData
+var _launched: bool = false
+var _collision_location: Vector3 = Vector3.INF
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -34,23 +37,23 @@ func _ready() -> void:
 
 # BUG When path is short the disk travels too quickly
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	# TODO This should be moved to something that isn't called every frame
 	if (camera_container.has_camera() && camera_container.is_current()) && !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if is_instance_valid(path_follow):
 		if flight_data == null or flight_data.flight_path.is_empty():
+			_swap_disk(true)
+	if _launched:
+		if path_follow.progress_ratio < 1:
+			var distance_per_second: float = flight_data.flight_speed * delta
+			path_follow.progress += distance_per_second
+			Logger.debug("Pathfollow progress %s", [str(path_follow.progress)], self)
+			if disk_mesh.global_basis != flight_data.flight_global_basis:
+				disk_mesh.global_basis = flight_data.flight_global_basis
+		else:
+			_collision_location = disk_mesh.global_position
 			_swap_disk()
-		## If disk not collided or disk just launched process on path
-		#elif path_follow.progress_ratio < 1:
-			#var velocity_magnitude: float = _determine_speed()
-			#var distance_per_second: float = velocity_magnitude * delta
-			#path_follow.progress += distance_per_second
-			#disk_mesh.global_transform = path_follow.global_transform
-			#if disk_mesh.global_rotation.x != launch_angle:
-				#disk_mesh.global_rotation.x = launch_angle
-		#if path_follow.progress_ratio >= 1:
-			#disk_mesh.collision_location = disk_mesh.global_position
-			#_swap_disk()
 
 func set_item_mesh(new_mesh: DiskMesh) -> void:
 	self.add_child(new_mesh)
@@ -79,25 +82,31 @@ func _body_enter(_body_rid: RID, _body: Node3D, _body_shape_index: int, _local_s
 		#_swap_disk()
 
 func _determine_speed() -> float:
-	return 0
-	#var max_speed: float = GlobalSettings.DISK.LAUNCH_SPEED * launch_speed
-	#var calulated_ratio: float = 1 - (4 * path_follow.progress_ratio) * (1 - path_follow.progress_ratio)
-	#var ratio_adjustment:float = max(GlobalSettings.DISK.MAX_SPEED_REDUCE, calulated_ratio)
-	#return ratio_adjustment * max_speed
+	var max_speed: float = GameConfig.DEFAULTS.launch_speed * flight_data.flight_speed
+	var calulated_ratio: float = 1 - (4 * path_follow.progress_ratio) * (1 - path_follow.progress_ratio)
+	var ratio_adjustment:float = max(GameConfig.DEFAULTS.max_speed_reduce, calulated_ratio)
+	return ratio_adjustment * max_speed
 
 # Gets rid of PathDisk and spawns in a rigid disk in its place with force
-func _swap_disk() -> void:
-	# TODO Change this to use Asset and Delivery Factory
+func _swap_disk(drop_disk: bool = false) -> void:
 	## Create a force disk
 	# TODO Create AssetData for the ForceDisk that will create a PullDisk upon pickup
-	var spawn_disk_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL)
-	var prepare_angle: float
-	if disk_collision.get_collision_count() == 0:
-		var new_disk: ForceDisk = AssetDelivery.spawn_asset(spawn_disk_data, self.global_position) as ForceDisk
-		new_disk.global_rotation.x = self.global_rotation.x
-	#else:
-		#prepare_angle = path_follow.global_rotation.x
-		#new_disk.global_position = disk_mesh.global_position
+	var spawn_disk_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.PATH, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.FORCE)
+	var prepare_angle: float = disk_mesh.rotation.x
+	if drop_disk:
+		var new_disk: ForceDisk = AssetDelivery.spawn_asset(spawn_disk_data, disk_mesh.global_position) as ForceDisk
+		new_disk.rotation.x = prepare_angle
+	else:
+		var new_flight_path: Array[Vector3] = [disk_mesh.global_position]
+		flight_data.set_flight_path(new_flight_path)
+		flight_data.set_flight_basis(path_follow.global_basis)
+		# TODO Need to change asset_data to create the correct disk type
+		var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, spawn_disk_data)
+		launched_disk.global_position = flight_data.flight_path[0]
+		launched_disk.global_basis = disk_mesh.global_basis
+		# TODO Copy ForceDisks request camera logic so this disk takes camera at launch
+		# TODO Ensure generated forcedisk camera launches without camera
+		#		Collision should start focus timer and idle rotation
 		#var current_camera: Camera3D = get_disk_camera()
 		#current_camera.reparent(get_tree().root, true)
 		#if flight_data != null:
@@ -115,3 +124,52 @@ func get_disk_camera() -> Camera3D:
 
 func is_current() -> bool:
 	return camera_container.is_current()
+
+func _set_flight_data(incoming_data: FlightData) -> void:
+	flight_data = incoming_data
+
+func _launch() -> void:
+	if flight_data != null:
+		if flight_data.focus_flight:
+			_submit_camera_request()
+			camera_container.set_current()
+			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
+				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		# Set path's curve equal to flight data's path
+		var flight_curve: Curve3D = Curve3D.new()
+		for flight_point in flight_data.flight_path:
+			flight_curve.add_point(flight_point)
+		path_3d.curve = flight_curve
+		_launched = true
+	else:
+		Logger.warn(Logger.MISSING_FLIGHT_DATA_LOG, [], self)
+
+func _get_camera_container() -> CameraContainer:
+	return camera_container
+
+func _set_camera_container(incoming_container: CameraContainer) -> void:
+	if camera_container != null:
+		camera_container.disconnect(GroupData.LOSE_FOCUS, _return_camera_to_owner)
+		camera_container = null
+	camera_container = incoming_container
+	camera_container.connect(GroupData.LOSE_FOCUS, _return_camera_to_owner)
+
+func _submit_camera_request() -> void:
+	if asset_data != null and !asset_data.group_name.is_empty():
+		# TODO Get rid of pre-built camera container
+		#_create_camera_container()
+		get_tree().call_group(asset_data.group_name, GroupData.REQUEST_CAMERA, camera_container)
+	else:
+		var formatted_string: String = Logger.NO_GROUP_LOG + Logger.LOG_SEPARATOR + Logger.NOT_SUBMITTING
+		Logger.debug(formatted_string, [], self)
+
+func _return_camera_to_owner() -> void:
+	var has_custom_group: bool = asset_data != null and !asset_data.group_name.is_empty()
+	var has_camera: bool = camera_container != null and camera_container.has_camera()
+	if has_camera and has_custom_group:
+		get_tree().call_group(asset_data.group_name, GroupData.TRANSFER_AND_ENABLE, camera_container.get_camera())
+	else:
+		Logger.debug(Logger.CANT_RETURN_LOG, [str(self)], self)
+
+func _set_asset_data(incoming_data: AssetData) -> void:
+	asset_data = incoming_data

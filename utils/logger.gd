@@ -1,5 +1,9 @@
 extends Node3D
 
+const CANT_RETURN_LOG: String = "Missing asset data or camera container/camera to return camera to owner \"%s\""
+const NOT_SUBMITTING: String = "Not submitting camera request"
+const NO_GROUP_LOG: String = "No group name"
+const MISSING_FLIGHT_DATA_LOG: String = "Launch parameters must be set before item can be launched"
 const KEEPING_CAMERA: String = "Not transferring camera"
 const NULL_PARAMETER_STRING: String = "Null parameter given"
 const CANNOT_ACTION_STRING: String = "Cannot %s"

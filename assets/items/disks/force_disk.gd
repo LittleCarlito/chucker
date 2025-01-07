@@ -33,15 +33,10 @@ class_name ForceDisk
 	# TODO Swap out disk creation stuff in swap disk with DiskFactory usage
 	# TODO See about slowing (maybe clamping) values as bounds get closer to make it feel like resistance
 
-const _NO_GROUP_LOG: String = "No group name"
-const _NOT_SUBMITTING: String = "Not submitting camera request"
-const _CANT_RETURN_LOG: String = "Missing asset data or camera container/camera to return camera to owner \"%s\""
-const _MISSING_FLIGHT_DATA_LOG: String = "Launch parameters must be set before item can be launched"
 const _NO_ITEM_DATA_LOG: String = "AssetData has not been initialized for this node"
 const _CREATING_CAMERA_LOG: String = "Creating camera container"
 const _SET_DISK_CAMERA: String = "set_disk_camera"
 const _GET_DISK_CAMERA: String = "get_disk_camera"
-const _LOSE_FOCUS: String = "lose_focus"
 
 @export var disk_mesh: DiskMesh
 @export var disk_collision: DiskCollision
@@ -161,11 +156,13 @@ func _launch() -> void:
 		self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
 		if flight_data.focus_flight:
 			_submit_camera_request()
+			camera_container.position = disk_mesh.position
 			camera_container.set_current()
+			# TODO Camera container is weird now at launch
 			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	else:
-		Logger.warn(_MISSING_FLIGHT_DATA_LOG, [], self)
+		Logger.warn(Logger.MISSING_FLIGHT_DATA_LOG, [], self)
 
 func _get_camera_container() -> CameraContainer:
 	_create_camera_container()
@@ -173,10 +170,10 @@ func _get_camera_container() -> CameraContainer:
 
 func _set_camera_container(incoming_container: CameraContainer) -> void:
 	if camera_container != null:
-		camera_container.disconnect(_LOSE_FOCUS, _return_camera_to_owner)
+		camera_container.disconnect(GroupData.LOSE_FOCUS, _return_camera_to_owner)
 		camera_container = null
 	camera_container = incoming_container
-	camera_container.connect(_LOSE_FOCUS, _return_camera_to_owner)
+	camera_container.connect(GroupData.LOSE_FOCUS, _return_camera_to_owner)
 
 func _return_camera_to_owner() -> void:
 	var has_custom_group: bool = asset_data != null and !asset_data.group_name.is_empty()
@@ -184,12 +181,12 @@ func _return_camera_to_owner() -> void:
 	if has_camera and has_custom_group:
 		get_tree().call_group(asset_data.group_name, GroupData.TRANSFER_AND_ENABLE, camera_container.get_camera())
 	else:
-		Logger.debug(_CANT_RETURN_LOG, [str(self)], self)
+		Logger.debug(Logger.CANT_RETURN_LOG, [str(self)], self)
 
 func _submit_camera_request() -> void:
 	if asset_data != null and !asset_data.group_name.is_empty():
 		_create_camera_container()
 		get_tree().call_group(asset_data.group_name, GroupData.REQUEST_CAMERA, camera_container)
 	else:
-		var formatted_string: String = _NO_GROUP_LOG + Logger.LOG_SEPARATOR + _NOT_SUBMITTING
+		var formatted_string: String = Logger.NO_GROUP_LOG + Logger.LOG_SEPARATOR + Logger.NOT_SUBMITTING
 		Logger.debug(formatted_string, [], self)

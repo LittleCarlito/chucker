@@ -47,6 +47,7 @@ var _focus_location: Vector3 = Vector3.INF
 # TODO Refactor these to "is" type naming
 var _focused: bool = false
 var _idle_rotate: bool = false
+var _default_control_offset: Vector3
 
 const CAMERA = {
 	# This needs to match the camera node name in ChuckTee scene
@@ -57,6 +58,7 @@ const CAMERA = {
 func _ready() -> void:
 	camera_timer.one_shot = true
 	_initial_orientation = self.rotation
+	_default_control_offset = camera_control.position
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -273,3 +275,6 @@ func get_look_direction() -> Vector3:
 func set_current() -> void:
 	if internal_camera != null:
 		internal_camera.current = true
+
+func get_control_offset() -> Vector3:
+	return _default_control_offset

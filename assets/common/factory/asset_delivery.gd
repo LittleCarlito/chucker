@@ -19,9 +19,6 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	pass
 
-# TODO OOOOO
-# TODO Move this method to the AssetFactory
-#		Being static and in here makes shitty objects
 ## Creates an AssetData rescource based off given parameters
 ## Defaults creation type to incoming_internal type if none or UNKNOWN given for creation_type
 func create_asset_data(incoming_internal: AssetData.TYPE, incoming_state: AssetData.ITEM_STATE = AssetData.ITEM_STATE.DISABLED, incoming_camera_state: AssetData.CAMERA_STATE = AssetData.CAMERA_STATE.EXISTS, incoming_create: AssetData.TYPE = AssetData.TYPE.UNKNOWN, incoming_group: String = GameConfig.DEFAULTS.group) -> AssetData:
@@ -36,31 +33,30 @@ func create_asset_data(incoming_internal: AssetData.TYPE, incoming_state: AssetD
 
 ## Creates new item based off incoming item data
 ## New item has its physical parameters set to follow the flight_data given
-func create_and_launch(flight_data: FlightData, item_data: AssetData) -> Node3D:
-	var item_type: AssetData.TYPE = item_data.creation_type
-	if item_type == AssetData.TYPE.UNKNOWN:
-		item_type = item_data.internal_type
-	var group_name: String = item_data.group_name
+func create_and_launch(flight_data: FlightData, asset_data: AssetData) -> Node3D:
+	var asset_type: AssetData.TYPE = asset_data.creation_type
+	if asset_type == AssetData.TYPE.UNKNOWN:
+		asset_type = asset_data.internal_type
+	var group_name: String = asset_data.group_name
 	if group_name == null || group_name.is_empty():
 		group_name = GameConfig.DEFAULTS.group
 		Logger.debug(_NO_GROUP_PROVIDED, [group_name], self)
-	var associated_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(item_data.creation_type, item_data.internal_type)
-	var new_asset_data: AssetData = AssetDelivery.create_asset_data(item_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, associated_creation_type, group_name)
+	var associated_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(asset_data.creation_type, asset_data.internal_type)
+	var new_asset_data: AssetData = create_asset_data(asset_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, associated_creation_type, group_name)
 	var new_asset: Node3D = AssetFactory.create_asset(new_asset_data.internal_type)
 	if new_asset != null:
 		_set_asset_data(new_asset, new_asset_data)
 		if new_asset.has_method(GroupData.SYNC_ASSET):
 			new_asset.call(GroupData.SYNC_ASSET)
-		get_tree().get_root().add_child(new_asset)
+		get_tree().get_current_scene().add_child(new_asset)
 		# Might need a check to ensure flight_path is populated first
 		if !flight_data.flight_path.is_empty():
-			new_asset.global_position = flight_data.flight_path[0]
 			if(_set_launch_parameters(new_asset, flight_data)):
 				if not _launch_asset(new_asset):
 					Logger.debug(_LAUNCH_RESULT_STRING, [str(new_asset), _FAILURE], self)
 				# Regardless of flight result have the items in th given data group update their status data
-				if item_data.group_name != null:
-					get_tree().call_group(item_data.group_name, GroupData.UPDATE_STATE)
+				if asset_data.group_name != null:
+					get_tree().call_group(asset_data.group_name, GroupData.UPDATE_STATE)
 			else:
 				Logger.debug(_LAUNCH_NOT_SET, [str(new_asset)], self)
 		else:
@@ -68,14 +64,12 @@ func create_and_launch(flight_data: FlightData, item_data: AssetData) -> Node3D:
 			Logger.debug(formatted_string, [str(flight_data)], self)
 			pass
 	else:
-		Logger.debug(_INVALID_INCOMING_ITEM, [str(item_data)], self)
+		Logger.debug(_INVALID_INCOMING_ITEM, [str(asset_data)], self)
 	return new_asset
 
-## TODO Equips incoming owner with internal type found inside given item
+## Equips incoming owner with internal type found inside given item
 func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) -> Node3D:
-	# TODO Should create the ChargeDisk and add it to the group for the passed in Chuck
-	#		Should add the new disk as a child to ChuckChucker
-	#			Should have method in ChuckChucker to set holdItem or something
+	# TODO In here Pull Disk isn't getting associated things I think so when trying to throw the data it gives pull is ha
 	var new_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(incoming_item.asset_data.creation_type, incoming_item.asset_data.internal_type)
 	var new_item_data: AssetData = AssetDelivery.create_asset_data(incoming_item.asset_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, new_creation_type, item_owner.asset_data.group_name)
 	var new_asset: Node3D = AssetFactory.create_asset(incoming_item.asset_data.creation_type)
@@ -105,7 +99,7 @@ func spawn_asset(asset_data: AssetData, spawn_location: Vector3 = Vector3(0, 1, 
 	if spawn_parent != null:
 		spawn_parent.add_child(created_node)
 	else:
-		get_tree().root.add_child(created_node)
+		get_tree().get_current_scene().add_child(created_node)
 	created_node.global_position = spawn_location
 	return created_node
 
@@ -124,7 +118,7 @@ static func _set_launch_parameters(incoming_asset: Node3D, incoming_data: Flight
 		incoming_asset.call(GroupData.SET_FLIGHT_DATA, incoming_data)
 		data_set = true
 	else:
-		Logger.debug(Logger.NO_METHOD_FOUND, [Logger.SET_FLIGHT_DATA, str(incoming_asset)], null)
+		Logger.debug(Logger.NO_METHOD_FOUND, [GroupData.SET_FLIGHT_DATA, str(incoming_asset)], null)
 	return data_set
 
 static func _launch_asset(incoming_asset: Node3D) -> bool:
