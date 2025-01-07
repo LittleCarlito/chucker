@@ -90,7 +90,7 @@ func _swap_disk() -> void:
 	# TODO Change this to use Asset and Delivery Factory
 	## Create a force disk
 	# TODO Create AssetData for the ForceDisk that will create a PullDisk upon pickup
-	var spawn_disk_data: AssetData = AssetData.create_item_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL)
+	var spawn_disk_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL)
 	var prepare_angle: float
 	if disk_collision.get_collision_count() == 0:
 		var new_disk: ForceDisk = AssetDelivery.spawn_asset(spawn_disk_data, self.global_position) as ForceDisk
@@ -108,7 +108,7 @@ func _swap_disk() -> void:
 	## Tilt the disk to original launch angle to simulate regular rigid throw
 	#new_disk.rotate_x(launch_angle)
 	## Get rid of Path3D and Mesh
-	#self.queue_free()
+	self.queue_free()
 
 func get_disk_camera() -> Camera3D:
 	return camera_container.get_camera()

@@ -35,20 +35,10 @@ const CREATION_MATRIX: Dictionary = {
 const ITEM_COLOR: Dictionary = {
 	AssetData.TYPE.FORCE: GameConfig.DEFAULTS.force_color,
 	AssetData.TYPE.PATH: GameConfig.DEFAULTS.path_color,
+	AssetData.TYPE.PULL: GameConfig.DEFAULTS.path_color,
+	AssetData.TYPE.CHARGE: GameConfig.DEFAULTS.force_color,
 	AssetData.TYPE.UNKNOWN: GameConfig.DEFAULTS.color
 }
-
-## Creates an AssetData rescource based off given parameters
-## Defaults creation type to incoming_internal type if none or UNKNOWN given for creation_type
-static func create_item_data(incoming_internal: AssetData.TYPE, incoming_state: AssetData.ITEM_STATE = AssetData.ITEM_STATE.DISABLED, incoming_camera_state: AssetData.CAMERA_STATE = AssetData.CAMERA_STATE.EXISTS, incoming_create: AssetData.TYPE = AssetData.TYPE.UNKNOWN, incoming_group: String = GameConfig.DEFAULTS.group) -> AssetData:
-	var new_data: AssetData = AssetData.new()
-	new_data.internal_type = incoming_internal
-	new_data.item_state = incoming_state
-	new_data.camera_state = incoming_camera_state
-	new_data.group_name = incoming_group
-	new_data.creation_type = incoming_create
-	new_data._setup_local_to_scene()
-	return new_data
 
 ## Takes in type and returns corresponding color
 ## Returns UNKNOWN COLOR_DEFAULT from GlobalSettings if type is not known

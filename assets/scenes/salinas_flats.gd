@@ -42,27 +42,27 @@ extends Node3D
 # TODO Condense the spawn call to a single call with arrays or dictionary
 func _ready() -> void:
 	# Spawn in Character
-	var chuck_data: AssetData = AssetData.create_item_data(AssetData.TYPE.PLAYER, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
+	var chuck_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.PLAYER, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
 	var chuck_location: Vector3 = Vector3(0, 1, 0)
 	AssetDelivery.spawn_asset(chuck_data, chuck_location, self)
 	# Spawn Path disk
-	var path_data: AssetData = AssetData.create_item_data(AssetData.TYPE.PATH, AssetData.ITEM_STATE.DEACTIVATED)
+	var path_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL)
 	var path_location: Vector3 = Vector3(2, 4, -2)
 	AssetDelivery.spawn_asset(path_data, path_location, self)
 	# Spawn in ForceDisk
-	var force_data: AssetData = AssetData.create_item_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.EXISTS, AssetData.TYPE.CHARGE)
+	var force_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.EXISTS, AssetData.TYPE.CHARGE)
 	var force_location: Vector3 = Vector3(-2, 4, -2)
 	AssetDelivery.spawn_asset(force_data, force_location, self)
 	# Spawn in TeeBox
-	var tee_box_data: AssetData = AssetData.create_item_data(AssetData.TYPE.TEE)
+	var tee_box_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.TEE)
 	var tee_location: Vector3 = Vector3(0, 0, 0)
 	AssetDelivery.spawn_asset(tee_box_data, tee_location, self)
 	# Spawn in Hole Node
-	var hole_node_data: AssetData = AssetData.create_item_data(AssetData.TYPE.HOLE_NODE)
+	var hole_node_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.HOLE_NODE)
 	var hole_node_location: Vector3 = Vector3(0, 5, -80)
 	AssetDelivery.spawn_asset(hole_node_data, hole_node_location, self)
 	# Spawn in Hole
-	var hole_data: AssetData = AssetData.create_item_data(AssetData.TYPE.HOLE)
+	var hole_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.HOLE)
 	var hole_location: Vector3 = Vector3(0, 5, -80)
 	AssetDelivery.spawn_asset(hole_data, hole_location, self)
 	kickoff_timer.start()

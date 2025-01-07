@@ -29,7 +29,7 @@ func _ready() -> void:
 	camera_container.populate_camera_control(_get_focus_point())
 	camera_container.set_current()
 	if asset_data == null:
-		asset_data = AssetData.create_item_data(AssetData.TYPE.PLAYER)
+		asset_data = AssetDelivery.create_asset_data(AssetData.TYPE.PLAYER)
 	asset_data.group_name = self.name
 	_update_state()
 

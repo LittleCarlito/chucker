@@ -1,7 +1,7 @@
 extends RigidBody3D
 class_name ForceDisk
 
-	# TODO OOOOO
+	# TODO Continue
 	# TODO Get path disk working again
 	# TODO Have the spawned course objects integrate their data with Global Hole Data
 	# TODO Get character stuff into state based
@@ -52,10 +52,10 @@ var _collided: bool = false
 
 func _ready() -> void:
 	if asset_data == null:
-		asset_data = AssetData.create_item_data(GameConfig.DEFAULTS.item as AssetData.TYPE)
+		asset_data = AssetDelivery.create_asset_data(GameConfig.DEFAULTS.item as AssetData.TYPE)
 		if !asset_data.group_name.is_empty():
 			add_to_group(asset_data.group_name)
-	disk_mesh.set_type(asset_data.internal_type)
+	disk_mesh.set_type(asset_data.creation_type)
 	_update_state()
 
 func _process(_delta: float) -> void:
@@ -91,6 +91,9 @@ func toggle_camera() -> void:
 
 func get_mesh() -> DiskMesh:
 	return disk_mesh
+
+func sync_asset() -> void:
+	disk_mesh.set_type(asset_data.creation_type)
 
 func set_disk_mesh(new_mesh: DiskMesh) -> void:
 	self.add_child(new_mesh)
@@ -188,6 +191,5 @@ func _submit_camera_request() -> void:
 		_create_camera_container()
 		get_tree().call_group(asset_data.group_name, GroupData.REQUEST_CAMERA, camera_container)
 	else:
-
 		var formatted_string: String = _NO_GROUP_LOG + Logger.LOG_SEPARATOR + _NOT_SUBMITTING
 		Logger.debug(formatted_string, [], self)
