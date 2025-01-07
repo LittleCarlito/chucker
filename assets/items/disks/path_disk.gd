@@ -35,12 +35,11 @@ func _ready() -> void:
 # BUG When path is short the disk travels too quickly
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	pass
-	#if (camera_container.has_camera() && camera_container.is_current()) && !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
-			#Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	#if is_instance_valid(path_follow):
-		#if launch_path.is_empty():
-			#_swap_disk()
+	if (camera_container.has_camera() && camera_container.is_current()) && !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	if is_instance_valid(path_follow):
+		if flight_data == null or flight_data.flight_path.is_empty():
+			_swap_disk()
 		## If disk not collided or disk just launched process on path
 		#elif path_follow.progress_ratio < 1:
 			#var velocity_magnitude: float = _determine_speed()
@@ -76,8 +75,8 @@ func _body_enter(_body_rid: RID, _body: Node3D, _body_shape_index: int, _local_s
 	#if item_owner != null:
 		#owner_rid = item_owner.get_rid()
 		#if body_rid != owner_rid:
-			#disk_mesh.collision_location = disk_mesh.global_position
-			#_swap_disk()
+		#disk_mesh.collision_location = disk_mesh.global_position
+		#_swap_disk()
 
 func _determine_speed() -> float:
 	return 0
@@ -88,24 +87,21 @@ func _determine_speed() -> float:
 
 # Gets rid of PathDisk and spawns in a rigid disk in its place with force
 func _swap_disk() -> void:
-	pass
+	# TODO Change this to use Asset and Delivery Factory
 	## Create a force disk
-	#var new_disk = ForceDisk.new_viewable_disk()
-	#get_tree().root.add_child(new_disk)
-	#var prepare_angle: float
-	#if disk_collision.get_collision_count() == 0:
-		#new_disk.global_position = self.global_position
-		#prepare_angle = launch_angle
+	# TODO Create AssetData for the ForceDisk that will create a PullDisk upon pickup
+	var spawn_disk_data: AssetData = AssetData.create_item_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL)
+	var prepare_angle: float
+	if disk_collision.get_collision_count() == 0:
+		var new_disk: ForceDisk = AssetDelivery.spawn_asset(spawn_disk_data, self.global_position) as ForceDisk
+		new_disk.global_rotation.x = self.global_rotation.x
 	#else:
-		#var current_camera: Camera3D = get_disk_camera()
-		#var new_location: Vector3 = disk_mesh.global_position
-		#current_camera.reparent(get_tree().root, true)
-		#current_camera.position = lerp(current_camera.position, new_disk.position, GlobalSettings.CAMERA.PAN_SPEED)
-		#new_disk.global_position = new_location
 		#prepare_angle = path_follow.global_rotation.x
-		#launch_speed = launch_speed * .5
-	#new_disk.set_internal_type(AssetData.TYPE.PATH)
-	#new_disk.set_creation_type(AssetData.TYPE.PATH)
+		#new_disk.global_position = disk_mesh.global_position
+		#var current_camera: Camera3D = get_disk_camera()
+		#current_camera.reparent(get_tree().root, true)
+		#if flight_data != null:
+			#flight_data.flight_speed *= .5
 	## Set momentum in direction of prepareAngle
 	#var swap_focus: bool = !launch_path.is_empty()
 	#new_disk.set_launch_parameters(launch_path, launch_speed, prepare_angle, swap_focus)

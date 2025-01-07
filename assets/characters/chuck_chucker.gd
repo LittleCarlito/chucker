@@ -17,9 +17,6 @@ var height: float
 var _initial_camera_orientation: Transform3D
 var _just_launched: bool = false
 
-# TODO OOOOO
-# TODO Enable movement after landing timer finishes
-# TODO Get camera following charge disk after launch
 # TODO Get ChuckChucker, mesh, and collision into a scene as BaseCharacter
 #		Then make another scene off that one with controls in the script and a camera at creation called ControllableCharacter
 
@@ -48,7 +45,6 @@ func _physics_process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	_handle_looking(event)
 	## Rotate input control
-	# TODO Add support for track pad scrolling to rotate disk up
 	if event.is_action_pressed(InputConfig.USER_INPUT.ROTATE_UP) || event.is_action_pressed(InputConfig.USER_INPUT.ROTATE_DOWN):
 		var rotation_adjust: float = GameConfig.DEFAULTS.rotate_adjust
 		if event.is_action_pressed(InputConfig.USER_INPUT.ROTATE_DOWN):
@@ -127,11 +123,6 @@ func _handle_movement(delta: float) -> void:
 func get_height() -> float:
 	return height
 
-# TODO Not currently used; Should end up being used by Groups to regain control
-func regain_focus() -> void:
-	enable_movement()
-	camera_container.enable_camera()
-
 func reload_project_settings() -> void:
 	camera_container.reset_zoom()
 
@@ -200,13 +191,11 @@ func _can_vertically_rotate(rotation_amount:float) -> bool:
 func _update_state() -> void:
 	asset_data.camera_state = AssetData.get_camera_state(camera_container)
 
-# TODO Should come up with something; Maybe an unequip check and then some default interaction
+# TODO Should come up with something; Maybe an unequip check and then some default interaction like a wiggle
 func hold_action(_delta: float) -> void:
 	pass
 
-# TODO Need to rework to consider if launch was focused or not
-#		If not a focused launch nothing should be disbled when thrown
-#			In fact checks should be made to ensure player can move and rotate
+## Handles group calls on release_action
 func release_action() -> void:
 	# TODO Expecting this will break; Doesn't lead to any code; Should probably be a call to item_container
 	unequip_item()

@@ -21,7 +21,7 @@ func _process(_delta: float) -> void:
 
 ## Creates new item based off incoming item data
 ## New item has its physical parameters set to follow the flight_data given
-func create_and_launch(flight_data: FlightData, item_data: AssetData) -> void:
+func create_and_launch(flight_data: FlightData, item_data: AssetData) -> Node3D:
 	var item_type: AssetData.TYPE = item_data.creation_type
 	if item_type == AssetData.TYPE.UNKNOWN:
 		item_type = item_data.internal_type
@@ -52,9 +52,10 @@ func create_and_launch(flight_data: FlightData, item_data: AssetData) -> void:
 			pass
 	else:
 		Logger.debug(_INVALID_INCOMING_ITEM, [str(item_data)], self)
+	return new_asset
 
 ## TODO Equips incoming owner with internal type found inside given item
-func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) -> void:
+func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) -> Node3D:
 	# TODO Should create the ChargeDisk and add it to the group for the passed in Chuck
 	#		Should add the new disk as a child to ChuckChucker
 	#			Should have method in ChuckChucker to set holdItem or something
@@ -67,6 +68,7 @@ func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) ->
 		incoming_item.pick_up()
 	else:
 		Logger.info(_INVALID_INCOMING_ITEM, [str(incoming_item)], self)
+	return new_asset
 
 # TODO Implement
 func dump_asset(_overflow_item: Node3D) -> void:
@@ -75,12 +77,16 @@ func dump_asset(_overflow_item: Node3D) -> void:
 	pass
 
 # TODO Make sure that nodes check for AssetData in their _ready and add themselves to the group if one exists there
-func spawn_asset(asset_data: AssetData, spawn_parent: Node3D, spawn_location: Vector3 = Vector3(0, 1, 0)) -> void:
+func spawn_asset(asset_data: AssetData, spawn_location: Vector3 = Vector3(0, 1, 0), spawn_parent: Node3D = null) -> Node3D:
 	var created_node: Node3D = AssetFactory.create_asset(asset_data.internal_type)
 	if created_node.has_method(GroupData.SET_ASSET_DATA):
 		created_node.call(GroupData.SET_ASSET_DATA, asset_data)
-	spawn_parent.add_child(created_node)
+	if spawn_parent != null:
+		spawn_parent.add_child(created_node)
+	else:
+		get_tree().root.add_child(created_node)
 	created_node.global_position = spawn_location
+	return created_node
 
 static func _set_asset_data(incoming_asset: Node3D, incoming_data: AssetData) -> bool:
 	var data_set: bool = false

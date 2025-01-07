@@ -1,12 +1,11 @@
 extends RigidBody3D
 class_name ForceDisk
 
-	# TODO Continue from here
-	# TODO When equipped aiming should aim disk and not look character around
-	#		Get character stuff into state based
-	#			Jumping, moving, aiming, etc have it all determine an ENUM in the character
+	# TODO OOOOO
 	# TODO Get path disk working again
 	# TODO Have the spawned course objects integrate their data with Global Hole Data
+	# TODO Get character stuff into state based
+	#			Jumping, moving, aiming, etc have it all determine an ENUM in the character
 	# TODO Add lerp to camera handoffs
 	#			make lerp speed global setting configurable
 	# TODO Shouldn't have to add special input handling
