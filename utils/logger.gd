@@ -1,5 +1,6 @@
 extends Node3D
 
+const NULL_PARAMETER: String = "Null parameter given to %s"
 const CANT_RETURN_LOG: String = "Missing asset data or camera container/camera to return camera to owner \"%s\""
 const NOT_SUBMITTING: String = "Not submitting camera request"
 const NO_GROUP_LOG: String = "No group name"

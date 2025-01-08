@@ -1,8 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://mfc0kjgxpvtg"]
+[gd_scene load_steps=6 format=3 uid="uid://mfc0kjgxpvtg"]
 
 [ext_resource type="Script" path="res://assets/items/disks/path_disk.gd" id="1_3o2g5"]
 [ext_resource type="PackedScene" uid="uid://jvw5pa8yws2g" path="res://assets/items/disks/common/disk_mesh.tscn" id="2_ed5vx"]
-[ext_resource type="PackedScene" uid="uid://uyfdjyipfutg" path="res://assets/camera/camera_container.tscn" id="3_gxbhy"]
 [ext_resource type="PackedScene" uid="uid://b7qyj227lvqus" path="res://assets/items/disks/common/disk_collision.tscn" id="4_d36lp"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6l2g0"]
@@ -14,26 +13,24 @@ resource_local_to_scene = true
 material = SubResource("StandardMaterial3D_6l2g0")
 height = 0.1
 
-[node name="PathDisk" type="Node3D" node_paths=PackedStringArray("disk_mesh", "disk_collision", "camera_container", "path_3d", "path_follow") groups=["All", "Disk", "General"]]
+[node name="PathDisk" type="Node3D" node_paths=PackedStringArray("disk_mesh", "disk_collision", "path_3d", "path_follow") groups=["All", "Disk", "General"]]
 script = ExtResource("1_3o2g5")
 disk_mesh = NodePath("Path3D/PathFollow3D/DiskMesh")
-disk_collision = NodePath("Path3D/PathFollow3D/CollisionArea/DiskCollision")
-camera_container = NodePath("Path3D/PathFollow3D/DiskMesh/CameraContainer")
+disk_collision = NodePath("Path3D/PathFollow3D/DiskMesh/CollisionArea/DiskCollision")
 path_3d = NodePath("Path3D")
 path_follow = NodePath("Path3D/PathFollow3D")
 
 [node name="Path3D" type="Path3D" parent="."]
 
 [node name="PathFollow3D" type="PathFollow3D" parent="Path3D"]
+rotation_mode = 0
 loop = false
 
 [node name="DiskMesh" parent="Path3D/PathFollow3D" instance=ExtResource("2_ed5vx")]
 mesh = SubResource("CylinderMesh_ltbny")
 
-[node name="CameraContainer" parent="Path3D/PathFollow3D/DiskMesh" instance=ExtResource("3_gxbhy")]
+[node name="CollisionArea" type="Area3D" parent="Path3D/PathFollow3D/DiskMesh"]
 
-[node name="CollisionArea" type="Area3D" parent="Path3D/PathFollow3D"]
+[node name="DiskCollision" parent="Path3D/PathFollow3D/DiskMesh/CollisionArea" instance=ExtResource("4_d36lp")]
 
-[node name="DiskCollision" parent="Path3D/PathFollow3D/CollisionArea" instance=ExtResource("4_d36lp")]
-
-[connection signal="body_shape_entered" from="Path3D/PathFollow3D/CollisionArea" to="." method="_body_enter"]
+[connection signal="body_shape_entered" from="Path3D/PathFollow3D/DiskMesh/CollisionArea" to="." method="_body_enter"]

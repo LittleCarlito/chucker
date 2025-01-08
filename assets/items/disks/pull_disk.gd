@@ -1,9 +1,6 @@
 extends ThrowableItem
 class_name PullDisk
 
-# TODO OOOOO
-# TODO Get this working again
-
 # TODO Allow for holding space or something to set power but still pull for offset
 # TODO Make a maximum pull time like charge disk
 #		Probably make that part of ThrowableItem and not have it in both
@@ -29,7 +26,6 @@ func _input(_event: InputEvent) -> void:
 
 func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> void:
 	flight_data.focus_flight = incoming_focus
-	# TODO This is being refactored from _process to here because it doesn't need to be there
 	# Perform pull disk calls
 	var only_primary_held: bool = Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY)
 	if only_primary_held:

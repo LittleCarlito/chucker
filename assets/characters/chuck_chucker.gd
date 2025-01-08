@@ -17,6 +17,7 @@ var height: float
 var _initial_camera_orientation: Transform3D
 var _just_launched: bool = false
 
+# BUG Disable left and right unequipped looking
 # TODO Get ChuckChucker, mesh, and collision into a scene as BaseCharacter
 #		Then make another scene off that one with controls in the script and a camera at creation called ControllableCharacter
 

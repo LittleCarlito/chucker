@@ -19,6 +19,8 @@ class_name CameraContainer
 # TODO Add methods to allow creation of camera containers without cameras
 #		These can then be holders for passed around cameras originally from characterbody scenes
 
+signal lose_focus
+
 const _BAD_CLAIM_LOG: String = "New parent \"%s\" claimed it could provide a camera container but returned null"
 const _TRANSFER_SUCCESSFUL: String = "%s has been successfully transferred to \"%s\""
 const _TRANSFER_FAILED: String = "Transfer of %s to new owner \"%s\" failed"
@@ -36,12 +38,10 @@ const _CAMERA: String = "Camera"
 
 @export var camera_control: Node3D
 @export var camera_timer: Timer
+@export var handle_input_when_current: bool = false
 var internal_camera: Camera3D
 var _initial_orientation: Vector3
-
-signal lose_focus
-
-@export var handle_input_when_current: bool = false
+var _hold_min_height: bool = false
 # TODO Refactor these to be public
 var _focus_location: Vector3 = Vector3.INF
 # TODO Refactor these to "is" type naming
@@ -60,13 +60,15 @@ func _ready() -> void:
 	_initial_orientation = self.rotation
 	_default_control_offset = camera_control.position
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	global_rotation.z = 0
 	if _focused:
 		if _idle_rotate:
-			idle_rotate(delta)
+			call_deferred("idle_rotate", delta)
 		else:
-			focus_camera_control(self.global_position)
+			call_deferred("focus_camera_control", self.global_position)
+	#if _hold_min_height:
+		#camera_control.position.y = max(CameraConfig.DEFAULTS.MIN_HEIGHT, camera_control.position.y)
 
 static func new_container_with_camera() -> CameraContainer:
 	var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
@@ -182,7 +184,8 @@ func set_camera(incoming_camera: Camera3D, incoming_focus: Vector3 = Vector3.INF
 	if !has_camera():
 		incoming_camera.global_transform = camera_control.global_transform
 		if incoming_camera.get_parent() != null:
-			incoming_camera.reparent(camera_control, false)
+			# TODO Removed false from here
+			incoming_camera.reparent(camera_control)
 		else:
 			camera_control.add_child(incoming_camera)
 		# TODO I think it is the focus point causing it maybe
@@ -249,24 +252,28 @@ func set_fov(incoming_fov: float) -> void:
 
 func _request_camera(new_parent: Node3D) -> bool:
 	var parent_swapped: bool = false
-	if internal_camera != null:
-		var parent_camera_container: CameraContainer
-		if new_parent is CameraContainer:
-			parent_camera_container = new_parent as CameraContainer
-		elif new_parent.has_method(GroupData.GET_CAMERA_CONTAINER):
-			parent_camera_container = new_parent.call(GroupData.GET_CAMERA_CONTAINER) as CameraContainer
-		if parent_camera_container != null:
-			internal_camera.reparent(parent_camera_container.camera_control)
-			parent_camera_container.internal_camera = internal_camera
-			internal_camera = null
-			parent_swapped = true
+	if new_parent != null:
+		if internal_camera != null:
+			var parent_camera_container: CameraContainer
+			if new_parent is CameraContainer:
+				parent_camera_container = new_parent as CameraContainer
+			elif new_parent.has_method(GroupData.GET_CAMERA_CONTAINER):
+				parent_camera_container = new_parent.call(GroupData.GET_CAMERA_CONTAINER) as CameraContainer
+			if parent_camera_container != null:
+				internal_camera.reparent(parent_camera_container.camera_control)
+				parent_camera_container.internal_camera = internal_camera
+				internal_camera = null
+				parent_swapped = true
+			else:
+				var formatted_string: String = _BAD_CLAIM_LOG + Logger.LOG_SEPARATOR + Logger.KEEPING_CAMERA
+				Logger.debug(formatted_string, [str(new_parent)], self)
 		else:
-			var formatted_string: String = _BAD_CLAIM_LOG + Logger.LOG_SEPARATOR + Logger.KEEPING_CAMERA
+			# This log is probably gonna be way too loud
+			var formatted_string: String = _NO_INTERNAL_CAMERA + Logger.LOG_SEPARATOR + Logger.KEEPING_CAMERA
 			Logger.debug(formatted_string, [str(new_parent)], self)
 	else:
-		# This log is probably gonna be way too loud
-		var formatted_string: String = _NO_INTERNAL_CAMERA + Logger.LOG_SEPARATOR + Logger.KEEPING_CAMERA
-		Logger.debug(formatted_string, [str(new_parent)], self)
+		Logger.debug(Logger.NULL_PARAMETER, [GroupData.REQUEST_CAMERA], self)
+		pass
 	return parent_swapped
 
 func get_look_direction() -> Vector3:
@@ -278,3 +285,12 @@ func set_current() -> void:
 
 func get_control_offset() -> Vector3:
 	return _default_control_offset
+
+func hold_min_height() -> void:
+	_hold_min_height = true
+
+func release_min_height() -> void:
+	_hold_min_height = false
+
+func reset_camera() -> void:
+	internal_camera.transform = transform

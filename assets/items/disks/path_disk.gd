@@ -1,6 +1,9 @@
 extends Node3D
 class_name PathDisk
 
+# TODO OOOOO
+# TODO Refactor Basis to be Transform in Path stuff
+# TODO Refactor all rotation stuff to be Transform based
 # TODO Get CameraContainer out of here and created through a method like ForceDisk
 # TODO Refactor to use AimLine AssetData FlightData and DiskFactory
 # BUG Can steal mouse if thrown over the edge
@@ -21,9 +24,9 @@ const _BODY_ENTER: String = "body_enter"
 
 @export var disk_mesh: DiskMesh
 @export var disk_collision: DiskCollision
-@export var camera_container: CameraContainer
 @export var path_3d: Path3D
 @export var path_follow: PathFollow3D
+var camera_container: CameraContainer
 var flight_data: FlightData
 var asset_data: AssetData
 var _launched: bool = false
@@ -40,7 +43,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	# TODO This should be moved to something that isn't called every frame
 	if (camera_container.has_camera() && camera_container.is_current()) && !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if is_instance_valid(path_follow):
 		if flight_data == null or flight_data.flight_path.is_empty():
 			_swap_disk(true)
@@ -48,14 +51,12 @@ func _process(delta: float) -> void:
 		if path_follow.progress_ratio < 1:
 			var distance_per_second: float = flight_data.flight_speed * delta
 			path_follow.progress += distance_per_second
-			if disk_mesh.global_basis != flight_data.flight_global_basis:
-				disk_mesh.global_basis = flight_data.flight_global_basis
 		else:
 			_collision_location = disk_mesh.global_position
 			_swap_disk()
 
 func set_item_mesh(new_mesh: DiskMesh) -> void:
-	self.add_child(new_mesh)
+	path_follow.add_child(new_mesh)
 	var old_mesh: DiskMesh = disk_mesh
 	if is_instance_valid(old_mesh):
 		old_mesh.queue_free()
@@ -98,11 +99,12 @@ func _swap_disk(drop_disk: bool = false) -> void:
 	else:
 		var new_flight_path: Array[Vector3] = [disk_mesh.global_position]
 		flight_data.set_flight_path(new_flight_path)
-		flight_data.set_flight_basis(path_follow.global_basis)
+		#var launch_basis: Basis = disk_mesh.global_basis
+		# TODO Get PathDisk collision speed offset to config
+		flight_data.flight_speed *= 0.1
+		#flight_data.set_flight_basis(launch_basis)
 		# TODO Need to change asset_data to create the correct disk type
 		var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, spawn_disk_data)
-		launched_disk.global_position = flight_data.flight_path[0]
-		launched_disk.global_basis = disk_mesh.global_basis
 		# TODO Copy ForceDisks request camera logic so this disk takes camera at launch
 		# TODO Ensure generated forcedisk camera launches without camera
 		#		Collision should start focus timer and idle rotation
@@ -132,6 +134,8 @@ func _launch() -> void:
 		if flight_data.focus_flight:
 			_submit_camera_request()
 			camera_container.set_current()
+			disk_mesh.global_rotation.y = flight_data.flight_global_basis.get_euler().y
+			disk_mesh.global_rotation.x = flight_data.flight_global_basis.get_euler().x
 			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		# Set path's curve equal to flight data's path
@@ -155,9 +159,9 @@ func _set_camera_container(incoming_container: CameraContainer) -> void:
 
 func _submit_camera_request() -> void:
 	if asset_data != null and !asset_data.group_name.is_empty():
-		# TODO Get rid of pre-built camera container
-		#_create_camera_container()
+		_create_camera_container()
 		get_tree().call_group(asset_data.group_name, GroupData.REQUEST_CAMERA, camera_container)
+		camera_container.reset_camera()
 	else:
 		var formatted_string: String = Logger.NO_GROUP_LOG + Logger.LOG_SEPARATOR + Logger.NOT_SUBMITTING
 		Logger.debug(formatted_string, [], self)
@@ -172,3 +176,13 @@ func _return_camera_to_owner() -> void:
 
 func _set_asset_data(incoming_data: AssetData) -> void:
 	asset_data = incoming_data
+
+## Creates intneral camera_container object
+## Should only be called intnernally
+func _create_camera_container() -> void:
+	if camera_container == null:
+		var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
+		disk_mesh.add_child(new_camera_container)
+		_set_camera_container(new_camera_container)
+	else:
+		Logger.warn(Logger.ALREADY_EXISTS_LOG, [Logger.CAMERA_CONTAINER], self)
