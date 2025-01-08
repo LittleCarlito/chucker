@@ -48,7 +48,6 @@ func _process(delta: float) -> void:
 		if path_follow.progress_ratio < 1:
 			var distance_per_second: float = flight_data.flight_speed * delta
 			path_follow.progress += distance_per_second
-			Logger.debug("Pathfollow progress %s", [str(path_follow.progress)], self)
 			if disk_mesh.global_basis != flight_data.flight_global_basis:
 				disk_mesh.global_basis = flight_data.flight_global_basis
 		else:
