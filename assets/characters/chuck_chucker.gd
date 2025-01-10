@@ -17,6 +17,7 @@ var height: float
 var _initial_camera_orientation: Transform3D
 var _just_launched: bool = false
 
+# BUG Right click looking unequipped disables movement
 # BUG Disable left and right unequipped looking
 # TODO Get ChuckChucker, mesh, and collision into a scene as BaseCharacter
 #		Then make another scene off that one with controls in the script and a camera at creation called ControllableCharacter
@@ -200,13 +201,12 @@ func hold_action(_delta: float) -> void:
 
 ## Handles group calls on release_action
 func release_action() -> void:
-	# TODO Expecting this will break; Doesn't lead to any code; Should probably be a call to item_container
 	unequip_item()
-	# TODO This should then update the status of the character if the item took the camera with it
+	# Update the status of the character if the item took the camera with it
 	_update_state()
-	_just_launched = true
 	# If the camera was released for the launch disable movement
 	if asset_data.camera_state != AssetData.CAMERA_STATE.ACTIVE:
+		_just_launched = true
 		disable_movement()
 		disable_rotation()
 
@@ -259,6 +259,7 @@ func _transfer_and_enable(incoming_camera: Camera3D) -> void:
 		enable_movement()
 	if is_rotation_disabled():
 		enable_rotation()
+	_just_launched = false
 	camera_container.set_camera(incoming_camera)
 
 func is_equipped() -> bool:

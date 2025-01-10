@@ -48,12 +48,12 @@ func _input(event: InputEvent) -> void:
 			scorecard.set_pixel_size(MENU.SCORECARD.TEEBOX_PIXEL_SIZE)
 		else:
 			scorecard.set_pixel_size(MENU.SCORECARD.PLAYER_PIXEL_SIZE)
-		scorecard.scorecardSprite.visible = true
-		self.get_viewport().get_camera_3d().look_at(scorecard.scorecardSprite.global_position)
+		scorecard.scorecard_sprite.visible = true
+		self.get_viewport().get_camera_3d().look_at(scorecard.scorecard_sprite.global_position)
 	if event.is_action_released(InputConfig.USER_INPUT.SCORE):
 		enable_movement.emit()
 		enable_rotation.emit()
-		scorecard.scorecardSprite.visible = false
+		scorecard.scorecard_sprite.visible = false
 		self.get_viewport().get_camera_3d().rotation = Vector3.ZERO
 
 # Handling close menu signals

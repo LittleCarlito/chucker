@@ -71,7 +71,6 @@ func create_and_launch(flight_data: FlightData, asset_data: AssetData) -> Node3D
 
 ## Equips incoming owner with internal type found inside given item
 func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) -> Node3D:
-	# TODO In here Pull Disk isn't getting associated things I think so when trying to throw the data it gives pull is ha
 	var new_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(incoming_item.asset_data.creation_type, incoming_item.asset_data.internal_type)
 	var new_item_data: AssetData = AssetDelivery.create_asset_data(incoming_item.asset_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, new_creation_type, item_owner.asset_data.group_name, item_owner.get_rid())
 	var new_asset: Node3D = AssetFactory.create_asset(incoming_item.asset_data.creation_type)
