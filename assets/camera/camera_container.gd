@@ -20,6 +20,7 @@ class_name CameraContainer
 #		These can then be holders for passed around cameras originally from characterbody scenes
 
 signal lose_focus
+signal log_output(log_level: Logger.LEVEL, log_string: String, optional_params: Array)
 
 const _BAD_CLAIM_LOG: String = "New parent \"%s\" claimed it could provide a camera container but returned null"
 const _TRANSFER_SUCCESSFUL: String = "%s has been successfully transferred to \"%s\""
@@ -36,9 +37,10 @@ const _REPARENT_CAMERA: String = "reparent_camera"
 const _FOCUS_CAMERA_CONTROL: String = "focus_camera_control"
 const _CAMERA: String = "Camera"
 
-@onready var camera_control: Node3D = $CameraControl
-@onready var camera_timer: Timer = $CameraTimer
+@export var camera_control: Node3D
+@export var camera_timer: Timer
 @export var handle_input_when_current: bool = false
+@export var signal_log: bool = false
 var internal_camera: Camera3D
 var _initial_orientation: Vector3
 var _hold_min_height: bool = false
@@ -82,7 +84,7 @@ func populate_camera_control(incoming_focus: Vector3 = Vector3.INF) -> void:
 		var new_scene_camera: Camera3D = AssetFactory.new_camera()
 		set_camera(new_scene_camera, incoming_focus)
 	else:
-		Logger.debug(_CAMERA_ALREADY_EXISTS, [], self)
+		_handle_logging(_CAMERA_ALREADY_EXISTS)
 
 func focus_camera_control(focus_location: Vector3, hold_focus: bool = false) -> void:
 	_focused = hold_focus
@@ -90,17 +92,17 @@ func focus_camera_control(focus_location: Vector3, hold_focus: bool = false) -> 
 		_focus_location = focus_location
 		camera_control.look_at(_focus_location)
 	elif _focus_location != Vector3.INF:
-		Logger.debug(_INF_FOCUS_LOG, [str(_focus_location)], self)
+		_handle_logging(_INF_FOCUS_LOG, [str(_focus_location)])
 		camera_control.look_at(_focus_location)
 	else:
-		Logger.debug(_NO_FOCUS_LOG, [_FOCUS_CAMERA_CONTROL], self)
+		_handle_logging(_NO_FOCUS_LOG, [_FOCUS_CAMERA_CONTROL])
 
 func horizontal_pan(roation_amount: float, focus_location: Vector3 = Vector3.INF) -> void:
 	self.global_rotation_degrees.y += roation_amount
 	if focus_location != Vector3.INF:
 		_focus_location = focus_location
 	elif _focus_location == Vector3.INF:
-		Logger.debug(_NO_FOCUS_LOG, [_HORIZONTAL_ROTATE], self)
+		_handle_logging(_NO_FOCUS_LOG, [_HORIZONTAL_ROTATE])
 
 func horizontal_rotate(roation_amount: float) -> void:
 	camera_control.rotation.y += roation_amount
@@ -135,7 +137,7 @@ func is_focused() -> bool:
 	return _focused and _focus_location != Vector3.INF
 
 func _on_camera_timer_timeout() -> void:
-	Logger.debug(_DISABLE_LOG, [], self)
+	_handle_logging(_DISABLE_LOG)
 	_focused = false
 	#internal_camera.current = false
 	_focus_location = Vector3.INF
@@ -152,7 +154,7 @@ func get_camera() -> Camera3D:
 		return internal_camera
 	else:
 		var formatted_string: String = Logger.NULL_CAMERA_LOG + Logger.LOG_SEPARATOR + Logger.RETURNING_NULL_LOG
-		Logger.debug(formatted_string, [Logger.GET_CAMERA], self)
+		_handle_logging(formatted_string, [Logger.GET_CAMERA])
 		return null
 
 ## Determines if the incoming holder can hold the camera and transferrs it if possible
@@ -165,19 +167,19 @@ func give_camera(incoming_holder: Node3D) -> bool:
 		if !incoming_has_camera:
 			if incoming_holder.call(GroupData.SET_CAMERA, internal_camera):
 				camera_transferred = true
-				Logger.info(_TRANSFER_SUCCESSFUL, [_CAMERA, str(incoming_holder)], self)
+				_handle_logging(_TRANSFER_SUCCESSFUL, [_CAMERA, str(incoming_holder)])
 			else:
 				var formatted_string: String = _TRANSFER_FAILED + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
-				Logger.debug(formatted_string, [_CAMERA, str(incoming_holder)], self)
+				_handle_logging(formatted_string, [_CAMERA, str(incoming_holder)])
 		else:
 			var formatted_string: String = _ALREADY_HAS_CAMERA + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
-			Logger.debug(formatted_string, [str(incoming_holder)], self)
+			_handle_logging(formatted_string, [str(incoming_holder)])
 	else:
 		if !has_required_methods:
 			var formatted_string: String = _BAD_HOLDER_LOG + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
-			Logger.debug(formatted_string, [str(incoming_holder), str(incoming_holder.has_method(GroupData.SET_CAMERA)), str(incoming_holder.has_method(GroupData.HAS_CAMERA))], self)
+			_handle_logging(formatted_string, [str(incoming_holder), str(incoming_holder.has_method(GroupData.SET_CAMERA)), str(incoming_holder.has_method(GroupData.HAS_CAMERA))])
 		else:
-			Logger.debug(_NO_INTERNAL_CAMERA, [str(incoming_holder)], self)
+			_handle_logging(_NO_INTERNAL_CAMERA, [str(incoming_holder)])
 	return camera_transferred
 
 func set_camera(incoming_camera: Camera3D, incoming_focus: Vector3 = Vector3.INF) -> bool:
@@ -198,7 +200,7 @@ func set_camera(incoming_camera: Camera3D, incoming_focus: Vector3 = Vector3.INF
 		camera_set = true
 	else:
 		var formatted_string: String = _CAMERA_ALREADY_EXISTS + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
-		Logger.debug(formatted_string, [], self)
+		_handle_logging(formatted_string)
 		camera_set = false
 	return camera_set
 
@@ -206,47 +208,51 @@ func toggle_camera() -> void:
 	if internal_camera != null:
 		internal_camera.current = not internal_camera.current
 	else:
-		Logger.debug(Logger.NULL_CAMERA_LOG, [Logger.TOGGLE_CAMERA], self)
+		_handle_logging(Logger.NULL_CAMERA_LOG, [Logger.TOGGLE_CAMERA])
 
 # TODO In disable and enable camera are where signals or group method calls need to be sent to update asset status
 func disable_camera() -> void:
 	if internal_camera != null:
 		internal_camera.current = false
 	else:
-		Logger.debug(Logger.NULL_CAMERA_LOG, [Logger.DISABLE_CAMERA], self)
+		_handle_logging(Logger.NULL_CAMERA_LOG, [Logger.DISABLE_CAMERA])
 
 # TODO In disable and enable camera are where signals or group method calls need to be sent to update asset status
 func enable_camera() -> void:
 	if internal_camera != null:
 		internal_camera.current = true
 	else:
-		Logger.debug(Logger.NULL_CAMERA_LOG, [Logger.ENABLE_CAMERA], self)
+		_handle_logging(Logger.NULL_CAMERA_LOG, [Logger.ENABLE_CAMERA])
 
-func is_current() -> bool:
+func is_current(surpress_logs: bool = true) -> bool:
 	if internal_camera != null:
 		return internal_camera.current
-	else:
+	elif not surpress_logs:
 		var formatted_string: String = Logger.NULL_CAMERA_LOG + Logger.LOG_SEPARATOR + Logger.RETURNING_FALSE_LOG
-		Logger.debug(formatted_string, [Logger.IS_CURRENT], self)
-		return false
+		_handle_logging(formatted_string, [Logger.IS_CURRENT])
+	return false
 
-func reset_zoom() -> void:
+# TODO OOOOO
+# TODO Add conditional for switching between logging and signal emitting to have parent log
+#		Have create_container method connect a handler method in the parent that will log the given string from their self so the parent is known
+func reset_zoom() -> bool:
+	var zoom_reset: bool = false
 	if internal_camera != null:
+		zoom_reset = true
 		internal_camera.fov = CameraConfig.get_fov_value()
-	else:
-		Logger.debug(Logger.NULL_CAMERA_LOG, [Logger.RESET_ZOOM], self)
+	return zoom_reset
 
 func zoom_in() -> void:
 	if internal_camera != null:
 		internal_camera.fov = CameraConfig.get_fov_value() - CameraConfig.get_in_adjust()
 	else:
-		Logger.debug(Logger.NULL_CAMERA_LOG, [Logger.ZOOM_IN], self)
+		_handle_logging(Logger.NULL_CAMERA_LOG, [Logger.ZOOM_IN])
 
 func zoom_out() -> void:
 	if internal_camera != null:
 		internal_camera.fov = CameraConfig.get_fov_value() + CameraConfig.get_out_adjust()
 	else:
-		Logger.debug(Logger.NULL_CAMERA_LOG, [Logger.ZOOM_OUT], self)
+		_handle_logging(Logger.NULL_CAMERA_LOG, [Logger.ZOOM_OUT])
 
 func set_fov(incoming_fov: float) -> void:
 	internal_camera.fov = incoming_fov
@@ -267,14 +273,13 @@ func _request_camera(new_parent: Node3D) -> bool:
 				parent_swapped = true
 			else:
 				var formatted_string: String = _BAD_CLAIM_LOG + Logger.LOG_SEPARATOR + Logger.KEEPING_CAMERA
-				Logger.debug(formatted_string, [str(new_parent)], self)
+				_handle_logging(formatted_string, [str(new_parent)])
 		else:
 			# This log is probably gonna be way too loud
 			var formatted_string: String = _NO_INTERNAL_CAMERA + Logger.LOG_SEPARATOR + Logger.KEEPING_CAMERA
-			Logger.debug(formatted_string, [str(new_parent)], self)
+			_handle_logging(formatted_string, [str(new_parent)])
 	else:
-		Logger.debug(Logger.NULL_PARAMETER, [GroupData.REQUEST_CAMERA], self)
-		pass
+		_handle_logging(Logger.NULL_PARAMETER, [GroupData.REQUEST_CAMERA])
 	return parent_swapped
 
 func get_look_direction() -> Vector3:
@@ -296,3 +301,9 @@ func release_min_height() -> void:
 func reset_camera() -> void:
 	if internal_camera != null:
 		internal_camera.transform = transform
+
+func _handle_logging(incoming_log: String, optional_params: Array = [], incoming_level: Logger.LEVEL = Logger.LEVEL.DEBUG) -> void:
+	if signal_log:
+		log_output.emit(incoming_level, incoming_log, optional_params)
+	else:
+		Logger.debug(incoming_log, optional_params, self)

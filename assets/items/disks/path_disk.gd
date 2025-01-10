@@ -1,11 +1,8 @@
 extends Node3D
 class_name PathDisk
 
-# TODO OOOOO
-# TODO Need to trigger idle rotate type stuff like in force disk when _swap_disk collision is detected
-# TODO Add camera rotating flight controls like in ForceDisk
-# TODO Don't think collision stuff is rotation wtih mesh because it doesn't trigger early enough
-#		Convert it to a sphere around the disk instead of a cylinder
+# TODO NEXT
+# TODO Fix AssetDelivery create_and_launch
 # TODO Refactor Basis to be Transform in Path stuff
 # TODO Refactor all rotation stuff to be Transform based
 # TODO Get CameraContainer out of here and created through a method like ForceDisk
@@ -150,6 +147,7 @@ func _set_camera_container(incoming_container: CameraContainer) -> void:
 		camera_container = null
 	camera_container = incoming_container
 	camera_container.connect(GroupData.LOSE_FOCUS, _return_camera_to_owner)
+	camera_container.connect(GroupData.HANDLE_CHILD_LOGS, _handle_child_logs)
 
 func _submit_camera_request() -> void:
 	if asset_data != null and !asset_data.group_name.is_empty():
@@ -184,3 +182,14 @@ func _create_camera_container() -> void:
 
 func pick_up() -> void:
 	self.queue_free()
+
+func _handle_child_logs(incoming_level: Logger.LEVEL, incoming_log: String, optional_params: Array) -> void:
+	match incoming_level:
+		Logger.LEVEL.DEBUG:
+			Logger.debug(incoming_log, optional_params, self)
+		Logger.LEVEL.INFO:
+			Logger.info(incoming_log, optional_params, self)
+		Logger.LEVEL.WARN:
+			Logger.warn(incoming_log, optional_params, self)
+		Logger.LEVEL.ERROR:
+			Logger.error(incoming_log, optional_params, self)

@@ -109,7 +109,8 @@ func _handle_movement(delta: float) -> void:
 					sprint_addition = GameConfig.DEFAULTS.sprint_speed
 					camera_container.zoom_out()
 				elif camera_container.has_camera():
-					camera_container.reset_zoom()
+					if not camera_container.reset_zoom():
+						Logger.debug(Logger.NULL_CAMERA_LOG, [Logger.RESET_ZOOM], self)
 				velocity.x = direction.x * (GameConfig.DEFAULTS.run_speed + sprint_addition)
 				velocity.z = direction.z * (GameConfig.DEFAULTS.run_speed + sprint_addition)
 		# Otherwise set velocity to start slowing down
@@ -125,11 +126,12 @@ func get_height() -> float:
 	return height
 
 func reload_project_settings() -> void:
-	camera_container.reset_zoom()
+	if not camera_container.reset_zoom():
+		Logger.debug(Logger.NULL_CAMERA_LOG, [Logger.RESET_ZOOM], self)
 
 func _handle_looking(event: InputEvent) -> void:
 	# Only handle aiming mouse movements when not equipped
-	if !is_equipped():
+	if not is_equipped():
 		# When secondary is pressed
 		if event.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
 			_handle_zoom_in()
@@ -137,7 +139,7 @@ func _handle_looking(event: InputEvent) -> void:
 		# When secondary is released
 		elif event.is_action_released(InputConfig.USER_INPUT.SECONDARY):
 			_handle_zoom_out()
-			if !_just_launched:
+			if not _just_launched:
 				enable_movement()
 		# When secondary is pressend and it is movement
 		elif event is InputEventMouseMotion and Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
@@ -261,3 +263,14 @@ func _transfer_and_enable(incoming_camera: Camera3D) -> void:
 
 func is_equipped() -> bool:
 	return item_container.is_equipped()
+
+func _handle_child_logs(incoming_level: Logger.LEVEL, incoming_log: String, optional_params: Array) -> void:
+	match incoming_level:
+		Logger.LEVEL.DEBUG:
+			Logger.debug(incoming_log, optional_params, self)
+		Logger.LEVEL.INFO:
+			Logger.info(incoming_log, optional_params, self)
+		Logger.LEVEL.WARN:
+			Logger.warn(incoming_log, optional_params, self)
+		Logger.LEVEL.ERROR:
+			Logger.error(incoming_log, optional_params, self)

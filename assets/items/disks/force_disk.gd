@@ -155,9 +155,7 @@ func _launch() -> void:
 		self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
 		if flight_data.focus_flight:
 			_submit_camera_request()
-			camera_container.hold_min_height()
 			camera_container.set_current()
-			# TODO Camera container is weird now at launch
 			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	else:
@@ -174,6 +172,7 @@ func _set_camera_container(incoming_container: CameraContainer) -> void:
 	camera_container = incoming_container
 	camera_container.reparent(self)
 	camera_container.connect(GroupData.LOSE_FOCUS, _return_camera_to_owner)
+	camera_container.connect(GroupData.HANDLE_CHILD_LOGS, _handle_child_logs)
 
 func _return_camera_to_owner() -> void:
 	var has_custom_group: bool = asset_data != null and !asset_data.group_name.is_empty()
@@ -192,3 +191,14 @@ func _submit_camera_request() -> void:
 	else:
 		var formatted_string: String = Logger.NO_GROUP_LOG + Logger.LOG_SEPARATOR + Logger.NOT_SUBMITTING
 		Logger.debug(formatted_string, [], self)
+
+func _handle_child_logs(incoming_level: Logger.LEVEL, incoming_log: String, optional_params: Array) -> void:
+	match incoming_level:
+		Logger.LEVEL.DEBUG:
+			Logger.debug(incoming_log, optional_params, self)
+		Logger.LEVEL.INFO:
+			Logger.info(incoming_log, optional_params, self)
+		Logger.LEVEL.WARN:
+			Logger.warn(incoming_log, optional_params, self)
+		Logger.LEVEL.ERROR:
+			Logger.error(incoming_log, optional_params, self)

@@ -54,6 +54,7 @@ collision_mask = 4
 [node name="ItemContainer" parent="." instance=ExtResource("3_40f1w")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.891411, 0)
 
+[connection signal="log_output" from="CameraContainer" to="." method="_handle_child_logs"]
 [connection signal="turn_horizontal" from="ItemContainer" to="." method="_handle_turn_horizontal"]
 [connection signal="zoom_in" from="ItemContainer" to="." method="_handle_zoom_in"]
 [connection signal="zoom_out" from="ItemContainer" to="." method="_handle_zoom_out"]
