@@ -131,19 +131,22 @@ func reload_project_settings() -> void:
 		Logger.debug(Logger.NULL_CAMERA_LOG, [Logger.RESET_ZOOM], self)
 
 func _handle_looking(event: InputEvent) -> void:
+	var only_secondary: bool = Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY) and not Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY)
 	# Only handle aiming mouse movements when not equipped
 	if not is_equipped():
 		# When secondary is pressed
 		if event.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
 			_handle_zoom_in()
 			disable_movement()
+		elif event.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
+			camera_container.reset_camera_control()
 		# When secondary is released
 		elif event.is_action_released(InputConfig.USER_INPUT.SECONDARY):
 			_handle_zoom_out()
 			if not _just_launched:
 				enable_movement()
 		# When secondary is pressend and it is movement
-		elif event is InputEventMouseMotion and Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
+		elif event is InputEventMouseMotion and only_secondary:
 			var v_rotation_amount: float = NodeUtil.get_vertical_rotation_amount(event)
 			var h_rotation_amount: float = NodeUtil.get_horizontal_rotation_amount(event)
 			if _can_horizontally_rotate(h_rotation_amount):

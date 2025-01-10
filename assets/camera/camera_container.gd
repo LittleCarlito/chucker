@@ -117,8 +117,7 @@ func get_vertical_rotation() -> float:
 	return camera_control.rotation.x
 
 func snap_back(incoming_z_rotation: float = NUMBERS.FLOAT16_MAX) -> void:
-	var z_rotation: float = 0.0 if incoming_z_rotation != NUMBERS.FLOAT16_MAX else incoming_z_rotation
-	camera_control.rotation = Vector3(-.2, 0, z_rotation)
+	reset_camera_control(incoming_z_rotation)
 	self.rotation = _initial_orientation
 	reset_zoom()
 
@@ -299,6 +298,10 @@ func release_min_height() -> void:
 func reset_camera() -> void:
 	if internal_camera != null:
 		internal_camera.transform = transform
+
+func reset_camera_control(incoming_z_rotation: float = NUMBERS.FLOAT16_MAX) -> void:
+	var z_rotation: float = 0.0 if incoming_z_rotation == NUMBERS.FLOAT16_MAX else incoming_z_rotation
+	camera_control.rotation = Vector3(-.2, 0, z_rotation)
 
 func _handle_logging(incoming_log: String, optional_params: Array = [], incoming_level: Logger.LEVEL = Logger.LEVEL.DEBUG) -> void:
 	if signal_log:
