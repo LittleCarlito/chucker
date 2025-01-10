@@ -1,0 +1,46 @@
+[gd_scene load_steps=7 format=3 uid="uid://jx2exqhsxrbu"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lk0je"]
+albedo_color = Color(0.140421, 0.332155, 0.190288, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_r3ig7"]
+material = SubResource("StandardMaterial3D_lk0je")
+radius = 1.0
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4tg1j"]
+radius = 1.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_j5w6h"]
+size = Vector3(0.5, 3, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_du71t"]
+albedo_color = Color(0.294542, 0.102842, 0.0391245, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_k8kgr"]
+material = SubResource("StandardMaterial3D_du71t")
+size = Vector3(0.5, 3, 0.5)
+
+[node name="Environment_Tree" type="Node3D"]
+
+[node name="TreeTop" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.48196, 0)
+collision_layer = 2
+collision_mask = 0
+
+[node name="TreeTopMesh" type="MeshInstance3D" parent="TreeTop"]
+mesh = SubResource("CapsuleMesh_r3ig7")
+skeleton = NodePath("../TreeTopCollision")
+
+[node name="TreeTopCollision" type="CollisionShape3D" parent="TreeTop"]
+shape = SubResource("CapsuleShape3D_4tg1j")
+
+[node name="TreeTrunk" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+collision_layer = 2
+collision_mask = 0
+
+[node name="TrunkCollision" type="CollisionShape3D" parent="TreeTrunk"]
+shape = SubResource("BoxShape3D_j5w6h")
+
+[node name="TrunkMesh" type="MeshInstance3D" parent="TreeTrunk"]
+mesh = SubResource("BoxMesh_k8kgr")

@@ -64,7 +64,11 @@ func _ready() -> void:
 	# Spawn in Hole
 	var hole_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.HOLE)
 	var hole_location: Vector3 = Vector3(0, 5, -80)
-	AssetDelivery.spawn_asset(hole_data, hole_location, self)
+	var spawned_hole: ChuckHole = AssetDelivery.spawn_asset(hole_data, hole_location, self)
+	# Spawn in Environment hazards
+	var tree_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.ENV_TREE)
+	var tree_location: Vector3 = spawned_hole.position + (spawned_hole.basis.z * 50) + (spawned_hole.basis.x * 10)
+	AssetDelivery.spawn_asset(tree_data, Vector3(tree_location.x, 0, tree_location.z), self)
 	kickoff_timer.start()
 
 

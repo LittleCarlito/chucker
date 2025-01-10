@@ -82,29 +82,21 @@ func _determine_speed() -> float:
 # Gets rid of PathDisk and spawns in a rigid disk in its place with force
 func _swap_disk(drop_disk: bool = false) -> void:
 	## Create a force disk
-	# TODO Create AssetData for the ForceDisk that will create a PullDisk upon pickup
 	var spawn_disk_data: AssetData = AssetDelivery.create_asset_data(asset_data.creation_type, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL, asset_data.group_name, asset_data.owner_rid)
 	var prepare_angle: float = disk_mesh.rotation.x
 	if drop_disk:
 		var new_disk: ForceDisk = AssetDelivery.spawn_asset(spawn_disk_data, disk_mesh.global_position) as ForceDisk
 		new_disk.rotation.x = prepare_angle
 	else:
+		# TODO Get resulting dot vector between the last 2 points of the path curve
+		#		Need to set flight basis to that
 		var new_flight_path: Array[Vector3] = [disk_mesh.global_position]
 		flight_data.set_flight_path(new_flight_path)
 		# TODO Get PathDisk collision speed offset to config
 		flight_data.flight_speed *= 0.1
+		# TODO on the curve detect the most negative z rotation and set path_follow rotate path_follow to it; Then set flight_data.global_basis thing to path_follow basis
+		flight_data.flight_global_basis = _get_recent_basis()
 		var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, spawn_disk_data)
-		# TODO Copy ForceDisks request camera logic so this disk takes camera at launch
-		#var current_camera: Camera3D = get_disk_camera()
-		#current_camera.reparent(get_tree().root, true)
-		#if flight_data != null:
-			#flight_data.flight_speed *= .5
-	## Set momentum in direction of prepareAngle
-	#var swap_focus: bool = !launch_path.is_empty()
-	#new_disk.set_launch_parameters(launch_path, launch_speed, prepare_angle, swap_focus)
-	## Tilt the disk to original launch angle to simulate regular rigid throw
-	#new_disk.rotate_x(launch_angle)
-	## Get rid of Path3D and Mesh
 	pick_up()
 
 func get_disk_camera() -> Camera3D:
@@ -191,3 +183,13 @@ func _handle_child_logs(incoming_level: Logger.LEVEL, incoming_log: String, opti
 			Logger.warn(incoming_log, optional_params, self)
 		Logger.LEVEL.ERROR:
 			Logger.error(incoming_log, optional_params, self)
+
+## Uses path_follow to determine the basis of the last 2 executed on points in the curve
+func _get_recent_basis() -> Basis:
+	var size_cuttoff: int = path_follow.progress_ratio * path_3d.curve.point_count
+	var end_point: Vector3 = path_3d.curve.get_point_position(size_cuttoff)
+	var previous_basis: Basis = path_3d.basis
+	path_3d.look_at(end_point)
+	var grabbed_basis: Basis = path_3d.basis
+	path_3d.basis = previous_basis
+	return grabbed_basis

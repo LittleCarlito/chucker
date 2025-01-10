@@ -8,7 +8,7 @@ const _NO_VALUE: String = "No value assicated in the creation matrix for \"%s\""
 ## Used for storing type property in engine Groups
 const TYPE_PROPERTY: String = "Type"
 ## Describes the type and assumed functionality of the object
-enum TYPE{FORCE = 0, PATH = 1, PULL = 2, CHARGE = 3, TEE = 10, HOLE_NODE = 11, HOLE = 12, ITEM_CONTAINER = 20, CAMERA_CONTAINER = 21, CAMERA = 22, PLAYER = 100, LEVEL = 200, UNKNOWN = 999}
+enum TYPE{FORCE = 0, PATH = 1, PULL = 2, CHARGE = 3, TEE = 10, HOLE_NODE = 11, HOLE = 12, ENV_TREE = 13, ITEM_CONTAINER = 20, CAMERA_CONTAINER = 21, CAMERA = 22, PLAYER = 100, LEVEL = 200, UNKNOWN = 999}
 ## Describes the objects ability to see
 enum CAMERA_STATE{EXISTS = 0, TRACKABLE = 1, VIEWABLE = 2, ACTIVE = 3, UNKNOWN = 999}
 ## Describes if the object is in a controlled state

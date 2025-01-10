@@ -12,6 +12,7 @@ const _item_container_scene: PackedScene = preload("res://assets/items/common/it
 const _chuck_tee_scene: PackedScene = preload("res://assets/buildings/course/chuck_tee.tscn")
 const _chuck_hole_scene: PackedScene = preload("res://assets/buildings/course/chuck_hole.tscn")
 const _hole_node_scene: PackedScene = preload("res://assets/buildings/course/hole_node.tscn")
+const _env_tree_scene: PackedScene = preload("res://assets/buildings/course/environment_tree.tscn")
 
 const scene_library: Dictionary = {
 	AssetData.TYPE.CAMERA_CONTAINER: _camera_container_scene,
@@ -24,7 +25,8 @@ const scene_library: Dictionary = {
 	AssetData.TYPE.ITEM_CONTAINER: _item_container_scene,
 	AssetData.TYPE.TEE: _chuck_tee_scene,
 	AssetData.TYPE.HOLE: _chuck_hole_scene,
-	AssetData.TYPE.HOLE_NODE: _hole_node_scene
+	AssetData.TYPE.HOLE_NODE: _hole_node_scene,
+	AssetData.TYPE.ENV_TREE: _env_tree_scene
 }
 
 const _INSTANTIATE_PACKED_SCENE: String = "_instantiate_packed_scene"
@@ -98,6 +100,11 @@ static func new_course_node() -> HoleNode:
 	var new_hole_node: HoleNode = _hole_node_scene.instantiate()
 	_brand(new_hole_node)
 	return new_hole_node
-	
+
+static func new_env_tree() -> Node3D:
+	var env_tree: Node3D = _env_tree_scene.instantiate()
+	_brand(env_tree)
+	return env_tree
+
 static func _brand(incoming_node: Node) -> void:
 	incoming_node.name = incoming_node.name + "-" + str(incoming_node.get_instance_id())
