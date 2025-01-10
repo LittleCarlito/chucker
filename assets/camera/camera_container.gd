@@ -61,14 +61,15 @@ func _ready() -> void:
 	_default_control_offset = camera_control.position
 
 func _physics_process(delta: float) -> void:
-	global_rotation.z = 0
-	if _focused:
+	var height_held: bool = false
+	if _hold_min_height:
+		height_held = CameraConfig.DEFAULTS.MIN_HEIGHT > camera_control.global_position.y
+		camera_control.global_position.y = max(CameraConfig.DEFAULTS.MIN_HEIGHT, camera_control.global_position.y)
+	if _focused or height_held:
 		if _idle_rotate:
 			call_deferred("idle_rotate", delta)
 		else:
-			call_deferred("focus_camera_control", self.global_position)
-	#if _hold_min_height:
-		#camera_control.position.y = max(CameraConfig.DEFAULTS.MIN_HEIGHT, camera_control.position.y)
+			call_deferred("focus_camera_control", self.global_position, height_held)
 
 static func new_container_with_camera() -> CameraContainer:
 	var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
@@ -293,4 +294,5 @@ func release_min_height() -> void:
 	_hold_min_height = false
 
 func reset_camera() -> void:
-	internal_camera.transform = transform
+	if internal_camera != null:
+		internal_camera.transform = transform

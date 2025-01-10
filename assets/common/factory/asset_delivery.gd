@@ -33,8 +33,7 @@ func create_asset_data(incoming_internal: AssetData.TYPE, incoming_state: AssetD
 
 ## Creates new item based off incoming item data
 ## New item has its physical parameters set to follow the flight_data given
-# TODO OOOOO
-# TODO Refactor this method and users to be passing in the disk they want to create, not the disk they are (i.e. a path disk would pass in its creation type as the internal type and pull disk as the internal type)
+# FIXME Refactor this method and users to be passing in the disk they want to create, not the disk they are (i.e. a path disk would pass in its creation type as the internal type and pull disk as the internal type)
 func create_and_launch(flight_data: FlightData, asset_data: AssetData) -> Node3D:
 	var asset_type: AssetData.TYPE = asset_data.creation_type
 	if asset_type == AssetData.TYPE.UNKNOWN:

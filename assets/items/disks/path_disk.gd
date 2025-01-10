@@ -2,6 +2,8 @@ extends Node3D
 class_name PathDisk
 
 # TODO OOOOO
+# TODO Need to trigger idle rotate type stuff like in force disk when _swap_disk collision is detected
+# TODO Don't think collision stuff is rotation wtih mesh because it doesn't trigger early enough
 # TODO Refactor Basis to be Transform in Path stuff
 # TODO Refactor all rotation stuff to be Transform based
 # TODO Get CameraContainer out of here and created through a method like ForceDisk
@@ -38,15 +40,13 @@ func _ready() -> void:
 	if asset_data != null and !asset_data.group_name.is_empty():
 		add_to_group(asset_data.group_name)
 
-# BUG When path is short the disk travels too quickly
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	# TODO This should be moved to something that isn't called every frame
-	if (camera_container.has_camera() && camera_container.is_current()) && !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if is_instance_valid(path_follow):
 		if flight_data == null or flight_data.flight_path.is_empty():
 			_swap_disk(true)
+
+func _physics_process(delta: float) -> void:
 	if _launched:
 		if path_follow.progress_ratio < 1:
 			var distance_per_second: float = flight_data.flight_speed * delta
@@ -134,6 +134,8 @@ func _launch() -> void:
 		if flight_data.focus_flight:
 			_submit_camera_request()
 			camera_container.set_current()
+			camera_container.hold_min_height()
+			camera_container.focus_camera_control(disk_mesh.global_position, true)
 			disk_mesh.global_rotation.y = flight_data.flight_global_basis.get_euler().y
 			disk_mesh.global_rotation.x = flight_data.flight_global_basis.get_euler().x
 			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
@@ -143,6 +145,7 @@ func _launch() -> void:
 		for flight_point in flight_data.flight_path:
 			flight_curve.add_point(flight_point)
 		path_3d.curve = flight_curve
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		_launched = true
 	else:
 		Logger.warn(Logger.MISSING_FLIGHT_DATA_LOG, [], self)

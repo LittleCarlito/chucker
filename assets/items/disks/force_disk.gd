@@ -157,7 +157,7 @@ func _launch() -> void:
 		self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
 		if flight_data.focus_flight:
 			_submit_camera_request()
-			camera_container.position = disk_mesh.position
+			camera_container.hold_min_height()
 			camera_container.set_current()
 			# TODO Camera container is weird now at launch
 			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
@@ -189,6 +189,7 @@ func _submit_camera_request() -> void:
 	if asset_data != null and !asset_data.group_name.is_empty():
 		_create_camera_container()
 		get_tree().call_group(asset_data.group_name, GroupData.REQUEST_CAMERA, camera_container)
+		camera_container.reset_camera()
 	else:
 		var formatted_string: String = Logger.NO_GROUP_LOG + Logger.LOG_SEPARATOR + Logger.NOT_SUBMITTING
 		Logger.debug(formatted_string, [], self)
