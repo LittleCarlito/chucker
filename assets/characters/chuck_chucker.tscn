@@ -50,6 +50,8 @@ shape = SubResource("BoxShape3D_3pknt")
 collision_mask = 4
 
 [node name="CameraContainer" parent="." instance=ExtResource("2_x3sxy")]
+handle_input_when_current = false
+signal_log = true
 
 [node name="ItemContainer" parent="." instance=ExtResource("3_40f1w")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.891411, 0)

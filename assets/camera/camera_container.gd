@@ -40,7 +40,7 @@ const _CAMERA: String = "Camera"
 @export var camera_control: Node3D
 @export var camera_timer: Timer
 @export var handle_input_when_current: bool = false
-@export var signal_log: bool = false
+@export var signal_log: bool = true
 var internal_camera: Camera3D
 var _initial_orientation: Vector3
 var _hold_min_height: bool = false
@@ -275,9 +275,7 @@ func _request_camera(new_parent: Node3D) -> bool:
 				var formatted_string: String = _BAD_CLAIM_LOG + Logger.LOG_SEPARATOR + Logger.KEEPING_CAMERA
 				_handle_logging(formatted_string, [str(new_parent)])
 		else:
-			# This log is probably gonna be way too loud
-			var formatted_string: String = _NO_INTERNAL_CAMERA + Logger.LOG_SEPARATOR + Logger.KEEPING_CAMERA
-			_handle_logging(formatted_string, [str(new_parent)])
+			_handle_logging(_NO_INTERNAL_CAMERA, [str(new_parent)])
 	else:
 		_handle_logging(Logger.NULL_PARAMETER, [GroupData.REQUEST_CAMERA])
 	return parent_swapped

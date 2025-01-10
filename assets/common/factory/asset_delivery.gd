@@ -39,20 +39,15 @@ func create_asset_data(incoming_internal: AssetData.TYPE,
 
 ## Creates new item based off incoming item data
 ## New item has its physical parameters set to follow the flight_data given
-# FIXME Refactor this method and users to be passing in the disk they want to create, not the disk they are (i.e. a path disk would pass in its creation type as the internal type and pull disk as the internal type)
 func create_and_launch(flight_data: FlightData, asset_data: AssetData) -> Node3D:
-	var asset_type: AssetData.TYPE = asset_data.creation_type
-	if asset_type == AssetData.TYPE.UNKNOWN:
-		asset_type = asset_data.internal_type
-	var group_name: String = asset_data.group_name
-	if group_name == null || group_name.is_empty():
-		group_name = GameConfig.DEFAULTS.group
-		Logger.debug(_NO_GROUP_PROVIDED, [group_name], self)
-	var associated_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(asset_data.creation_type, asset_data.internal_type)
-	var new_asset_data: AssetData = create_asset_data(asset_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, associated_creation_type, group_name, asset_data.owner_rid)
-	var new_asset: Node3D = AssetFactory.create_asset(new_asset_data.internal_type)
+	if asset_data.creation_type == AssetData.TYPE.UNKNOWN:
+		asset_data.creation_type = asset_data.internal_type
+	if asset_data.group_name == null || asset_data.group_name.is_empty():
+		asset_data.group_name = GameConfig.DEFAULTS.group
+		Logger.debug(_NO_GROUP_PROVIDED, [asset_data.group_name], self)
+	var new_asset: Node3D = AssetFactory.create_asset(asset_data.internal_type)
 	if new_asset != null:
-		_set_asset_data(new_asset, new_asset_data)
+		_set_asset_data(new_asset, asset_data)
 		if new_asset.has_method(GroupData.SYNC_ASSET):
 			new_asset.call(GroupData.SYNC_ASSET)
 		get_tree().get_current_scene().add_child(new_asset)

@@ -83,7 +83,7 @@ func _determine_speed() -> float:
 func _swap_disk(drop_disk: bool = false) -> void:
 	## Create a force disk
 	# TODO Create AssetData for the ForceDisk that will create a PullDisk upon pickup
-	var spawn_disk_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.PATH, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.FORCE, asset_data.group_name, asset_data.owner_rid)
+	var spawn_disk_data: AssetData = AssetDelivery.create_asset_data(asset_data.creation_type, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL, asset_data.group_name, asset_data.owner_rid)
 	var prepare_angle: float = disk_mesh.rotation.x
 	if drop_disk:
 		var new_disk: ForceDisk = AssetDelivery.spawn_asset(spawn_disk_data, disk_mesh.global_position) as ForceDisk
@@ -93,8 +93,6 @@ func _swap_disk(drop_disk: bool = false) -> void:
 		flight_data.set_flight_path(new_flight_path)
 		# TODO Get PathDisk collision speed offset to config
 		flight_data.flight_speed *= 0.1
-		# TODO Update create_and_launch and its users to be logical
-		#		Should be having to make some kind of AssetData here for the new disk to be correct
 		var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, spawn_disk_data)
 		# TODO Copy ForceDisks request camera logic so this disk takes camera at launch
 		#var current_camera: Camera3D = get_disk_camera()

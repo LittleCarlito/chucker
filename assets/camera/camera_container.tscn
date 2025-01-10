@@ -6,7 +6,6 @@
 script = ExtResource("1_yhe62")
 camera_control = NodePath("CameraControl")
 camera_timer = NodePath("CameraTimer")
-signal_log = true
 
 [node name="CameraControl" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.939692, 0.34202, 0, -0.34202, 0.939692, 0, 2.5, 4)

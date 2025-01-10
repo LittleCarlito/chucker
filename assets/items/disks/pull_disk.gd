@@ -51,8 +51,9 @@ func release_action(incoming_basis: Basis) -> void:
 		var multiplier: float = min(GameConfig.DEFAULTS.max_hold, (pull_draw.last_length / 100)) * GameConfig.DEFAULTS.hold_multiplier
 		var final_speed: float = GameConfig.DEFAULTS.launch_speed * multiplier
 		flight_data = FlightData.create_flight_data(final_speed, incoming_basis, flight_data.flight_path, flight_data.focus_flight)
-		# TODO create path_disk_data and pass it into the launch method
-		AssetDelivery.create_and_launch(flight_data, asset_data)
+		# Create path_disk_data and pass it into the launch method
+		var path_disk_data: AssetData = AssetDelivery.create_asset_data(asset_data.creation_type, asset_data.item_state, asset_data.camera_state, AssetData.TYPE.FORCE, asset_data.group_name, asset_data.owner_rid)
+		AssetDelivery.create_and_launch(flight_data, path_disk_data)
 		launched.emit()
 		pick_up()
 		self.rotation.x = 0

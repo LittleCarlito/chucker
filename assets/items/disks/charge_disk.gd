@@ -80,7 +80,8 @@ func release_action(incoming_basis: Basis) -> void:
 		var final_speed: float = GameConfig.DEFAULTS.launch_speed * speed_multiplier
 		flight_data = FlightData.create_flight_data(final_speed, incoming_basis, flight_data.flight_path, flight_data.focus_flight)
 		# TODO Make sure that item_data contains the group_name of the entity throwing it
-		var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, asset_data)
+		var force_disk_data: AssetData = AssetDelivery.create_asset_data(asset_data.creation_type, asset_data.item_state, asset_data.camera_state, asset_data.internal_type, asset_data.group_name, asset_data.owner_rid)
+		var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, force_disk_data)
 		# TODO Since moving this camera position is fucked; Check out setting focus in create and launch; probably needs to be done as separate call after
 		launched_disk.global_position = flight_data.flight_path[0]
 		launched.emit()
