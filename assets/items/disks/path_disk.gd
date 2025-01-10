@@ -32,6 +32,7 @@ var flight_data: FlightData
 var asset_data: AssetData
 var _launched: bool = false
 var _collision_location: Vector3 = Vector3.INF
+var _spawned_disk: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -81,23 +82,26 @@ func _determine_speed() -> float:
 
 # Gets rid of PathDisk and spawns in a rigid disk in its place with force
 func _swap_disk(drop_disk: bool = false) -> void:
-	## Create a force disk
-	var spawn_disk_data: AssetData = AssetDelivery.create_asset_data(asset_data.creation_type, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL, asset_data.group_name, asset_data.owner_rid)
-	var prepare_angle: float = disk_mesh.rotation.x
-	if drop_disk:
-		var new_disk: ForceDisk = AssetDelivery.spawn_asset(spawn_disk_data, disk_mesh.global_position) as ForceDisk
-		new_disk.rotation.x = prepare_angle
-	else:
-		# TODO Get resulting dot vector between the last 2 points of the path curve
-		#		Need to set flight basis to that
-		var new_flight_path: Array[Vector3] = [disk_mesh.global_position]
-		flight_data.set_flight_path(new_flight_path)
-		# TODO Get PathDisk collision speed offset to config
-		flight_data.flight_speed *= 0.1
-		# TODO on the curve detect the most negative z rotation and set path_follow rotate path_follow to it; Then set flight_data.global_basis thing to path_follow basis
-		flight_data.flight_global_basis = _get_recent_basis()
-		var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, spawn_disk_data)
-	pick_up()
+	if not _spawned_disk:
+		## Create a force disk
+		var spawn_disk_data: AssetData = AssetDelivery.create_asset_data(asset_data.creation_type, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL, asset_data.group_name, asset_data.owner_rid)
+		var prepare_angle: float = disk_mesh.rotation.x
+		if drop_disk:
+			var new_disk: ForceDisk = AssetDelivery.spawn_asset(spawn_disk_data, disk_mesh.global_position) as ForceDisk
+			new_disk.rotation.x = prepare_angle
+			_spawned_disk = true
+		else:
+			# TODO Get resulting dot vector between the last 2 points of the path curve
+			#		Need to set flight basis to that
+			var new_flight_path: Array[Vector3] = [disk_mesh.global_position]
+			flight_data.set_flight_path(new_flight_path)
+			# TODO Get PathDisk collision speed offset to config
+			flight_data.flight_speed *= 0.5
+			# TODO on the curve detect the most negative z rotation and set path_follow rotate path_follow to it; Then set flight_data.global_basis thing to path_follow basis
+			flight_data.flight_global_basis = disk_mesh.basis
+			var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, spawn_disk_data)
+			_spawned_disk = true
+		pick_up()
 
 func get_disk_camera() -> Camera3D:
 	return camera_container.get_camera()

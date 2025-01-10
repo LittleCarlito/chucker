@@ -232,6 +232,12 @@ func is_current(surpress_logs: bool = true) -> bool:
 	return false
 
 # TODO OOOOO
+# TODO Need to get normalized vector between disk_mesh and colliding plane
+#		Need to ahve new_disk look in that direction before force applied
+#			Apply linear force
+#			Rotate transform basis back up to what mesh whas at collision
+# TODO Potential solution
+#		Take new disk make sure its basis is set to original launch basis, invert its basis, apply force, invert its basis again
 # TODO Add conditional for switching between logging and signal emitting to have parent log
 #		Have create_container method connect a handler method in the parent that will log the given string from their self so the parent is known
 func reset_zoom() -> bool:
@@ -270,6 +276,7 @@ func _request_camera(new_parent: Node3D) -> bool:
 				parent_camera_container.internal_camera = internal_camera
 				internal_camera = null
 				parent_swapped = true
+				basis.inverse()
 			else:
 				var formatted_string: String = _BAD_CLAIM_LOG + Logger.LOG_SEPARATOR + Logger.KEEPING_CAMERA
 				_handle_logging(formatted_string, [str(new_parent)])
