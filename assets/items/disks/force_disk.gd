@@ -156,6 +156,7 @@ func _launch() -> void:
 		if flight_data.focus_flight:
 			_submit_camera_request()
 			camera_container.set_current()
+			camera_container.hold_min_height()
 			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	else:
