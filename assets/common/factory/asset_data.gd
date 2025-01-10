@@ -16,14 +16,16 @@ enum ITEM_STATE{DISABLED = 0, DEACTIVATED = 1, ACTIVATED = 2, UNKNOWN = 999}
 
 ## The type of this instance of the asset
 @export var internal_type: AssetData.TYPE
-## The group_name set via code for this instance of the asset
-@export var group_name: String
-## The type of asset created by this instance of the asset
-@export var creation_type: AssetData.TYPE
 ## The controllable state of this asset
 @export var item_state: AssetData.ITEM_STATE
 ## The state of this asset's internal camera
 @export var camera_state: AssetData.CAMERA_STATE
+## The type of asset created by this instance of the asset
+@export var creation_type: AssetData.TYPE
+## The group_name set via code for this instance of the asset
+@export var group_name: String
+## The owners RID if available
+@export var owner_rid: RID
 
 const CREATION_MATRIX: Dictionary = {
 	TYPE.CHARGE: [TYPE.FORCE],

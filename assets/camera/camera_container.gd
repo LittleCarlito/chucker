@@ -36,8 +36,8 @@ const _REPARENT_CAMERA: String = "reparent_camera"
 const _FOCUS_CAMERA_CONTROL: String = "focus_camera_control"
 const _CAMERA: String = "Camera"
 
-@export var camera_control: Node3D
-@export var camera_timer: Timer
+@onready var camera_control: Node3D = $CameraControl
+@onready var camera_timer: Timer = $CameraTimer
 @export var handle_input_when_current: bool = false
 var internal_camera: Camera3D
 var _initial_orientation: Vector3

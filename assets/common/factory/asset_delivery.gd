@@ -21,7 +21,12 @@ func _process(_delta: float) -> void:
 
 ## Creates an AssetData rescource based off given parameters
 ## Defaults creation type to incoming_internal type if none or UNKNOWN given for creation_type
-func create_asset_data(incoming_internal: AssetData.TYPE, incoming_state: AssetData.ITEM_STATE = AssetData.ITEM_STATE.DISABLED, incoming_camera_state: AssetData.CAMERA_STATE = AssetData.CAMERA_STATE.EXISTS, incoming_create: AssetData.TYPE = AssetData.TYPE.UNKNOWN, incoming_group: String = GameConfig.DEFAULTS.group) -> AssetData:
+func create_asset_data(incoming_internal: AssetData.TYPE,
+						incoming_state: AssetData.ITEM_STATE = AssetData.ITEM_STATE.DISABLED,
+						incoming_camera_state: AssetData.CAMERA_STATE = AssetData.CAMERA_STATE.EXISTS,
+						incoming_create: AssetData.TYPE = AssetData.TYPE.UNKNOWN,
+						incoming_group: String = GameConfig.DEFAULTS.group,
+						incoming_owner_rid: RID = RID()) -> AssetData:
 	var new_data: AssetData = AssetData.new()
 	new_data._setup_local_to_scene()
 	new_data.internal_type = incoming_internal
@@ -29,6 +34,7 @@ func create_asset_data(incoming_internal: AssetData.TYPE, incoming_state: AssetD
 	new_data.camera_state = incoming_camera_state
 	new_data.group_name = incoming_group
 	new_data.creation_type = incoming_create
+	new_data.owner_rid = incoming_owner_rid
 	return new_data
 
 ## Creates new item based off incoming item data
@@ -43,7 +49,7 @@ func create_and_launch(flight_data: FlightData, asset_data: AssetData) -> Node3D
 		group_name = GameConfig.DEFAULTS.group
 		Logger.debug(_NO_GROUP_PROVIDED, [group_name], self)
 	var associated_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(asset_data.creation_type, asset_data.internal_type)
-	var new_asset_data: AssetData = create_asset_data(asset_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, associated_creation_type, group_name)
+	var new_asset_data: AssetData = create_asset_data(asset_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, associated_creation_type, group_name, asset_data.owner_rid)
 	var new_asset: Node3D = AssetFactory.create_asset(new_asset_data.internal_type)
 	if new_asset != null:
 		_set_asset_data(new_asset, new_asset_data)
@@ -72,7 +78,7 @@ func create_and_launch(flight_data: FlightData, asset_data: AssetData) -> Node3D
 func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) -> Node3D:
 	# TODO In here Pull Disk isn't getting associated things I think so when trying to throw the data it gives pull is ha
 	var new_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(incoming_item.asset_data.creation_type, incoming_item.asset_data.internal_type)
-	var new_item_data: AssetData = AssetDelivery.create_asset_data(incoming_item.asset_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, new_creation_type, item_owner.asset_data.group_name)
+	var new_item_data: AssetData = AssetDelivery.create_asset_data(incoming_item.asset_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, new_creation_type, item_owner.asset_data.group_name, item_owner.get_rid())
 	var new_asset: Node3D = AssetFactory.create_asset(incoming_item.asset_data.creation_type)
 	if new_asset != null:
 		_set_asset_data(new_asset, new_item_data)

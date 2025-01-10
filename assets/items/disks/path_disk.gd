@@ -3,7 +3,9 @@ class_name PathDisk
 
 # TODO OOOOO
 # TODO Need to trigger idle rotate type stuff like in force disk when _swap_disk collision is detected
+# TODO Add camera rotating flight controls like in ForceDisk
 # TODO Don't think collision stuff is rotation wtih mesh because it doesn't trigger early enough
+#		Convert it to a sphere around the disk instead of a cylinder
 # TODO Refactor Basis to be Transform in Path stuff
 # TODO Refactor all rotation stuff to be Transform based
 # TODO Get CameraContainer out of here and created through a method like ForceDisk
@@ -40,6 +42,13 @@ func _ready() -> void:
 	if asset_data != null and !asset_data.group_name.is_empty():
 		add_to_group(asset_data.group_name)
 
+func _input(event: InputEvent) -> void:
+	# Looking controls
+	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and camera_container != null and camera_container.is_current():
+		if event is InputEventMouseMotion:
+			var horizontal_rotation_amount: float = deg_to_rad(event.relative.x) * CameraConfig.get_horizontal_look_sens()
+			camera_container.horizontal_pan(horizontal_rotation_amount, self.global_position)
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if is_instance_valid(path_follow):
@@ -62,24 +71,10 @@ func set_item_mesh(new_mesh: DiskMesh) -> void:
 		old_mesh.queue_free()
 	disk_mesh = new_mesh
 
-func set_launch_parameters(_incoming_data: FlightData) -> void:
-	#super(incoming_path, incoming_speed, incoming_angle, is_focused)
-	#var throw_curve: Curve3D = Curve3D.new()
-	#for throw_point in incoming_path:
-		#throw_curve.add_point(to_local(throw_point))
-	#path_3d.curve = throw_curve
-	#camera_container.toggle_camera()
-	pass
-
-func _body_enter(_body_rid: RID, _body: Node3D, _body_shape_index: int, _local_shape_index: int) -> void:
-	pass
-	# TODO Refator to use AssetData or group method calls
-	#var owner_rid: RID
-	#if item_owner != null:
-		#owner_rid = item_owner.get_rid()
-		#if body_rid != owner_rid:
-		#disk_mesh.collision_location = disk_mesh.global_position
-		#_swap_disk()
+func _body_enter(body_rid: RID, _body: Node3D, _body_shape_index: int, _local_shape_index: int) -> void:
+	if body_rid != asset_data.owner_rid:
+		_collision_location = disk_mesh.global_position
+		_swap_disk()
 
 func _determine_speed() -> float:
 	var max_speed: float = GameConfig.DEFAULTS.launch_speed * flight_data.flight_speed
@@ -91,7 +86,7 @@ func _determine_speed() -> float:
 func _swap_disk(drop_disk: bool = false) -> void:
 	## Create a force disk
 	# TODO Create AssetData for the ForceDisk that will create a PullDisk upon pickup
-	var spawn_disk_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.PATH, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.FORCE)
+	var spawn_disk_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.PATH, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.FORCE, asset_data.group_name, asset_data.owner_rid)
 	var prepare_angle: float = disk_mesh.rotation.x
 	if drop_disk:
 		var new_disk: ForceDisk = AssetDelivery.spawn_asset(spawn_disk_data, disk_mesh.global_position) as ForceDisk
@@ -99,15 +94,12 @@ func _swap_disk(drop_disk: bool = false) -> void:
 	else:
 		var new_flight_path: Array[Vector3] = [disk_mesh.global_position]
 		flight_data.set_flight_path(new_flight_path)
-		#var launch_basis: Basis = disk_mesh.global_basis
 		# TODO Get PathDisk collision speed offset to config
 		flight_data.flight_speed *= 0.1
-		#flight_data.set_flight_basis(launch_basis)
-		# TODO Need to change asset_data to create the correct disk type
+		# TODO Update create_and_launch and its users to be logical
+		#		Should be having to make some kind of AssetData here for the new disk to be correct
 		var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, spawn_disk_data)
 		# TODO Copy ForceDisks request camera logic so this disk takes camera at launch
-		# TODO Ensure generated forcedisk camera launches without camera
-		#		Collision should start focus timer and idle rotation
 		#var current_camera: Camera3D = get_disk_camera()
 		#current_camera.reparent(get_tree().root, true)
 		#if flight_data != null:
@@ -118,7 +110,7 @@ func _swap_disk(drop_disk: bool = false) -> void:
 	## Tilt the disk to original launch angle to simulate regular rigid throw
 	#new_disk.rotate_x(launch_angle)
 	## Get rid of Path3D and Mesh
-	self.queue_free()
+	pick_up()
 
 func get_disk_camera() -> Camera3D:
 	return camera_container.get_camera()
@@ -135,7 +127,6 @@ func _launch() -> void:
 			_submit_camera_request()
 			camera_container.set_current()
 			camera_container.hold_min_height()
-			camera_container.focus_camera_control(disk_mesh.global_position, true)
 			disk_mesh.global_rotation.y = flight_data.flight_global_basis.get_euler().y
 			disk_mesh.global_rotation.x = flight_data.flight_global_basis.get_euler().x
 			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
@@ -164,6 +155,7 @@ func _submit_camera_request() -> void:
 	if asset_data != null and !asset_data.group_name.is_empty():
 		_create_camera_container()
 		get_tree().call_group(asset_data.group_name, GroupData.REQUEST_CAMERA, camera_container)
+		camera_container.add_to_group(asset_data.group_name)
 		camera_container.reset_camera()
 	else:
 		var formatted_string: String = Logger.NO_GROUP_LOG + Logger.LOG_SEPARATOR + Logger.NOT_SUBMITTING
@@ -189,3 +181,6 @@ func _create_camera_container() -> void:
 		_set_camera_container(new_camera_container)
 	else:
 		Logger.warn(Logger.ALREADY_EXISTS_LOG, [Logger.CAMERA_CONTAINER], self)
+
+func pick_up() -> void:
+	self.queue_free()

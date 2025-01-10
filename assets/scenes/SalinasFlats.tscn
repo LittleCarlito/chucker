@@ -8,10 +8,11 @@
 [sub_resource type="Resource" id="Resource_24efs"]
 script = ExtResource("2_audb8")
 internal_type = 4
-group_name = ""
-creation_type = 99
 item_state = 2
 camera_state = 3
+creation_type = 99
+group_name = ""
+owner_rid = RID()
 
 [sub_resource type="BoxMesh" id="BoxMesh_vba8s"]
 size = Vector3(50, 3, 200)

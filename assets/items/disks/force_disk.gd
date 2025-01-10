@@ -121,11 +121,9 @@ func _handle_collision(body_rid: RID, _body: Node, _body_shape_index: int, _loca
 	disk_collision.store_collision(self.get_rid(), body_rid, self.global_position, flight_data, asset_data)
 	if camera_container != null && (camera_container.has_camera() && camera_container.is_current()):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		if !camera_container.is_focused():
-			# Focus camera on collision location
-			camera_container.start_focus(self.global_basis, self.global_position)
-			self.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
-			self.angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
+		camera_container.start_focus(self.global_basis, self.global_position)
+		self.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
+		self.angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
 
 func pick_up() -> void:
 	self.queue_free()
@@ -189,6 +187,7 @@ func _submit_camera_request() -> void:
 	if asset_data != null and !asset_data.group_name.is_empty():
 		_create_camera_container()
 		get_tree().call_group(asset_data.group_name, GroupData.REQUEST_CAMERA, camera_container)
+		camera_container.add_to_group(asset_data.group_name)
 		camera_container.reset_camera()
 	else:
 		var formatted_string: String = Logger.NO_GROUP_LOG + Logger.LOG_SEPARATOR + Logger.NOT_SUBMITTING
