@@ -150,8 +150,8 @@ func _set_flight_data(incoming_data: FlightData) -> void:
 func _launch() -> void:
 	if flight_data != null:
 		self.global_position = flight_data.flight_path[0]
-		self.global_basis = flight_data.flight_global_basis
-		self.linear_velocity = -self.global_transform.basis.z * flight_data.flight_speed
+		self.basis = flight_data.flight_basis
+		self.linear_velocity = -self.transform.basis.z * flight_data.flight_speed
 		self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
 		if flight_data.focus_flight:
 			_submit_camera_request()

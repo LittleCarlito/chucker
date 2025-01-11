@@ -91,15 +91,13 @@ func _swap_disk(drop_disk: bool = false) -> void:
 			new_disk.rotation.x = prepare_angle
 			_spawned_disk = true
 		else:
-			# TODO Get resulting dot vector between the last 2 points of the path curve; test commit
-			#		Need to set flight basis to that
 			var new_flight_path: Array[Vector3] = [disk_mesh.global_position]
 			flight_data.set_flight_path(new_flight_path)
 			# TODO Get PathDisk collision speed offset to config
-			flight_data.flight_speed *= 0.5
-			# TODO on the curve detect the most negative z rotation and set path_follow rotate path_follow to it; Then set flight_data.global_basis thing to path_follow basis
-			flight_data.flight_global_basis = disk_mesh.basis
+			flight_data.flight_speed *= .1
+			#flight_data.flight_basis = flight_data.flight_basis.inverse()
 			var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, spawn_disk_data)
+			
 			_spawned_disk = true
 		pick_up()
 
@@ -118,8 +116,9 @@ func _launch() -> void:
 			_submit_camera_request()
 			camera_container.set_current()
 			camera_container.hold_min_height()
-			disk_mesh.global_rotation.y = flight_data.flight_global_basis.get_euler().y
-			disk_mesh.global_rotation.x = flight_data.flight_global_basis.get_euler().x
+			disk_mesh.basis = flight_data.flight_basis
+			#disk_mesh.basis.y = flight_data.flight_basis.y
+			#disk_mesh.basis.x = flight_data.flight_basis.x
 			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		# Set path's curve equal to flight data's path

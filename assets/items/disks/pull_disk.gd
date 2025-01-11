@@ -1,6 +1,8 @@
 extends ThrowableItem
 class_name PullDisk
 
+# TODO OOOOO
+# TODO Need to add right click aiming
 # TODO Allow for holding space or something to set power but still pull for offset
 # TODO Make a maximum pull time like charge disk
 #		Probably make that part of ThrowableItem and not have it in both
@@ -42,9 +44,8 @@ func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> 
 		charge_view.set_progress((pull_draw.last_length / GameConfig.DEFAULTS.max_pull) * 100)
 		var multiplier: float = (pull_draw.last_length / 100) * GameConfig.DEFAULTS.hold_multiplier
 		flight_data.flight_path = aim_line.draw_aim_line(multiplier, pull_draw.last_offset * .01)
-		flight_data.flight_global_basis = incoming_basis
+		flight_data.flight_basis = incoming_basis
 
-# TODO Need to refactor to use FlightData and DiskFactory
 func release_action(incoming_basis: Basis) -> void:
 	## If right click is not held launch the disk
 	if not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY) and pull_draw.last_length > GameConfig.DEFAULTS.min_pull:

@@ -64,7 +64,7 @@ func hold_action(delta: float, incoming_basis: Basis, incoming_focus: bool) -> v
 		var drawn_line: Array[Vector3] = aim_line.draw_aim_line(speed_multiplier)
 		if drawn_line != null:
 			flight_data.flight_path = drawn_line
-		flight_data.flight_global_basis = incoming_basis
+		flight_data.flight_basis = incoming_basis
 
 # TODO Refactor to take in global_basis and set it in flight data as well
 # TODO Figure out default value for Basis
@@ -95,9 +95,9 @@ func _set_asset_data(incoming_data: AssetData) -> void:
 	if asset_data != null and !asset_data.group_name.is_empty() and !is_in_group(asset_data.group_name):
 		add_to_group(asset_data.group_name)
 
-func _set_flight_global_basis(incoming_basis: Basis) -> void:
+func _set_flight_basis(incoming_basis: Basis) -> void:
 	if flight_data != null:
-		flight_data.flight_global_basis = incoming_basis
+		flight_data.flight_basis = incoming_basis
 	else:
 		Logger.debug(_FLIGHT_DATA_NOT_SET, [], self)
 

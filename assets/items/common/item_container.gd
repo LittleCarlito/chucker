@@ -45,7 +45,7 @@ func unequip_item() -> void:
 func hold_action(delta: float, incoming_focus: bool = false) -> void:
 	if is_equipped():
 		if equipped_item.has_method(GroupData.HOLD_ACTION):
-			equipped_item.call(GroupData.HOLD_ACTION, delta, self.global_basis, incoming_focus)
+			equipped_item.call(GroupData.HOLD_ACTION, delta, self.basis, incoming_focus)
 		else:
 			Logger.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), GroupData.HOLD_ACTION], self)
 	else:
