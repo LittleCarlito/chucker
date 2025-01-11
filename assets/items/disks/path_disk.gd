@@ -91,7 +91,7 @@ func _swap_disk(drop_disk: bool = false) -> void:
 			new_disk.rotation.x = prepare_angle
 			_spawned_disk = true
 		else:
-			# TODO Get resulting dot vector between the last 2 points of the path curve
+			# TODO Get resulting dot vector between the last 2 points of the path curve; test commit
 			#		Need to set flight basis to that
 			var new_flight_path: Array[Vector3] = [disk_mesh.global_position]
 			flight_data.set_flight_path(new_flight_path)
