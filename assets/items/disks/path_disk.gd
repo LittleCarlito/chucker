@@ -48,7 +48,7 @@ func _input(event: InputEvent) -> void:
 			camera_container.horizontal_pan(horizontal_rotation_amount, self.global_position)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if is_instance_valid(path_follow):
 		if flight_data == null or flight_data.flight_path.is_empty():
 			_swap_disk(true)
@@ -94,10 +94,13 @@ func _swap_disk(drop_disk: bool = false) -> void:
 			var new_flight_path: Array[Vector3] = [disk_mesh.global_position]
 			flight_data.set_flight_path(new_flight_path)
 			# TODO Get PathDisk collision speed offset to config
-			flight_data.flight_speed *= .1
+			var original_flight_speed: float = flight_data.flight_speed
+			flight_data.flight_speed = 0
 			#flight_data.flight_basis = flight_data.flight_basis.inverse()
-			var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, spawn_disk_data)
-			
+			var _launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, spawn_disk_data)
+			# TODO Need to get vector perpindicular launched disk and apply linear force along it
+			var perp_vector: Vector3 = NodeUtil.get_perpendicular_vector(_launched_disk.basis.z)
+			_launched_disk.linear_velocity = Vector3(0, -(original_flight_speed), 0)
 			_spawned_disk = true
 		pick_up()
 
@@ -140,7 +143,7 @@ func _set_camera_container(incoming_container: CameraContainer) -> void:
 		camera_container = null
 	camera_container = incoming_container
 	camera_container.connect(GroupData.LOSE_FOCUS, _return_camera_to_owner)
-	camera_container.connect(GroupData.HANDLE_CHILD_LOGS, _handle_child_logs)
+	camera_container.connect(GroupData.LOG_OUTPUT, _handle_child_logs)
 
 func _submit_camera_request() -> void:
 	if asset_data != null and !asset_data.group_name.is_empty():
@@ -189,6 +192,7 @@ func _handle_child_logs(incoming_level: Logger.LEVEL, incoming_log: String, opti
 
 ## Uses path_follow to determine the basis of the last 2 executed on points in the curve
 func _get_recent_basis() -> Basis:
+	@warning_ignore("narrowing_conversion")
 	var size_cuttoff: int = path_follow.progress_ratio * path_3d.curve.point_count
 	var end_point: Vector3 = path_3d.curve.get_point_position(size_cuttoff)
 	var previous_basis: Basis = path_3d.basis

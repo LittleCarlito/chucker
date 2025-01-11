@@ -173,7 +173,7 @@ func _set_camera_container(incoming_container: CameraContainer) -> void:
 	camera_container = incoming_container
 	camera_container.reparent(self)
 	camera_container.connect(GroupData.LOSE_FOCUS, _return_camera_to_owner)
-	camera_container.connect(GroupData.HANDLE_CHILD_LOGS, _handle_child_logs)
+	camera_container.connect(GroupData.LOG_OUTPUT, _handle_child_logs)
 
 func _return_camera_to_owner() -> void:
 	var has_custom_group: bool = asset_data != null and !asset_data.group_name.is_empty()

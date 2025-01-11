@@ -2,7 +2,7 @@ extends Object
 class_name GroupData
 
 # General method names
-const HANDLE_CHILD_LOGS: String = "_handle_child_logs"
+const LOG_OUTPUT: String = "log_output"
 const SYNC_ASSET: String = "sync_asset"
 # TODO Need to implement this method in all assets that contain CameraContainer
 const SET_CAMERA: String = "set_camera" # (incoming_camera: Camera3D, focus_point: Vector3 = Vecotr3.INF)
