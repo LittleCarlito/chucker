@@ -87,7 +87,8 @@ func _swap_disk(drop_disk: bool = false) -> void:
 		var spawn_disk_data: AssetData = AssetDelivery.create_asset_data(asset_data.creation_type, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL, asset_data.group_name, asset_data.owner_rid)
 		var prepare_angle: float = disk_mesh.rotation.x
 		if drop_disk:
-			var new_disk: ForceDisk = AssetDelivery.spawn_asset(spawn_disk_data, disk_mesh.global_position) as ForceDisk
+			var new_disk_spawn_data: SpawnData = SpawnData.new(spawn_disk_data, disk_mesh.global_position)
+			var new_disk: ForceDisk = AssetDelivery.spawn_asset(new_disk_spawn_data) as ForceDisk
 			new_disk.rotation.x = prepare_angle
 			_spawned_disk = true
 		else:
@@ -98,9 +99,12 @@ func _swap_disk(drop_disk: bool = false) -> void:
 			flight_data.flight_speed = 0
 			#flight_data.flight_basis = flight_data.flight_basis.inverse()
 			var _launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, spawn_disk_data)
-			# TODO Need to get vector perpindicular launched disk and apply linear force along it
-			var perp_vector: Vector3 = NodeUtil.get_perpendicular_vector(_launched_disk.basis.z)
-			_launched_disk.linear_velocity = Vector3(0, -(original_flight_speed), 0)
+			# TODO OOOOO
+			# TODO Add something like this in for ForceDisk so Thrown ChargeDisks get more umph on landing
+			#			Need to make it take a skipping parameter for launches through path_disk
+			#				Need to determine a way through existing fields that this id intended case
+			# TODO Then need to add right click aiming to pull disk
+			_launched_disk.linear_velocity = Vector3(0, -(original_flight_speed * .4), -(original_flight_speed))
 			_spawned_disk = true
 		pick_up()
 

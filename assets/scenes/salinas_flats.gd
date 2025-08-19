@@ -38,37 +38,46 @@ extends Node3D
 #		Allow the bag to have 6 x 6 inventory where disks are stored and can be chosen/equipped
 
 # Called when the node enters the scene tree for the first time.
-# TODO Switch this to loading assets from file for the map
-# TODO Condense the spawn call to a single call with arrays or dictionary
 func _ready() -> void:
 	# Spawn in Character
 	var chuck_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.PLAYER, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
-	var chuck_location: Vector3 = Vector3(0, 1, 0)
-	AssetDelivery.spawn_asset(chuck_data, chuck_location, self)
+	const chuck_location: Vector3 = Vector3(0, 1, 0)
+	var chuck_spawn_data: SpawnData = SpawnData.new(chuck_data, chuck_location, self)
 	# Spawn Path disk
 	var path_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL)
-	var path_location: Vector3 = Vector3(2, 4, -2)
-	AssetDelivery.spawn_asset(path_data, path_location, self)
+	const path_location: Vector3 = Vector3(2, 4, -2)
+	var path_spawn_data: SpawnData = SpawnData.new(path_data, path_location, self)
 	# Spawn in ForceDisk
 	var force_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.EXISTS, AssetData.TYPE.CHARGE)
-	var force_location: Vector3 = Vector3(-2, 4, -2)
-	AssetDelivery.spawn_asset(force_data, force_location, self)
+	const force_location: Vector3 = Vector3(-2, 4, -2)
+	var force_spawn_data: SpawnData = SpawnData.new(force_data, force_location, self)
 	# Spawn in TeeBox
 	var tee_box_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.TEE)
-	var tee_location: Vector3 = Vector3(0, 0, 0)
-	AssetDelivery.spawn_asset(tee_box_data, tee_location, self)
+	const tee_location: Vector3 = Vector3(0, 0, 0)
+	var tee_spawn_data: SpawnData = SpawnData.new(tee_box_data, tee_location, self)
 	# Spawn in Hole Node
 	var hole_node_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.HOLE_NODE)
-	var hole_node_location: Vector3 = Vector3(0, 5, -80)
-	AssetDelivery.spawn_asset(hole_node_data, hole_node_location, self)
+	const hole_node_location: Vector3 = Vector3(0, 5, -80)
+	var hole_node_spawn_data: SpawnData = SpawnData.new(hole_node_data, hole_node_location, self)
 	# Spawn in Hole
 	var hole_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.HOLE)
-	var hole_location: Vector3 = Vector3(0, 5, -80)
-	var spawned_hole: ChuckHole = AssetDelivery.spawn_asset(hole_data, hole_location, self)
+	const hole_location: Vector3 = Vector3(0, 5, -80)
+	var hole_spawn_data: SpawnData = SpawnData.new(hole_data, hole_location, self)
 	# Spawn in Environment hazards
 	var tree_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.ENV_TREE)
-	var tree_location: Vector3 = spawned_hole.position + (spawned_hole.basis.z * 50) + (spawned_hole.basis.x * 10)
-	AssetDelivery.spawn_asset(tree_data, Vector3(tree_location.x, 0, tree_location.z), self)
+	const tree_location: Vector3 = Vector3(15, 0, -40)
+	var tree_spawn_data: SpawnData = SpawnData.new(tree_data, tree_location, self)
+	# Create and spawn master asset list
+	var asset_spawn_data: Array[SpawnData] = [
+											chuck_spawn_data, 
+											path_spawn_data, 
+											force_spawn_data, 
+											tee_spawn_data,
+											hole_node_spawn_data, 
+											hole_spawn_data, 
+											tree_spawn_data
+										]
+	AssetDelivery.spawn_assets(asset_spawn_data)
 	kickoff_timer.start()
 
 

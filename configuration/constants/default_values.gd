@@ -1,0 +1,5 @@
+extends Object
+class_name DEFAULTS
+
+const DEFAULT_LOCATION: Vector3 = Vector3(0, 1, 0)
+const GIGA_LOCATION: Vector3 = Vector3(NUMBERS.FLOAT16_MAX, NUMBERS.FLOAT16_MAX, NUMBERS.FLOAT16_MAX)

@@ -216,13 +216,12 @@ func release_action() -> void:
 ## Stores new_item internally and attempts to give it internal camera if possible
 ## Returns item that was equipped if one was previously
 func equip_item(new_item: Node3D) -> void:
-	disable_movement()
-	var displaced_item: Node3D = null
+	#disable_movement()
 	_give_camera(new_item)
 	# Returns the equipped item if there was one
-	displaced_item = item_container.equip_item(new_item)
+	var displaced_item: Node3D = item_container.equip_item(new_item)
 	if displaced_item != null:
-		AssetDelivery.dump_asset(displaced_item)
+		AssetDelivery.drop_asset(displaced_item)
 	if new_item.has_signal(ThrowableItem.AIM):
 		new_item.connect(ThrowableItem.AIM, item_container._handle_aiming)
 	if new_item.has_signal(ThrowableItem.LAUNCHED):

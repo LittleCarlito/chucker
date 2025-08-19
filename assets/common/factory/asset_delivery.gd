@@ -14,7 +14,6 @@ const _FAILURE: String = "Failure"
 func _ready() -> void:
 	pass # Replace with function body.
 
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
@@ -84,24 +83,39 @@ func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) ->
 		Logger.info(_INVALID_INCOMING_ITEM, [str(incoming_item)], self)
 	return new_asset
 
-# TODO Implement
-func dump_asset(_overflow_item: Node3D) -> void:
-	# TODO Spawn this into the Levels default spawn area
-	# TODO Should eventually have it dump on top of whatever entity caused it to overflow
-	pass
+func drop_asset(drop_item: Node3D, drop_location: Vector3 = DEFAULTS.GIGA_LOCATION) -> void:
+	# TODO OOOOO
+	#			This isn't working because the Node3Ds being given from chuck are charge and pull disks so they dont' ahve gravity as they are meshes
+	#				Need some form of determination to figure out what asset type is being dropped and if it is one of those drop the corresponding loaded rigid disk
+	# Upnarent and move
+	drop_item.reparent(get_tree().root)
+	if(drop_location != DEFAULTS.GIGA_LOCATION):
+		drop_item.global_position = drop_location
+	# Spawn proper rigid object if only mesh
+	if(drop_item is ThrowableItem):
+		Logger.error("Shit gonna hover dog", [], self)
+	elif(drop_item is RigidBody3D):
+		Logger.error("BAZINGA", [], self)
+	elif(drop_item is Node3D):
+		Logger.error("BAZLORPA", [], self)
+	else:
+		Logger.error("Unexpected class \"%s\" has been picked up", [drop_item.get_class()], self)
 
-# TODO Make sure that nodes check for AssetData in their _ready and add themselves to the group if one exists there
-func spawn_asset(asset_data: AssetData, spawn_location: Vector3 = Vector3(0, 1, 0), spawn_parent: Node3D = null) -> Node3D:
-	var created_node: Node3D = AssetFactory.create_asset(asset_data.internal_type)
+func spawn_assets(incoming_spawns: Array[SpawnData]) -> Array:
+	return incoming_spawns.map(spawn_asset)
+
+## If using this function make sure that nodes check for AssetData in their _ready and add themselves to the group if one exists there
+func spawn_asset(spawn_data: SpawnData) -> Node3D:
+	var created_node: Node3D = AssetFactory.create_asset(spawn_data.asset_data.internal_type)
 	if created_node.has_method(GroupData.SET_ASSET_DATA):
-		created_node.call(GroupData.SET_ASSET_DATA, asset_data)
+		created_node.call(GroupData.SET_ASSET_DATA, spawn_data.asset_data)
 	if created_node.has_method(GroupData.SYNC_ASSET):
 		created_node.call(GroupData.SYNC_ASSET)
-	if spawn_parent != null:
-		spawn_parent.add_child(created_node)
+	if spawn_data.spawn_parent != null:
+		spawn_data.spawn_parent.add_child(created_node)
 	else:
 		get_tree().get_current_scene().add_child(created_node)
-	created_node.global_position = spawn_location
+	created_node.global_position = spawn_data.spawn_location
 	return created_node
 
 static func _set_asset_data(incoming_asset: Node3D, incoming_data: AssetData) -> bool:

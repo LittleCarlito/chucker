@@ -126,12 +126,3 @@ func get_first_non_sequential_index(incoming_data: Array[int]) -> int:
 		if i + 1 != incoming_data[i]:
 			return_index = i
 	return return_index
-
-# Function that returns a vector pointing straight down on the Y-axis
-# while considering the input vector's rotation around the Z-axis
-func get_perpendicular_vector(v: Vector3) -> Vector3:
-	var z_rotation_angle = atan2(v.y, v.x)  # Extract the rotation around the Z-axis
-	# Calculate the rotated downward vector
-	var downward = Vector3(0, -1, 0)  # Start with a vector pointing straight down
-	var rotated_downward = downward.rotated(Vector3(0, 0, 1), z_rotation_angle)
-	return rotated_downward
