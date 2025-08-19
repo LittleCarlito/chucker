@@ -25,3 +25,14 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
+
+func hold_action(_delta: float, _incoming_basis: Basis, _incoming_focus: bool) -> void:
+	Logger.warn("No hold_action function implemented for this object", [], self)
+
+func release_action(_incoming_basis: Basis) -> void:
+	Logger.error("All ThrowableItem objects must implement a release action function", [], self)
+	self.queue_free()
+
+func drop_item() -> void:
+	Logger.error("All ThrowableItem objects must implement a drop item function", [], self)
+	self.queue_free()

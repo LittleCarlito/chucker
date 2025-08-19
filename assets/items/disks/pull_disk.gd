@@ -50,22 +50,49 @@ func release_action(incoming_basis: Basis) -> void:
 	if not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY) and pull_draw.last_length > GameConfig.DEFAULTS.min_pull:
 		var multiplier: float = min(GameConfig.DEFAULTS.max_hold, (pull_draw.last_length / 100)) * GameConfig.DEFAULTS.hold_multiplier
 		var final_speed: float = GameConfig.DEFAULTS.launch_speed * multiplier
-		flight_data = FlightData.create_flight_data(final_speed, incoming_basis, flight_data.flight_path, flight_data.focus_flight)
+		flight_data = FlightData.new(final_speed, incoming_basis, flight_data.flight_path, flight_data.focus_flight)
 		# Create path_disk_data and pass it into the launch method
-		var path_disk_data: AssetData = AssetDelivery.create_asset_data(asset_data.creation_type, asset_data.item_state, asset_data.camera_state, AssetData.TYPE.FORCE, asset_data.group_name, asset_data.owner_rid)
+		var path_disk_data: AssetData = self._get_next_asset_data()
 		AssetDelivery.create_and_launch(flight_data, path_disk_data)
 		launched.emit()
 		pick_up()
 		self.rotation.x = 0
 		charge_view.set_progress(-1)
 
+func drop_item() -> void:
+	var drop_path: Array[Vector3] = [self.global_position]
+	var drop_flight: FlightData = FlightData.new(0, self.global_basis, drop_path, false)
+	var drop_asset: AssetData = self._get_next_asset_data(true)
+	AssetDelivery.create_and_launch(drop_flight, drop_asset)
+	self.queue_free()
+
 func reset_launch_parameters() -> void:
 	flight_data = FlightData.new()
 
 func pick_up() -> void:
-	queue_free()
+	self.queue_free()
 
 func _set_asset_data(incoming_data: AssetData) -> void:
-	asset_data = incoming_data
-	if asset_data != null and !asset_data.group_name.is_empty() and !is_in_group(asset_data.group_name):
-		add_to_group(asset_data.group_name)
+	self.asset_data = incoming_data
+	if self.asset_data != null and !self.asset_data.group_name.is_empty() and !self.is_in_group(self.asset_data.group_name):
+		self.add_to_group(asset_data.group_name)
+
+func _get_next_asset_data(is_force_disk: bool = false) -> AssetData:
+	if(is_force_disk):
+		return AssetData.new(
+			AssetData.TYPE.FORCE, 
+			self.asset_data.item_state, 
+			self.asset_data.camera_state, 
+			AssetData.TYPE.PULL,
+			self.asset_data.group_name, 
+			self.asset_data.owner_rid
+			)
+	else:
+		return AssetData.new(
+			self.asset_data.creation_type, 
+			self.asset_data.item_state, 
+			self.asset_data.camera_state, 
+			AssetData.TYPE.FORCE,
+			self.asset_data.group_name, 
+			self.asset_data.owner_rid
+			)

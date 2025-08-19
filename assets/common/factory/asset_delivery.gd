@@ -18,24 +18,6 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	pass
 
-## Creates an AssetData rescource based off given parameters
-## Defaults creation type to incoming_internal type if none or UNKNOWN given for creation_type
-func create_asset_data(incoming_internal: AssetData.TYPE,
-						incoming_state: AssetData.ITEM_STATE = AssetData.ITEM_STATE.DISABLED,
-						incoming_camera_state: AssetData.CAMERA_STATE = AssetData.CAMERA_STATE.EXISTS,
-						incoming_create: AssetData.TYPE = AssetData.TYPE.UNKNOWN,
-						incoming_group: String = GameConfig.DEFAULTS.group,
-						incoming_owner_rid: RID = RID()) -> AssetData:
-	var new_data: AssetData = AssetData.new()
-	new_data._setup_local_to_scene()
-	new_data.internal_type = incoming_internal
-	new_data.item_state = incoming_state
-	new_data.camera_state = incoming_camera_state
-	new_data.group_name = incoming_group
-	new_data.creation_type = incoming_create
-	new_data.owner_rid = incoming_owner_rid
-	return new_data
-
 ## Creates new item based off incoming item data
 ## New item has its physical parameters set to follow the flight_data given
 func create_and_launch(flight_data: FlightData, asset_data: AssetData) -> Node3D:
@@ -71,7 +53,7 @@ func create_and_launch(flight_data: FlightData, asset_data: AssetData) -> Node3D
 ## Equips incoming owner with internal type found inside given item
 func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) -> Node3D:
 	var new_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(incoming_item.asset_data.creation_type, incoming_item.asset_data.internal_type)
-	var new_item_data: AssetData = AssetDelivery.create_asset_data(incoming_item.asset_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, new_creation_type, item_owner.asset_data.group_name, item_owner.get_rid())
+	var new_item_data: AssetData = AssetData.new(incoming_item.asset_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, new_creation_type, item_owner.asset_data.group_name, item_owner.get_rid())
 	var new_asset: Node3D = AssetFactory.create_asset(incoming_item.asset_data.creation_type)
 	if new_asset != null:
 		_set_asset_data(new_asset, new_item_data)
@@ -87,19 +69,15 @@ func drop_asset(drop_item: Node3D, drop_location: Vector3 = DEFAULTS.GIGA_LOCATI
 	# TODO OOOOO
 	#			This isn't working because the Node3Ds being given from chuck are charge and pull disks so they dont' ahve gravity as they are meshes
 	#				Need some form of determination to figure out what asset type is being dropped and if it is one of those drop the corresponding loaded rigid disk
-	# Upnarent and move
-	drop_item.reparent(get_tree().root)
+	# Unparent and move
+	drop_item.reparent(get_tree().current_scene)
 	if(drop_location != DEFAULTS.GIGA_LOCATION):
 		drop_item.global_position = drop_location
 	# Spawn proper rigid object if only mesh
 	if(drop_item is ThrowableItem):
-		Logger.error("Shit gonna hover dog", [], self)
-	elif(drop_item is RigidBody3D):
-		Logger.error("BAZINGA", [], self)
-	elif(drop_item is Node3D):
-		Logger.error("BAZLORPA", [], self)
+		drop_item.drop_item()
 	else:
-		Logger.error("Unexpected class \"%s\" has been picked up", [drop_item.get_class()], self)
+		Logger.warn("Class \"%s\" has been dropped without a function call; Item may be hovering", [drop_item.get_class()], self)
 
 func spawn_assets(incoming_spawns: Array[SpawnData]) -> Array:
 	return incoming_spawns.map(spawn_asset)

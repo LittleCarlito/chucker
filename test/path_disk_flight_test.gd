@@ -29,7 +29,7 @@ func _run_path_test() -> int:
 	testPathDisk.global_transform = testTransform
 	get_tree().root.add_child(testPathDisk)
 	testPathDisk.prepare_item(AssetData.TYPE)
-	var path_flight_data: FlightData = FlightData.create_flight_data(testSpeed, testTransform.basis, testPath, false)
+	var path_flight_data: FlightData = FlightData.new(testSpeed, testTransform.basis, testPath, false)
 	testPathDisk._set_flight_data(path_flight_data)
 	testPathDisk._launch()
 	#testPathDisk.set_launch_parameters(testPath, testSpeed, testAngle)

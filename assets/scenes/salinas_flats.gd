@@ -40,31 +40,31 @@ extends Node3D
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# Spawn in Character
-	var chuck_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.PLAYER, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
+	var chuck_data: AssetData = AssetData.new(AssetData.TYPE.PLAYER, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
 	const chuck_location: Vector3 = Vector3(0, 1, 0)
 	var chuck_spawn_data: SpawnData = SpawnData.new(chuck_data, chuck_location, self)
 	# Spawn Path disk
-	var path_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL)
+	var path_data: AssetData = AssetData.new(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL)
 	const path_location: Vector3 = Vector3(2, 4, -2)
 	var path_spawn_data: SpawnData = SpawnData.new(path_data, path_location, self)
 	# Spawn in ForceDisk
-	var force_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.EXISTS, AssetData.TYPE.CHARGE)
+	var force_data: AssetData = AssetData.new(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.EXISTS, AssetData.TYPE.CHARGE)
 	const force_location: Vector3 = Vector3(-2, 4, -2)
 	var force_spawn_data: SpawnData = SpawnData.new(force_data, force_location, self)
 	# Spawn in TeeBox
-	var tee_box_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.TEE)
+	var tee_box_data: AssetData = AssetData.new(AssetData.TYPE.TEE)
 	const tee_location: Vector3 = Vector3(0, 0, 0)
 	var tee_spawn_data: SpawnData = SpawnData.new(tee_box_data, tee_location, self)
 	# Spawn in Hole Node
-	var hole_node_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.HOLE_NODE)
+	var hole_node_data: AssetData = AssetData.new(AssetData.TYPE.HOLE_NODE)
 	const hole_node_location: Vector3 = Vector3(0, 5, -80)
 	var hole_node_spawn_data: SpawnData = SpawnData.new(hole_node_data, hole_node_location, self)
 	# Spawn in Hole
-	var hole_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.HOLE)
+	var hole_data: AssetData = AssetData.new(AssetData.TYPE.HOLE)
 	const hole_location: Vector3 = Vector3(0, 5, -80)
 	var hole_spawn_data: SpawnData = SpawnData.new(hole_data, hole_location, self)
 	# Spawn in Environment hazards
-	var tree_data: AssetData = AssetDelivery.create_asset_data(AssetData.TYPE.ENV_TREE)
+	var tree_data: AssetData = AssetData.new(AssetData.TYPE.ENV_TREE)
 	const tree_location: Vector3 = Vector3(15, 0, -40)
 	var tree_spawn_data: SpawnData = SpawnData.new(tree_data, tree_location, self)
 	# Create and spawn master asset list
@@ -79,7 +79,6 @@ func _ready() -> void:
 										]
 	AssetDelivery.spawn_assets(asset_spawn_data)
 	kickoff_timer.start()
-
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:

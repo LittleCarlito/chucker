@@ -84,7 +84,7 @@ func _determine_speed() -> float:
 func _swap_disk(drop_disk: bool = false) -> void:
 	if not _spawned_disk:
 		## Create a force disk
-		var spawn_disk_data: AssetData = AssetDelivery.create_asset_data(asset_data.creation_type, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL, asset_data.group_name, asset_data.owner_rid)
+		var spawn_disk_data: AssetData = AssetData.new(asset_data.creation_type, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL, asset_data.group_name, asset_data.owner_rid)
 		var prepare_angle: float = disk_mesh.rotation.x
 		if drop_disk:
 			var new_disk_spawn_data: SpawnData = SpawnData.new(spawn_disk_data, disk_mesh.global_position)

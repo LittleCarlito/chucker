@@ -6,14 +6,12 @@ class_name FlightData
 @export var flight_path: Array[Vector3]
 @export var focus_flight: bool
 
-static func create_flight_data(incoming_speed: float, incoming_basis: Basis, incoming_path: Array[Vector3] = [], incoming_focus: bool = false) -> FlightData:
-	var return_data: FlightData = FlightData.new()
-	return_data.flight_speed = incoming_speed
-	return_data.flight_basis = incoming_basis
-	return_data.flight_path = incoming_path
-	return_data.focus_flight = incoming_focus
-	return_data._setup_local_to_scene()
-	return return_data
+func _init(incoming_speed: float = 0, incoming_basis: Basis = Basis.from_euler(Vector3(0, 0, 0)), incoming_path: Array[Vector3] = [], incoming_focus: bool = false) -> void:
+	self.flight_speed = incoming_speed
+	self.flight_basis = incoming_basis
+	self.flight_path = incoming_path
+	self.focus_flight = incoming_focus
+	self._setup_local_to_scene()
 
 func set_flight_path(incoming_path: Array[Vector3]) -> void:
 	self.flight_path = incoming_path

@@ -78,28 +78,46 @@ func release_action(incoming_basis: Basis) -> void:
 		# TODO Added this last multiplier bit in from force disks method (should be done by caller) don't know if its necessary though
 		#		If it is should be simplified into the calculation above instead of 2 separate lines
 		var final_speed: float = GameConfig.DEFAULTS.launch_speed * speed_multiplier
-		flight_data = FlightData.create_flight_data(final_speed, incoming_basis, flight_data.flight_path, flight_data.focus_flight)
+		flight_data = FlightData.new(final_speed, incoming_basis, flight_data.flight_path, flight_data.focus_flight)
 		# TODO Make sure that item_data contains the group_name of the entity throwing it
-		var force_disk_data: AssetData = AssetDelivery.create_asset_data(asset_data.creation_type, asset_data.item_state, asset_data.camera_state, asset_data.internal_type, asset_data.group_name, asset_data.owner_rid)
+		var force_disk_data: AssetData = self._get_next_asset_data()
 		var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, force_disk_data)
 		# TODO Since moving this camera position is fucked; Check out setting focus in create and launch; probably needs to be done as separate call after
 		launched_disk.global_position = flight_data.flight_path[0]
 		launched.emit()
 		pick_up()
 
+func drop_item() -> void:
+	var drop_path: Array[Vector3] = [self.global_position]
+	var drop_flight: FlightData = FlightData.new(0, self.global_basis, drop_path, false)
+	var drop_asset: AssetData = self._get_next_asset_data()
+	AssetDelivery.create_and_launch(drop_flight, drop_asset)
+	self.queue_free()
+
 func reset_launch_parameters() -> void:
 	flight_data = FlightData.new()
 
-func _set_asset_data(incoming_data: AssetData) -> void:
-	asset_data = incoming_data
-	if asset_data != null and !asset_data.group_name.is_empty() and !is_in_group(asset_data.group_name):
-		add_to_group(asset_data.group_name)
 
 func _set_flight_basis(incoming_basis: Basis) -> void:
-	if flight_data != null:
-		flight_data.flight_basis = incoming_basis
+	if self.flight_data != null:
+		self.flight_data.flight_basis = incoming_basis
 	else:
 		Logger.debug(_FLIGHT_DATA_NOT_SET, [], self)
 
 func pick_up() -> void:
 	self.queue_free()
+
+func _set_asset_data(incoming_data: AssetData) -> void:
+	self.asset_data = incoming_data
+	if self.asset_data != null and !asset_data.group_name.is_empty() and !self.is_in_group(self.asset_data.group_name):
+		self.add_to_group(asset_data.group_name)
+
+func _get_next_asset_data() -> AssetData:
+	return AssetData.new(
+		self.asset_data.creation_type, 
+		self.asset_data.item_state, 
+		self.asset_data.camera_state, 
+		self.asset_data.internal_type, 
+		self.asset_data.group_name, 
+		self.asset_data.owner_rid
+		)

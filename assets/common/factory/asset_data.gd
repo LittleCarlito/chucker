@@ -42,6 +42,21 @@ const ITEM_COLOR: Dictionary = {
 	AssetData.TYPE.UNKNOWN: GameConfig.DEFAULTS.color
 }
 
+func _init(incoming_internal: TYPE = TYPE.UNKNOWN,
+			incoming_state: ITEM_STATE = ITEM_STATE.DISABLED,
+			incoming_camera_state: CAMERA_STATE = CAMERA_STATE.EXISTS,
+			incoming_create: TYPE = AssetData.TYPE.UNKNOWN,
+			incoming_group: String = GameConfig.DEFAULTS.group,
+			incoming_owner_rid: RID = RID()) -> void:
+	self.internal_type = incoming_internal
+	self.item_state = incoming_state
+	self.camera_state = incoming_camera_state
+	self.group_name = incoming_group
+	self.creation_type = incoming_create
+	self.owner_rid = incoming_owner_rid
+	self._setup_local_to_scene()
+	
+
 ## Takes in type and returns corresponding color
 ## Returns UNKNOWN COLOR_DEFAULT from GlobalSettings if type is not known
 static func get_item_color(incoming_type: AssetData.TYPE) -> Color:

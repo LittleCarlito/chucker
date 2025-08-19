@@ -31,7 +31,7 @@ func _ready() -> void:
 	camera_container.populate_camera_control(_get_focus_point())
 	camera_container.set_current()
 	if asset_data == null:
-		asset_data = AssetDelivery.create_asset_data(AssetData.TYPE.PLAYER)
+		asset_data = AssetData.new(AssetData.TYPE.PLAYER)
 	asset_data.group_name = self.name
 	_update_state()
 
@@ -216,7 +216,7 @@ func release_action() -> void:
 ## Stores new_item internally and attempts to give it internal camera if possible
 ## Returns item that was equipped if one was previously
 func equip_item(new_item: Node3D) -> void:
-	#disable_movement()
+	disable_movement()
 	_give_camera(new_item)
 	# Returns the equipped item if there was one
 	var displaced_item: Node3D = item_container.equip_item(new_item)
