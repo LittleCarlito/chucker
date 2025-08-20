@@ -17,8 +17,6 @@ var height: float
 var _initial_camera_orientation: Transform3D
 var _just_launched: bool = false
 
-# BUG Right click looking unequipped disables movement
-# BUG Disable left and right unequipped looking
 # TODO Get ChuckChucker, mesh, and collision into a scene as BaseCharacter
 #		Then make another scene off that one with controls in the script and a camera at creation called ControllableCharacter
 
@@ -109,9 +107,6 @@ func _handle_movement(delta: float) -> void:
 				if Input.is_action_pressed(InputConfig.USER_INPUT.SPRINT):
 					sprint_addition = GameConfig.DEFAULTS.sprint_speed
 					camera_container.zoom_out()
-				elif camera_container.has_camera():
-					if not camera_container.reset_zoom():
-						Logger.debug(Logger.NULL_CAMERA_LOG, [Logger.RESET_ZOOM], self)
 				velocity.x = direction.x * (GameConfig.DEFAULTS.run_speed + sprint_addition)
 				velocity.z = direction.z * (GameConfig.DEFAULTS.run_speed + sprint_addition)
 		# Otherwise set velocity to start slowing down
@@ -119,8 +114,6 @@ func _handle_movement(delta: float) -> void:
 			velocity.x = move_toward(velocity.x, 0, GameConfig.DEFAULTS.run_speed)
 			velocity.z = move_toward(velocity.z, 0, GameConfig.DEFAULTS.run_speed)
 	move_and_slide()
-	# Keep camera up
-	#camera_container.position = lerp(camera_container.position, position, GlobalSettings.CAMERA.PAN_SPEED)
 
 ## Returns the height of Chuck
 func get_height() -> float:
@@ -137,7 +130,6 @@ func _handle_looking(event: InputEvent) -> void:
 		# When secondary is pressed
 		if event.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
 			_handle_zoom_in()
-			disable_movement()
 		elif event.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
 			camera_container.reset_camera_control()
 		# When secondary is released
