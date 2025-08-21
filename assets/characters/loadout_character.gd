@@ -37,7 +37,7 @@ func is_unequipped() -> bool:
 
 func equip_frontmost_object() -> void:
 	# Detect obejects in front of the character
-	if Input.is_action_just_pressed(InputConfig.USER_INPUT.INTERACT) and self.front_detection.is_colliding():
+	if self.front_detection.is_colliding():
 		var colliding_count = self.front_detection.get_collision_count()
 		for n in colliding_count:
 			var colliding_object = self.front_detection.get_collider(0)

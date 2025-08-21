@@ -12,7 +12,6 @@ func _physics_process(delta: float) -> void:
 	_handle_movement_input(delta)
 
 func _input(event: InputEvent) -> void:
-	_handle_view_input(event)
 	_handle_horizontal_rotation_input(event)
 
 func equip_item(new_item: Node3D) -> Variant:
@@ -24,36 +23,6 @@ func _handle_player_action_input(delta: float) -> void:
 		self.item_hold_action(delta, focusing_output)
 	if Input.is_action_just_released(InputConfig.USER_INPUT.PRIMARY):
 		self.item_hold_release()
-
-# TODO This needs to be changed to hold action and release hold action
-#			Will need to expand to alt_hold_action and alt_release_action too for right click
-func _handle_view_input(event: InputEvent) -> void:
-	var only_secondary: bool = Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY) and not Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY)
-	# Only handle aiming mouse movements when not equipped
-	if self.is_unequipped():
-		# When secondary is pressed
-		if event.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
-			self._handle_zoom_in()
-		elif event.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
-			self._reset_camera_control()
-		# When secondary is released
-		elif event.is_action_released(InputConfig.USER_INPUT.SECONDARY):
-			self._handle_zoom_out()
-		# When secondary is pressend and it is movement
-		elif event is InputEventMouseMotion and only_secondary:
-			var v_rotation_amount: float = NodeUtil.get_vertical_rotation_amount(event)
-			var h_rotation_amount: float = NodeUtil.get_horizontal_rotation_amount(event)
-			self.rotate_camera(v_rotation_amount, h_rotation_amount)
-	# Third person viewing self
-	# Only occurs when unequipped and primary is held
-	if event.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and self.is_unequipped():
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	elif event is InputEventMouseMotion and (Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and self.is_unequipped()):
-		## Determine amount to rotate camera
-		var horizontal_rotate_amount: float = deg_to_rad(event.relative.x) * CameraConfig.get_horizontal_look_sens()
-		self.horizontal_pan(horizontal_rotate_amount, self.global_position)
-	elif event.is_action_released(InputConfig.USER_INPUT.PRIMARY) and self.is_unequipped():
-		self.snap_back(self.global_rotation.z)
 
 func _handle_rotation_input() -> void:
 	if is_rotation_enabled():
