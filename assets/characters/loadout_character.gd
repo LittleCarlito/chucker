@@ -31,3 +31,32 @@ func unequip_item(alter_movement: bool = false) -> void:
 
 func is_equipped() -> bool:
 	return item_container.is_equipped()
+
+func is_unequipped() -> bool:
+	return item_container.is_unequipped()
+
+func equip_frontmost_object() -> void:
+	# Detect obejects in front of the character
+	if Input.is_action_just_pressed(InputConfig.USER_INPUT.INTERACT) and self.front_detection.is_colliding():
+		var colliding_count = self.front_detection.get_collision_count()
+		for n in colliding_count:
+			var colliding_object = self.front_detection.get_collider(0)
+			if colliding_object != null and colliding_object is ForceDisk:
+				AssetDelivery.create_and_give_item(self, colliding_object)
+
+func rotate_equipped_item(rotation_axis: Vector3, rotation_amount: float) -> void:
+	if rotation_axis.x != 0.0:
+		item_container._handle_x_rotation(rotation_amount)
+	# TODO Add y and z functions to item container and call them here
+
+func item_hold_action(delta: float, focus_output: bool = false) -> void:
+	if self.is_equipped():
+		self.item_container.hold_action(delta, focus_output)
+	else:
+		Logger.debug("Should really come up with an unarmed hold action...", [], self)
+
+func item_hold_release() -> void:
+	if self.is_equipped():
+		self.item_container.release_action()
+	else:
+		Logger.debug("Should really come up with an unarmed hold release action...", [], self)

@@ -144,7 +144,6 @@ func _on_camera_timer_timeout() -> void:
 	_focus_location = Vector3.INF
 	lose_focus.emit()
 
-# TODO Is getting called and working but only getting called once
 func idle_rotate(delta: float) -> void:
 	# Calculate the rotation angle in radians
 	var rotation_amount: float = (CameraConfig.get_idle_rotate_speed() * delta)

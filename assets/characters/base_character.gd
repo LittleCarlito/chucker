@@ -10,16 +10,13 @@ const _EMPTY_CAMERA_CONTAINER: String = "CameraContainer from \"%s\" returned nu
 
 var height: float
 var _initial_camera_orientation: Transform3D
-# TODO Need to break apart disable_movement calls into specifying movement and/or rotation
 var disable_movement_var: bool = false
 var disable_rotation_var: bool = false
 
-# TODO OOOOO
-#		Can we pass in "is_active" or something to set the camera container to false by default to ensure only characters that are supposed to be focused at start fight for it
 func _ready() -> void:
 	self.height = base_mesh.get_aabb().size.y
 	_initial_camera_orientation = camera_container.global_transform
-	self.camera_container.populate_camera_control(self._get_focus_point(), true)
+	self.camera_container.populate_camera_control(self._get_focus_point())
 
 func _physics_process(delta: float) -> void:
 	apply_gravity(delta)

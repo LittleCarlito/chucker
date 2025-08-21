@@ -3,10 +3,6 @@ class_name ChuckChucker
 
 var asset_data: AssetData
 
-# BUG Shift spring zoom out and release reset zoom no longer works
-# TODO Get ChuckChucker, mesh, and collision into a scene as BaseCharacter
-#		Then make another scene off that one with controls in the script and a camera at creation called ControllableCharacter
-
 func _ready() -> void:
 	super._ready()
 	if self.asset_data == null:
@@ -16,7 +12,11 @@ func _ready() -> void:
 	self.camera_container.add_to_group(self.name)
 	self._update_state()
 
-func equip_item(new_item:Node3D) -> Variant:
+func _physics_process(delta: float) -> void:
+	super._physics_process(delta)
+	self._handle_interact_input()
+
+func equip_item(new_item: Node3D) -> Variant:
 	if new_item.has_signal(ThrowableItem.LAUNCHED):
 		new_item.connect(ThrowableItem.LAUNCHED, release_action)
 	# Chuck drops items if already equipping one
@@ -29,11 +29,7 @@ func equip_item(new_item:Node3D) -> Variant:
 func _process(_delta: float) -> void:
 	pass
 
-# TODO Should come up with something; Maybe an unequip check and then some default interaction like a wiggle
-func hold_action(_delta: float) -> void:
-	pass
-
-## Handles group calls on release_action
+## Release action gets called on the items; This logic is what chuck does on release
 func release_action() -> void:
 	self.unequip_item()
 	# Update the status of the character if the item took the camera with it
@@ -47,7 +43,9 @@ func release_action() -> void:
 func get_group_name() -> String:
 	return self.asset_data.group_name
 
-# TODO Need to go through methods in and affecting this class and determine which need to have this method called after
-#		Only should set enum state and not change enablement of movement or anything like that
 func _update_state() -> void:
 	asset_data.camera_state = AssetData.get_camera_state(camera_container)
+
+func _handle_interact_input() -> void:
+	if Input.is_action_just_pressed(InputConfig.USER_INPUT.INTERACT):
+		self.equip_frontmost_object();
