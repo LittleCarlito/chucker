@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cfdusnakbbbnq" path="res://resources/debug_mask.png" id="3_u6uee"]
 [ext_resource type="PackedScene" uid="uid://b7qyj227lvqus" path="res://assets/items/disks/common/disk_collision.tscn" id="4_d36lp"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_arkct"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wjuk3"]
 resource_local_to_scene = true
 albedo_color = Color(0, 0, 1, 1)
 detail_enabled = true
@@ -14,7 +14,7 @@ uv1_scale = Vector3(2, 2, 2)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_ltbny"]
 resource_local_to_scene = true
-material = SubResource("StandardMaterial3D_arkct")
+material = SubResource("StandardMaterial3D_wjuk3")
 height = 0.1
 
 [node name="PathDisk" type="Node3D" node_paths=PackedStringArray("disk_mesh", "disk_collision", "path_3d", "path_follow") groups=["All", "Disk", "General"]]

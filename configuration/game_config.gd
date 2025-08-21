@@ -27,7 +27,10 @@ const DEFAULTS: Dictionary = {
 	"force_color": Color.RED,
 	"path_color": Color.BLUE,
 	"scroll_color": Color(0.686, 0.608, 0.439, 0.624),
-	"color": Color.CHARTREUSE
+	"color": Color.CHARTREUSE,
+	# Location values
+	"default_location": Vector3(0, 1, 0),
+	"uknown_location": Vector3(NUMBERS.FLOAT16_MAX, NUMBERS.FLOAT16_MAX, NUMBERS.FLOAT16_MAX)
 }
 
 # Called when the node enters the scene tree for the first time.

@@ -61,13 +61,13 @@ static func new_container_with_camera() -> CameraContainer:
 	new_camera_container.set_camera(new_scene_camera)
 	return new_camera_container
 
-func populate_camera_control(incoming_focus: Vector3 = Vector3.INF, set_current: bool = false) -> void:
+func populate_camera_control(incoming_focus: Vector3 = Vector3.INF, incoming_current: bool = false) -> void:
 	if internal_camera == null:
 		var new_scene_camera: Camera3D = AssetFactory.new_camera()
 		set_camera(new_scene_camera, incoming_focus)
 	else:
 		_handle_logging(_CAMERA_ALREADY_EXISTS)
-	if set_current:
+	if incoming_current:
 		self.set_current()
 
 func focus_camera_control(focus_location: Vector3, hold_focus: bool = false) -> void:

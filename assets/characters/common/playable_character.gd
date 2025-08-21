@@ -40,7 +40,7 @@ func _transfer_and_enable(incoming_camera: Camera3D) -> void:
 	_just_output = false
 	self.set_camera(incoming_camera)
 
-func _handle_movement_input(delta: float) -> void:
+func _handle_movement_input(_delta: float) -> void:
 	# Handle jump
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.JUMP):
 		self.jump()
