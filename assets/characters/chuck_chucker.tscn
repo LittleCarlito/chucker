@@ -25,15 +25,15 @@ rings = 13
 [sub_resource type="BoxShape3D" id="BoxShape3D_3pknt"]
 size = Vector3(1.2, 1.2, 1)
 
-[node name="ChuckChucker" type="CharacterBody3D" node_paths=PackedStringArray("camera_container", "front_detection", "item_container", "base_mesh", "base_collision") groups=["General", "Player"]]
+[node name="ChuckChucker" type="CharacterBody3D" node_paths=PackedStringArray("front_detection", "item_container", "base_mesh", "base_collision", "camera_container") groups=["General", "Player"]]
 collision_mask = 2
 script = ExtResource("1_hnkcf")
-camera_container = NodePath("CameraContainer")
 focusing_output = true
 front_detection = NodePath("FrontDetect")
 item_container = NodePath("ItemContainer")
 base_mesh = NodePath("ChuckMesh")
 base_collision = NodePath("CollisionShape3D")
+camera_container = NodePath("CameraContainer")
 
 [node name="ChuckMesh" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_qdtv4")
@@ -56,6 +56,5 @@ collision_mask = 4
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.891411, 0)
 
 [connection signal="log_output" from="CameraContainer" to="." method="_handle_child_logs"]
-[connection signal="turn_horizontal" from="ItemContainer" to="." method="_handle_turn_horizontal"]
 [connection signal="zoom_in" from="ItemContainer" to="." method="_handle_zoom_in"]
 [connection signal="zoom_out" from="ItemContainer" to="." method="_handle_zoom_out"]

@@ -240,15 +240,17 @@ func reset_zoom() -> bool:
 		internal_camera.fov = CameraConfig.get_fov_value()
 	return zoom_reset
 
-func zoom_in() -> void:
+func zoom_in(zoom_amount: float = NUMBERS.FLOAT16_MAX) -> void:
+	var zoom_adjust = zoom_amount if zoom_amount != NUMBERS.FLOAT16_MAX else CameraConfig.get_in_adjust()
 	if internal_camera != null:
-		internal_camera.fov = CameraConfig.get_fov_value() - CameraConfig.get_in_adjust()
+		internal_camera.fov = CameraConfig.get_fov_value() - zoom_adjust
 	else:
 		_handle_logging(Logger.NULL_CAMERA_LOG, [Logger.ZOOM_IN])
 
-func zoom_out() -> void:
+func zoom_out(zoom_amount: float = NUMBERS.FLOAT16_MAX) -> void:
+	var zoom_adjust = zoom_amount if zoom_amount != NUMBERS.FLOAT16_MAX else CameraConfig.get_in_adjust()
 	if internal_camera != null:
-		internal_camera.fov = CameraConfig.get_fov_value() + CameraConfig.get_out_adjust()
+		internal_camera.fov = CameraConfig.get_fov_value() + zoom_adjust
 	else:
 		_handle_logging(Logger.NULL_CAMERA_LOG, [Logger.ZOOM_OUT])
 

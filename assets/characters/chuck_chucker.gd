@@ -3,6 +3,7 @@ class_name ChuckChucker
 
 var asset_data: AssetData
 
+# BUG Shift spring zoom out and release reset zoom no longer works
 # TODO Get ChuckChucker, mesh, and collision into a scene as BaseCharacter
 #		Then make another scene off that one with controls in the script and a camera at creation called ControllableCharacter
 

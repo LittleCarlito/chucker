@@ -8,6 +8,7 @@ signal turn_horizontal(rotate_amount)
 const _UNEQUIP_MESSAGE_LOG: String = "unequip_item() called but no item is equiped"
 const _EQUIPPED_MISSING_METHOD: String = "Equipped item \"%s\" doesn't have %s method"
 const _ITEM_CONTAINER_UNEQUIPPED: String = "ItemContainer is not equipped with an item; %s should not have been called"
+const _TURN_HORIZONTAL: String = "turn_horizontal"
 
 var equipped_item: Node3D
 
