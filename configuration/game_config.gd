@@ -6,7 +6,7 @@ const NAME: String = "game"
 const DEFAULTS: Dictionary = {
 	# Player values
 	"run_speed": 5.0,
-	"sprint_speed": 4.0,
+	"sprint_multiplier": 2.0,
 	"jump_force": 4.5, 
 	"max_launch_rotation": 67,
 	"min_launch_rotation": -25,

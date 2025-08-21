@@ -1,20 +1,5 @@
-# TODO Get rid of this class and move the disable stuff into chuck
 extends LoadoutCharacter
 class_name PlayableCharacter
-
-const _RETURNING_ZERO: String = "; Returning 0"
-const _HANDLE_PLAYER_ACTION: String = "_handle_player_action"
-const _HANDLE_CAMERA_CONTROLS: String = "_handle_camera_controls"
-const _HANDLE_PLAYER_INTERACT: String = "_handle_player_interact"
-const _HANDLE_MOVEMENT: String = "_handle_movement"
-const _UNEQUIP_ITEM: String = "unequip_item"
-const _GET_HEIGHT: String = "get_height"
-const _UKNOWN_OBJECT_LOG: String = "Tried to pick up UNKNOWN object; Where did you get that?"
-const _NO_CAMERA_CONTAINER_LOG: String = "New item \"%s\" doesn't have the ability to hold a camera"
-const _EMPTY_CAMERA_CONTAINER: String = "CameraContainer from \"%s\" returned null"
-
-@export var camera_container: CameraContainer
-var _initial_camera_orientation: Transform3D
 
 # TODO OOOOO Disable movement and other movement stuff (that isn't input based) should be moved down to base_character
 
@@ -25,6 +10,7 @@ func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 func _physics_process(delta: float) -> void:
+	super._physics_process(delta)
 	_handle_camera_controls()
 	_handle_player_action(delta)
 	_handle_player_interact()
@@ -38,16 +24,6 @@ func _input(event: InputEvent) -> void:
 func equip_item(new_item: Node3D) -> Variant:
 	self._give_camera(new_item)
 	return super.equip_item(new_item)
-
-# TODO Break apart into input base logic and jump logic; Put jump logic in base_character
-## Actions to be performed when MOVE_JUMP is pressed
-func _handle_jump(delta: float) -> void:
-	# Add the gravity
-	if not is_on_floor():
-		velocity += get_gravity() * delta
-	# Handle jump
-	if Input.is_action_just_pressed(InputConfig.USER_INPUT.JUMP) and is_on_floor() and is_movement_enabled():
-		velocity.y = GameConfig.DEFAULTS.jump_force
 
 # TODO Break out input logic from base logic; Have base logic moved to LoadoutCharacter and input logic here calling it
 ## Actions when disk is thrown
@@ -141,8 +117,8 @@ func _transfer_and_enable(incoming_camera: Camera3D) -> void:
 	_just_output = false
 	camera_container.set_camera(incoming_camera)
 
-# TODO Break out interact logic from input logic; move interact to base class keep input calling that here
-# TODO FrontDetect should be made its own scene with this in its script
+# TODO Break out interact logic from input logic; move interact to Loadout class keep input calling that here
+#			That means moving the detection box from the front too
 ## Handle player pressing interact button
 func _handle_player_interact() -> void:
 	# Detect obejects in front of the character
@@ -157,29 +133,17 @@ func _handle_player_interact() -> void:
 ## Detects and executes movements
 func _handle_movement(delta: float) -> void:
 	# Handle jump
-	if not is_on_floor():
-		velocity += get_gravity() * delta
-	if Input.is_action_just_pressed(InputConfig.USER_INPUT.JUMP) and is_on_floor() and is_movement_enabled():
-		velocity.y = GameConfig.DEFAULTS.jump_force
+	if Input.is_action_just_pressed(InputConfig.USER_INPUT.JUMP):
+		self.jump()
 	var input_dir = Input.get_vector(InputConfig.USER_INPUT.STRAFE_LEFT, InputConfig.USER_INPUT.STRAFE_RIGHT, InputConfig.USER_INPUT.FORWARD, InputConfig.USER_INPUT.BACKWARD)
+	var final_direction: Vector3 = Vector3(0, 0, 0)
+	var sprint_multiplier: float = 1
 	if(is_on_floor()):
-		var direction = (self.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-		if direction:
-			if is_movement_disabled():
-				velocity.x = 0
-				velocity.z = 0
-			else:
-				var sprint_addition: float = 0.0
-				if Input.is_action_pressed(InputConfig.USER_INPUT.SPRINT):
-					sprint_addition = GameConfig.DEFAULTS.sprint_speed
-					camera_container.zoom_out()
-				velocity.x = direction.x * (GameConfig.DEFAULTS.run_speed + sprint_addition)
-				velocity.z = direction.z * (GameConfig.DEFAULTS.run_speed + sprint_addition)
-		# Otherwise set velocity to start slowing down
-		else:
-			velocity.x = move_toward(velocity.x, 0, GameConfig.DEFAULTS.run_speed)
-			velocity.z = move_toward(velocity.z, 0, GameConfig.DEFAULTS.run_speed)
-	move_and_slide()
+		final_direction = (self.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+		if Input.is_action_pressed(InputConfig.USER_INPUT.SPRINT):
+			sprint_multiplier = GameConfig.DEFAULTS.sprint_multiplier
+			camera_container.zoom_out()
+	self.move(final_direction, sprint_multiplier)
 
 # TODO Break out input logic from rotation logic; rotation logic goes to base class; input logic calls base logic
 ## Rotate input control

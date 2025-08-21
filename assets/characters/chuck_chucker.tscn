@@ -32,7 +32,6 @@ camera_container = NodePath("CameraContainer")
 focusing_output = true
 front_detection = NodePath("FrontDetect")
 item_container = NodePath("ItemContainer")
-freeze_on_equip = false
 base_mesh = NodePath("ChuckMesh")
 base_collision = NodePath("CollisionShape3D")
 
