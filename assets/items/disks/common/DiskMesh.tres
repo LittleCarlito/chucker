@@ -1,10 +1,9 @@
 [gd_resource type="CylinderMesh" load_steps=2 format=3 uid="uid://bwc6i6by0861c"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y830f"]
-resource_local_to_scene = true
-albedo_color = Color(0.93, 0, 0, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y5mod"]
+albedo_color = Color(1, 0, 0, 1)
 
 [resource]
 resource_local_to_scene = true
-material = SubResource("StandardMaterial3D_y830f")
+material = SubResource("StandardMaterial3D_y5mod")
 height = 0.1
