@@ -126,4 +126,3 @@ func get_first_non_sequential_index(incoming_data: Array[int]) -> int:
 		if i + 1 != incoming_data[i]:
 			return_index = i
 	return return_index
-
