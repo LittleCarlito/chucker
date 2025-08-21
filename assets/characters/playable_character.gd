@@ -25,10 +25,12 @@ func _handle_player_action_input(delta: float) -> void:
 	if Input.is_action_just_released(InputConfig.USER_INPUT.PRIMARY):
 		self.item_hold_release()
 
+# TODO This needs to be changed to hold action and release hold action
+#			Will need to expand to alt_hold_action and alt_release_action too for right click
 func _handle_view_input(event: InputEvent) -> void:
 	var only_secondary: bool = Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY) and not Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY)
 	# Only handle aiming mouse movements when not equipped
-	if not self.is_equipped():
+	if self.is_unequipped():
 		# When secondary is pressed
 		if event.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
 			self._handle_zoom_in()

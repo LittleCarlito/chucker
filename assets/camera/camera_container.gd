@@ -1,24 +1,6 @@
 extends Node3D
 class_name CameraContainer
 
-# TODO This should end up being a container that 
-#			Is able to have a set focused location
-#				Once that location is set it should always be focusing it
-#			Handle input events and move according to internally set MODE
-	#			Have MODE.HORIZONTAL_ROTATION
-	#				Camera only rotates on the horizontal access
-	#					Ignore other axis given in the mouse movement event
-	#				If focused location is set it will continue to focus on that location and move around it
-	#				If focused location is not set camera container should continue to look forward and move on desired access
-	#					Should not be in circular motion around point
-	#			Have MODE.FREE_LOOK
-	#				Camera rotates according to mouse movement event
-	#				If focused location movement self should always end up facing that location and having movement centered around it
-	#				If no focused location sent self should just move according to mouse movement freely in normalized 2d direction
-#				
-# TODO Add methods to allow creation of camera containers without cameras
-#		These can then be holders for passed around cameras originally from characterbody scenes
-
 signal lose_focus
 signal log_output(log_level: Logger.LEVEL, log_string: String, optional_params: Array)
 
@@ -210,14 +192,12 @@ func toggle_camera() -> void:
 	else:
 		_handle_logging(Logger.NULL_CAMERA_LOG, [Logger.TOGGLE_CAMERA])
 
-# TODO In disable and enable camera are where signals or group method calls need to be sent to update asset status
 func disable_camera() -> void:
 	if internal_camera != null:
 		internal_camera.current = false
 	else:
 		_handle_logging(Logger.NULL_CAMERA_LOG, [Logger.DISABLE_CAMERA])
 
-# TODO In disable and enable camera are where signals or group method calls need to be sent to update asset status
 func enable_camera() -> void:
 	if internal_camera != null:
 		internal_camera.current = true

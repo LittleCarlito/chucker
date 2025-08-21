@@ -123,6 +123,12 @@ func snap_back(incoming_rotation: float = NUMBERS.FLOAT16_MAX) -> void:
 func set_camera(incoming_camera: Camera3D) -> void:
 	self.camera_container.set_camera(incoming_camera)
 
+func disable_camera() -> void:
+	self.camera_container.disable_camera()
+
+func enable_camera() -> void:
+	self.camera_container.enable_camera()
+
 func _reset_camera_control() -> void:
 	self.camera_container.reset_camera_control()
 

@@ -42,7 +42,6 @@ func unequip_item() -> void:
 	# Reset item controller rotation
 	self.rotation_degrees.x = 0
 
-# TODO Figure out a default 0ing, min, or max value for Basis to allow defaulting
 func hold_action(delta: float, incoming_focus: bool = false) -> void:
 	if is_equipped():
 		if equipped_item.has_method(GroupData.HOLD_ACTION):
@@ -52,7 +51,6 @@ func hold_action(delta: float, incoming_focus: bool = false) -> void:
 	else:
 		Logger.debug(_ITEM_CONTAINER_UNEQUIPPED, [GroupData.HOLD_ACTION], self)
 
-# TODO Figure out a default 0ing, min, or max value for Basis to allow defaulting
 func release_action() -> void:
 	if is_equipped():
 		if equipped_item.has_method(GroupData.RELEASE_ACTION):
@@ -85,19 +83,13 @@ func _handle_aiming(aim_type: ThrowableItem.AIM_TYPE, adjustment_value: float) -
 
 # TODO Redo this to use clamp() inseach of the checking logic
 func _handle_x_rotation(rotation_amount: float) -> void:
-	var is_min_rotate: bool = rotation_amount > 0 and rotation_degrees.x < GameConfig.DEFAULTS.max_launch_rotation
-	var is_max_rotate: bool = rotation_amount < 0 and rotation_degrees.x > GameConfig.DEFAULTS.min_launch_rotation
-	if is_min_rotate or is_max_rotate:
-		var projected_rotation: float
-		if rotation_amount > 0:
-			projected_rotation = rad_to_deg(rotation_amount + rotation.x)
-			if projected_rotation > GameConfig.DEFAULTS.max_launch_rotation:
-				rotation_degrees.x = GameConfig.DEFAULTS.max_launch_rotation
-			else:
-				rotate_x(rotation_amount)
-		else:
-			projected_rotation = rad_to_deg(rotation_amount + rotation.x)
-			if projected_rotation < GameConfig.DEFAULTS.min_launch_rotation:
-				rotation_degrees.x = GameConfig.DEFAULTS.min_launch_rotation
-			else:
-				rotate_x(rotation_amount)
+	# Compute the new projected rotation in degrees
+	var projected_rotation: float = rad_to_deg(rotation.x + rotation_amount)
+	# Clamp it between allowed min and max
+	projected_rotation = clamp(
+		projected_rotation,
+		GameConfig.DEFAULTS.min_launch_rotation,
+		GameConfig.DEFAULTS.max_launch_rotation
+	)
+	# Directly set rotation_degrees.x
+	rotation_degrees.x = projected_rotation

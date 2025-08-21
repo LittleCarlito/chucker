@@ -43,6 +43,14 @@ func release_action() -> void:
 func get_group_name() -> String:
 	return self.asset_data.group_name
 
+func disable_camera() -> void:
+	super.disable_camera()
+	self._update_state()
+
+func enable_camera() -> void:
+	super.enable_camera()
+	self._update_state()
+
 func _update_state() -> void:
 	asset_data.camera_state = AssetData.get_camera_state(camera_container)
 
