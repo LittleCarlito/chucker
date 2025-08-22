@@ -18,7 +18,7 @@ const DEFAULTS: Dictionary = {
 	"gravity_multiplier": .009,
 	"max_pull": 200,
 	"min_pull": 15,
-	"max_offset": 400,
+	"max_offset": 250,
 	"rotate_adjust": .1,
 	"max_speed_reduce": .75,
 	"item": AssetData.TYPE.FORCE,

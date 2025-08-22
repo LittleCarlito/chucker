@@ -63,6 +63,15 @@ func set_item_mesh(new_mesh: DiskMesh) -> void:
 		old_mesh.queue_free()
 	disk_mesh = new_mesh
 
+func get_disk_camera() -> Camera3D:
+	return camera_container.get_camera()
+
+func is_current() -> bool:
+	return camera_container.is_current()
+
+func pick_up() -> void:
+	self.queue_free()
+
 func _body_enter(body_rid: RID, _body: Node3D, _body_shape_index: int, _local_shape_index: int) -> void:
 	if body_rid != asset_data.owner_rid:
 		_collision_location = disk_mesh.global_position
@@ -97,12 +106,6 @@ func _swap_disk(drop_disk: bool = false) -> void:
 			_launched_disk.linear_velocity += _launched_disk.global_transform.basis * added_velocity
 			_spawned_disk = true
 		pick_up()
-
-func get_disk_camera() -> Camera3D:
-	return camera_container.get_camera()
-
-func is_current() -> bool:
-	return camera_container.is_current()
 
 func _set_flight_data(incoming_data: FlightData) -> void:
 	flight_data = incoming_data
@@ -167,9 +170,6 @@ func _create_camera_container() -> void:
 		_set_camera_container(new_camera_container)
 	else:
 		Logger.warn(Logger.ALREADY_EXISTS_LOG, [Logger.CAMERA_CONTAINER], self)
-
-func pick_up() -> void:
-	self.queue_free()
 
 func _handle_child_logs(incoming_level: Logger.LEVEL, incoming_log: String, optional_params: Array) -> void:
 	match incoming_level:

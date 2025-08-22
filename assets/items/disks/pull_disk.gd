@@ -1,6 +1,7 @@
 extends ThrowableItem
 class_name PullDisk
 
+# TODO Make pulling to the sides add more curve than distance
 # TODO Need to add right click aiming
 # TODO Allow for holding space or something to set power but still pull for offset
 # TODO Make a maximum pull time like charge disk
@@ -19,10 +20,6 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	pass
-
-func _input(_event: InputEvent) -> void:
-	#handle_input(event)
 	pass
 
 func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> void:
