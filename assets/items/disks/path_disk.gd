@@ -21,6 +21,7 @@ const _BODY_ENTER: String = "body_enter"
 @export var disk_collision: DiskCollision
 @export var path_3d: Path3D
 @export var path_follow: PathFollow3D
+@export var debug_logs: bool = true
 var camera_container: CameraContainer
 var flight_data: FlightData
 var asset_data: AssetData
@@ -112,6 +113,8 @@ func _set_flight_data(incoming_data: FlightData) -> void:
 
 func _launch() -> void:
 	if flight_data != null:
+		var flight_type: String = NodeUtil.analyze_path(flight_data.flight_path)
+		Logger.debug("Heads up its a %s shot!", [flight_type], self)
 		if flight_data.focus_flight:
 			_submit_camera_request()
 			camera_container.set_current()
