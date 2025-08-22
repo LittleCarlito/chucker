@@ -22,14 +22,13 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	pass
 
+# We know primary is held upon entering this function
 func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> void:
 	flight_data.focus_flight = incoming_focus
 	# Perform pull disk calls
 	var only_primary_held: bool = Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY)
 	if only_primary_held:
 		pull_draw.begin_pull()
-	elif Input.is_action_just_released(InputConfig.USER_INPUT.PRIMARY):
-		pull_draw.reset_pull()
 	## If right click is pressed while holding left reset throw
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.SECONDARY):
 		pull_draw.reset_pull()
@@ -42,7 +41,9 @@ func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> 
 		flight_data.flight_path = aim_line.draw_aim_line(multiplier, pull_draw.last_offset * .01)
 		flight_data.flight_basis = incoming_basis
 
+# We know primary was released upon entering this function
 func release_action(incoming_basis: Basis) -> void:
+	pull_draw.reset_pull()
 	## If right click is not held launch the disk
 	if not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY) and pull_draw.last_length > GameConfig.DEFAULTS.min_pull:
 		var multiplier: float = min(GameConfig.DEFAULTS.max_hold, (pull_draw.last_length / 100)) * GameConfig.DEFAULTS.hold_multiplier
