@@ -63,7 +63,7 @@ func hold_action(delta: float, incoming_basis: Basis, incoming_focus: bool) -> v
 		var speed_multiplier: float = min(GameConfig.DEFAULTS.max_hold, held_time) * GameConfig.DEFAULTS.hold_multiplier
 		var drawn_line: Array[Vector3] = aim_line.draw_aim_line(speed_multiplier)
 		if drawn_line != null:
-			flight_data.flight_path = drawn_line
+			flight_data.flight_path = FlightPath.convert(drawn_line)
 		flight_data.flight_basis = incoming_basis
 
 # TODO Refactor to take in global_basis and set it in flight data as well
@@ -74,7 +74,7 @@ func release_action(incoming_basis: Basis) -> void:
 		charge_view.set_progress(-1)
 		var final_time: float = stopwatch.reset()
 		var speed_multiplier: float = min(GameConfig.DEFAULTS.max_hold, final_time) * GameConfig.DEFAULTS.hold_multiplier
-		flight_data.flight_path = aim_line.draw_aim_line(speed_multiplier)
+		flight_data.flight_path = FlightPath.convert(aim_line.draw_aim_line(speed_multiplier))
 		# TODO Added this last multiplier bit in from force disks method (should be done by caller) don't know if its necessary though
 		#		If it is should be simplified into the calculation above instead of 2 separate lines
 		var final_speed: float = GameConfig.DEFAULTS.launch_speed * speed_multiplier
@@ -83,12 +83,12 @@ func release_action(incoming_basis: Basis) -> void:
 		var force_disk_data: AssetData = self._get_next_asset_data()
 		var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, force_disk_data)
 		# TODO Since moving this camera position is fucked; Check out setting focus in create and launch; probably needs to be done as separate call after
-		launched_disk.global_position = flight_data.flight_path[0]
+		launched_disk.global_position = flight_data.flight_path.path[0].point_position
 		launched.emit()
 		pick_up()
 
 func drop_item() -> void:
-	var drop_path: Array[Vector3] = [self.global_position]
+	var drop_path: FlightPath = FlightPath.convert([self.global_position])
 	var drop_flight: FlightData = FlightData.new(0, self.global_basis, drop_path, false)
 	var drop_asset: AssetData = self._get_next_asset_data()
 	AssetDelivery.create_and_launch(drop_flight, drop_asset)

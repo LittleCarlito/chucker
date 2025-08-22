@@ -12,11 +12,12 @@ class_name PullDisk
 @export var pull_draw: PullDraw
 @export var charge_view: ChargeView
 var asset_data: AssetData
-var flight_data: FlightData = FlightData.new()
+var flight_data: FlightData
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	charge_view.set_progress(-1)
+	flight_data = FlightData.new()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -38,7 +39,7 @@ func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> 
 	elif not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
 		charge_view.set_progress((pull_draw.last_length / GameConfig.DEFAULTS.max_pull) * 100)
 		var multiplier: float = (pull_draw.last_length / 100) * GameConfig.DEFAULTS.hold_multiplier
-		flight_data.flight_path = aim_line.draw_aim_line(multiplier, pull_draw.last_offset * .01)
+		flight_data.flight_path = FlightPath.convert(aim_line.draw_aim_line(multiplier, pull_draw.last_offset * .01))
 		flight_data.flight_basis = incoming_basis
 
 # We know primary was released upon entering this function
@@ -58,7 +59,7 @@ func release_action(incoming_basis: Basis) -> void:
 		charge_view.set_progress(-1)
 
 func drop_item() -> void:
-	var drop_path: Array[Vector3] = [self.global_position]
+	var drop_path: FlightPath = FlightPath.convert([self.global_position])
 	var drop_flight: FlightData = FlightData.new(0, self.global_basis, drop_path, false)
 	var drop_asset: AssetData = self._get_next_asset_data(true)
 	AssetDelivery.create_and_launch(drop_flight, drop_asset)

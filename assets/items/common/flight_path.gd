@@ -1,0 +1,112 @@
+class_name FlightPath
+var path: Array[FlightPoint]
+var path_type: PATH_TYPE
+
+enum PATH_TYPE {
+	STRAIGHT,
+	LEFT,
+	RIGHT,
+	EMPTY
+}
+
+func _init(incoming_path: Array[FlightPoint] = []):
+	self.path = incoming_path
+	self.path_type = self.analyze_path(self)
+
+func is_empty() -> bool:
+	return path.is_empty()
+
+func print_details() -> void:
+	var type_string: String = self._get_type_string(path_type)
+	Logger.debug("\n[FlightPath data]\nNumber of points: %d\nFlight type %s", [path.size(), type_string], self)
+	# Extra details: iterate over each flight point
+	for i in range(path.size()):
+		var fp: FlightPoint = path[i]
+		Logger.error("Point %d: Roll Intensity: %.3f", [i, fp.roll_intensity], self)
+
+func _get_type_string(incoming_type: PATH_TYPE) -> String:
+	match incoming_type:
+		PATH_TYPE.STRAIGHT:
+			return "straight"
+		PATH_TYPE.LEFT:
+			return "hook"
+		PATH_TYPE.RIGHT:
+			return "slice"
+		_:
+			return "empty"
+
+## Analyzes the incoming path for curvature
+static func analyze_path(flight_path: FlightPath) -> PATH_TYPE:
+	if flight_path.path.is_empty():
+		return PATH_TYPE.EMPTY
+	# Need at least 3 points to determine curvature direction
+	if flight_path.path.size() < 3:
+		return PATH_TYPE.STRAIGHT
+	# Just check first few segments to determine overall curve direction
+	var point_a = flight_path.path[0].point_position
+	var point_b = flight_path.path[1].point_position
+	var point_c = flight_path.path[2].point_position
+	# Create vectors from A to B and B to C (ignoring Y component for left/right only)
+	var vector_ab = Vector2(point_b.x - point_a.x, point_b.z - point_a.z)
+	var vector_bc = Vector2(point_c.x - point_b.x, point_c.z - point_b.z)
+	# Use cross product to determine turn direction
+	var cross_product = vector_ab.x * vector_bc.y - vector_ab.y * vector_bc.x
+	if cross_product > 0.001:
+		return PATH_TYPE.RIGHT
+	elif cross_product < -0.001:
+		return PATH_TYPE.LEFT
+	else:
+		return PATH_TYPE.STRAIGHT
+
+## Converts a path of 3D points into a FlightPath with roll intensity calculations
+## roll_intensity: 0.0 = straight, positive = right turn (slice), negative = left turn (hook)
+## Higher absolute values indicate sharper curves, typically ranging from -2.0 to +2.0
+static func convert(incoming_line: Array[Vector3]) -> FlightPath:
+	var flight_points: Array[FlightPoint] = []
+	# Handle empty array
+	if incoming_line.size() == 0:
+		return FlightPath.new(flight_points)
+	# Handle single point - create FlightPoint with no roll
+	if incoming_line.size() == 1:
+		var flight_point = FlightPoint.new()
+		flight_point.point_position = incoming_line[0]
+		flight_point.roll_intensity = 0.0
+		flight_points.append(flight_point)
+		return FlightPath.new(flight_points)
+	# Process each point in the path (2 or more points)
+	for i in range(incoming_line.size()):
+		var flight_point = FlightPoint.new()
+		flight_point.point_position = incoming_line[i]
+		# Calculate roll intensity based on curvature at this point
+		if i == 0 or i == incoming_line.size() - 1:
+			# First and last points have no roll (no curve data available)
+			flight_point.roll_intensity = 0.0
+		else:
+			# Get three consecutive points to analyze curvature
+			var point_a = incoming_line[i - 1]
+			var point_current = incoming_line[i]
+			var point_c = incoming_line[i + 1]
+			# Create vectors (ignoring Y component for left/right analysis)
+			var vector_ab = Vector2(point_current.x - point_a.x, point_current.z - point_a.z)
+			var vector_bc = Vector2(point_c.x - point_current.x, point_c.z - point_current.z)
+			# Normalize vectors to get consistent intensity regardless of segment length
+			var len_ab = vector_ab.length()
+			var len_bc = vector_bc.length()
+			if len_ab > 0.001 and len_bc > 0.001:
+				vector_ab = vector_ab / len_ab
+				vector_bc = vector_bc / len_bc
+				# Calculate cross product for turn direction and magnitude
+				var cross_product = vector_ab.x * vector_bc.y - vector_ab.y * vector_bc.x
+				# Calculate dot product for turn sharpness (how much the direction changes)
+				var dot_product = vector_ab.dot(vector_bc)
+				# Convert dot product to angle change (0 = no change, 1 = 90°, 2 = 180°)
+				var angle_change = (1.0 - dot_product)
+				# Roll intensity combines direction and sharpness
+				# Positive = right turn (slice), Negative = left turn (hook)
+				flight_point.roll_intensity = cross_product * angle_change
+			else:
+				flight_point.roll_intensity = 0.0
+		flight_points.append(flight_point)
+	var flight_path = FlightPath.new(flight_points)
+	flight_path.path_type = analyze_path(flight_path)
+	return flight_path

@@ -126,24 +126,3 @@ func get_first_non_sequential_index(incoming_data: Array[int]) -> int:
 		if i + 1 != incoming_data[i]:
 			return_index = i
 	return return_index
-
-## Analyzes the incoming path for curvature
-func analyze_path(incoming_path: Array[Vector3]) -> String:
-	# Need at least 3 points to determine curvature direction
-	if incoming_path.size() < 3:
-		return "straight"
-	# Just check first few segments to determine overall curve direction
-	var point_a = incoming_path[0]
-	var point_b = incoming_path[1] 
-	var point_c = incoming_path[2]
-	# Create vectors from A to B and B to C (ignoring Y component for left/right only)
-	var vector_ab = Vector2(point_b.x - point_a.x, point_b.z - point_a.z)
-	var vector_bc = Vector2(point_c.x - point_b.x, point_c.z - point_b.z)
-	# Use cross product to determine turn direction
-	var cross_product = vector_ab.x * vector_bc.y - vector_ab.y * vector_bc.x
-	if cross_product > 0.001:
-		return "slice"
-	elif cross_product < -0.001:
-		return "hook"
-	else:
-		return "straight"

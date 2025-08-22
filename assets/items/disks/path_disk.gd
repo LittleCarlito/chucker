@@ -96,7 +96,7 @@ func _swap_disk(drop_disk: bool = false) -> void:
 			new_disk.rotation.x = prepare_angle
 			_spawned_disk = true
 		else:
-			var new_flight_path: Array[Vector3] = [disk_mesh.global_position]
+			var new_flight_path: FlightPath = FlightPath.convert([disk_mesh.global_position])
 			flight_data.set_flight_path(new_flight_path)
 			# TODO Get PathDisk collision speed offset to config
 			var original_flight_speed: float = flight_data.flight_speed
@@ -113,8 +113,7 @@ func _set_flight_data(incoming_data: FlightData) -> void:
 
 func _launch() -> void:
 	if flight_data != null:
-		var flight_type: String = NodeUtil.analyze_path(flight_data.flight_path)
-		Logger.debug("Heads up its a %s shot!", [flight_type], self)
+		flight_data.print_details()
 		if flight_data.focus_flight:
 			_submit_camera_request()
 			camera_container.set_current()
@@ -124,8 +123,8 @@ func _launch() -> void:
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		# Set path's curve equal to flight data's path
 		var flight_curve: Curve3D = Curve3D.new()
-		for flight_point in flight_data.flight_path:
-			flight_curve.add_point(flight_point)
+		for flight_point in flight_data.flight_path.path:
+			flight_curve.add_point(flight_point.point_position)
 		path_3d.curve = flight_curve
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		_launched = true

@@ -79,7 +79,7 @@ func _print(print_log: String, params: Array, caller: Object, incoming_log_level
 	var log_string: String = print_log % params
 	var format_string: String =  "[%s] %s - %s: %s"
 	var level_string: String = LEVEL.keys()[incoming_log_level]
-	var caller_string: String = "" if caller == null else caller.get("name")
+	var caller_string: String = "" if caller == null else str(caller.name) if caller is Node else ""
 	var formatted_log: String = format_string % [level_string, time_stamp, caller_string, log_string]
 	print(formatted_log)
 	if incoming_log_level == LEVEL.WARN:
