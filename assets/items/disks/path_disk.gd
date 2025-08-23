@@ -2,7 +2,11 @@ extends Node3D
 class_name PathDisk
 
 # TODO NEXT
-# TODO Make disk tilt in the air when curve is added
+# BUG Focusing output false and throwing doesnt' return control to character
+#		Or mouse (should right on release when not focusing output)
+# BUG Path disk requires clicking after throwing to reclaim mouse
+# TODO Only apply roll tilt when throw is of certain lengthw:
+# TODO Keep camera steady on z axis rotation while disk rotates
 # TODO Need to allow holding power consistent while still pulling offset curve
 #		Consider making another disk that is a multi click disk
 #			First click starts the shot and draws a line to the mouse (to max line length)
@@ -137,7 +141,6 @@ func _launch() -> void:
 		for flight_point in flight_data.flight_path.path:
 			flight_curve.add_point(flight_point.point_position)
 		path_3d.curve = flight_curve
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		_launched = true
 	else:
 		Logger.warn(Logger.MISSING_FLIGHT_DATA_LOG, [], self)

@@ -97,30 +97,31 @@ static func convert(incoming_line: Array[Vector3]) -> FlightPath:
 			var point_a = incoming_line[i - 1]
 			var point_current = incoming_line[i]
 			var point_c = incoming_line[i + 1]
-
-			# Create vectors (ignoring Y for left/right analysis)
-			var vector_ab = Vector2(point_current.x - point_a.x, point_current.z - point_a.z)
-			var vector_bc = Vector2(point_c.x - point_current.x, point_c.z - point_current.z)
-
-			var len_ab = vector_ab.length()
-			var len_bc = vector_bc.length()
-			if len_ab > 0.001 and len_bc > 0.001:
-				vector_ab = vector_ab / len_ab
-				vector_bc = vector_bc / len_bc
-
-				# Dot = cos(theta), Cross = sin(theta)
-				var dot_product = clamp(vector_ab.dot(vector_bc), -1.0, 1.0)
-				var cross_product = vector_ab.x * vector_bc.y - vector_ab.y * vector_bc.x
-
-				# Actual angle between vectors (0 = straight, π = 180° turn)
-				var angle = acos(dot_product)
-
-				# Roll intensity = signed angle
-				flight_point.roll_intensity = -sign(cross_product) * angle
-			else:
-				flight_point.roll_intensity = 0.0
+			flight_point.roll_intensity = calculate_roll_intensity(point_a, point_current, point_c)
 		flight_points.append(flight_point)
-
 	var flight_path = FlightPath.new(flight_points)
 	flight_path.path_type = analyze_path(flight_path)
 	return flight_path
+
+## Calculates roll intensity for three consecutive points
+## roll_intensity: 0.0 = straight, positive = right turn (slice), negative = left turn (hook)
+## Higher absolute values indicate sharper curves, in radians (≈ -3.14 … +3.14)
+static func calculate_roll_intensity(point_a: Vector3, point_b: Vector3, point_c: Vector3) -> float:
+	# Create vectors (ignoring Y for left/right analysis)
+	var vector_ab = Vector2(point_b.x - point_a.x, point_b.z - point_a.z)
+	var vector_bc = Vector2(point_c.x - point_b.x, point_c.z - point_b.z)
+	var len_ab = vector_ab.length()
+	var len_bc = vector_bc.length()
+	
+	if len_ab > 0.001 and len_bc > 0.001:
+		vector_ab = vector_ab / len_ab
+		vector_bc = vector_bc / len_bc
+		# Dot = cos(theta), Cross = sin(theta)
+		var dot_product = clamp(vector_ab.dot(vector_bc), -1.0, 1.0)
+		var cross_product = vector_ab.x * vector_bc.y - vector_ab.y * vector_bc.x
+		# Actual angle between vectors (0 = straight, π = 180° turn)
+		var angle = acos(dot_product)
+		# Roll intensity = signed angle
+		return -sign(cross_product) * angle
+	else:
+		return 0.0
