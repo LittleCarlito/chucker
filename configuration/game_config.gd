@@ -30,7 +30,9 @@ const DEFAULTS: Dictionary = {
 	"color": Color.CHARTREUSE,
 	# Location values
 	"default_location": Vector3(0, 1, 0),
-	"uknown_location": Vector3(NUMBERS.FLOAT16_MAX, NUMBERS.FLOAT16_MAX, NUMBERS.FLOAT16_MAX)
+	"uknown_location": Vector3(NUMBERS.FLOAT16_MAX, NUMBERS.FLOAT16_MAX, NUMBERS.FLOAT16_MAX),
+	# Debug values
+	"extra_debug": false
 }
 
 # Called when the node enters the scene tree for the first time.
