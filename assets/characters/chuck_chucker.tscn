@@ -28,7 +28,6 @@ size = Vector3(1.2, 1.2, 1)
 [node name="ChuckChucker" type="CharacterBody3D" node_paths=PackedStringArray("front_detection", "item_container", "base_mesh", "base_collision", "camera_container") groups=["General", "Player"]]
 collision_mask = 2
 script = ExtResource("1_hnkcf")
-focusing_output = true
 front_detection = NodePath("FrontDetect")
 item_container = NodePath("ItemContainer")
 base_mesh = NodePath("ChuckMesh")

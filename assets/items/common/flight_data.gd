@@ -11,6 +11,11 @@ func _init(incoming_speed: float = 0, incoming_basis: Basis = Basis.from_euler(V
 	self.flight_path = incoming_path
 	self.focus_flight = incoming_focus
 
+## Returns the roll intensity at the given % into the flight path
+## Given as whole number example: 60.6 == 60.6%; .606 = .606%
+func roll_intensity_at(incoming_percent: float) -> float:
+	return flight_path.roll_intensity_at(incoming_percent)
+
 func set_flight_path(incoming_path: FlightPath) -> void:
 	self.flight_path = incoming_path
 

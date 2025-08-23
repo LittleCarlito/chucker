@@ -13,13 +13,25 @@ func _init(incoming_path: Array[FlightPoint] = []):
 	self.path = incoming_path
 	self.path_type = self.analyze_path(self)
 
+## Returns the roll intensity at the given % into the flight path
+## Given as decimal between 0.0 and 1.0, example: 0.606 == 60.6%
+func roll_intensity_at(incoming_percent: float) -> float:
+	if path.size() <= 1:
+		return 0.0
+	else:
+		# Use percent directly (0.0 to 1.0) multiplied by size
+		var desired_index: int = int(path.size() * incoming_percent)
+		# Safety clamp to avoid indexing out of range
+		desired_index = clamp(desired_index, 0, path.size() - 1)
+		return path[desired_index].roll_intensity
+
 func is_empty() -> bool:
 	return path.is_empty()
 
 func print_details() -> void:
 	var type_string: String = self._get_type_string(path_type)
 	Logger.debug("\n[FlightPath data]\nNumber of points: %d\nFlight type %s", [path.size(), type_string], self)
-	if GameConfig.DEFAULTS.extra_debug:
+	if GameConfig.DEFAULTS.extra_detail:
 		for i in range(path.size()):
 			var fp: FlightPoint = path[i]
 			Logger.debug("Point %d: Roll Intensity: %.3f", [i, fp.roll_intensity], self)
@@ -104,7 +116,7 @@ static func convert(incoming_line: Array[Vector3]) -> FlightPath:
 				var angle = acos(dot_product)
 
 				# Roll intensity = signed angle
-				flight_point.roll_intensity = sign(cross_product) * angle
+				flight_point.roll_intensity = -sign(cross_product) * angle
 			else:
 				flight_point.roll_intensity = 0.0
 		flight_points.append(flight_point)

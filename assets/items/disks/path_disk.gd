@@ -2,7 +2,6 @@ extends Node3D
 class_name PathDisk
 
 # TODO NEXT
-# TODO Make pulling to the sides add more curve than distance
 # TODO Make disk tilt in the air when curve is added
 # TODO Need to allow holding power consistent while still pulling offset curve
 #		Consider making another disk that is a multi click disk
@@ -51,6 +50,10 @@ func _process(_delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	if _launched:
 		if path_follow.progress_ratio < 1:
+			var current_roll_intensity: float = flight_data.flight_path.roll_intensity_at(path_follow.progress_ratio)
+			if GameConfig.DEFAULTS.flight_detail:
+				Logger.debug("Roll intensity at percentage %03f is %03f", [path_follow.progress_ratio, current_roll_intensity], self)
+			self._apply_roll_intensity(current_roll_intensity)
 			var distance_per_second: float = flight_data.flight_speed * delta
 			path_follow.progress += distance_per_second
 		else:
@@ -72,6 +75,14 @@ func is_current() -> bool:
 
 func pick_up() -> void:
 	self.queue_free()
+
+# TODO Think on how different shot types would be implemented
+#			A shot where only increasing absolute values of z roation is added (aka it doesn't flatten out)
+#			Shots where no roll intensity is applied and it travels with no tilt
+#			Shots where it over-rotates and can end up on its side or upside down before reaching ground
+func _apply_roll_intensity(incoming_intensity: float) -> void:
+	var roll_modifier: float = incoming_intensity * 20
+	self.disk_mesh.rotation.z = roll_modifier
 
 func _body_enter(body_rid: RID, _body: Node3D, _body_shape_index: int, _local_shape_index: int) -> void:
 	if body_rid != asset_data.owner_rid:

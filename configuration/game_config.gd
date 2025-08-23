@@ -32,7 +32,8 @@ const DEFAULTS: Dictionary = {
 	"default_location": Vector3(0, 1, 0),
 	"uknown_location": Vector3(NUMBERS.FLOAT16_MAX, NUMBERS.FLOAT16_MAX, NUMBERS.FLOAT16_MAX),
 	# Debug values
-	"extra_debug": false
+	"extra_detail": false,
+	"flight_detail": true
 }
 
 # Called when the node enters the scene tree for the first time.
