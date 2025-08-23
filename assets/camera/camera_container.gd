@@ -26,6 +26,7 @@ const _CAMERA: String = "Camera"
 var internal_camera: Camera3D
 var _initial_orientation: Vector3
 var _hold_min_height: bool = false
+var _enable_gimbal: bool = false
 # TODO Refactor these to be public
 var _focus_location: Vector3 = Vector3.INF
 # TODO Refactor these to "is" type naming
@@ -54,6 +55,8 @@ func _physics_process(delta: float) -> void:
 			call_deferred("idle_rotate", delta)
 		else:
 			call_deferred("focus_camera_control", self.global_position, height_held)
+	if _enable_gimbal:
+		self.camera_control.global_rotation = _initial_orientation
 
 static func new_container_with_camera() -> CameraContainer:
 	var new_camera_container: CameraContainer = AssetFactory.new_camera_container()

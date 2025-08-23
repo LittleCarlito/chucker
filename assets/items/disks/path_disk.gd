@@ -1,18 +1,6 @@
 extends Node3D
 class_name PathDisk
 
-# TODO NEXT
-# TODO Keep camera steady on z axis rotation while disk rotates
-# TODO Need to allow holding power consistent while still pulling offset curve
-#		Consider making another disk that is a multi click disk
-#			First click starts the shot and draws a line to the mouse (to max line length)
-#			Second click sets power and draws offset line to the mouse (to max offset line length)
-#			Third click launches the disk
-#			Right clicking during the process resets the shot
-# TODO Add original launch velocity on z axis to disk when collision is detected
-#		Need to make collision with ground more realistic
-# BUG Can steal mouse if thrown over the edge
-
 const _BODY_EXIT: String = "body_exit"
 const _BODY_ENTER: String = "body_enter"
 
@@ -50,9 +38,11 @@ func _process(_delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	if _launched:
+		# Log flight information
 		if GameConfig.DEFAULTS.flight_detail and not self._details_logged:
 			flight_data.flight_details.log_details()
 			self._details_logged = true
+		# Move disk in space
 		if path_follow.progress_ratio < 1:
 			self._apply_roll_intensity()
 			var distance_per_second: float = flight_data.flight_speed * delta
@@ -186,6 +176,7 @@ func _set_asset_data(incoming_data: AssetData) -> void:
 func _create_camera_container() -> void:
 	if camera_container == null:
 		var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
+		new_camera_container._enable_gimbal = true
 		disk_mesh.add_child(new_camera_container)
 		_set_camera_container(new_camera_container)
 	else:
