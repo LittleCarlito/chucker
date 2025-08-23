@@ -1,7 +1,6 @@
 extends ThrowableItem
 class_name PullDisk
 
-# TODO Make pulling to the sides add more curve than distance
 # TODO Need to add right click aiming
 # TODO Allow for holding space or something to set power but still pull for offset
 # TODO Make a maximum pull time like charge disk

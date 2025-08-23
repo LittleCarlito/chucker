@@ -176,7 +176,7 @@ func _set_asset_data(incoming_data: AssetData) -> void:
 func _create_camera_container() -> void:
 	if camera_container == null:
 		var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
-		new_camera_container._enable_gimbal = true
+		new_camera_container.is_steady = true
 		disk_mesh.add_child(new_camera_container)
 		_set_camera_container(new_camera_container)
 	else:
