@@ -29,7 +29,9 @@ func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> 
 	# Perform pull disk calls
 	var only_primary_held: bool = Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY)
 	if only_primary_held:
-		pull_draw.begin_pull()
+		var flight_details: FlightDetails = pull_draw.begin_pull()
+		self.flight_data.flight_details = flight_details
+		Logger.debug("Pull draw power is %03f", [self.flight_data.flight_details.flight_power], self)
 	## If right click is pressed while holding left reset throw
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.SECONDARY):
 		pull_draw.reset_pull()
@@ -44,12 +46,12 @@ func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> 
 
 # We know primary was released upon entering this function
 func release_action(incoming_basis: Basis) -> void:
-	pull_draw.reset_pull()
+	Logger.debug("Pull draw power ON RELEASE is %03f", [self.flight_data.flight_details.flight_power], self)
 	## If right click is not held launch the disk
 	if not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY) and pull_draw.last_length > GameConfig.DEFAULTS.min_pull:
 		var multiplier: float = min(GameConfig.DEFAULTS.max_hold, (pull_draw.last_length / 100)) * GameConfig.DEFAULTS.hold_multiplier
 		var final_speed: float = GameConfig.DEFAULTS.launch_speed * multiplier
-		flight_data = FlightData.new(final_speed, incoming_basis, flight_data.flight_path, flight_data.focus_flight)
+		flight_data = FlightData.new(final_speed, incoming_basis, flight_data.flight_details, flight_data.flight_path, flight_data.focus_flight)
 		# Create path_disk_data and pass it into the launch method
 		var path_disk_data: AssetData = self._get_next_asset_data()
 		AssetDelivery.create_and_launch(flight_data, path_disk_data)
@@ -57,10 +59,11 @@ func release_action(incoming_basis: Basis) -> void:
 		pick_up()
 		self.rotation.x = 0
 		charge_view.set_progress(-1)
+	pull_draw.reset_pull()
 
 func drop_item() -> void:
 	var drop_path: FlightPath = FlightPath.convert([self.global_position])
-	var drop_flight: FlightData = FlightData.new(0, self.global_basis, drop_path, false)
+	var drop_flight: FlightData = FlightData.new(0, self.global_basis, FlightDetails.new(), drop_path, false)
 	var drop_asset: AssetData = self._get_next_asset_data(true)
 	AssetDelivery.create_and_launch(drop_flight, drop_asset)
 	self.queue_free()

@@ -29,8 +29,8 @@ func is_empty() -> bool:
 	return path.is_empty()
 
 func print_details() -> void:
-	var type_string: String = self._get_type_string(path_type)
-	Logger.debug("\n[FlightPath data]\nNumber of points: %d\nFlight type %s", [path.size(), type_string], self)
+	var flight_type_string: String = self._get_type_string(path_type)
+	Logger.debug("\n[FlightPath data]\nNumber of points: %d\nFlight type %s", [path.size(), flight_type_string], self)
 	if GameConfig.DEFAULTS.extra_detail:
 		for i in range(path.size()):
 			var fp: FlightPoint = path[i]

@@ -78,7 +78,7 @@ func release_action(incoming_basis: Basis) -> void:
 		# TODO Added this last multiplier bit in from force disks method (should be done by caller) don't know if its necessary though
 		#		If it is should be simplified into the calculation above instead of 2 separate lines
 		var final_speed: float = GameConfig.DEFAULTS.launch_speed * speed_multiplier
-		flight_data = FlightData.new(final_speed, incoming_basis, flight_data.flight_path, flight_data.focus_flight)
+		flight_data = FlightData.new(final_speed, incoming_basis, flight_data.flight_details, flight_data.flight_path, flight_data.focus_flight)
 		# TODO Make sure that item_data contains the group_name of the entity throwing it
 		var force_disk_data: AssetData = self._get_next_asset_data()
 		var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, force_disk_data)
@@ -89,7 +89,7 @@ func release_action(incoming_basis: Basis) -> void:
 
 func drop_item() -> void:
 	var drop_path: FlightPath = FlightPath.convert([self.global_position])
-	var drop_flight: FlightData = FlightData.new(0, self.global_basis, drop_path, false)
+	var drop_flight: FlightData = FlightData.new(0, self.global_basis, FlightDetails.new(), drop_path, false)
 	var drop_asset: AssetData = self._get_next_asset_data()
 	AssetDelivery.create_and_launch(drop_flight, drop_asset)
 	self.queue_free()

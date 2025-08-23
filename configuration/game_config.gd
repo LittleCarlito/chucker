@@ -18,6 +18,7 @@ const DEFAULTS: Dictionary = {
 	"gravity_multiplier": .009,
 	"max_pull": 200,
 	"min_pull": 15,
+	"min_pull_for_offset": 100,
 	"max_offset": 250,
 	"rotate_adjust": .1,
 	"max_speed_reduce": .75,

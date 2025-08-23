@@ -2,10 +2,6 @@ extends Node3D
 class_name PathDisk
 
 # TODO NEXT
-# BUG Focusing output false and throwing doesnt' return control to character
-#		Or mouse (should right on release when not focusing output)
-# BUG Path disk requires clicking after throwing to reclaim mouse
-# TODO Only apply roll tilt when throw is of certain lengthw:
 # TODO Keep camera steady on z axis rotation while disk rotates
 # TODO Need to allow holding power consistent while still pulling offset curve
 #		Consider making another disk that is a multi click disk
@@ -31,6 +27,7 @@ var asset_data: AssetData
 var _launched: bool = false
 var _collision_location: Vector3 = Vector3.INF
 var _spawned_disk: bool = false
+var _details_logged: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -53,11 +50,11 @@ func _process(_delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	if _launched:
+		if GameConfig.DEFAULTS.flight_detail and not self._details_logged:
+			flight_data.flight_details.log_details()
+			self._details_logged = true
 		if path_follow.progress_ratio < 1:
-			var current_roll_intensity: float = flight_data.flight_path.roll_intensity_at(path_follow.progress_ratio)
-			if GameConfig.DEFAULTS.flight_detail:
-				Logger.debug("Roll intensity at percentage %03f is %03f", [path_follow.progress_ratio, current_roll_intensity], self)
-			self._apply_roll_intensity(current_roll_intensity)
+			self._apply_roll_intensity()
 			var distance_per_second: float = flight_data.flight_speed * delta
 			path_follow.progress += distance_per_second
 		else:
@@ -84,9 +81,16 @@ func pick_up() -> void:
 #			A shot where only increasing absolute values of z roation is added (aka it doesn't flatten out)
 #			Shots where no roll intensity is applied and it travels with no tilt
 #			Shots where it over-rotates and can end up on its side or upside down before reaching ground
-func _apply_roll_intensity(incoming_intensity: float) -> void:
-	var roll_modifier: float = incoming_intensity * 20
-	self.disk_mesh.rotation.z = roll_modifier
+func _apply_roll_intensity() -> void:
+	if flight_data.flight_details.flight_power > GameConfig.DEFAULTS.min_pull_for_offset:
+		var current_roll_intensity: float = flight_data.flight_path.roll_intensity_at(path_follow.progress_ratio)
+		if GameConfig.DEFAULTS.flight_detail:
+			Logger.debug("Roll intensity at percentage %03f is %03f", [path_follow.progress_ratio, current_roll_intensity], self)
+		var roll_modifier: float = current_roll_intensity * 20
+		self.disk_mesh.rotation.z = roll_modifier
+	else:
+		if GameConfig.DEFAULTS.flight_detail:
+			Logger.debug("Throw has too little power to apply roll", [], self)
 
 func _body_enter(body_rid: RID, _body: Node3D, _body_shape_index: int, _local_shape_index: int) -> void:
 	if body_rid != asset_data.owner_rid:
