@@ -141,6 +141,9 @@ func _handle_zoom_out() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	camera_container.snap_back(self.global_rotation.z)
 
+func _handle_horizontal_rotation(rotation_amount: float) -> void:
+	Logger.debug("IM TRYIN MY BEST BOSS", [], self)
+
 func _get_focus_point() -> Vector3:
 	var focus_point: Vector3 = self.position + CameraConfig.get_player_focus_offset()
 	return focus_point

@@ -52,11 +52,7 @@ func rotate_equipped_item(rotation_axis: Vector3, rotation_amount: float) -> voi
 func item_hold_action(delta: float, focus_output: bool = false) -> void:
 	if self.is_equipped():
 		self.item_container.hold_action(delta, focus_output)
-	else:
-		Logger.debug("Should really come up with an unarmed hold action...", [], self)
 
 func item_hold_release() -> void:
 	if self.is_equipped():
 		self.item_container.release_action()
-	else:
-		Logger.debug("Should really come up with an unarmed hold release action...", [], self)
