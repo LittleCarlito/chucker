@@ -54,7 +54,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			call_deferred("focus_camera_control", self.global_position, height_held)
 	if is_steady:
-		self.camera_control.global_rotation = _initial_orientation
+		self.global_rotation.z = 0
 
 static func new_container_with_camera() -> CameraContainer:
 	var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
@@ -233,6 +233,9 @@ func zoom_out(zoom_amount: float = NUMBERS.FLOAT16_MAX) -> void:
 		internal_camera.fov = CameraConfig.get_fov_value() + zoom_adjust
 	else:
 		_handle_logging(Logger.NULL_CAMERA_LOG, [Logger.ZOOM_OUT])
+
+func hold_steady() -> void:
+	is_steady = true
 
 func set_fov(incoming_fov: float) -> void:
 	internal_camera.fov = incoming_fov

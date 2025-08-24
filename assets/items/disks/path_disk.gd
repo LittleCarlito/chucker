@@ -127,6 +127,7 @@ func _launch() -> void:
 			_submit_camera_request()
 			camera_container.set_current()
 			camera_container.hold_min_height()
+			camera_container.hold_steady()
 			disk_mesh.basis = flight_data.flight_basis
 			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -176,7 +177,6 @@ func _set_asset_data(incoming_data: AssetData) -> void:
 func _create_camera_container() -> void:
 	if camera_container == null:
 		var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
-		new_camera_container.is_steady = true
 		disk_mesh.add_child(new_camera_container)
 		_set_camera_container(new_camera_container)
 	else:
