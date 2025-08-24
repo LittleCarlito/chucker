@@ -10,6 +10,8 @@ func _ready() -> void:
 	self.add_to_group(self.name)
 	self.asset_data.group_name = self.name
 	self.camera_container.add_to_group(self.name)
+	self.item_container.connect(SIGNAL_NAME.ZOOM_IN, _handle_zoom_in)
+	self.item_container.connect(SIGNAL_NAME.ZOOM_OUT, _handle_zoom_out)
 	self._update_state()
 
 func _physics_process(delta: float) -> void:
