@@ -11,10 +11,14 @@ var asset_data: AssetData
 var flight_data: FlightData = FlightData.new()
 var stopwatch: Stopwatch = Stopwatch.new()
 
-# TODO Have charge and line decrease after reaching max and increase after reaching min on long holds
-# TODO Add charge effects
-#		Wobble if held too long
-#		Will just inaccurately launch after x amount of time
+
+# TODO Create maximum "charge" aka "pull" time for ChargeDisk and PullDisk
+#			ChargeDisk
+#				Have charge and line decrease after reaching max and increase after reaching min on long holds
+#			PullDisk
+#				Make a maximum pull time like charge disk
+#			ThrowableItem
+#				Add shake to the disk as timer gets closer until it finally just inaccurately launches
 # TODO Add "perfect" release window
 # TODO Give "perfect" release different effects
 # TODO Ability to put spin on disk and curve it
@@ -28,26 +32,6 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
-
-func _input(event: InputEvent) -> void:
-	_handle_aiming(event)
-
-# TODO Get this to ThrowableItem so it is shared with PullDisk
-func _handle_aiming(event: InputEvent) -> void:
-	# When secondary is pressed
-	if event.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
-		aim.emit(AIM_TYPE.ZOOM_IN, 0)
-	# When secondary is released
-	elif event.is_action_released(InputConfig.USER_INPUT.SECONDARY):
-		aim.emit(AIM_TYPE.ZOOM_OUT, 0)
-	elif event is InputEventMouseMotion and Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
-		var v_rotation_amount: float = NodeUtil.get_vertical_rotation_amount(event)
-		var h_rotation_amount: float = NodeUtil.get_horizontal_rotation_amount(event)
-		if v_rotation_amount != -1:
-			aim.emit(AIM_TYPE.VERTIAL_LOOK, v_rotation_amount)
-		if h_rotation_amount != -1:
-			Logger.error("SHOULD BE HAPPENING", [], self)
-			aim.emit(AIM_TYPE.HORIZONTAL_LOOK, h_rotation_amount * 10)
 
 # TODO Refactor to take in global_basis and set it in flight data as well
 # TODO Figure out default value for Basis

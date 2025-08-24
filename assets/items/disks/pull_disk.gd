@@ -1,11 +1,6 @@
 extends ThrowableItem
 class_name PullDisk
 
-# TODO Need to add right click aiming
-# TODO Make a maximum pull time like charge disk
-#		Probably make that part of ThrowableItem and not have it in both
-#		Make it shake the disk as timer gets closer until it finally just inaccurately launches
-
 @export var aim_line: AimLine
 @export var pull_draw: PullDraw
 @export var charge_view: ChargeView
