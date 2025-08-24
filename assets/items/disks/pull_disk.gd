@@ -2,7 +2,6 @@ extends ThrowableItem
 class_name PullDisk
 
 # TODO Need to add right click aiming
-# TODO Allow for holding space or something to set power but still pull for offset
 # TODO Make a maximum pull time like charge disk
 #		Probably make that part of ThrowableItem and not have it in both
 #		Make it shake the disk as timer gets closer until it finally just inaccurately launches
@@ -30,7 +29,6 @@ func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> 
 	if only_primary_held:
 		var flight_details: FlightDetails = pull_draw.begin_pull()
 		self.flight_data.flight_details = flight_details
-		Logger.debug("Pull draw power is %03f", [self.flight_data.flight_details.flight_power], self)
 	## If right click is pressed while holding left reset throw
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.SECONDARY):
 		pull_draw.reset_pull()
@@ -45,7 +43,6 @@ func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> 
 
 # We know primary was released upon entering this function
 func release_action(incoming_basis: Basis) -> void:
-	Logger.debug("Pull draw power ON RELEASE is %03f", [self.flight_data.flight_details.flight_power], self)
 	## If right click is not held launch the disk
 	if not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY) and pull_draw.last_length > GameConfig.DEFAULTS.min_pull:
 		var multiplier: float = min(GameConfig.DEFAULTS.max_hold, (pull_draw.last_length / 100)) * GameConfig.DEFAULTS.hold_multiplier
