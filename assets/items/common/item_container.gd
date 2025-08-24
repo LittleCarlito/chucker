@@ -75,8 +75,6 @@ func _handle_aiming(aim_type: ThrowableItem.AIM_TYPE, adjustment_value: float) -
 		ThrowableItem.AIM_TYPE.ZOOM_OUT:
 			zoom_out.emit()
 		ThrowableItem.AIM_TYPE.HORIZONTAL_LOOK:
-			# TODO Make sure amount passed in is adjusted
-			# 	var horizontal_rotate_amount: float = deg_to_rad(event.relative.x) * CameraConfig.get_horizontal_look_sens()
 			turn_horizontal.emit(adjustment_value)
 		ThrowableItem.AIM_TYPE.VERTIAL_LOOK:
 			_handle_x_rotation(adjustment_value)

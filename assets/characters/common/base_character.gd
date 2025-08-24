@@ -76,26 +76,6 @@ func enable_movement() -> void:
 func toggle_movement() -> void:
 	disable_movement_var = not disable_movement_var
 
-## Returns true if rotation is enabled
-func is_rotation_enabled() -> bool:
-	return !disable_rotation_var
-
-## Returns true if rotation is disabled
-func is_rotation_disabled() -> bool:
-	return disable_rotation_var
-
-## Disables rotation
-func disable_rotation() -> void:
-	disable_rotation_var = true
-
-## Enables rotation
-func enable_rotation() -> void:
-	disable_rotation_var = false
-
-## Toggles rotation enablement
-func toggle_rotation() -> void:
-	disable_rotation_var = not disable_rotation_var
-
 ## Camera functions
 
 func rotate_camera(vertical_rotation: float, horizontal_rotation: float) -> void:
@@ -132,6 +112,34 @@ func enable_camera() -> void:
 func _reset_camera_control() -> void:
 	self.camera_container.reset_camera_control()
 
+func _handle_horizontal_rotation(incoming_rotation: float = NUMBERS.FLOAT16_MAX) -> void:
+	var rotation_amount = incoming_rotation if incoming_rotation != NUMBERS.FLOAT16_MAX else deg_to_rad(CameraConfig.get_rotate_speed())
+	self.rotate_y_axis(rotation_amount)
+	Logger.debug("I CAUGHT IT; %03f", [incoming_rotation], self)
+	# TODO assign to variable = f incoming_rotation is the max default value assign it to the GameConfig rotation amount value
+	# TODO Rotate base character (self) determined amount
+	pass
+
+## Returns true if rotation is enabled
+func is_rotation_enabled() -> bool:
+	return !disable_rotation_var
+
+## Returns true if rotation is disabled
+func is_rotation_disabled() -> bool:
+	return disable_rotation_var
+
+## Disables rotation
+func disable_rotation() -> void:
+	disable_rotation_var = true
+
+## Enables rotation
+func enable_rotation() -> void:
+	disable_rotation_var = false
+
+## Toggles rotation enablement
+func toggle_rotation() -> void:
+	disable_rotation_var = not disable_rotation_var
+
 func _handle_zoom_in() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if camera_container.is_current():
@@ -140,9 +148,6 @@ func _handle_zoom_in() -> void:
 func _handle_zoom_out() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	camera_container.snap_back(self.global_rotation.z)
-
-func _handle_horizontal_rotation(rotation_amount: float) -> void:
-	Logger.debug("IM TRYIN MY BEST BOSS", [], self)
 
 func _get_focus_point() -> Vector3:
 	var focus_point: Vector3 = self.position + CameraConfig.get_player_focus_offset()

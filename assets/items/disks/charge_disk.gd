@@ -32,6 +32,7 @@ func _process(_delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	_handle_aiming(event)
 
+# TODO Get this to ThrowableItem so it is shared with PullDisk
 func _handle_aiming(event: InputEvent) -> void:
 	# When secondary is pressed
 	if event.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
@@ -45,6 +46,7 @@ func _handle_aiming(event: InputEvent) -> void:
 		if v_rotation_amount != -1:
 			aim.emit(AIM_TYPE.VERTIAL_LOOK, v_rotation_amount)
 		if h_rotation_amount != -1:
+			Logger.error("SHOULD BE HAPPENING", [], self)
 			aim.emit(AIM_TYPE.HORIZONTAL_LOOK, h_rotation_amount * 10)
 
 # TODO Refactor to take in global_basis and set it in flight data as well
