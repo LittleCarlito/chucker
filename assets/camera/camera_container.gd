@@ -1,24 +1,6 @@
 extends Node3D
 class_name CameraContainer
 
-# TODO This should end up being a container that 
-#			Is able to have a set focused location
-#				Once that location is set it should always be focusing it
-#			Handle input events and move according to internally set MODE
-	#			Have MODE.HORIZONTAL_ROTATION
-	#				Camera only rotates on the horizontal access
-	#					Ignore other axis given in the mouse movement event
-	#				If focused location is set it will continue to focus on that location and move around it
-	#				If focused location is not set camera container should continue to look forward and move on desired access
-	#					Should not be in circular motion around point
-	#			Have MODE.FREE_LOOK
-	#				Camera rotates according to mouse movement event
-	#				If focused location movement self should always end up facing that location and having movement centered around it
-	#				If no focused location sent self should just move according to mouse movement freely in normalized 2d direction
-#				
-# TODO Add methods to allow creation of camera containers without cameras
-#		These can then be holders for passed around cameras originally from characterbody scenes
-
 signal lose_focus
 signal log_output(log_level: Logger.LEVEL, log_string: String, optional_params: Array)
 
@@ -41,14 +23,13 @@ const _CAMERA: String = "Camera"
 @export var camera_timer: Timer
 @export var handle_input_when_current: bool = false
 @export var signal_log: bool = true
+@export var is_holding_min_height: bool = false
+@export var is_steady: bool = false
+@export var is_focused: bool = false
+@export var is_idle_rotating: bool = false
 var internal_camera: Camera3D
 var _initial_orientation: Vector3
-var _hold_min_height: bool = false
-# TODO Refactor these to be public
 var _focus_location: Vector3 = Vector3.INF
-# TODO Refactor these to "is" type naming
-var _focused: bool = false
-var _idle_rotate: bool = false
 var _default_control_offset: Vector3
 
 const CAMERA = {
@@ -64,14 +45,16 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	var height_held: bool = false
-	if _hold_min_height:
+	if is_holding_min_height:
 		height_held = CameraConfig.DEFAULTS.MIN_HEIGHT > camera_control.global_position.y
 		camera_control.global_position.y = max(CameraConfig.DEFAULTS.MIN_HEIGHT, camera_control.global_position.y)
-	if _focused or height_held:
-		if _idle_rotate:
+	if is_focused or height_held:
+		if is_idle_rotating:
 			call_deferred("idle_rotate", delta)
 		else:
 			call_deferred("focus_camera_control", self.global_position, height_held)
+	if is_steady:
+		self.global_rotation.z = 0
 
 static func new_container_with_camera() -> CameraContainer:
 	var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
@@ -79,15 +62,17 @@ static func new_container_with_camera() -> CameraContainer:
 	new_camera_container.set_camera(new_scene_camera)
 	return new_camera_container
 
-func populate_camera_control(incoming_focus: Vector3 = Vector3.INF) -> void:
+func populate_camera_control(incoming_focus: Vector3 = Vector3.INF, incoming_current: bool = false) -> void:
 	if internal_camera == null:
 		var new_scene_camera: Camera3D = AssetFactory.new_camera()
 		set_camera(new_scene_camera, incoming_focus)
 	else:
 		_handle_logging(_CAMERA_ALREADY_EXISTS)
+	if incoming_current:
+		self.set_current()
 
 func focus_camera_control(focus_location: Vector3, hold_focus: bool = false) -> void:
-	_focused = hold_focus
+	is_focused = hold_focus
 	if focus_location != Vector3.INF:
 		_focus_location = focus_location
 		camera_control.look_at(_focus_location)
@@ -128,21 +113,20 @@ func start_focus(incoming_global_basis: Basis, incoming_location: Vector3 = Vect
 	self.global_basis = incoming_global_basis
 	if incoming_location != Vector3.INF:
 		_focus_location = incoming_location
-	_focused = true
-	_idle_rotate = true
+	is_focused = true
+	is_idle_rotating = true
 	camera_timer.start(CameraConfig.get_shot_watch_time())
 
-func is_focused() -> bool:
-	return _focused and _focus_location != Vector3.INF
+func is_camera_focused() -> bool:
+	return is_focused and _focus_location != Vector3.INF
 
 func _on_camera_timer_timeout() -> void:
 	_handle_logging(_DISABLE_LOG)
-	_focused = false
+	is_focused = false
 	#internal_camera.current = false
 	_focus_location = Vector3.INF
 	lose_focus.emit()
 
-# TODO Is getting called and working but only getting called once
 func idle_rotate(delta: float) -> void:
 	# Calculate the rotation angle in radians
 	var rotation_amount: float = (CameraConfig.get_idle_rotate_speed() * delta)
@@ -209,14 +193,12 @@ func toggle_camera() -> void:
 	else:
 		_handle_logging(Logger.NULL_CAMERA_LOG, [Logger.TOGGLE_CAMERA])
 
-# TODO In disable and enable camera are where signals or group method calls need to be sent to update asset status
 func disable_camera() -> void:
 	if internal_camera != null:
 		internal_camera.current = false
 	else:
 		_handle_logging(Logger.NULL_CAMERA_LOG, [Logger.DISABLE_CAMERA])
 
-# TODO In disable and enable camera are where signals or group method calls need to be sent to update asset status
 func enable_camera() -> void:
 	if internal_camera != null:
 		internal_camera.current = true
@@ -238,17 +220,22 @@ func reset_zoom() -> bool:
 		internal_camera.fov = CameraConfig.get_fov_value()
 	return zoom_reset
 
-func zoom_in() -> void:
+func zoom_in(zoom_amount: float = NUMBERS.FLOAT16_MAX) -> void:
+	var zoom_adjust = zoom_amount if zoom_amount != NUMBERS.FLOAT16_MAX else CameraConfig.get_in_adjust()
 	if internal_camera != null:
-		internal_camera.fov = CameraConfig.get_fov_value() - CameraConfig.get_in_adjust()
+		internal_camera.fov = CameraConfig.get_fov_value() - zoom_adjust
 	else:
 		_handle_logging(Logger.NULL_CAMERA_LOG, [Logger.ZOOM_IN])
 
-func zoom_out() -> void:
+func zoom_out(zoom_amount: float = NUMBERS.FLOAT16_MAX) -> void:
+	var zoom_adjust = zoom_amount if zoom_amount != NUMBERS.FLOAT16_MAX else CameraConfig.get_in_adjust()
 	if internal_camera != null:
-		internal_camera.fov = CameraConfig.get_fov_value() + CameraConfig.get_out_adjust()
+		internal_camera.fov = CameraConfig.get_fov_value() + zoom_adjust
 	else:
 		_handle_logging(Logger.NULL_CAMERA_LOG, [Logger.ZOOM_OUT])
+
+func hold_steady() -> void:
+	is_steady = true
 
 func set_fov(incoming_fov: float) -> void:
 	internal_camera.fov = incoming_fov
@@ -288,10 +275,10 @@ func get_control_offset() -> Vector3:
 	return _default_control_offset
 
 func hold_min_height() -> void:
-	_hold_min_height = true
+	is_holding_min_height = true
 
 func release_min_height() -> void:
-	_hold_min_height = false
+	is_holding_min_height = false
 
 func reset_camera() -> void:
 	if internal_camera != null:

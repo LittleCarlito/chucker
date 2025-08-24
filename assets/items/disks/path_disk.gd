@@ -1,25 +1,6 @@
 extends Node3D
 class_name PathDisk
 
-# TODO NEXT
-# TODO Fix AssetDelivery create_and_launch
-# TODO Refactor Basis to be Transform in Path stuff
-# TODO Refactor all rotation stuff to be Transform based
-# TODO Get CameraContainer out of here and created through a method like ForceDisk
-# TODO Refactor to use AimLine AssetData FlightData and DiskFactory
-# BUG Can steal mouse if thrown over the edge
-# TODO Flickering when swapdisk disk switch happens
-#		Should just give the camera object to the swapped disk instead of activating the new one
-# TODO Make disk tilt in the air when curve is added
-# TODO Need to allow holding power consistent while still pulling offset curve
-#		Consider making another disk that is a multi click disk
-#			First click starts the shot and draws a line to the mouse (to max line length)
-#			Second click sets power and draws offset line to the mouse (to max offset line length)
-#			Third click launches the disk
-#			Right clicking during the process resets the shot
-# TODO Add original launch velocity on z axis to disk when collision is detected
-#		Need to make collision with ground more realistic
-
 const _BODY_EXIT: String = "body_exit"
 const _BODY_ENTER: String = "body_enter"
 
@@ -27,12 +8,14 @@ const _BODY_ENTER: String = "body_enter"
 @export var disk_collision: DiskCollision
 @export var path_3d: Path3D
 @export var path_follow: PathFollow3D
+@export var debug_logs: bool = true
 var camera_container: CameraContainer
 var flight_data: FlightData
 var asset_data: AssetData
 var _launched: bool = false
 var _collision_location: Vector3 = Vector3.INF
 var _spawned_disk: bool = false
+var _details_logged: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -55,7 +38,13 @@ func _process(_delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	if _launched:
+		# Log flight information
+		if GameConfig.DEFAULTS.flight_detail and not self._details_logged:
+			flight_data.flight_details.log_details()
+			self._details_logged = true
+		# Move disk in space
 		if path_follow.progress_ratio < 1:
+			self._apply_roll_intensity()
 			var distance_per_second: float = flight_data.flight_speed * delta
 			path_follow.progress += distance_per_second
 		else:
@@ -68,6 +57,30 @@ func set_item_mesh(new_mesh: DiskMesh) -> void:
 	if is_instance_valid(old_mesh):
 		old_mesh.queue_free()
 	disk_mesh = new_mesh
+
+func get_disk_camera() -> Camera3D:
+	return camera_container.get_camera()
+
+func is_current() -> bool:
+	return camera_container.is_current()
+
+func pick_up() -> void:
+	self.queue_free()
+
+# TODO Think on how different shot types would be implemented
+#			A shot where only increasing absolute values of z roation is added (aka it doesn't flatten out)
+#			Shots where no roll intensity is applied and it travels with no tilt
+#			Shots where it over-rotates and can end up on its side or upside down before reaching ground
+func _apply_roll_intensity() -> void:
+	if flight_data.flight_details.flight_power > GameConfig.DEFAULTS.min_pull_for_offset:
+		var current_roll_intensity: float = flight_data.flight_path.roll_intensity_at(path_follow.progress_ratio)
+		if GameConfig.DEFAULTS.flight_detail:
+			Logger.debug("Roll intensity at percentage %03f is %03f", [path_follow.progress_ratio, current_roll_intensity], self)
+		var roll_modifier: float = current_roll_intensity * 20
+		self.disk_mesh.rotation.z = roll_modifier
+	else:
+		if GameConfig.DEFAULTS.flight_detail:
+			Logger.debug("Throw has too little power to apply roll", [], self)
 
 func _body_enter(body_rid: RID, _body: Node3D, _body_shape_index: int, _local_shape_index: int) -> void:
 	if body_rid != asset_data.owner_rid:
@@ -92,48 +105,37 @@ func _swap_disk(drop_disk: bool = false) -> void:
 			new_disk.rotation.x = prepare_angle
 			_spawned_disk = true
 		else:
-			var new_flight_path: Array[Vector3] = [disk_mesh.global_position]
+			var new_flight_path: FlightPath = FlightPath.convert([disk_mesh.global_position])
 			flight_data.set_flight_path(new_flight_path)
 			# TODO Get PathDisk collision speed offset to config
 			var original_flight_speed: float = flight_data.flight_speed
 			flight_data.flight_speed = 0
-			#flight_data.flight_basis = flight_data.flight_basis.inverse()
 			var _launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, spawn_disk_data)
-			# TODO OOOOO
-			# TODO Add something like this in for ForceDisk so Thrown ChargeDisks get more umph on landing
-			#			Need to make it take a skipping parameter for launches through path_disk
-			#				Need to determine a way through existing fields that this id intended case
-			# TODO Then need to add right click aiming to pull disk
-			_launched_disk.linear_velocity = Vector3(0, -(original_flight_speed * .4), -(original_flight_speed))
+			# TODO Get path disk speed modifier to config
+			var added_velocity: Vector3 = Vector3(0, -(original_flight_speed * 0.4), -(original_flight_speed * 0.4))
+			_launched_disk.linear_velocity += _launched_disk.global_transform.basis * added_velocity
 			_spawned_disk = true
 		pick_up()
-
-func get_disk_camera() -> Camera3D:
-	return camera_container.get_camera()
-
-func is_current() -> bool:
-	return camera_container.is_current()
 
 func _set_flight_data(incoming_data: FlightData) -> void:
 	flight_data = incoming_data
 
 func _launch() -> void:
 	if flight_data != null:
+		flight_data.print_details()
 		if flight_data.focus_flight:
 			_submit_camera_request()
 			camera_container.set_current()
 			camera_container.hold_min_height()
+			camera_container.hold_steady()
 			disk_mesh.basis = flight_data.flight_basis
-			#disk_mesh.basis.y = flight_data.flight_basis.y
-			#disk_mesh.basis.x = flight_data.flight_basis.x
 			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		# Set path's curve equal to flight data's path
 		var flight_curve: Curve3D = Curve3D.new()
-		for flight_point in flight_data.flight_path:
-			flight_curve.add_point(flight_point)
+		for flight_point in flight_data.flight_path.path:
+			flight_curve.add_point(flight_point.point_position)
 		path_3d.curve = flight_curve
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		_launched = true
 	else:
 		Logger.warn(Logger.MISSING_FLIGHT_DATA_LOG, [], self)
@@ -180,9 +182,6 @@ func _create_camera_container() -> void:
 	else:
 		Logger.warn(Logger.ALREADY_EXISTS_LOG, [Logger.CAMERA_CONTAINER], self)
 
-func pick_up() -> void:
-	self.queue_free()
-
 func _handle_child_logs(incoming_level: Logger.LEVEL, incoming_log: String, optional_params: Array) -> void:
 	match incoming_level:
 		Logger.LEVEL.DEBUG:
@@ -193,14 +192,3 @@ func _handle_child_logs(incoming_level: Logger.LEVEL, incoming_log: String, opti
 			Logger.warn(incoming_log, optional_params, self)
 		Logger.LEVEL.ERROR:
 			Logger.error(incoming_log, optional_params, self)
-
-## Uses path_follow to determine the basis of the last 2 executed on points in the curve
-func _get_recent_basis() -> Basis:
-	@warning_ignore("narrowing_conversion")
-	var size_cuttoff: int = path_follow.progress_ratio * path_3d.curve.point_count
-	var end_point: Vector3 = path_3d.curve.get_point_position(size_cuttoff)
-	var previous_basis: Basis = path_3d.basis
-	path_3d.look_at(end_point)
-	var grabbed_basis: Basis = path_3d.basis
-	path_3d.basis = previous_basis
-	return grabbed_basis

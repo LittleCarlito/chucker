@@ -65,13 +65,10 @@ func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) ->
 		Logger.info(_INVALID_INCOMING_ITEM, [str(incoming_item)], self)
 	return new_asset
 
-func drop_asset(drop_item: Node3D, drop_location: Vector3 = DEFAULTS.GIGA_LOCATION) -> void:
-	# TODO OOOOO
-	#			This isn't working because the Node3Ds being given from chuck are charge and pull disks so they dont' ahve gravity as they are meshes
-	#				Need some form of determination to figure out what asset type is being dropped and if it is one of those drop the corresponding loaded rigid disk
+func drop_asset(drop_item: Node3D, drop_location: Vector3 = GameConfig.DEFAULTS.uknown_location) -> void:
 	# Unparent and move
 	drop_item.reparent(get_tree().current_scene)
-	if(drop_location != DEFAULTS.GIGA_LOCATION):
+	if(drop_location != GameConfig.DEFAULTS.uknown_location):
 		drop_item.global_position = drop_location
 	# Spawn proper rigid object if only mesh
 	if(drop_item is ThrowableItem):
