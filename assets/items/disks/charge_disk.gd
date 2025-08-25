@@ -19,9 +19,41 @@ var stopwatch: Stopwatch = Stopwatch.new()
 #				Make a maximum pull time like charge disk
 #			ThrowableItem
 #				Add shake to the disk as timer gets closer until it finally just inaccurately launches
-# TODO Add "perfect" release window
-# TODO Give "perfect" release different effects
-# TODO Ability to put spin on disk and curve it
+#
+# OUTLINE 
+#
+#		Move AssetData and FlightData from PullDisk and ChargeDisk and into ThrowableItem
+#		Within AssetData manage state of asset
+#		State needs new states
+#			READY
+#			UNDERCOOKED
+#			WINDUP_VERY_EARLY
+#			WINDUP_EARLY
+#			WINDUP_PERFECT
+#			WINDUP_LONG
+#			WINDUP_VERY_LONG
+#			OVERCOOKED
+#			THROWING
+#			FOLLOW_THRU
+#		ItemContainer calls down to its contained object to let it know when/what state to update to
+#			But only does so if
+#				If it is equipped
+#				If it has the function to primary action hold
+#		Update FlightData to contain state window for when each state is switched to based off
+#			Disk Type
+#				ChargeDisk - Flat amounts for switching each regardless of flight path
+#				PathDisk - Flat amounts for switch each regardless of flight path
+#					Above the same regardless of path because path is determined as mouse is held
+#				*PlanDisk* - Determined by analyze_path
+#					New disk type
+#					Just leave as TODO to remember to create it after
+#					Like normal golf games with flight path fully decided before attempting shot
+#
+#	TODO Store the state timing periods in FlightData
+#			Can create/get the charge/pull disk ones as constants so even as the path is created the same values will be placed in there
+#			PlanDisk will have its path already determined therefore timing periods can be determined and placed in FlightData before hold_action happens
+
+# TODO Ability to put spin on disk
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -36,7 +68,7 @@ func _process(_delta: float) -> void:
 # TODO Refactor to take in global_basis and set it in flight data as well
 # TODO Figure out default value for Basis
 func hold_action(delta: float, incoming_basis: Basis, incoming_focus: bool) -> void:
-	flight_data.focus_flight = incoming_focus
+	flight_data.set_is_focused(incoming_focus)
 	# If right click is pressed while holding left reset throw
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.SECONDARY):
 		stopwatch.reset()
@@ -49,8 +81,9 @@ func hold_action(delta: float, incoming_basis: Basis, incoming_focus: bool) -> v
 		var speed_multiplier: float = min(GameConfig.DEFAULTS.max_hold, held_time) * GameConfig.DEFAULTS.hold_multiplier
 		var drawn_line: Array[Vector3] = aim_line.draw_aim_line(speed_multiplier)
 		if drawn_line != null:
-			flight_data.flight_path = FlightPath.convert(drawn_line)
-		flight_data.flight_basis = incoming_basis
+			var new_path: FlightPath = FlightPath.convert(drawn_line)
+			flight_data.set_flight_path(new_path)
+		flight_data.set_flight_basis(incoming_basis)
 
 # TODO Refactor to take in global_basis and set it in flight data as well
 # TODO Figure out default value for Basis
@@ -60,11 +93,12 @@ func release_action(incoming_basis: Basis) -> void:
 		charge_view.set_progress(-1)
 		var final_time: float = stopwatch.reset()
 		var speed_multiplier: float = min(GameConfig.DEFAULTS.max_hold, final_time) * GameConfig.DEFAULTS.hold_multiplier
-		flight_data.flight_path = FlightPath.convert(aim_line.draw_aim_line(speed_multiplier))
+		var new_path: FlightPath = FlightPath.convert(aim_line.draw_aim_line(speed_multiplier))
+		flight_data.set_flight_path(new_path)
 		# TODO Added this last multiplier bit in from force disks method (should be done by caller) don't know if its necessary though
 		#		If it is should be simplified into the calculation above instead of 2 separate lines
 		var final_speed: float = GameConfig.DEFAULTS.launch_speed * speed_multiplier
-		flight_data = FlightData.new(final_speed, incoming_basis, flight_data.flight_details, flight_data.flight_path, flight_data.focus_flight)
+		flight_data.set_flight_speed(final_speed)
 		# TODO Make sure that item_data contains the group_name of the entity throwing it
 		var force_disk_data: AssetData = self._get_next_asset_data()
 		var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, force_disk_data)
@@ -86,7 +120,7 @@ func reset_launch_parameters() -> void:
 
 func _set_flight_basis(incoming_basis: Basis) -> void:
 	if self.flight_data != null:
-		self.flight_data.flight_basis = incoming_basis
+		self.flight_data.set_flight_basis(incoming_basis)
 	else:
 		Logger.debug(_FLIGHT_DATA_NOT_SET, [], self)
 

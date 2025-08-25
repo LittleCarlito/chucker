@@ -18,12 +18,12 @@ func _process(_delta: float) -> void:
 
 # We know primary is held upon entering this function
 func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> void:
-	flight_data.focus_flight = incoming_focus
+	flight_data.set_is_focused(incoming_focus)
 	# Perform pull disk calls
 	var only_primary_held: bool = Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY)
 	if only_primary_held:
 		var flight_details: FlightDetails = pull_draw.begin_pull()
-		self.flight_data.flight_details = flight_details
+		self.flight_data.set_flight_details(flight_details)
 	## If right click is pressed while holding left reset throw
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.SECONDARY):
 		pull_draw.reset_pull()
@@ -33,8 +33,9 @@ func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> 
 	elif not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
 		charge_view.set_progress((pull_draw.last_length / GameConfig.DEFAULTS.max_pull) * 100)
 		var multiplier: float = (pull_draw.last_length / 100) * GameConfig.DEFAULTS.hold_multiplier
-		flight_data.flight_path = FlightPath.convert(aim_line.draw_aim_line(multiplier, pull_draw.last_offset * .01))
-		flight_data.flight_basis = incoming_basis
+		var new_path: FlightPath = FlightPath.convert(aim_line.draw_aim_line(multiplier, pull_draw.last_offset * .01))
+		flight_data.set_flight_path(new_path)
+		flight_data.set_flight_basis(incoming_basis)
 
 # We know primary was released upon entering this function
 func release_action(incoming_basis: Basis) -> void:
@@ -42,7 +43,8 @@ func release_action(incoming_basis: Basis) -> void:
 	if not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY) and pull_draw.last_length > GameConfig.DEFAULTS.min_pull:
 		var multiplier: float = min(GameConfig.DEFAULTS.max_hold, (pull_draw.last_length / 100)) * GameConfig.DEFAULTS.hold_multiplier
 		var final_speed: float = GameConfig.DEFAULTS.launch_speed * multiplier
-		flight_data = FlightData.new(final_speed, incoming_basis, flight_data.flight_details, flight_data.flight_path, flight_data.focus_flight)
+		flight_data.set_flight_speed(final_speed)
+		flight_data.set_flight_basis(incoming_basis)
 		# Create path_disk_data and pass it into the launch method
 		var path_disk_data: AssetData = self._get_next_asset_data()
 		AssetDelivery.create_and_launch(flight_data, path_disk_data)

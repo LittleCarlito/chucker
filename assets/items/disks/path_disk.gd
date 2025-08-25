@@ -33,19 +33,19 @@ func _input(event: InputEvent) -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	if is_instance_valid(path_follow):
-		if flight_data == null or flight_data.flight_path.is_empty():
+		if flight_data == null or flight_data.get_actual_path().is_empty():
 			_swap_disk(true)
 
 func _physics_process(delta: float) -> void:
 	if _launched:
 		# Log flight information
 		if GameConfig.DEFAULTS.flight_detail and not self._details_logged:
-			flight_data.flight_details.log_details()
+			flight_data.print_details()
 			self._details_logged = true
 		# Move disk in space
 		if path_follow.progress_ratio < 1:
 			self._apply_roll_intensity()
-			var distance_per_second: float = flight_data.flight_speed * delta
+			var distance_per_second: float = flight_data.get_flight_speed() * delta
 			path_follow.progress += distance_per_second
 		else:
 			_collision_location = disk_mesh.global_position
@@ -72,8 +72,8 @@ func pick_up() -> void:
 #			Shots where no roll intensity is applied and it travels with no tilt
 #			Shots where it over-rotates and can end up on its side or upside down before reaching ground
 func _apply_roll_intensity() -> void:
-	if flight_data.flight_details.flight_power > GameConfig.DEFAULTS.min_pull_for_offset:
-		var current_roll_intensity: float = flight_data.flight_path.roll_intensity_at(path_follow.progress_ratio)
+	if flight_data.get_flight_power() > GameConfig.DEFAULTS.min_pull_for_offset:
+		var current_roll_intensity: float = flight_data.get_flight_path().roll_intensity_at(path_follow.progress_ratio)
 		if GameConfig.DEFAULTS.flight_detail:
 			Logger.debug("Roll intensity at percentage %03f is %03f", [path_follow.progress_ratio, current_roll_intensity], self)
 		var roll_modifier: float = current_roll_intensity * 20
@@ -88,7 +88,7 @@ func _body_enter(body_rid: RID, _body: Node3D, _body_shape_index: int, _local_sh
 		_swap_disk()
 
 func _determine_speed() -> float:
-	var max_speed: float = GameConfig.DEFAULTS.launch_speed * flight_data.flight_speed
+	var max_speed: float = GameConfig.DEFAULTS.launch_speed * flight_data.get_flight_speed()
 	var calulated_ratio: float = 1 - (4 * path_follow.progress_ratio) * (1 - path_follow.progress_ratio)
 	var ratio_adjustment:float = max(GameConfig.DEFAULTS.max_speed_reduce, calulated_ratio)
 	return ratio_adjustment * max_speed
@@ -108,8 +108,8 @@ func _swap_disk(drop_disk: bool = false) -> void:
 			var new_flight_path: FlightPath = FlightPath.convert([disk_mesh.global_position])
 			flight_data.set_flight_path(new_flight_path)
 			# TODO Get PathDisk collision speed offset to config
-			var original_flight_speed: float = flight_data.flight_speed
-			flight_data.flight_speed = 0
+			var original_flight_speed: float = flight_data.get_flight_speed()
+			flight_data.set_flight_speed(0)
 			var _launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, spawn_disk_data)
 			# TODO Get path disk speed modifier to config
 			var added_velocity: Vector3 = Vector3(0, -(original_flight_speed * 0.4), -(original_flight_speed * 0.4))
@@ -123,17 +123,17 @@ func _set_flight_data(incoming_data: FlightData) -> void:
 func _launch() -> void:
 	if flight_data != null:
 		flight_data.print_details()
-		if flight_data.focus_flight:
+		if flight_data.is_focus_flight():
 			_submit_camera_request()
 			camera_container.set_current()
 			camera_container.hold_min_height()
 			camera_container.hold_steady()
-			disk_mesh.basis = flight_data.flight_basis
+			disk_mesh.basis = flight_data.get_flight_basis()
 			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		# Set path's curve equal to flight data's path
 		var flight_curve: Curve3D = Curve3D.new()
-		for flight_point in flight_data.flight_path.path:
+		for flight_point in flight_data.get_actual_path():
 			flight_curve.add_point(flight_point.point_position)
 		path_3d.curve = flight_curve
 		_launched = true
