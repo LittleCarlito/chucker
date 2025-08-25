@@ -11,9 +11,6 @@ var asset_data: AssetData
 var flight_data: FlightData = FlightData.new()
 var stopwatch: Stopwatch = Stopwatch.new()
 
-# BUG Charge disk seems to be goign to default 0 basis on launch
-# BUG Disable movement is occuring even with it not checked on chuck
-
 # TODO Create maximum "charge" aka "pull" time for ChargeDisk and PullDisk
 #			ChargeDisk
 #				Have charge and line decrease after reaching max and increase after reaching min on long holds
@@ -101,6 +98,7 @@ func release_action(incoming_basis: Basis) -> void:
 		#		If it is should be simplified into the calculation above instead of 2 separate lines
 		var final_speed: float = GameConfig.DEFAULTS.launch_speed * speed_multiplier
 		flight_data.set_flight_speed(final_speed)
+		flight_data.set_flight_basis(incoming_basis)
 		# TODO Make sure that item_data contains the group_name of the entity throwing it
 		var force_disk_data: AssetData = self._get_next_asset_data()
 		var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, force_disk_data)
