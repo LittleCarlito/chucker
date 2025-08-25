@@ -15,24 +15,26 @@ var follow_thru_under_window: float
 var follow_thru_perfect_widow: float
 var follow_thru_over_window:float
 
-
+var current_state: ItemState.STATE
 
 func _init(
-	p_ready_window: float = NUMBERS.FLOAT16_MAX,
-	p_windup_undercooked_window: float = NUMBERS.FLOAT16_MAX,
-	p_windup_very_early_window: float = NUMBERS.FLOAT16_MAX,
-	p_windup_early_window: float = NUMBERS.FLOAT16_MAX,
-	p_windup_perfect_window: float = NUMBERS.FLOAT16_MAX,
-	p_windup_late_window: float = NUMBERS.FLOAT16_MAX,
-	p_windup_very_late_window: float = NUMBERS.FLOAT16_MAX,
-	p_windup_overcooked_window: float = NUMBERS.FLOAT16_MAX,
-	p_throwing_under_window: float = NUMBERS.FLOAT16_MAX,
-	p_throwing_perfect_window: float = NUMBERS.FLOAT16_MAX,
-	p_throwing_over_window: float = NUMBERS.FLOAT16_MAX,
-	p_follow_thru_under_window: float = NUMBERS.FLOAT16_MAX,
-	p_follow_thru_perfect_widow: float = NUMBERS.FLOAT16_MAX,
-	p_follow_thru_over_window: float = NUMBERS.FLOAT16_MAX
-):
+			incoming_state: ItemState.STATE = 0,
+			p_ready_window: float = NUMBERS.FLOAT16_MAX,
+			p_windup_undercooked_window: float = NUMBERS.FLOAT16_MAX,
+			p_windup_very_early_window: float = NUMBERS.FLOAT16_MAX,
+			p_windup_early_window: float = NUMBERS.FLOAT16_MAX,
+			p_windup_perfect_window: float = NUMBERS.FLOAT16_MAX,
+			p_windup_late_window: float = NUMBERS.FLOAT16_MAX,
+			p_windup_very_late_window: float = NUMBERS.FLOAT16_MAX,
+			p_windup_overcooked_window: float = NUMBERS.FLOAT16_MAX,
+			p_throwing_under_window: float = NUMBERS.FLOAT16_MAX,
+			p_throwing_perfect_window: float = NUMBERS.FLOAT16_MAX,
+			p_throwing_over_window: float = NUMBERS.FLOAT16_MAX,
+			p_follow_thru_under_window: float = NUMBERS.FLOAT16_MAX,
+			p_follow_thru_perfect_widow: float = NUMBERS.FLOAT16_MAX,
+			p_follow_thru_over_window: float = NUMBERS.FLOAT16_MAX
+			):
+	self.current_state = incoming_state
 	self.ready_window = p_ready_window
 	self.windup_undercooked_window = p_windup_undercooked_window
 	self.windup_very_early_window = p_windup_very_early_window
@@ -47,6 +49,21 @@ func _init(
 	self.follow_thru_under_window = p_follow_thru_under_window
 	self.follow_thru_perfect_widow = p_follow_thru_perfect_widow
 	self.follow_thru_over_window = p_follow_thru_over_window
+
+# TODO Implement structure to make it finite state machine
+#			Reconfigure variables to be an Array[float]
+#			Only can increase/decrease states via calls
+#				Have the get next valid state search the array for the next non NumbersFloatMax window value
+#				Have get next state search the array for next value regardless of window set for it
+#				Make get last valid and normal functions as well
+#				Make a reset state function
+#					Resets to 0 value state (right now that means READY; But we will treat it as 0 in code)
+#				Make is state function
+#				Make find state function
+#					Takes in a state and gives out a - 0 + value for how far that status is from the current
+
+func reset_state() -> void:
+	self.current_state = 0
 
 func is_valid_state() -> bool:
 	var windows = [

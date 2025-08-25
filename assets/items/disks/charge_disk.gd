@@ -61,8 +61,8 @@ func _ready() -> void:
 		add_to_group(self.asset_data.group_name)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
+func _process(delta: float) -> void:
+	super._process(delta)
 
 # TODO Refactor to take in global_basis and set it in flight data as well
 # TODO Figure out default value for Basis

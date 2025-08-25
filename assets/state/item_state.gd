@@ -18,6 +18,7 @@ enum STATE {
 }
 
 static var DEFAULT_STATE_CONFIG = ItemStateConfig.new(
+	0,
 	15, 
 	30, 
 	45, 
@@ -39,4 +40,4 @@ static func get_default_config(incoming_type: AssetData.TYPE) -> ItemStateConfig
 		AssetData.TYPE.CHARGE || AssetData.TYPE.PULL:
 			return DEFAULT_STATE_CONFIG
 		_:
-			return ItemStateConfig.new()
+			return ItemStateConfig.new(0)

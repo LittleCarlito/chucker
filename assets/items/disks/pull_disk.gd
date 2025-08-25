@@ -9,8 +9,8 @@ func _ready() -> void:
 	flight_data.reset_state_config(AssetData.TYPE.PULL)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
+func _process(delta: float) -> void:
+	super._process(delta)
 
 # We know primary is held upon entering this function
 func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> void:
