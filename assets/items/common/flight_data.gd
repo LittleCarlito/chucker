@@ -2,10 +2,17 @@ class_name FlightData
 
 var flight_details: FlightDetails
 var flight_path: FlightPath
+var state_config: ItemStateConfig
 
-func _init(incoming_details: FlightDetails = FlightDetails.new(), incoming_path: FlightPath = FlightPath.new()) -> void:
+func _init(
+			incoming_details: FlightDetails = FlightDetails.new(), 
+			incoming_path: FlightPath = FlightPath.new(), 
+			item_type: AssetData.TYPE = AssetData.TYPE.UNKNOWN
+			) -> void:
 	self.flight_details = incoming_details
 	self.flight_path = incoming_path
+	self.state_config = ItemStateConfig.get_default_config(item_type)
+
 
 ## Returns the roll intensity at the given % into the flight path
 ## Given as whole number example: 60.6 == 60.6%; .606 = .606%
