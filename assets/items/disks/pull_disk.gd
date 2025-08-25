@@ -22,8 +22,9 @@ func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> 
 	# Perform pull disk calls
 	var only_primary_held: bool = Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY)
 	if only_primary_held:
-		var flight_details: FlightDetails = pull_draw.begin_pull()
-		self.flight_data.set_flight_details(flight_details)
+		var pull_data: PullData = pull_draw.begin_pull()
+		self.flight_data.set_flight_power(pull_data.primary_pull)
+		self.flight_data.set_flight_aim(pull_data.secondary_pull)
 	## If right click is pressed while holding left reset throw
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.SECONDARY):
 		pull_draw.reset_pull()

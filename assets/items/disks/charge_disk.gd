@@ -11,6 +11,8 @@ var asset_data: AssetData
 var flight_data: FlightData = FlightData.new()
 var stopwatch: Stopwatch = Stopwatch.new()
 
+# BUG Charge disk seems to be goign to default 0 basis on launch
+# BUG Disable movement is occuring even with it not checked on chuck
 
 # TODO Create maximum "charge" aka "pull" time for ChargeDisk and PullDisk
 #			ChargeDisk

@@ -15,7 +15,7 @@ func _process(delta: float) -> void:
 	if last_length != 0:
 		self.queue_redraw()
 
-func begin_pull() -> FlightDetails:
+func begin_pull() -> PullData:
 	if origin_hold == Vector2.INF:
 		origin_hold = get_tree().root.get_viewport().get_mouse_position()
 	hold_current = get_tree().root.get_viewport().get_mouse_position()
@@ -26,7 +26,7 @@ func reset_pull() -> void:
 	hold_current = Vector2.INF
 	calc_last_values()
 
-func calc_last_values() -> FlightDetails:
+func calc_last_values() -> PullData:
 	var y_pull: float = abs(hold_current.y - origin_hold.y)
 	var x_pull: float = hold_current.x - origin_hold.x
 	var x_pull_abs: float = abs(x_pull)
@@ -40,8 +40,8 @@ func calc_last_values() -> FlightDetails:
 		last_offset = max(-GameConfig.DEFAULTS.max_offset, x_aim_contribution)
 	return self.get_pull_details()
 
-func get_pull_details() -> FlightDetails:
-	return FlightDetails.new(last_length, last_offset)
+func get_pull_details() -> PullData:
+	return PullData.new(last_length, last_offset)
 
 func _draw() -> void:
 	var power_end_point: Vector2 = origin_hold.move_toward(hold_current, last_length)

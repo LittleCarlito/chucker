@@ -50,8 +50,14 @@ func print_details() -> void:
 func get_flight_power() -> float:
 	return self.flight_details.flight_power
 
+func set_flight_power(incoming_power: float) -> void:
+	self.flight_details.flight_power = incoming_power
+
 func get_flight_aim() -> float:
 	return self.flight_details.flight_aim
+
+func set_flight_aim(incoming_aim: float) -> void:
+	self.flight_details.flight_aim = incoming_aim
 
 func set_is_focused(incoming_focus: bool) -> void:
 	self.flight_details.focus_flight = incoming_focus
