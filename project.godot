@@ -27,9 +27,9 @@ DrawUtil="*res://utils/draw_util.gd"
 NodeUtil="*res://utils/node_util.gd"
 Logger="*res://utils/logger.gd"
 InputSprite="*res://configuration/input/input_sprite.gd"
-AssetDelivery="*res://assets/common/factory/asset_delivery.gd"
 GlobalHoleData="*res://assets/buildings/course/data/global_hole_data.gd"
 UserSettingData="*res://configuration/handler/user_setting_data.gd"
+AssetDelivery="*res://assets/factory/asset_delivery.gd"
 
 [display]
 

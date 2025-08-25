@@ -1,7 +1,7 @@
 extends FreelookCharacter
 class_name ChuckChucker
 
-var asset_data: AssetData
+@export var asset_data: AssetData
 
 func _ready() -> void:
 	super._ready()
@@ -39,7 +39,7 @@ func release_action() -> void:
 	self._update_state()
 	# If the camera was released for the launch disable movement
 	if asset_data.camera_state != AssetData.CAMERA_STATE.ACTIVE:
-		self._just_output = true
+		self.just_output = true
 		self.disable_movement()
 		self.disable_rotation()
 

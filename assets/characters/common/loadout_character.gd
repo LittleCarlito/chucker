@@ -6,7 +6,7 @@ class_name LoadoutCharacter
 @export var item_container: ItemContainer
 @export var freeze_on_equip: bool = true
 
-var _just_output: bool
+var just_output: bool
 
 func _ready() -> void:
 	super._ready()

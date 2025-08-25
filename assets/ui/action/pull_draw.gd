@@ -11,7 +11,7 @@ var x_axis_power_ratio: float = 0.2
 func _ready() -> void:
 	pass
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if last_length != 0:
 		self.queue_redraw()
 

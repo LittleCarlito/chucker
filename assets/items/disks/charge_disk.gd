@@ -11,6 +11,7 @@ var asset_data: AssetData
 var flight_data: FlightData = FlightData.new()
 var stopwatch: Stopwatch = Stopwatch.new()
 
+# BUG why can't AssetData be moved from Factory folder to Data folder?
 # TODO Create maximum "charge" aka "pull" time for ChargeDisk and PullDisk
 #			ChargeDisk
 #				Have charge and line decrease after reaching max and increase after reaching min on long holds

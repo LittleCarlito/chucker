@@ -37,7 +37,7 @@ func _transfer_and_enable(incoming_camera: Camera3D) -> void:
 		enable_movement()
 	if is_rotation_disabled():
 		enable_rotation()
-	_just_output = false
+	self.just_output = false
 	self.set_camera(incoming_camera)
 
 func _handle_movement_input(_delta: float) -> void:
