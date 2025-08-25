@@ -3,12 +3,6 @@ class_name ChargeDisk
 
 const _FLIGHT_DATA_NOT_SET: String = "FlightData not set; Cannot set flight global basis"
 
-@export var charge_view: ChargeView
-@export var aim_line: AimLine
-@export var disk_mesh: DiskMesh
-
-var asset_data: AssetData
-var flight_data: FlightData
 var stopwatch: Stopwatch
 
 # BUG why can't AssetData be moved from Factory folder to Data folder?
@@ -60,9 +54,9 @@ var stopwatch: Stopwatch
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	self.flightdata = FlightData.new(AssetData.TYPE.CHARGE)
+	super._ready()
 	self.stopwatch = Stopwatch.new()
-	self.charge_view.set_progress(-1)
+	self.flight_data.reset_state_config(AssetData.TYPE.CHARGE)
 	if self.asset_data != null and !self.asset_data.group_name.is_empty():
 		add_to_group(self.asset_data.group_name)
 

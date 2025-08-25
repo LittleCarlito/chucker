@@ -7,9 +7,6 @@ signal aim(aim_type, adjustment_value)
 @warning_ignore("unused_signal")
 signal launched
 
-const LAUNCHED: String = "launched"
-const AIM: String = "aim"
-
 enum AIM_TYPE {
 	ZOOM_IN,
 	ZOOM_OUT,
@@ -17,13 +14,36 @@ enum AIM_TYPE {
 	VERTIAL_LOOK
 }
 
+@export var charge_view: ChargeView
+@export var aim_line: AimLine
+@export var disk_mesh: DiskMesh
+
+const LAUNCHED: String = "launched"
+const AIM: String = "aim"
+var asset_data: AssetData
+var flight_data: FlightData
+var _primary_hold_time: float
+var _secondary_hold_time :float
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	self.flight_data = FlightData.new()
+	self.charge_view.set_progress(-1)
+	self._primary_hold_time = 0
+	self._secondary_hold_time = 0
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
+func _process(delta: float) -> void:
+	if Input.is_action_just_pressed(InputConfig.USER_INPUT.PRIMARY):
+		self._primary_hold_time = 0
+	elif Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY):
+		self._primary_hold_time += delta
+		Logger.debug("Primary hold updated to %03f", [self._primary_hold_time], self)
+	if Input.is_action_just_pressed(InputConfig.USER_INPUT.SECONDARY):
+		self._secondary_hold_time = 0
+	elif Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
+		self._secondary_hold_time += delta
+		Logger.debug("Secondary hold updated to %03f", [self._secondary_hold_time], self)
 
 func _input(event: InputEvent) -> void:
 	_handle_aiming(event)

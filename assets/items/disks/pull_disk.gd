@@ -1,16 +1,12 @@
 extends ThrowableItem
 class_name PullDisk
 
-@export var aim_line: AimLine
 @export var pull_draw: PullDraw
-@export var charge_view: ChargeView
-var asset_data: AssetData
-var flight_data: FlightData
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	charge_view.set_progress(-1)
-	flight_data = FlightData.new(AssetData.TYPE.PULL)
+	super._ready()
+	flight_data.reset_state_config(AssetData.TYPE.PULL)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:

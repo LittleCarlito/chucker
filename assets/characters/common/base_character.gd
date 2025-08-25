@@ -115,10 +115,6 @@ func _reset_camera_control() -> void:
 func _handle_horizontal_rotation(incoming_rotation: float = NUMBERS.FLOAT16_MAX) -> void:
 	var rotation_amount = incoming_rotation if incoming_rotation != NUMBERS.FLOAT16_MAX else deg_to_rad(CameraConfig.get_rotate_speed())
 	self.rotate_y_axis(rotation_amount)
-	Logger.debug("I CAUGHT IT; %03f", [incoming_rotation], self)
-	# TODO assign to variable = f incoming_rotation is the max default value assign it to the GameConfig rotation amount value
-	# TODO Rotate base character (self) determined amount
-	pass
 
 ## Returns true if rotation is enabled
 func is_rotation_enabled() -> bool:
