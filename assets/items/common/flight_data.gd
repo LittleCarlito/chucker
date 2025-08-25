@@ -3,20 +3,8 @@ class_name FlightData
 var flight_details: FlightDetails
 var flight_path: FlightPath
 
-# TODO Refactor this constructor to work better with FlightDetails
-func _init(
-	incoming_speed: float = 0, 
-	incoming_basis: Basis = Basis.from_euler(Vector3(0, 0, 0)), 
-	incoming_details: FlightDetails = FlightDetails.new(),
-	incoming_path: FlightPath = FlightPath.new(), 
-	incoming_focus: bool = false
-	) -> void:
-	# TODO Restructure this to work better within the constructor
+func _init(incoming_details: FlightDetails = FlightDetails.new(), incoming_path: FlightPath = FlightPath.new()) -> void:
 	self.flight_details = incoming_details
-	self.flight_details.flight_basis = incoming_basis
-	self.flight_details.flight_speed = incoming_speed
-	self.flight_details.focus_flight = incoming_focus
-
 	self.flight_path = incoming_path
 
 ## Returns the roll intensity at the given % into the flight path
@@ -33,7 +21,6 @@ func get_flight_details() -> FlightDetails:
 func get_flight_path() -> FlightPath:
 	return self.flight_path
 
-# TODO Fix all accessors to .flight_path.path
 func get_actual_path() -> Array[FlightPoint]:
 	return self.flight_path.path
 

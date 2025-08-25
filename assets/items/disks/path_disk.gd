@@ -73,7 +73,7 @@ func pick_up() -> void:
 #			Shots where it over-rotates and can end up on its side or upside down before reaching ground
 func _apply_roll_intensity() -> void:
 	if flight_data.get_flight_power() > GameConfig.DEFAULTS.min_pull_for_offset:
-		var current_roll_intensity: float = flight_data.get_flight_path().roll_intensity_at(path_follow.progress_ratio)
+		var current_roll_intensity: float = flight_data.roll_intensity_at(path_follow.progress_ratio)
 		if GameConfig.DEFAULTS.flight_detail:
 			Logger.debug("Roll intensity at percentage %03f is %03f", [path_follow.progress_ratio, current_roll_intensity], self)
 		var roll_modifier: float = current_roll_intensity * 20

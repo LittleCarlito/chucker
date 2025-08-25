@@ -25,14 +25,17 @@ var stopwatch: Stopwatch = Stopwatch.new()
 #		Within AssetData manage state of asset
 #		State needs new states
 #			READY
-#			UNDERCOOKED
+#			WINDUP_UNDERCOOKED
 #			WINDUP_VERY_EARLY
 #			WINDUP_EARLY
 #			WINDUP_PERFECT
 #			WINDUP_LONG
 #			WINDUP_VERY_LONG
-#			OVERCOOKED
+#			WINDUP_OVERCOOKED
+#			UNDER_THROWING
 #			THROWING
+#			PERFECT_THROWING
+#			OVER_THROWING
 #			FOLLOW_THRU
 #		ItemContainer calls down to its contained object to let it know when/what state to update to
 #			But only does so if
@@ -103,13 +106,14 @@ func release_action(incoming_basis: Basis) -> void:
 		var force_disk_data: AssetData = self._get_next_asset_data()
 		var launched_disk: ForceDisk = AssetDelivery.create_and_launch(flight_data, force_disk_data)
 		# TODO Since moving this camera position is fucked; Check out setting focus in create and launch; probably needs to be done as separate call after
-		launched_disk.global_position = flight_data.flight_path.path[0].point_position
+		launched_disk.global_position = flight_data.get_actual_path()[0].point_position
 		launched.emit()
 		pick_up()
 
 func drop_item() -> void:
 	var drop_path: FlightPath = FlightPath.convert([self.global_position])
-	var drop_flight: FlightData = FlightData.new(0, self.global_basis, FlightDetails.new(), drop_path, false)
+	var drop_details: FlightDetails = FlightDetails.new(0, 0, self.global_basis, false, 0)
+	var drop_flight: FlightData = FlightData.new(drop_details, drop_path)
 	var drop_asset: AssetData = self._get_next_asset_data()
 	AssetDelivery.create_and_launch(drop_flight, drop_asset)
 	self.queue_free()

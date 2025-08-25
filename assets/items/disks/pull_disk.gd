@@ -57,7 +57,8 @@ func release_action(incoming_basis: Basis) -> void:
 
 func drop_item() -> void:
 	var drop_path: FlightPath = FlightPath.convert([self.global_position])
-	var drop_flight: FlightData = FlightData.new(0, self.global_basis, FlightDetails.new(), drop_path, false)
+	var drop_details: FlightDetails = FlightDetails.new(0, 0, self.global_basis, false, 0,)
+	var drop_flight: FlightData = FlightData.new(drop_details, drop_path)
 	var drop_asset: AssetData = self._get_next_asset_data(true)
 	AssetDelivery.create_and_launch(drop_flight, drop_asset)
 	self.queue_free()
