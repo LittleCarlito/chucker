@@ -10,7 +10,7 @@ var flight_data: FlightData
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	charge_view.set_progress(-1)
-	flight_data = FlightData.new()
+	flight_data = FlightData.new(AssetData.TYPE.PULL)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -58,13 +58,13 @@ func release_action(incoming_basis: Basis) -> void:
 func drop_item() -> void:
 	var drop_path: FlightPath = FlightPath.convert([self.global_position])
 	var drop_details: FlightDetails = FlightDetails.new(0, 0, self.global_basis, false, 0,)
-	var drop_flight: FlightData = FlightData.new(drop_details, drop_path)
+	var drop_flight: FlightData = FlightData.new(AssetData.TYPE.PULL, drop_details, drop_path)
 	var drop_asset: AssetData = self._get_next_asset_data(true)
 	AssetDelivery.create_and_launch(drop_flight, drop_asset)
 	self.queue_free()
 
 func reset_launch_parameters() -> void:
-	flight_data = FlightData.new()
+	flight_data = FlightData.new(AssetData.TYPE.PULL)
 
 func pick_up() -> void:
 	self.queue_free()
