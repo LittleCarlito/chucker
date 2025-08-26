@@ -40,20 +40,6 @@ func _init(
 	if not is_state_configuration_valid():
 		push_error("ItemStateConfig state window values must be sequential and increasing.")
 
-func _is_valid_state(state: int) -> bool:
-	if state < 0 or state >= windows.size(): return false
-	return windows[state] != NUMBERS.FLOAT16_MAX
-
-func _get_next_state(from_state: int, only_valid: bool) -> int:
-	for s in range(from_state + 1, windows.size()):
-		if not only_valid or _is_valid_state(s): return s
-	return from_state
-
-func _get_previous_state(from_state: int, only_valid: bool) -> int:
-	for s in range(from_state - 1, -1, -1):
-		if not only_valid or _is_valid_state(s): return s
-	return from_state
-
 func can_transition(to_state: ItemState.STATE) -> bool:
 	if not ItemState.VALID_TRANSITIONS.has(self.current_state): return false
 	return to_state in ItemState.VALID_TRANSITIONS[self.current_state]
@@ -65,44 +51,44 @@ func try_set_state(to_state: ItemState.STATE) -> bool:
 	return false
 
 func peak_next_valid() -> ItemState.STATE: 
-	return _get_next_state(self.current_state, true)
+	return _get_next_valid_transition(self.current_state)
 
 func peak_next_actual() -> ItemState.STATE: 
-	return _get_next_state(self.current_state, false)
+	return _get_next_valid_transition(self.current_state)
 
 func set_next_valid() -> ItemState.STATE: 
-	var candidate = _get_next_state(self.current_state, true)
+	var candidate = _get_next_valid_transition(self.current_state)
 	if try_set_state(candidate): return self.current_state
 	return self.current_state
 
 func set_next_actual() -> ItemState.STATE: 
-	var candidate = _get_next_state(self.current_state, false)
+	var candidate = _get_next_valid_transition(self.current_state)
 	if try_set_state(candidate): return self.current_state
 	return self.current_state
 
 func peak_previous_valid() -> ItemState.STATE: 
-	return _get_previous_state(self.current_state, true)
+	return _get_previous_valid_transition(self.current_state)
 
 func peak_previous_actual() -> ItemState.STATE: 
-	return _get_previous_state(self.current_state, false)
+	return _get_previous_valid_transition(self.current_state)
 
 func set_previous_valid() -> ItemState.STATE: 
-	var candidate = _get_previous_state(self.current_state, true)
+	var candidate = _get_previous_valid_transition(self.current_state)
 	if try_set_state(candidate): return self.current_state
 	return self.current_state
 
 func set_previous_actual() -> ItemState.STATE: 
-	var candidate = _get_previous_state(self.current_state, false)
+	var candidate = _get_previous_valid_transition(self.current_state)
 	if try_set_state(candidate): return self.current_state
 	return self.current_state
 
 func reset_state() -> void: 
 	self.current_state = ItemState.STATE.READY
 
-func get_valid_states() -> Array[ItemState.STATE]: 
+func get_populated_states() -> Array[ItemState.STATE]: 
 	var result: Array[ItemState.STATE] = []
 	for s in range(windows.size()):
-		if _is_valid_state(s): 
+		if _is_populated_state(s): 
 			result.append(s)
 	return result
 
@@ -123,3 +109,20 @@ func is_state_configuration_valid() -> bool:
 			if w < last_value: return false
 			last_value = w
 	return true
+
+func _is_populated_state(state: int) -> bool:
+	if state < 0 or state >= windows.size(): return false
+	return windows[state] != NUMBERS.FLOAT16_MAX
+
+func _get_next_valid_transition(from_state: int) -> int:
+	if not ItemState.VALID_TRANSITIONS.has(from_state): return from_state
+	for target_state in ItemState.VALID_TRANSITIONS[from_state]:
+		if target_state > from_state: return target_state
+	return from_state
+
+func _get_previous_valid_transition(from_state: int) -> int:
+	for source_state in ItemState.VALID_TRANSITIONS.keys():
+		if source_state < from_state and ItemState.VALID_TRANSITIONS.has(source_state):
+			for target_state in ItemState.VALID_TRANSITIONS[source_state]:
+				if target_state == from_state: return source_state
+	return from_state
