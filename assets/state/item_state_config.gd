@@ -38,8 +38,7 @@ func _init(
 	windows[ItemState.STATE.FOLLOW_THRU_UNDER] = p_follow_thru_under_window
 	windows[ItemState.STATE.FOLLOW_THRU_PERFECT] = p_follow_thru_perfect_widow
 	windows[ItemState.STATE.FOLLOW_THRU_OVER] = p_follow_thru_over_window
-	if not is_state_configuration_valid():
-		push_error("ItemStateConfig state window values must be sequential and increasing.")
+	self.validate_state_configuration()
 
 func can_transition(to_state: ItemState.STATE) -> bool:
 	if not ItemState.VALID_TRANSITIONS.has(self.current_state): return false
@@ -102,14 +101,37 @@ func is_state(state: ItemState.STATE) -> bool:
 func find_state(target: ItemState.STATE) -> int: 
 	return target - self.current_state
 
-func is_state_configuration_valid() -> bool:
-	var last_value: float = -INF
+func validate_state_configuration() -> void:
+	var populated_states: Array[int] = []
+	for state_value in ItemState.STATE.values():
+		if state_value < windows.size() and windows[state_value] != NUMBERS.FLOAT16_MAX:
+			populated_states.append(state_value)
+	populated_states.sort()
+	for i in range(1, populated_states.size()):
+		var window_state = populated_states[i]
+		var prev_state = populated_states[i - 1]
+		var current_value = windows[window_state]
+		var prev_value = windows[prev_state]
+		if current_value < prev_value:
+			var state_name := ItemState.get_state_string(window_state)
+			var prev_state_name := ItemState.get_state_string(prev_state)
+			var error_msg := "Invalid state configuration: State '%s' (%.2f) is less than previous state '%s' (%.2f)." % [
+				state_name, current_value, prev_state_name, prev_value
+			]
+			push_error(error_msg)
+			return
+	return
+
+func _windows_to_string() -> String:
+	var parts: Array[String] = []
 	for s in range(windows.size()):
-		var w = windows[s]
-		if w != NUMBERS.FLOAT16_MAX:
-			if w < last_value: return false
-			last_value = w
-	return true
+		var label := ItemState.get_state_string(s)
+		var value := windows[s]
+		if value == NUMBERS.FLOAT16_MAX:
+			parts.append("%s: MAX" % label)
+		else:
+			parts.append("%s: %.2f" % [label, value])
+	return "[" + ", ".join(parts) + "]"
 
 func get_nearest_state(incoming_value: float) -> String:
 	var nearest_state: ItemState.STATE = ItemState.STATE.READY

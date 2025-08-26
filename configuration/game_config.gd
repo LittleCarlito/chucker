@@ -33,6 +33,7 @@ const DEFAULTS: Dictionary = {
 	"default_location": Vector3(0, 1, 0),
 	"uknown_location": Vector3(NUMBERS.FLOAT16_MAX, NUMBERS.FLOAT16_MAX, NUMBERS.FLOAT16_MAX),
 	# Debug values
+	"debug_logs": true,
 	"extra_detail": false,
 	"flight_detail": false
 }
