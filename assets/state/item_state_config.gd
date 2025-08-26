@@ -1,92 +1,125 @@
 class_name ItemStateConfig
 
-var ready_window: float
-var windup_undercooked_window: float
-var windup_very_early_window: float
-var windup_early_window: float
-var windup_perfect_window: float
-var windup_late_window: float
-var windup_very_late_window: float
-var windup_overcooked_window: float
-var throwing_under_window: float
-var throwing_perfect_window: float
-var throwing_over_window: float
-var follow_thru_under_window: float
-var follow_thru_perfect_widow: float
-var follow_thru_over_window:float
-
 var current_state: ItemState.STATE
+var windows: Array[float] = []
 
 func _init(
-			incoming_state: ItemState.STATE = 0,
-			p_ready_window: float = NUMBERS.FLOAT16_MAX,
-			p_windup_undercooked_window: float = NUMBERS.FLOAT16_MAX,
-			p_windup_very_early_window: float = NUMBERS.FLOAT16_MAX,
-			p_windup_early_window: float = NUMBERS.FLOAT16_MAX,
-			p_windup_perfect_window: float = NUMBERS.FLOAT16_MAX,
-			p_windup_late_window: float = NUMBERS.FLOAT16_MAX,
-			p_windup_very_late_window: float = NUMBERS.FLOAT16_MAX,
-			p_windup_overcooked_window: float = NUMBERS.FLOAT16_MAX,
-			p_throwing_under_window: float = NUMBERS.FLOAT16_MAX,
-			p_throwing_perfect_window: float = NUMBERS.FLOAT16_MAX,
-			p_throwing_over_window: float = NUMBERS.FLOAT16_MAX,
-			p_follow_thru_under_window: float = NUMBERS.FLOAT16_MAX,
-			p_follow_thru_perfect_widow: float = NUMBERS.FLOAT16_MAX,
-			p_follow_thru_over_window: float = NUMBERS.FLOAT16_MAX
+				incoming_state: ItemState.STATE = ItemState.STATE.READY,
+				p_ready_window: float = NUMBERS.FLOAT16_MAX,
+				p_windup_undercooked_window: float = NUMBERS.FLOAT16_MAX,
+				p_windup_very_early_window: float = NUMBERS.FLOAT16_MAX,
+				p_windup_early_window: float = NUMBERS.FLOAT16_MAX,
+				p_windup_perfect_window: float = NUMBERS.FLOAT16_MAX,
+				p_windup_late_window: float = NUMBERS.FLOAT16_MAX,
+				p_windup_very_late_window: float = NUMBERS.FLOAT16_MAX,
+				p_windup_overcooked_window: float = NUMBERS.FLOAT16_MAX,
+				p_throwing_under_window: float = NUMBERS.FLOAT16_MAX,
+				p_throwing_perfect_window: float = NUMBERS.FLOAT16_MAX,
+				p_throwing_over_window: float = NUMBERS.FLOAT16_MAX,
+				p_follow_thru_under_window: float = NUMBERS.FLOAT16_MAX,
+				p_follow_thru_perfect_widow: float = NUMBERS.FLOAT16_MAX,
+				p_follow_thru_over_window: float = NUMBERS.FLOAT16_MAX
 			):
 	self.current_state = incoming_state
-	self.ready_window = p_ready_window
-	self.windup_undercooked_window = p_windup_undercooked_window
-	self.windup_very_early_window = p_windup_very_early_window
-	self.windup_early_window = p_windup_early_window
-	self.windup_perfect_window = p_windup_perfect_window
-	self.windup_late_window = p_windup_late_window
-	self.windup_very_late_window = p_windup_very_late_window
-	self.windup_overcooked_window = p_windup_overcooked_window
-	self.throwing_under_window = p_throwing_under_window
-	self.throwing_perfect_window = p_throwing_perfect_window
-	self.throwing_over_window = p_throwing_over_window
-	self.follow_thru_under_window = p_follow_thru_under_window
-	self.follow_thru_perfect_widow = p_follow_thru_perfect_widow
-	self.follow_thru_over_window = p_follow_thru_over_window
+	var max_state = ItemState.STATE.FOLLOW_THRU_OVER
+	windows.resize(max_state + 1)
+	windows[ItemState.STATE.READY] = p_ready_window
+	windows[ItemState.STATE.WINDUP_UNDERCOOKED] = p_windup_undercooked_window
+	windows[ItemState.STATE.WINDUP_VERY_EARLY] = p_windup_very_early_window
+	windows[ItemState.STATE.WINDUP_EARLY] = p_windup_early_window
+	windows[ItemState.STATE.WINDUP_PERFECT] = p_windup_perfect_window
+	windows[ItemState.STATE.WINDUP_LATE] = p_windup_late_window
+	windows[ItemState.STATE.WINDUP_VERY_LATE] = p_windup_very_late_window
+	windows[ItemState.STATE.WINDUP_OVERCOOKED] = p_windup_overcooked_window
+	windows[ItemState.STATE.THROWING_UNDER] = p_throwing_under_window
+	windows[ItemState.STATE.THROWING_PERFECT] = p_throwing_perfect_window
+	windows[ItemState.STATE.THROWING_OVER] = p_throwing_over_window
+	windows[ItemState.STATE.FOLLOW_THRU_UNDER] = p_follow_thru_under_window
+	windows[ItemState.STATE.FOLLOW_THRU_PERFECT] = p_follow_thru_perfect_widow
+	windows[ItemState.STATE.FOLLOW_THRU_OVER] = p_follow_thru_over_window
+	if not is_state_configuration_valid():
+		push_error("ItemStateConfig state window values must be sequential and increasing.")
 
-# TODO Implement structure to make it finite state machine
-#			Reconfigure variables to be an Array[float]
-#			Only can increase/decrease states via calls
-#				Have the get next valid state search the array for the next non NumbersFloatMax window value
-#				Have get next state search the array for next value regardless of window set for it
-#				Make get last valid and normal functions as well
-#				Make a reset state function
-#					Resets to 0 value state (right now that means READY; But we will treat it as 0 in code)
-#				Make is state function
-#				Make find state function
-#					Takes in a state and gives out a - 0 + value for how far that status is from the current
+func _is_valid_state(state: int) -> bool:
+	if state < 0 or state >= windows.size(): return false
+	return windows[state] != NUMBERS.FLOAT16_MAX
 
-func reset_state() -> void:
-	self.current_state = 0
+func _get_next_state(from_state: int, only_valid: bool) -> int:
+	for s in range(from_state + 1, windows.size()):
+		if not only_valid or _is_valid_state(s): return s
+	return from_state
 
-func is_valid_state() -> bool:
-	var windows = [
-		ready_window,
-		windup_undercooked_window,
-		windup_very_early_window,
-		windup_early_window,
-		windup_perfect_window,
-		windup_late_window,
-		windup_very_late_window,
-		windup_overcooked_window,
-		throwing_under_window,
-		throwing_perfect_window,
-		throwing_over_window,
-		follow_thru_under_window,
-		follow_thru_perfect_widow,
-		follow_thru_over_window
-	]
-	var valid_windows = []
-	for window in windows:
-		if window != NUMBERS.FLOAT16_MAX:
-			valid_windows.append(window)
-	for i in range(valid_windows.size() - 1):
-		if valid_windows[i] > valid_windows[i + 1]:
-			return false
+func _get_previous_state(from_state: int, only_valid: bool) -> int:
+	for s in range(from_state - 1, -1, -1):
+		if not only_valid or _is_valid_state(s): return s
+	return from_state
+
+func can_transition(to_state: ItemState.STATE) -> bool:
+	if not ItemState.VALID_TRANSITIONS.has(self.current_state): return false
+	return to_state in ItemState.VALID_TRANSITIONS[self.current_state]
+
+func try_set_state(to_state: ItemState.STATE) -> bool:
+	if can_transition(to_state):
+		self.current_state = to_state
+		return true
+	return false
+
+func peak_next_valid() -> ItemState.STATE: 
+	return _get_next_state(self.current_state, true)
+
+func peak_next_actual() -> ItemState.STATE: 
+	return _get_next_state(self.current_state, false)
+
+func set_next_valid() -> ItemState.STATE: 
+	var candidate = _get_next_state(self.current_state, true)
+	if try_set_state(candidate): return self.current_state
+	return self.current_state
+
+func set_next_actual() -> ItemState.STATE: 
+	var candidate = _get_next_state(self.current_state, false)
+	if try_set_state(candidate): return self.current_state
+	return self.current_state
+
+func peak_previous_valid() -> ItemState.STATE: 
+	return _get_previous_state(self.current_state, true)
+
+func peak_previous_actual() -> ItemState.STATE: 
+	return _get_previous_state(self.current_state, false)
+
+func set_previous_valid() -> ItemState.STATE: 
+	var candidate = _get_previous_state(self.current_state, true)
+	if try_set_state(candidate): return self.current_state
+	return self.current_state
+
+func set_previous_actual() -> ItemState.STATE: 
+	var candidate = _get_previous_state(self.current_state, false)
+	if try_set_state(candidate): return self.current_state
+	return self.current_state
+
+func reset_state() -> void: 
+	self.current_state = ItemState.STATE.READY
+
+func get_valid_states() -> Array[ItemState.STATE]: 
+	var result: Array[ItemState.STATE] = []
+	for s in range(windows.size()):
+		if _is_valid_state(s): 
+			result.append(s)
+	return result
+
+func get_all_states() -> Array[ItemState.STATE]: 
+	return range(windows.size())
+
+func is_state(state: ItemState.STATE) -> bool: 
+	return self.current_state == state
+
+func find_state(target: ItemState.STATE) -> int: 
+	return target - self.current_state
+
+func is_state_configuration_valid() -> bool:
+	var last_value: float = -INF
+	for s in range(windows.size()):
+		var w = windows[s]
+		if w != NUMBERS.FLOAT16_MAX:
+			if w < last_value: return false
+			last_value = w
 	return true

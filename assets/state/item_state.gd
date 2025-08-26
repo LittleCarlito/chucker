@@ -17,22 +17,49 @@ enum STATE {
 	FOLLOW_THRU_OVER = 52
 }
 
+const VALID_TRANSITIONS: Dictionary = {
+	self.STATE.READY: 	[
+				self.STATE.WINDUP_UNDERCOOKED,
+				self.STATE.WINDUP_VERY_EARLY,
+				self.STATE.WINDUP_EARLY,
+				self.STATE.WINDUP_PERFECT,
+				self.STATE.WINDUP_LATE,
+				self.STATE.WINDUP_VERY_LATE,
+				self.STATE.WINDUP_OVERCOOKED
+	],
+	self.STATE.WINDUP_UNDERCOOKED: [self.STATE.READY, self.STATE.THROWING_UNDER],
+	self.STATE.WINDUP_VERY_EARLY: [self.STATE.READY, self.STATE.THROWING_UNDER],
+	self.STATE.WINDUP_EARLY: [self.STATE.READY, self.STATE.THROWING_UNDER],
+	self.STATE.WINDUP_PERFECT: [self.STATE.READY, self.STATE.THROWING_PERFECT],
+	self.STATE.WINDUP_LATE: [self.STATE.READY, self.STATE.THROWING_OVER],
+	self.STATE.WINDUP_VERY_LATE: [self.STATE.READY, self.STATE.THROWING_OVER],
+	self.STATE.WINDUP_OVERCOOKED: [self.STATE.READY, self.STATE.THROWING_OVER],
+	self.STATE.THROWING_UNDER: [self.STATE.READY, self.STATE.FOLLOW_THRU_UNDER],
+	self.STATE.THROWING_PERFECT: [self.STATE.READY, self.STATE.FOLLOW_THRU_PERFECT],
+	self.STATE.THROWING_OVER: [self.STATE.READY, self.STATE.FOLLOW_THRU_OVER]
+}
+
 static var DEFAULT_STATE_CONFIG = ItemStateConfig.new(
+	# Starting state
 	0,
-	15, 
-	30, 
-	45, 
-	60,
-	75,
-	90,
-	105,
-	120,
-	135,
-	150,
-	165,
-	180,
-	195,
-	210
+	#Ready
+	0,
+	# Windup windows
+	.3, 
+	.6, 
+	1,
+	1.3,
+	1.6,
+	2,
+	2.3
+	# TODO Dynamically get throwing animation time values
+	# ?,
+	# ?,
+	# ?,
+	# TODO Dynamically get follow thru animation time values
+	# ?,
+	# ?,
+	# ?
 )
 
 static func get_default_config(incoming_type: AssetData.TYPE) -> ItemStateConfig:
