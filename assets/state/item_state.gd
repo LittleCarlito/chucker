@@ -2,19 +2,19 @@ class_name ItemState
 
 enum STATE {
 	READY = 0,
-	WINDUP_UNDERCOOKED = 10,
-	WINDUP_VERY_EARLY = 11,
-	WINDUP_EARLY = 12,
-	WINDUP_PERFECT = 13,
-	WINDUP_LATE = 14,
-	WINDUP_VERY_LATE = 15,
-	WINDUP_OVERCOOKED = 16,
-	THROWING_UNDER = 30,
-	THROWING_PERFECT = 31,
-	THROWING_OVER = 32,
-	FOLLOW_THRU_UNDER = 50,
-	FOLLOW_THRU_PERFECT = 51,
-	FOLLOW_THRU_OVER = 52
+	WINDUP_UNDERCOOKED = 110,
+	WINDUP_VERY_EARLY = 120,
+	WINDUP_EARLY = 125,
+	WINDUP_PERFECT = 150,
+	WINDUP_LATE = 175,
+	WINDUP_VERY_LATE = 180,
+	WINDUP_OVERCOOKED = 190,
+	THROWING_UNDER = 225,
+	THROWING_PERFECT = 250,
+	THROWING_OVER = 275,
+	FOLLOW_THRU_UNDER = 325,
+	FOLLOW_THRU_PERFECT = 350,
+	FOLLOW_THRU_OVER = 375
 }
 
 const VALID_TRANSITIONS: Dictionary = {
@@ -63,8 +63,40 @@ static var DEFAULT_STATE_CONFIG = ItemStateConfig.new(
 )
 
 static func get_default_config(incoming_type: AssetData.TYPE) -> ItemStateConfig:
-	match incoming_type:
-		AssetData.TYPE.CHARGE || AssetData.TYPE.PULL:
-			return DEFAULT_STATE_CONFIG
+	if incoming_type == AssetData.TYPE.PULL || incoming_type == AssetData.TYPE.CHARGE:
+		return ItemState.DEFAULT_STATE_CONFIG
+	else:
+		return ItemStateConfig.new(0)
+
+static func get_state_string(state_value: int) -> String:
+	match state_value:
+		STATE.READY:
+			return "READY"
+		STATE.WINDUP_UNDERCOOKED:
+			return "WINDUP_UNDERCOOKED"
+		STATE.WINDUP_VERY_EARLY:
+			return "WINDUP_VERY_EARLY"
+		STATE.WINDUP_EARLY:
+			return "WINDUP_EARLY"
+		STATE.WINDUP_PERFECT:
+			return "WINDUP_PERFECT"
+		STATE.WINDUP_LATE:
+			return "WINDUP_LATE"
+		STATE.WINDUP_VERY_LATE:
+			return "WINDUP_VERY_LATE"
+		STATE.WINDUP_OVERCOOKED:
+			return "WINDUP_OVERCOOKED"
+		STATE.THROWING_UNDER:
+			return "THROWING_UNDER"
+		STATE.THROWING_PERFECT:
+			return "THROWING_PERFECT"
+		STATE.THROWING_OVER:
+			return "THROWING_OVER"
+		STATE.FOLLOW_THRU_UNDER:
+			return "FOLLOW_THRU_UNDER"
+		STATE.FOLLOW_THRU_PERFECT:
+			return "FOLLOW_THRU_PERFECT"
+		STATE.FOLLOW_THRU_OVER:
+			return "FOLLOW_THRU_OVER"
 		_:
-			return ItemStateConfig.new(0)
+			return "UNKNOWN"

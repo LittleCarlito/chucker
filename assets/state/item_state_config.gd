@@ -111,7 +111,7 @@ func is_state_configuration_valid() -> bool:
 			last_value = w
 	return true
 
-func get_nearest_state(incoming_value: float) -> ItemState.STATE:
+func get_nearest_state(incoming_value: float) -> String:
 	var nearest_state: ItemState.STATE = ItemState.STATE.READY
 	var smallest_distance: float = INF
 	for state in range(windows.size()):
@@ -120,7 +120,14 @@ func get_nearest_state(incoming_value: float) -> ItemState.STATE:
 			if distance < smallest_distance:
 				smallest_distance = distance
 				nearest_state = state
-	return nearest_state
+	return ItemState.get_state_string(nearest_state)
+
+func print_details() -> void:
+	Logger.debug(
+				"ItemStateConfig - Current State: %s, Windows: [READY: %.2f, WINDUP_UNDERCOOKED: %.2f, WINDUP_VERY_EARLY: %.2f, WINDUP_EARLY: %.2f, WINDUP_PERFECT: %.2f, WINDUP_LATE: %.2f, WINDUP_VERY_LATE: %.2f, WINDUP_OVERCOOKED: %.2f, THROWING_UNDER: %.2f, THROWING_PERFECT: %.2f, THROWING_OVER: %.2f, FOLLOW_THRU_UNDER: %.2f, FOLLOW_THRU_PERFECT: %.2f, FOLLOW_THRU_OVER: %.2f]",
+				[ItemState.STATE.keys()[current_state], windows[ItemState.STATE.READY], windows[ItemState.STATE.WINDUP_UNDERCOOKED], windows[ItemState.STATE.WINDUP_VERY_EARLY], windows[ItemState.STATE.WINDUP_EARLY], windows[ItemState.STATE.WINDUP_PERFECT], windows[ItemState.STATE.WINDUP_LATE], windows[ItemState.STATE.WINDUP_VERY_LATE], windows[ItemState.STATE.WINDUP_OVERCOOKED], windows[ItemState.STATE.THROWING_UNDER], windows[ItemState.STATE.THROWING_PERFECT], windows[ItemState.STATE.THROWING_OVER], windows[ItemState.STATE.FOLLOW_THRU_UNDER], windows[ItemState.STATE.FOLLOW_THRU_PERFECT], windows[ItemState.STATE.FOLLOW_THRU_OVER]], 
+				self
+				)
 
 func _is_populated_state(state: int) -> bool:
 	if state < 0 or state >= windows.size(): return false

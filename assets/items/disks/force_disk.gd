@@ -47,7 +47,7 @@ var _collided: bool = false
 
 func _ready() -> void:
 	if asset_data == null:
-		asset_data = AssetData.new(GameConfig.DEFAULTS.item as AssetData.TYPE)
+		asset_data = AssetData.new(AssetData.TYPE.FORCE)
 		if !asset_data.group_name.is_empty():
 			add_to_group(asset_data.group_name)
 	disk_mesh.set_type(asset_data.creation_type)

@@ -5,51 +5,8 @@ const _FLIGHT_DATA_NOT_SET: String = "FlightData not set; Cannot set flight glob
 
 var stopwatch: Stopwatch
 
-# BUG why can't AssetData be moved from Factory folder to Data folder?
-# TODO Create maximum "charge" aka "pull" time for ChargeDisk and PullDisk
-#			ChargeDisk
-#				Have charge and line decrease after reaching max and increase after reaching min on long holds
-#			PullDisk
-#				Make a maximum pull time like charge disk
-#			ThrowableItem
-#				Add shake to the disk as timer gets closer until it finally just inaccurately launches
-#
-# OUTLINE 
-#
-#		Move AssetData and FlightData from PullDisk and ChargeDisk and into ThrowableItem
-#		Within AssetData manage state of asset
-#		State needs new states
-#			READY
-#			WINDUP_UNDERCOOKED
-#			WINDUP_VERY_EARLY
-#			WINDUP_EARLY
-#			WINDUP_PERFECT
-#			WINDUP_LONG
-#			WINDUP_VERY_LONG
-#			WINDUP_OVERCOOKED
-#			UNDER_THROWING
-#			THROWING
-#			PERFECT_THROWING
-#			OVER_THROWING
-#			FOLLOW_THRU
-#		ItemContainer calls down to its contained object to let it know when/what state to update to
-#			But only does so if
-#				If it is equipped
-#				If it has the function to primary action hold
-#		Update FlightData to contain state window for when each state is switched to based off
-#			Disk Type
-#				ChargeDisk - Flat amounts for switching each regardless of flight path
-#				PathDisk - Flat amounts for switch each regardless of flight path
-#					Above the same regardless of path because path is determined as mouse is held
-#				*PlanDisk* - Determined by analyze_path
-#					New disk type
-#					Just leave as TODO to remember to create it after
-#					Like normal golf games with flight path fully decided before attempting shot
-#
-#	TODO Store the state timing periods in FlightData
-#			Can create/get the charge/pull disk ones as constants so even as the path is created the same values will be placed in there
-#			PlanDisk will have its path already determined therefore timing periods can be determined and placed in FlightData before hold_action happens
-
+# TODO Keep momentum when jumping in air
+#		Used to; look to old code to see what was lost in character refactor
 # TODO Ability to put spin on disk
 
 # Called when the node enters the scene tree for the first time.

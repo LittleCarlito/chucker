@@ -75,6 +75,8 @@ func _init(
 	self.creation_type = incoming_create
 	self.owner_rid = incoming_owner_rid
 	self.item_state_config = ItemState.get_default_config(self.internal_type)
+	if self.internal_type == 2:
+		self.item_state_config.print_details()
 	self._setup_local_to_scene()
 	
 
@@ -118,5 +120,8 @@ func set_internal_type(incoming_type: TYPE) -> void:
 	self.internal_type = incoming_type
 	self.item_state_config = ItemState.get_default_config(self.internal_type)
 
-func get_nearest_state(incoming_value: float) -> ItemState.STATE:
+func get_nearest_state(incoming_value: float) -> String:
 	return self.item_state_config.get_nearest_state(incoming_value)
+
+func print_details() -> void:
+	self.item_state_config.print_details()
