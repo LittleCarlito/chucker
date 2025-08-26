@@ -1,8 +1,8 @@
 extends LocalResource
 class_name ItemStateConfig
 
-var current_state: ItemState.STATE
-var windows: Array[float] = []
+@export var current_state: ItemState.STATE
+@export var windows: Array[float] = []
 
 func _init(
 				incoming_state: ItemState.STATE = ItemState.STATE.READY,

@@ -38,7 +38,7 @@ func move(move_direction: Vector3, speed_multiplier: float = 1) -> void:
 			velocity.x = move_direction.x * (GameConfig.DEFAULTS.run_speed * speed_multiplier)
 			velocity.z = move_direction.z * (GameConfig.DEFAULTS.run_speed * speed_multiplier)
 		# Otherwise set velocity to start slowing down
-		else:
+		elif self.is_on_floor():
 			velocity.x = move_toward(velocity.x, 0, GameConfig.DEFAULTS.run_speed)
 			velocity.z = move_toward(velocity.z, 0, GameConfig.DEFAULTS.run_speed)
 	move_and_slide()

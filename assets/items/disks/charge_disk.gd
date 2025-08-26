@@ -5,8 +5,6 @@ const _FLIGHT_DATA_NOT_SET: String = "FlightData not set; Cannot set flight glob
 
 var stopwatch: Stopwatch
 
-# TODO Keep momentum when jumping in air
-#		Used to; look to old code to see what was lost in character refactor
 # TODO Ability to put spin on disk
 
 # Called when the node enters the scene tree for the first time.
