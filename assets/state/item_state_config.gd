@@ -1,3 +1,4 @@
+extends LocalResource
 class_name ItemStateConfig
 
 var current_state: ItemState.STATE
@@ -109,6 +110,17 @@ func is_state_configuration_valid() -> bool:
 			if w < last_value: return false
 			last_value = w
 	return true
+
+func get_nearest_state(incoming_value: float) -> ItemState.STATE:
+	var nearest_state: ItemState.STATE = ItemState.STATE.READY
+	var smallest_distance: float = INF
+	for state in range(windows.size()):
+		if windows[state] != NUMBERS.FLOAT16_MAX:
+			var distance = abs(windows[state] - incoming_value)
+			if distance < smallest_distance:
+				smallest_distance = distance
+				nearest_state = state
+	return nearest_state
 
 func _is_populated_state(state: int) -> bool:
 	if state < 0 or state >= windows.size(): return false

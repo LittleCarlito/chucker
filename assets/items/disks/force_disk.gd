@@ -64,7 +64,7 @@ func _input(event: InputEvent) -> void:
 			camera_container.horizontal_pan(horizontal_rotation_amount, self.global_position)
 
 func set_internal_type(new_internal_type: AssetData.TYPE) -> void:
-	asset_data.internal_type = new_internal_type
+	asset_data.set_internal_type(new_internal_type)
 	disk_mesh.set_type(asset_data.internal_type)
 
 func set_creation_type(new_creation_type: AssetData.TYPE) -> void:

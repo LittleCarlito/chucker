@@ -38,7 +38,8 @@ func _process(delta: float) -> void:
 		self._primary_hold_time = 0
 	elif Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY):
 		self._primary_hold_time += delta
-		Logger.debug("Primary hold updated to %03f", [self._primary_hold_time], self)
+		var nearest_state: ItemState.STATE = asset_data.get_nearest_state(self._primary_hold_time)
+		Logger.debug("Primary hold updated to %03f; State would be %d", [self._primary_hold_time, nearest_state], self)
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.SECONDARY):
 		self._secondary_hold_time = 0
 	elif Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):

@@ -2,20 +2,10 @@ class_name FlightData
 
 var flight_details: FlightDetails
 var flight_path: FlightPath
-var state_config: ItemStateConfig
 
-func _init(
-			item_type: AssetData.TYPE = AssetData.TYPE.UNKNOWN,
-			incoming_details: FlightDetails = FlightDetails.new(), 
-			incoming_path: FlightPath = FlightPath.new()
-			) -> void:
+func _init(incoming_details: FlightDetails = FlightDetails.new(), incoming_path: FlightPath = FlightPath.new()) -> void:
 	self.flight_details = incoming_details
 	self.flight_path = incoming_path
-	# Only have to call once; Path + Charge are static and Planned knows path before creating its final FlightData
-	self.state_config = ItemState.get_default_config(item_type)
-
-func reset_state_config(new_asset_type: AssetData.TYPE) -> void:
-	self.state_config = ItemState.get_default_config(new_asset_type)
 
 ## Returns the roll intensity at the given % into the flight path
 ## Given as whole number example: 60.6 == 60.6%; .606 = .606%

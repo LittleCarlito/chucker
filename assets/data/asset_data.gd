@@ -42,6 +42,8 @@ enum ITEM_STATE{DISABLED = 0, DEACTIVATED = 1, ACTIVATED = 2, UNKNOWN = 999}
 @export var group_name: String
 ## The owners RID if available
 @export var owner_rid: RID
+## Configuration for transition timings between states
+@export var item_state_config: ItemStateConfig
 
 const CREATION_MATRIX: Dictionary = {
 	TYPE.CHARGE: [TYPE.FORCE],
@@ -58,18 +60,21 @@ const ITEM_COLOR: Dictionary = {
 	AssetData.TYPE.UNKNOWN: GameConfig.DEFAULTS.color
 }
 
-func _init(incoming_internal: TYPE = TYPE.UNKNOWN,
+func _init(
+			incoming_internal: TYPE = TYPE.UNKNOWN,
 			incoming_state: ITEM_STATE = ITEM_STATE.DISABLED,
 			incoming_camera_state: CAMERA_STATE = CAMERA_STATE.EXISTS,
 			incoming_create: TYPE = AssetData.TYPE.UNKNOWN,
 			incoming_group: String = GameConfig.DEFAULTS.group,
-			incoming_owner_rid: RID = RID()) -> void:
+			incoming_owner_rid: RID = RID()
+			) -> void:
 	self.internal_type = incoming_internal
 	self.item_state = incoming_state
 	self.camera_state = incoming_camera_state
 	self.group_name = incoming_group
 	self.creation_type = incoming_create
 	self.owner_rid = incoming_owner_rid
+	self.item_state_config = ItemState.get_default_config(self.internal_type)
 	self._setup_local_to_scene()
 	
 
@@ -108,3 +113,10 @@ static func get_associated_creation_type(incoming_type: AssetData.TYPE, previous
 		var formatted_string: String = _NO_VALUE + Logger.LOG_SEPARATOR + Logger.RETURNING_UNKNOWN_LOG
 		Logger.debug(formatted_string, [str(incoming_type)], null)
 	return associated_type
+
+func set_internal_type(incoming_type: TYPE) -> void:
+	self.internal_type = incoming_type
+	self.item_state_config = ItemState.get_default_config(self.internal_type)
+
+func get_nearest_state(incoming_value: float) -> ItemState.STATE:
+	return self.item_state_config.get_nearest_state(incoming_value)

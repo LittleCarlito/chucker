@@ -56,7 +56,6 @@ var stopwatch: Stopwatch
 func _ready() -> void:
 	super._ready()
 	self.stopwatch = Stopwatch.new()
-	self.flight_data.reset_state_config(AssetData.TYPE.CHARGE)
 	if self.asset_data != null and !self.asset_data.group_name.is_empty():
 		add_to_group(self.asset_data.group_name)
 
@@ -110,13 +109,13 @@ func release_action(incoming_basis: Basis) -> void:
 func drop_item() -> void:
 	var drop_path: FlightPath = FlightPath.convert([self.global_position])
 	var drop_details: FlightDetails = FlightDetails.new(0, 0, self.global_basis, false, 0)
-	var drop_flight: FlightData = FlightData.new(AssetData.TYPE.CHARGE, drop_details, drop_path)
+	var drop_flight: FlightData = FlightData.new(drop_details, drop_path)
 	var drop_asset: AssetData = self._get_next_asset_data()
 	AssetDelivery.create_and_launch(drop_flight, drop_asset)
 	self.queue_free()
 
 func reset_launch_parameters() -> void:
-	flight_data = FlightData.new(AssetData.TYPE.CHARGE)
+	flight_data = FlightData.new()
 
 
 func _set_flight_basis(incoming_basis: Basis) -> void:
