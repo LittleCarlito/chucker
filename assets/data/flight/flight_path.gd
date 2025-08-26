@@ -1,6 +1,7 @@
 class_name FlightPath
 var path: Array[FlightPoint]
 var path_type: PATH_TYPE
+var max_offset: float
 
 enum PATH_TYPE {
 	STRAIGHT,
@@ -11,7 +12,7 @@ enum PATH_TYPE {
 
 func _init(incoming_path: Array[FlightPoint] = []):
 	self.path = incoming_path
-	self.path_type = self.analyze_path(self)
+	FlightPath.analyze_path_offset(self)
 
 ## Returns the roll intensity at the given % into the flight path
 ## Given as decimal between 0.0 and 1.0, example: 0.606 == 60.6%
@@ -25,12 +26,24 @@ func roll_intensity_at(incoming_percent: float) -> float:
 		desired_index = clamp(desired_index, 0, path.size() - 1)
 		return path[desired_index].roll_intensity
 
+func get_max_offset() -> float:
+	return self.max_offset
+
+func get_path() -> Array[FlightPoint]:
+	return self.path
+
 func is_empty() -> bool:
-	return path.is_empty()
+	return self.path.is_empty()
+
+func size() -> int:
+	return self.path.size()
+
+func get_point(incoming_index: int) -> FlightPoint:
+	return self.path[incoming_index]
 
 func print_details() -> void:
 	var flight_type_string: String = self._get_type_string(path_type)
-	Logger.debug("\n[FlightPath data]\nNumber of points: %d\nFlight type %s", [path.size(), flight_type_string], self)
+	Logger.debug("\n[FlightPath data]\nNumber of points: %d\nFlight type %s\nMax offset : %03f", [path.size(), flight_type_string, max_offset], self)
 	if GameConfig.DEFAULTS.extra_detail:
 		for i in range(path.size()):
 			var fp: FlightPoint = path[i]
@@ -47,28 +60,50 @@ func _get_type_string(incoming_type: PATH_TYPE) -> String:
 		_:
 			return "empty"
 
+## Analyzes the incoming path for max offset point
+static func analyze_path_offset(flight_path: FlightPath) -> void:
+	if flight_path.is_empty() or flight_path.size() < 3:
+		flight_path.max_offset = 0.0
+		FlightPath.analyze_path_type(flight_path)
+		return
+	var first_point = Vector2(flight_path.get_point(0).point_position.x, flight_path.get_point(0).point_position.z)
+	var last_point = Vector2(flight_path.get_point(flight_path.size() - 1).point_position.x, flight_path.get_point(flight_path.size() - 1).point_position.z)
+	var baseline = last_point - first_point
+	var baseline_length = baseline.length()
+	if baseline_length < 0.001:
+		flight_path.max_offset = 0.0
+		FlightPath.analyze_path_type(flight_path)
+		return
+	var max_offset = 0.0
+	var max_offset_magnitude = 0.0
+	for i in range(1, flight_path.size() - 1):
+		var current_point = Vector2(flight_path.get_point(i).point_position.x, flight_path.get_point(i).point_position.z)
+		var to_point = current_point - first_point
+		var projection_length = to_point.dot(baseline) / baseline_length
+		var projection_point = first_point + baseline.normalized() * projection_length
+		var offset_vector = current_point - projection_point
+		var distance = offset_vector.length()
+		if distance > max_offset_magnitude:
+			max_offset_magnitude = distance
+			var cross_product = baseline.x * offset_vector.y - baseline.y * offset_vector.x
+			max_offset = sign(cross_product) * distance
+	flight_path.max_offset = max_offset
+	FlightPath.analyze_path_type(flight_path)
+
 ## Analyzes the incoming path for curvature
-static func analyze_path(flight_path: FlightPath) -> PATH_TYPE:
-	if flight_path.path.is_empty():
-		return PATH_TYPE.EMPTY
-	# Need at least 3 points to determine curvature direction
-	if flight_path.path.size() < 3:
-		return PATH_TYPE.STRAIGHT
-	# Just check first few segments to determine overall curve direction
-	var point_a = flight_path.path[0].point_position
-	var point_b = flight_path.path[1].point_position
-	var point_c = flight_path.path[2].point_position
-	# Create vectors from A to B and B to C (ignoring Y component for left/right only)
-	var vector_ab = Vector2(point_b.x - point_a.x, point_b.z - point_a.z)
-	var vector_bc = Vector2(point_c.x - point_b.x, point_c.z - point_b.z)
-	# Use cross product to determine turn direction
-	var cross_product = vector_ab.x * vector_bc.y - vector_ab.y * vector_bc.x
-	if cross_product > 0.001:
-		return PATH_TYPE.RIGHT
-	elif cross_product < -0.001:
-		return PATH_TYPE.LEFT
+static func analyze_path_type(flight_path: FlightPath) -> void:
+	if flight_path.is_empty():
+		flight_path.path_type = PATH_TYPE.EMPTY
+		return
+	if flight_path.size() < 3:
+		flight_path.path_type = PATH_TYPE.STRAIGHT
+		return
+	if flight_path.max_offset > 0.001:
+		flight_path.path_type = PATH_TYPE.RIGHT
+	elif flight_path.max_offset < -0.001:
+		flight_path.path_type = PATH_TYPE.LEFT
 	else:
-		return PATH_TYPE.STRAIGHT
+		flight_path.path_type = PATH_TYPE.STRAIGHT
 
 ## Converts a path of 3D points into a FlightPath with roll intensity calculations
 ## roll_intensity: 0.0 = straight, positive = right turn (slice), negative = left turn (hook)
@@ -100,7 +135,6 @@ static func convert(incoming_line: Array[Vector3]) -> FlightPath:
 			flight_point.roll_intensity = calculate_roll_intensity(point_a, point_current, point_c)
 		flight_points.append(flight_point)
 	var flight_path = FlightPath.new(flight_points)
-	flight_path.path_type = analyze_path(flight_path)
 	return flight_path
 
 ## Calculates roll intensity for three consecutive points

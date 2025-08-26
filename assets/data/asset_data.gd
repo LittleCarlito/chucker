@@ -74,7 +74,7 @@ func _init(
 	self.group_name = incoming_group
 	self.creation_type = incoming_create
 	self.owner_rid = incoming_owner_rid
-	self.item_state_config = ItemState.get_default_config(self.internal_type)
+	self.item_state_config = STATE_DEFAULTS.get_default_config(self.internal_type)
 	if self.internal_type == 2:
 		self.item_state_config.print_details()
 	self._setup_local_to_scene()
@@ -118,10 +118,31 @@ static func get_associated_creation_type(incoming_type: AssetData.TYPE, previous
 
 func set_internal_type(incoming_type: TYPE) -> void:
 	self.internal_type = incoming_type
-	self.item_state_config = ItemState.get_default_config(self.internal_type)
+	self.item_state_config = STATE_DEFAULTS.get_default_config(self.internal_type)
+
+func get_next_valid_value() -> float:
+	return self.item_state_config.peak_next_valid_value()
+
+func reset_state() -> void:
+	self.item_state_config.reset_state()
+
+func get_current_state() -> ItemState.STATE:
+	return self.item_state_config.get_current_state()
 
 func get_nearest_state(incoming_value: float) -> String:
 	return self.item_state_config.get_nearest_state(incoming_value)
+
+func get_next_populated_state() -> ItemState.STATE:
+	return self.item_state_config.peak_next_populated()
+
+func get_next_valid_state() -> ItemState.STATE:
+	return self.item_state_config.peak_next_valid()
+
+func set_next_populated_state() -> ItemState.STATE:
+	return self.item_state_config.set_next_populated()
+
+func set_next_valid_state() -> ItemState.STATE:
+	return self.item_state_config.set_next_valid()
 
 func print_details() -> void:
 	self.item_state_config.print_details()

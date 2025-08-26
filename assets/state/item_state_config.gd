@@ -40,6 +40,9 @@ func _init(
 	windows[ItemState.STATE.FOLLOW_THRU_OVER] = p_follow_thru_over_window
 	self.validate_state_configuration()
 
+func get_current_state() -> ItemState.STATE:
+	return self.current_state
+
 func can_transition(to_state: ItemState.STATE) -> bool:
 	if not ItemState.VALID_TRANSITIONS.has(self.current_state): return false
 	return to_state in ItemState.VALID_TRANSITIONS[self.current_state]
@@ -50,14 +53,25 @@ func try_set_state(to_state: ItemState.STATE) -> bool:
 		return true
 	return false
 
+func peak_next_valid_value() -> float:
+	return _get_next_valid_value(self.current_state)
+
 func peak_next_valid() -> ItemState.STATE: 
 	return _get_next_valid_transition(self.current_state)
+
+func peak_next_populated() -> ItemState.STATE:
+	return _get_next_populated(self.current_state)
 
 func peak_next_actual() -> ItemState.STATE: 
 	return _get_next_valid_transition(self.current_state)
 
 func set_next_valid() -> ItemState.STATE: 
 	var candidate = _get_next_valid_transition(self.current_state)
+	if try_set_state(candidate): return self.current_state
+	return self.current_state
+
+func set_next_populated() -> ItemState.STATE:
+	var candidate = _get_next_populated(self.current_state)
 	if try_set_state(candidate): return self.current_state
 	return self.current_state
 
@@ -69,11 +83,19 @@ func set_next_actual() -> ItemState.STATE:
 func peak_previous_valid() -> ItemState.STATE: 
 	return _get_previous_valid_transition(self.current_state)
 
+func peak_previous_populated() -> ItemState.STATE:
+	return _get_previous_populated(self.current_state)
+
 func peak_previous_actual() -> ItemState.STATE: 
 	return _get_previous_valid_transition(self.current_state)
 
 func set_previous_valid() -> ItemState.STATE: 
 	var candidate = _get_previous_valid_transition(self.current_state)
+	if try_set_state(candidate): return self.current_state
+	return self.current_state
+
+func set_previous_populated() -> ItemState.STATE:
+	var candidate = _get_previous_populated(self.current_state)
 	if try_set_state(candidate): return self.current_state
 	return self.current_state
 
@@ -136,20 +158,32 @@ func _windows_to_string() -> String:
 func get_nearest_state(incoming_value: float) -> String:
 	var nearest_state: ItemState.STATE = ItemState.STATE.READY
 	var smallest_distance: float = INF
-	for state in range(windows.size()):
-		if windows[state] != NUMBERS.FLOAT16_MAX:
-			var distance = abs(windows[state] - incoming_value)
+	# Iterate through actual enum values, not array indices
+	for state_value in ItemState.STATE.values():
+		if state_value < windows.size() and windows[state_value] != NUMBERS.FLOAT16_MAX:
+			var distance = abs(windows[state_value] - incoming_value)
 			if distance < smallest_distance:
 				smallest_distance = distance
-				nearest_state = state
+				nearest_state = state_value
+	
 	return ItemState.get_state_string(nearest_state)
 
 func print_details() -> void:
+	var window_parts: Array[String] = []
+	for state_value in ItemState.STATE.values():
+		if state_value < windows.size():
+			var state_name = ItemState.get_state_string(state_value)
+			var value = windows[state_value]
+			if value == NUMBERS.FLOAT16_MAX:
+				window_parts.append("%s: MAX" % state_name)
+			else:
+				window_parts.append("%s: %.2f" % [state_name, value])
+	var windows_string = "[" + ", ".join(window_parts) + "]"
 	Logger.debug(
-				"ItemStateConfig - Current State: %s, Windows: [READY: %.2f, WINDUP_UNDERCOOKED: %.2f, WINDUP_VERY_EARLY: %.2f, WINDUP_EARLY: %.2f, WINDUP_PERFECT: %.2f, WINDUP_LATE: %.2f, WINDUP_VERY_LATE: %.2f, WINDUP_OVERCOOKED: %.2f, THROWING_UNDER: %.2f, THROWING_PERFECT: %.2f, THROWING_OVER: %.2f, FOLLOW_THRU_UNDER: %.2f, FOLLOW_THRU_PERFECT: %.2f, FOLLOW_THRU_OVER: %.2f]",
-				[ItemState.STATE.keys()[current_state], windows[ItemState.STATE.READY], windows[ItemState.STATE.WINDUP_UNDERCOOKED], windows[ItemState.STATE.WINDUP_VERY_EARLY], windows[ItemState.STATE.WINDUP_EARLY], windows[ItemState.STATE.WINDUP_PERFECT], windows[ItemState.STATE.WINDUP_LATE], windows[ItemState.STATE.WINDUP_VERY_LATE], windows[ItemState.STATE.WINDUP_OVERCOOKED], windows[ItemState.STATE.THROWING_UNDER], windows[ItemState.STATE.THROWING_PERFECT], windows[ItemState.STATE.THROWING_OVER], windows[ItemState.STATE.FOLLOW_THRU_UNDER], windows[ItemState.STATE.FOLLOW_THRU_PERFECT], windows[ItemState.STATE.FOLLOW_THRU_OVER]], 
-				self
-				)
+		"ItemStateConfig - Current State: %s, Windows: %s",
+		[ItemState.get_state_string(current_state), windows_string],
+		self
+	)
 
 func _is_populated_state(state: int) -> bool:
 	if state < 0 or state >= windows.size(): return false
@@ -167,3 +201,24 @@ func _get_previous_valid_transition(from_state: int) -> int:
 			for target_state in ItemState.VALID_TRANSITIONS[source_state]:
 				if target_state == from_state: return source_state
 	return from_state
+
+func _get_next_populated(incoming_state: ItemState.STATE) -> ItemState.STATE:
+	var valid_states = ItemState.STATE.values()
+	valid_states.sort()
+	for state in valid_states:
+		if state > incoming_state and _is_populated_state(state): return state
+	return incoming_state
+
+func _get_previous_populated(incoming_state: ItemState.STATE) -> ItemState.STATE:
+	var valid_states = ItemState.STATE.values()
+	valid_states.sort()
+	valid_states.reverse()
+	for state in valid_states:
+		if state < incoming_state and _is_populated_state(state): return state
+	return incoming_state
+
+func _get_next_valid_value(incoming_state: ItemState.STATE) -> float:
+	var next_state = _get_next_valid_transition(incoming_state)
+	if next_state != incoming_state and next_state < windows.size():
+		return windows[next_state]
+	return NUMBERS.FLOAT16_MAX

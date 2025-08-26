@@ -41,6 +41,7 @@ func release_action(incoming_basis: Basis) -> void:
 		var final_speed: float = GameConfig.DEFAULTS.launch_speed * multiplier
 		flight_data.set_flight_speed(final_speed)
 		flight_data.set_flight_basis(incoming_basis)
+		flight_data.set_flight_spin(flight_data.get_max_offset())
 		# Create path_disk_data and pass it into the launch method
 		var path_disk_data: AssetData = self._get_next_asset_data()
 		AssetDelivery.create_and_launch(flight_data, path_disk_data)
@@ -52,7 +53,7 @@ func release_action(incoming_basis: Basis) -> void:
 
 func drop_item() -> void:
 	var drop_path: FlightPath = FlightPath.convert([self.global_position])
-	var drop_details: FlightDetails = FlightDetails.new(0, 0, self.global_basis, false, 0,)
+	var drop_details: FlightDetails = FlightDetails.new(0, 0, self.global_basis, false, 0, 0)
 	var drop_flight: FlightData = FlightData.new(drop_details, drop_path)
 	var drop_asset: AssetData = self._get_next_asset_data(true)
 	AssetDelivery.create_and_launch(drop_flight, drop_asset)

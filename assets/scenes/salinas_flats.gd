@@ -3,6 +3,8 @@ extends Node3D
 @onready var control_node: ControlNode = $ControlNode
 @export var item_data: AssetData
 @export var kickoff_timer: Timer
+var _spawned: bool = false
+var asset_spawn_data: Array[SpawnData]
 
 # TODO Get Course objects to integrate data with Global Hole Data
 # TODO Make set controls work
@@ -68,16 +70,16 @@ func _ready() -> void:
 	const tree_location: Vector3 = Vector3(15, 0, -40)
 	var tree_spawn_data: SpawnData = SpawnData.new(tree_data, tree_location, self)
 	# Create and spawn master asset list
-	var asset_spawn_data: Array[SpawnData] = [
-											chuck_spawn_data, 
-											path_spawn_data, 
-											force_spawn_data, 
-											tee_spawn_data,
-											hole_node_spawn_data, 
-											hole_spawn_data, 
-											tree_spawn_data
-										]
-	AssetDelivery.spawn_assets(asset_spawn_data)
+	asset_spawn_data = [
+						chuck_spawn_data, 
+						path_spawn_data, 
+						force_spawn_data, 
+						tee_spawn_data,
+						hole_node_spawn_data, 
+						hole_spawn_data, 
+						tree_spawn_data
+						]
+	kickoff_timer.connect(SIGNAL_NAME.TIMEOUT, _kickoff_data_load)
 	kickoff_timer.start()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -107,5 +109,6 @@ func update_course_data() -> void:
 	#GlobalHoleData._set_data_sequential()
 
 func _kickoff_data_load() -> void:
+	AssetDelivery.spawn_assets(asset_spawn_data)
 	update_course_data()
 	_apply_settings()

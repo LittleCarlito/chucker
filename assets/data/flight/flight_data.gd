@@ -30,10 +30,6 @@ func set_flight_path(incoming_path: FlightPath) -> void:
 func set_flight_basis(incoming_basis: Basis) -> void:
 	self.flight_details.flight_basis = incoming_basis
 
-func print_details() -> void:
-	flight_details.print_details()
-	flight_path.print_details()
-
 func get_flight_power() -> float:
 	return self.flight_details.flight_power
 
@@ -52,6 +48,9 @@ func set_is_focused(incoming_focus: bool) -> void:
 func is_focus_flight() -> bool:
 	return self.flight_details.focus_flight
 
+func get_max_offset() -> float:
+	return self.flight_path.get_max_offset()
+
 func get_flight_speed() -> float:
 	return self.flight_details.flight_speed
 
@@ -60,3 +59,13 @@ func set_flight_speed(incoming_speed: float) -> void:
 
 func get_flight_basis() -> Basis:
 	return self.flight_details.flight_basis
+
+func get_flight_spin() -> float:
+	return self.flight_details.flight_spin
+
+func set_flight_spin(incoming_spin: float) -> void:
+	self.flight_details.flight_spin = incoming_spin
+
+func print_details() -> void:
+	flight_details.print_details()
+	flight_path.print_details()

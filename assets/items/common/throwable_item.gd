@@ -36,16 +36,26 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.PRIMARY):
 		self._primary_hold_time = 0
+		var current_state: ItemState.STATE = self.get_current_state()
+		if current_state == ItemState.STATE.READY:
+			asset_data.set_next_valid_state()
+		else:
+			asset_data.reset_state()
 	elif Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY):
 		self._primary_hold_time += delta
-		# BUG The issue is that every state window has MAX value
-		var nearest_state: String = asset_data.get_nearest_state(self._primary_hold_time)
-		Logger.debug("Primary hold updated to %03f; State would be %s", [self._primary_hold_time, nearest_state], self)
+		var peaked_state: ItemState.STATE = asset_data.get_next_valid_state()
+		var next_hold_min: float = asset_data.get_next_valid_value()
+		if self._primary_hold_time > next_hold_min:
+			var peaked_string: String = ItemState.get_state_string(peaked_state)
+			if peaked_state > ItemState.STATE.IS_WINDUP && peaked_state < ItemState.STATE.IS_THROWING:
+				asset_data.set_next_valid_state() 
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.SECONDARY):
 		self._secondary_hold_time = 0
 	elif Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
 		self._secondary_hold_time += delta
-		Logger.debug("Secondary hold updated to %03f", [self._secondary_hold_time], self)
+		# TODO Redo to be like primary and get rid of the get nearest state function code
+		var secondary_nearest_state: String = asset_data.get_nearest_state(self._secondary_hold_time)
+		Logger.debug("Secondary hold updated to %03f; State would be %s", [self._secondary_hold_time, secondary_nearest_state], self)
 
 func _input(event: InputEvent) -> void:
 	_handle_aiming(event)
@@ -75,3 +85,6 @@ func release_action(_incoming_basis: Basis) -> void:
 func drop_item() -> void:
 	Logger.error("All ThrowableItem objects must implement a drop item function", [], self)
 	self.queue_free()
+
+func get_current_state() -> ItemState.STATE:
+	return asset_data.get_current_state()

@@ -52,4 +52,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50.6695, -6.53482)
 one_shot = true
 
 [connection signal="apply_settings" from="ControlNode" to="." method="_apply_settings"]
-[connection signal="timeout" from="KickoffTimer" to="." method="_kickoff_data_load"]

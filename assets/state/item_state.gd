@@ -2,6 +2,7 @@ class_name ItemState
 
 enum STATE {
 	READY = 0,
+	IS_WINDUP = 100,
 	WINDUP_UNDERCOOKED = 110,
 	WINDUP_VERY_EARLY = 120,
 	WINDUP_EARLY = 125,
@@ -9,9 +10,11 @@ enum STATE {
 	WINDUP_LATE = 175,
 	WINDUP_VERY_LATE = 180,
 	WINDUP_OVERCOOKED = 190,
+	IS_THROWING = 200,
 	THROWING_UNDER = 225,
 	THROWING_PERFECT = 250,
 	THROWING_OVER = 275,
+	IS_FOLLOW_THRU = 300,
 	FOLLOW_THRU_UNDER = 325,
 	FOLLOW_THRU_PERFECT = 350,
 	FOLLOW_THRU_OVER = 375
@@ -27,46 +30,20 @@ const VALID_TRANSITIONS: Dictionary = {
 				self.STATE.WINDUP_VERY_LATE,
 				self.STATE.WINDUP_OVERCOOKED
 	],
-	self.STATE.WINDUP_UNDERCOOKED: [self.STATE.READY, self.STATE.THROWING_UNDER],
-	self.STATE.WINDUP_VERY_EARLY: [self.STATE.READY, self.STATE.THROWING_UNDER],
-	self.STATE.WINDUP_EARLY: [self.STATE.READY, self.STATE.THROWING_UNDER],
-	self.STATE.WINDUP_PERFECT: [self.STATE.READY, self.STATE.THROWING_PERFECT],
-	self.STATE.WINDUP_LATE: [self.STATE.READY, self.STATE.THROWING_OVER],
-	self.STATE.WINDUP_VERY_LATE: [self.STATE.READY, self.STATE.THROWING_OVER],
+	self.STATE.WINDUP_UNDERCOOKED: [self.STATE.READY, self.STATE.WINDUP_VERY_EARLY, self.STATE.THROWING_UNDER],
+	self.STATE.WINDUP_VERY_EARLY: [self.STATE.READY, self.STATE.WINDUP_EARLY, self.STATE.THROWING_UNDER],
+	self.STATE.WINDUP_EARLY: [self.STATE.READY, self.STATE.WINDUP_PERFECT, self.STATE.THROWING_UNDER],
+	self.STATE.WINDUP_PERFECT: [self.STATE.READY, self.STATE.WINDUP_LATE, self.STATE.THROWING_PERFECT],
+	self.STATE.WINDUP_LATE: [self.STATE.READY, self.STATE.WINDUP_VERY_LATE, self.STATE.THROWING_OVER],
+	self.STATE.WINDUP_VERY_LATE: [self.STATE.READY, self.STATE.WINDUP_OVERCOOKED, self.STATE.THROWING_OVER],
 	self.STATE.WINDUP_OVERCOOKED: [self.STATE.READY, self.STATE.THROWING_OVER],
 	self.STATE.THROWING_UNDER: [self.STATE.READY, self.STATE.FOLLOW_THRU_UNDER],
 	self.STATE.THROWING_PERFECT: [self.STATE.READY, self.STATE.FOLLOW_THRU_PERFECT],
-	self.STATE.THROWING_OVER: [self.STATE.READY, self.STATE.FOLLOW_THRU_OVER]
+	self.STATE.THROWING_OVER: [self.STATE.READY, self.STATE.FOLLOW_THRU_OVER],
+	self.STATE.FOLLOW_THRU_UNDER: [self.STATE.READY],
+	self.STATE.FOLLOW_THRU_PERFECT: [self.STATE.READY],
+	self.STATE.FOLLOW_THRU_OVER: [self.STATE.READY]
 }
-
-static var DEFAULT_STATE_CONFIG = ItemStateConfig.new(
-	# Starting state
-	0,
-	#Ready
-	0,
-	# Windup windows
-	.3, 
-	.6, 
-	1,
-	1.3,
-	1.6,
-	2,
-	2.3
-	# TODO Dynamically get throwing animation time values
-	# ?,
-	# ?,
-	# ?,
-	# TODO Dynamically get follow thru animation time values
-	# ?,
-	# ?,
-	# ?
-)
-
-static func get_default_config(incoming_type: AssetData.TYPE) -> ItemStateConfig:
-	if incoming_type == AssetData.TYPE.PULL || incoming_type == AssetData.TYPE.CHARGE:
-		return ItemState.DEFAULT_STATE_CONFIG
-	else:
-		return ItemStateConfig.new(0)
 
 static func get_state_string(state_value: int) -> String:
 	match state_value:
