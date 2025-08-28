@@ -22,6 +22,7 @@ const DEFAULTS: Dictionary = {
 	"max_offset": 250,
 	"rotate_adjust": .1,
 	"max_speed_reduce": .75,
+	"spin_multiplier": 15,
 	"item": AssetData.TYPE.FORCE,
 	"group": GroupData.ENVIRONMENT,
 	# Color values

@@ -6,7 +6,6 @@ const _FLIGHT_DATA_NOT_SET: String = "FlightData not set; Cannot set flight glob
 var stopwatch: Stopwatch
 
 # BUG Camera on path disk spins with disk
-# TODO Boost spin amount by multiplier in GameConfig shared by all disk types
 # TODO Refactor state to be singular
 #		Don't want multiple state objects
 #		Right now Force disk has _update_state and it isn't part of ItemStateConfig
@@ -107,5 +106,5 @@ func _get_next_asset_data() -> AssetData:
 
 func _update_spin_value() -> void:
 	var current_state: ItemState.STATE = self.get_current_state()
-	var spin_amount: float = STATE_DEFAULTS.get_spin_amount(current_state)
+	var spin_amount: float = STATE_DEFAULTS.get_spin_amount(current_state) * GameConfig.DEFAULTS.spin_multiplier
 	self.flight_data.set_flight_spin(spin_amount)

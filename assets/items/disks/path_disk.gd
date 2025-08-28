@@ -33,7 +33,7 @@ func _input(event: InputEvent) -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if is_instance_valid(self.path_follow):
-		self.disk_mesh.rotation.y += self.flight_data.get_flight_spin() * delta
+		self.disk_mesh.rotation.y += (self.flight_data.get_flight_spin() * delta) * GameConfig.DEFAULTS.spin_multiplier
 		if self.flight_data == null or self.flight_data.get_actual_path().is_empty():
 			self._swap_disk(true)
 
