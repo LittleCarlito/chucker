@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://jvw5pa8yws2g" path="res://assets/items/disks/common/disk_mesh.tscn" id="3_jikxa"]
 [ext_resource type="Texture2D" uid="uid://cfdusnakbbbnq" path="res://resources/debug_mask.png" id="4_6huc8"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pwrbj"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v6wj5"]
 resource_local_to_scene = true
 albedo_color = Color(0.93, 0, 0, 1)
 detail_enabled = true
@@ -14,7 +14,7 @@ uv1_scale = Vector3(2, 2, 2)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_ycwnx"]
 resource_local_to_scene = true
-material = SubResource("StandardMaterial3D_pwrbj")
+material = SubResource("StandardMaterial3D_v6wj5")
 height = 0.1
 
 [node name="ForceDisk" type="RigidBody3D" node_paths=PackedStringArray("disk_mesh", "disk_collision") groups=["All", "Disk", "General"]]

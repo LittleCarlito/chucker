@@ -16,7 +16,8 @@ var disable_rotation_var: bool = false
 func _ready() -> void:
 	self.height = base_mesh.get_aabb().size.y
 	_initial_camera_orientation = camera_container.global_transform
-	self.camera_container.populate_camera_control(self._get_focus_point())
+	if ApplicationConfig.ENABLE_LEGACY_CAMERA:
+		self.camera_container.populate_camera_control(self._get_focus_point())
 
 func _physics_process(delta: float) -> void:
 	apply_gravity(delta)
