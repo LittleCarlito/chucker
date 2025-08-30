@@ -59,9 +59,6 @@ var stopwatch: Stopwatch
 #				Need to be able to tell from source of truth for equiped/input what to do with camera
 #					Could be item or character
 #				Will have fallback logic on camera container if what it is connected to has nothing
-#			Assets need to have docking/undocking functions
-#				Docking is when camera focus Node3D is connected to asset camera focal point Node3D
-#				Undocking would be the disconnecting of the two and the signals
 #			New camera setup needs logic to handle new signals
 #				Will need to have these functions hooked up in its docking functions
 #			New camera needs its own input handling
@@ -76,6 +73,7 @@ var stopwatch: Stopwatch
 # TODO Refactor state to be singular
 #		Don't want multiple state objects
 #		Right now Force disk has _update_state and it isn't part of ItemStateConfig
+# TODO Get configuration stuff to state and single game_config.gd
 # TODO Do force disk TODOs
 # TODO Do salinas flats TODOs
 

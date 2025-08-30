@@ -41,6 +41,9 @@ var asset_spawn_data: Array[SpawnData]
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	# Spawn in Camera
+	var camera_data: AssetData = AssetData.new(AssetData.TYPE.CAMERA, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
+	# TODO Will need to redo camera state shit below for all of them with new camera setup
 	# Spawn in Character
 	var chuck_data: AssetData = AssetData.new(AssetData.TYPE.PLAYER, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
 	const chuck_location: Vector3 = Vector3(0, 1, 0)

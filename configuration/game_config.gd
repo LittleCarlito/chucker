@@ -4,6 +4,9 @@ class_name GameConfig
 const NAME: String = "game"
 
 const DEFAULTS: Dictionary = {
+	# Camera values
+	"controller_distance": 5,
+	"controller_height": 15,
 	# Player values
 	"run_speed": 5.0,
 	"sprint_multiplier": 2.0,
