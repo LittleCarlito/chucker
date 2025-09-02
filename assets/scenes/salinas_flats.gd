@@ -42,9 +42,9 @@ var asset_spawn_data: Array[SpawnData]
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# Spawn in Camera
-	var rig_data: AssetData = AssetData.new(AssetData.TYPE.CAMERA, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
-	var rig_location: Vector3 = Vector3(0, 1, 0)
-	var rig_spawn_data: SpawnData = SpawnData.new(rig_data, rig_location)
+	# var rig_data: AssetData = AssetData.new(AssetData.TYPE.CAMERA, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
+	# var rig_location: Vector3 = Vector3(0, 1, 0)
+	# var rig_spawn_data: SpawnData = SpawnData.new(rig_data, rig_location)
 	# TODO Will need to redo camera state shit below for all of them with new camera setup
 	# Spawn in Character
 	var chuck_data: AssetData = AssetData.new(AssetData.TYPE.PLAYER, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
@@ -76,7 +76,7 @@ func _ready() -> void:
 	var tree_spawn_data: SpawnData = SpawnData.new(tree_data, tree_location, self)
 	# Create and spawn master asset list
 	asset_spawn_data = [
-						rig_spawn_data,
+						#rig_spawn_data,
 						chuck_spawn_data, 
 						path_spawn_data, 
 						force_spawn_data, 
@@ -118,12 +118,12 @@ func _kickoff_data_load() -> void:
 	var spawned_assets: Dictionary = AssetDelivery.spawn_assets(asset_spawn_data)
 	# TODO Get the rig and the character to variables
 	#			insert the character object as teh focus point of the rig
-	var player_characters: Array = spawned_assets[AssetData.TYPE.PLAYER]
-	var camera_rigs: Array = spawned_assets[AssetData.TYPE.CAMERA]
-	if player_characters.size() > 0 && camera_rigs.size() > 0:
-		var main_character: ChuckChucker = player_characters[0]
-		var main_rig: CameraRig = camera_rigs[0]
-		main_rig.make_current()
-		main_rig.set_integration_point(main_character, true)
+	#var player_characters: Array = spawned_assets[AssetData.TYPE.PLAYER]
+	#var camera_rigs: Array = spawned_assets[AssetData.TYPE.CAMERA]
+	#if player_characters.size() > 0 && camera_rigs.size() > 0:
+		#var main_character: ChuckChucker = player_characters[0]
+		#var main_rig: CameraRig = camera_rigs[0]
+		#main_rig.make_current()
+		#main_rig.set_integration_point(main_character, true)
 	update_course_data()
 	_apply_settings()

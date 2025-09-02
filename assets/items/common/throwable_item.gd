@@ -68,8 +68,8 @@ func _handle_aiming(event: InputEvent) -> void:
 	elif event.is_action_released(InputConfig.USER_INPUT.SECONDARY):
 		aim.emit(AIM_TYPE.ZOOM_OUT, 0)
 	elif event is InputEventMouseMotion and Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
-		var v_rotation_amount: float = NodeUtil.get_vertical_rotation_amount(event)
-		var h_rotation_amount: float = NodeUtil.get_horizontal_rotation_amount(event)
+		var v_rotation_amount: float = NodeUtil.get_vertical_aim_amount(event)
+		var h_rotation_amount: float = NodeUtil.get_horizontal_aim_amount(event)
 		if v_rotation_amount != -1:
 			aim.emit(AIM_TYPE.VERTIAL_LOOK, v_rotation_amount)
 		if h_rotation_amount != -1:

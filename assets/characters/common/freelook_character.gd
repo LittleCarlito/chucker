@@ -38,7 +38,7 @@ func press_primary_action() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func hold_primary_action(event: InputEvent) -> void:
-	var horizontal_rotate_amount: float = deg_to_rad(event.relative.x) * CameraConfig.get_horizontal_look_sens()
+	var horizontal_rotate_amount: float = NodeUtil.get_horizontal_look_amount(event)
 	self.horizontal_pan(horizontal_rotate_amount, self.global_position)
 
 func release_primary_action() -> void:
@@ -48,8 +48,8 @@ func press_secondary_action() -> void:
 	self._handle_zoom_in()
 
 func hold_secondary_action(event: InputEvent) -> void:
-	var v_rotation_amount: float = NodeUtil.get_vertical_rotation_amount(event)
-	var h_rotation_amount: float = NodeUtil.get_horizontal_rotation_amount(event)
+	var v_rotation_amount: float = NodeUtil.get_vertical_aim_amount(event)
+	var h_rotation_amount: float = NodeUtil.get_horizontal_aim_amount(event)
 	self.rotate_camera(v_rotation_amount, h_rotation_amount)
 
 func release_secondary_action() -> void:

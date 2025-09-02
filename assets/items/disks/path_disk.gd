@@ -27,7 +27,7 @@ func _input(event: InputEvent) -> void:
 	# Looking controls
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and self.camera_container != null and self.camera_container.is_current():
 		if event is InputEventMouseMotion:
-			var horizontal_rotation_amount: float = deg_to_rad(event.relative.x) * CameraConfig.get_horizontal_look_sens()
+			var horizontal_rotation_amount: float = deg_to_rad(event.relative.x) * CameraConfig.get_horizontal_look_sense()
 			self.camera_container.horizontal_pan(horizontal_rotation_amount, self.global_position)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
