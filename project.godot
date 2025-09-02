@@ -30,6 +30,7 @@ InputSprite="*res://configuration/input/input_sprite.gd"
 GlobalHoleData="*res://assets/buildings/course/data/global_hole_data.gd"
 UserSettingData="*res://configuration/handler/user_setting_data.gd"
 AssetDelivery="*res://assets/factory/asset_delivery.gd"
+GlobalInputController="*res://input/global_input_controller.gd"
 
 [display]
 
