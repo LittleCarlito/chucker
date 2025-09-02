@@ -4,7 +4,7 @@ class_name CameraRig
 @export var integration_point: Node3D
 @export var camera_controller: Node3D
 @export var internal_camera: Camera3D
-var enable_rig_movement: bool = false
+@export var enable_rig_movement: bool
 var is_focused: bool
 var is_primary_freelook: bool
 var is_secondary_freelook: bool
