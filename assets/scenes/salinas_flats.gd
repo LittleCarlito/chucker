@@ -115,6 +115,15 @@ func update_course_data() -> void:
 	#GlobalHoleData._set_data_sequential()
 
 func _kickoff_data_load() -> void:
-	AssetDelivery.spawn_assets(asset_spawn_data)
+	var spawned_assets: Dictionary = AssetDelivery.spawn_assets(asset_spawn_data)
+	# TODO Get the rig and the character to variables
+	#			insert the character object as teh focus point of the rig
+	var player_characters: Array = spawned_assets[AssetData.TYPE.PLAYER]
+	var camera_rigs: Array = spawned_assets[AssetData.TYPE.CAMERA]
+	if player_characters.size() > 0 && camera_rigs.size() > 0:
+		var main_character: ChuckChucker = player_characters[0]
+		var main_rig: CameraRig = camera_rigs[0]
+		main_rig.make_current()
+		main_rig.set_integration_point(main_character, true)
 	update_course_data()
 	_apply_settings()

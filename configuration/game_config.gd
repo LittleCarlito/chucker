@@ -5,8 +5,8 @@ const NAME: String = "game"
 
 const DEFAULTS: Dictionary = {
 	# Camera values
-	"controller_distance": 5,
-	"controller_height": 15,
+	"controller_distance": 6.8,
+	"controller_height": 3.4,
 	# Player values
 	"run_speed": 5.0,
 	"sprint_multiplier": 2.0,

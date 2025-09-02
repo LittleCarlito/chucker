@@ -70,6 +70,10 @@ var stopwatch: Stopwatch
 #				C is go down
 #				Mouse movements move the camera around the focal point just like rotation stuff currently works
 
+# TODO Create InputController
+#			Have it post input events to actual game events in an event bus
+#			Things that then should be responding to those actions are then looking for them in the bus
+#				i.e. things that have movement enabled are looking for movement events in the bus and would move together
 # TODO Refactor state to be singular
 #		Don't want multiple state objects
 #		Right now Force disk has _update_state and it isn't part of ItemStateConfig

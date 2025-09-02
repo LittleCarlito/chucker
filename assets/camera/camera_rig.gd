@@ -1,29 +1,48 @@
 extends Node3D
 class_name CameraRig
 
-
-@export var integration_point: CameraIntegrationPoint
+@export var integration_point: Node3D
 @export var camera_controller: Node3D
 @export var internal_camera: Camera3D
 var enable_rig_movement: bool = false
+var is_focused: bool
+var is_primary_freelook: bool
+var is_secondary_freelook: bool
+var is_zoom: bool
 
 # TODO Logic for handling WASD movement when enable_right_movement is true
 #			Ensure that camera is able to move but if there is a focus point that logic is still respected and still looked at
 
-
 # TODO Each object should have a FocusPoint created on it that is passed to the CameraRig
 #			Make it an optional paramter here; with empty constructor as default
-func _ready(incoming_current: bool = false, incoming_integration: CameraIntegrationPoint = null) -> void:
-	self.camera_controller.position.z = GameConfig.DEFAULTS.controller_distance
-	self.camera_controller.position.y = GameConfig.DEFAULTS.controller_height
+func _ready(
+			incoming_current: bool = false,
+			incoming_integration: Node3D = null,
+			incoming_focus: bool = false, 
+			incoming_primary_enabled: bool = false,
+			incoming_secondary_enabled: bool = false,
+			incoming_zoom_enabled: bool = false
+			) -> void:
+	self.maintain_distance()
 	if incoming_current:
 		self.make_current()
 	if incoming_integration != null:
 		self.integration_point = incoming_integration
+	self.is_focused = incoming_focus
+	self.is_primary_freelook = incoming_primary_enabled
+	self.is_secondary_freelook = incoming_secondary_enabled
+	self.is_zoom = incoming_zoom_enabled
 
-func set_integration_point(incoming_point: Node3D) -> void:
-	self.integration_point = incoming_point
-	# TODO Here is where you would look for signals and connect them to the incoming_point
+# TODO Need to have it keep proper distance from the focus poitn as well as it moves
+func _process(_delta: float) -> void:
+	if is_focused && integration_point != null:
+		self.maintain_distance()
+		self.focus_camera()
+
+func set_integration_point(focus_node: Node3D, incoming_focus: bool = false) -> void:
+	self.integration_point = focus_node
+	if incoming_focus:
+		self.enable_focus()
 
 func get_integration_point() -> Node3D:
 	return self.integration_point
@@ -31,7 +50,7 @@ func get_integration_point() -> Node3D:
 func deintegrate() -> void:
 	# TODO Here is where you need to check if focus point existed
 	#			If it did you need to disconnect all the signals
-	self.integration_point = CameraIntegrationPoint.new()
+	self.integration_point = Node3D.new()
 
 func is_current() -> bool:
 	return self.internal_camera.is_current()
@@ -43,6 +62,24 @@ func make_current() -> void:
 ## If camera is current makes it not current
 func clear_current() -> void:
 	self.internal_camera.clear_current()
+
+func focus_camera() -> void:
+	if integration_point != null:
+		var focus_vector: Vector3 = self.integration_point.position
+		camera_controller.look_at(focus_vector)
+	else:
+		push_warning("No integration point for rig to focus on")
+
+func maintain_distance() -> void:
+	if integration_point != null:
+		# Apply offset in local space relative to integration point's orientation
+		var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
+		var world_offset = integration_point.global_transform.basis * offset
+		# Set position and rotation to follow integration point with offset
+		camera_controller.global_position = integration_point.global_position + world_offset
+		camera_controller.global_rotation = integration_point.global_rotation
+	else:
+		push_warning("No integration point to maintain distance from")
 
 func pivot_vertically(incoming_rotation: float) -> void:
 	# TODO 	Logic to tilt self in global space by incoming rotation
@@ -56,3 +93,39 @@ func pivot_horizontally(incoming_rotation: float) -> void:
 	# TODO 	Same logic as above
 	#			Moveing self as a whole instead of camera container and trying to restrict it
 	pass
+
+func is_focusing() -> bool:
+	return self.is_focused
+
+func enable_focus() -> void:
+	self.is_focused = true
+
+func reset_focus() -> void:
+	self.is_focused = false
+
+func is_primary_freelook_enabled() -> bool:
+	return self.is_primary_freelook
+
+func enable_primary_freelook() -> void:
+	self.is_primary_freelook = true
+
+func disable_primary_freelook() -> void:
+	self.is_primary_freelook = false
+
+func is_secondary_freelook_enabled() -> bool:
+	return self.is_secondary_freelook
+
+func enable_secondary_freelook() -> void:
+	self.is_secondary_freelook = true
+
+func disable_secondary_freelook() -> void:
+	self.is_secondary_freelook = false
+
+func is_zoom_eanbled() -> bool:
+	return self.is_zoom
+
+func enable_zoom() -> void:
+	self.is_zoom = true
+
+func disable_zoom() -> void:
+	self.is_zoom = false

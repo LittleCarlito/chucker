@@ -76,8 +76,16 @@ func drop_asset(drop_item: Node3D, drop_location: Vector3 = GameConfig.DEFAULTS.
 	else:
 		Logger.warn("Class \"%s\" has been dropped without a function call; Item may be hovering", [drop_item.get_class()], self)
 
-func spawn_assets(incoming_spawns: Array[SpawnData]) -> Array:
-	return incoming_spawns.map(spawn_asset)
+func spawn_assets(incoming_spawns: Array[SpawnData]) -> Dictionary:
+	var spawned_assets: Dictionary = {}
+	for spawn_data in incoming_spawns:
+		var spawned_asset: Node3D = spawn_asset(spawn_data)
+		var asset_type: AssetData.TYPE = spawn_data.asset_data.internal_type
+		if not spawned_assets.has(asset_type):
+			spawned_assets[asset_type] = []
+		spawned_assets[asset_type].append(spawned_asset)
+	return spawned_assets
+
 
 ## If using this function make sure that nodes check for AssetData in their _ready and add themselves to the group if one exists there
 func spawn_asset(spawn_data: SpawnData) -> Node3D:
