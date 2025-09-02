@@ -31,6 +31,9 @@ func _ready() -> void:
 	self.charge_view.set_progress(-1)
 	self._primary_hold_time = 0
 	self._secondary_hold_time = 0
+	GlobalInputController.connect(SIGNAL_NAME.SECONDARY_ACTION, _handle_aim_action)
+	GlobalInputController.connect(SIGNAL_NAME.SECONDARY_RELEASE, _handle_aim_release)
+	GlobalInputController.connect(SIGNAL_NAME.SECONDARY_MOTION, _handle_aim_movement)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -57,23 +60,18 @@ func _process(delta: float) -> void:
 		var secondary_nearest_state: String = asset_data.get_nearest_state(self._secondary_hold_time)
 		Logger.debug("Secondary hold updated to %03f; State would be %s", [self._secondary_hold_time, secondary_nearest_state], self)
 
-func _input(event: InputEvent) -> void:
-	_handle_aiming(event)
+# TODO Figure out if someone is actually connecting to these "aim" signals
+func _handle_aim_movement(v_motion: float, h_motion: float) -> void:
+	if v_motion != -1:
+		aim.emit(AIM_TYPE.VERTIAL_LOOK, v_motion)
+	if h_motion != -1:
+		aim.emit(AIM_TYPE.HORIZONTAL_LOOK, h_motion * 10)
 
-func _handle_aiming(event: InputEvent) -> void:
-	# When secondary is pressed
-	if event.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
-		aim.emit(AIM_TYPE.ZOOM_IN, 0)
-	# When secondary is released
-	elif event.is_action_released(InputConfig.USER_INPUT.SECONDARY):
-		aim.emit(AIM_TYPE.ZOOM_OUT, 0)
-	elif event is InputEventMouseMotion and Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
-		var v_rotation_amount: float = NodeUtil.get_vertical_aim_amount(event)
-		var h_rotation_amount: float = NodeUtil.get_horizontal_aim_amount(event)
-		if v_rotation_amount != -1:
-			aim.emit(AIM_TYPE.VERTIAL_LOOK, v_rotation_amount)
-		if h_rotation_amount != -1:
-			aim.emit(AIM_TYPE.HORIZONTAL_LOOK, h_rotation_amount * 10)
+func _handle_aim_action() -> void:
+	aim.emit(AIM_TYPE.ZOOM_IN, 0)
+
+func _handle_aim_release() -> void:
+	aim.emit(AIM_TYPE.ZOOM_OUT, 0)
 
 func hold_action(_delta: float, _incoming_basis: Basis, _incoming_focus: bool) -> void:
 	Logger.warn("No hold_action function implemented for this object", [], self)
