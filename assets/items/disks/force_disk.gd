@@ -31,6 +31,13 @@ var camera_container: CameraContainer
 var _collided: bool = false
 var _applied_flight_data: bool = false
 
+# TODO Fix to use variable below when switching to new camera
+#			Right now shit in CameraContainer is used but it will need to be from state instead
+# TODO Need to get below used from CameraState from AssetData instead
+#			When camera rig takes something in to focus it it needs to set the camera status to TRACKED
+#			Other camera states need to be changed to AVAILABLE, UNAVAILABLE (for if camera can't view it), and UKNOWN (edge cases; should error)
+var _is_tracked: bool = false
+
 func _ready() -> void:
 	if self.asset_data == null:
 		self.asset_data = AssetData.new(AssetData.TYPE.FORCE)
@@ -39,18 +46,17 @@ func _ready() -> void:
 	self.disk_mesh.set_type(self.asset_data.creation_type)
 	self.angular_damp = 0.0
 	self._update_state()
+	GlobalInputController.connect(SIGNAL_NAME.FREELOOK_MOTION, _handle_freelook_motion)
 
 func _process(_delta: float) -> void:
 	if self.flight_data != null && not self._applied_flight_data:
 		self.angular_velocity.y = self.flight_data.get_flight_spin()
 		self._applied_flight_data = true
 
-func _input(event: InputEvent) -> void:
-	# Looking controls
+
+func _handle_freelook_motion(v_motion: float, h_motion: float) -> void:
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and camera_container != null and camera_container.is_current():
-		if event is InputEventMouseMotion:
-			var horizontal_rotation_amount: float = deg_to_rad(event.relative.x) * CameraConfig.get_horizontal_look_sense()
-			camera_container.horizontal_pan(horizontal_rotation_amount, self.global_position)
+		camera_container.horizontal_pan(h_motion, self.global_position)
 
 func set_internal_type(new_internal_type: AssetData.TYPE) -> void:
 	asset_data.set_internal_type(new_internal_type)

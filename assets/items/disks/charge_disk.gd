@@ -81,6 +81,8 @@ var stopwatch: Stopwatch
 # TODO Refactor configuration directory stuff
 #			Most can be @export options on objects in scenes
 #			Those that can't should fit into game_config.gd
+# TODO Do SIGNAL_NAME TODOs
+# TODO Do Node Util TODOs
 # TODO Do force disk TODOs
 # TODO Do salinas flats TODOs
 

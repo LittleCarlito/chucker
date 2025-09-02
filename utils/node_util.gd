@@ -87,6 +87,8 @@ func find_chucker(find_chuck: Node) -> Node:
 		else:
 			return Node.new()
 
+# TODO Refactor to InputEvent helper
+
 func get_horizontal_look_amount(event: InputEvent) -> float:
 	return deg_to_rad(event.relative.x) * CameraConfig.get_horizontal_look_sense()
 
