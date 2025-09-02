@@ -1,9 +1,10 @@
+extends Node3D
 class_name CameraRig
 
 
-var integration_point: CameraIntegrationPoint
-
-var camera_controller: CameraController
+@export var integration_point: CameraIntegrationPoint
+@export var camera_controller: Node3D
+@export var internal_camera: Camera3D
 var enable_rig_movement: bool = false
 
 # TODO Logic for handling WASD movement when enable_right_movement is true
@@ -12,13 +13,13 @@ var enable_rig_movement: bool = false
 
 # TODO Each object should have a FocusPoint created on it that is passed to the CameraRig
 #			Make it an optional paramter here; with empty constructor as default
-func _ready(incoming_current: bool = false, incoming_integration: CameraIntegrationPoint = CameraIntegrationPoint.new()) -> void:
-	self.camera_controller = CameraController.new()
+func _ready(incoming_current: bool = false, incoming_integration: CameraIntegrationPoint = null) -> void:
 	self.camera_controller.position.z = GameConfig.DEFAULTS.controller_distance
 	self.camera_controller.position.y = GameConfig.DEFAULTS.controller_height
 	if incoming_current:
 		self.make_current()
-	self.integration_point = incoming_point
+	if incoming_integration != null:
+		self.integration_point = incoming_integration
 
 func set_integration_point(incoming_point: Node3D) -> void:
 	self.integration_point = incoming_point
@@ -33,15 +34,15 @@ func deintegrate() -> void:
 	self.integration_point = CameraIntegrationPoint.new()
 
 func is_current() -> bool:
-	return self.camera_controller.internal_camera.is_current()
+	return self.internal_camera.is_current()
 
 ## Sets camera to current
 func make_current() -> void:
-	self.camera_controller.internal_camera.make_current()
+	self.internal_camera.make_current()
 
 ## If camera is current makes it not current
 func clear_current() -> void:
-	self.camera_controller.internal_camera.clear_current()
+	self.internal_camera.clear_current()
 
 func pivot_vertically(incoming_rotation: float) -> void:
 	# TODO 	Logic to tilt self in global space by incoming rotation

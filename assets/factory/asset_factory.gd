@@ -1,12 +1,16 @@
 extends Node
 class_name AssetFactory
 
+# CAMERAS
 const _camera_container_scene: PackedScene = preload("res://assets/camera/camera_container.tscn")
 const _camera_scene: PackedScene = preload("res://assets/camera/standard_camera.tscn")
+const _rig_scene: PackedScene = preload("res://assets/camera/camera_rig.tscn")
+# DISKS
 const _force_scene: PackedScene = preload("res://assets/items/disks/ForceDisk.tscn")
 const _path_scene: PackedScene = preload("res://assets/items/disks/PathDisk.tscn")
 const _charge_scene: PackedScene = preload("res://assets/items/disks/charge_disk.tscn")
 const _pull_scene: PackedScene = preload("res://assets/items/disks/pull_disk.tscn")
+# OTHER
 const _player_scene: PackedScene = preload("res://assets/characters/chuck_chucker.tscn")
 const _item_container_scene: PackedScene = preload("res://assets/items/common/item_container.tscn")
 const _chuck_tee_scene: PackedScene = preload("res://assets/buildings/course/chuck_tee.tscn")
@@ -16,7 +20,7 @@ const _env_tree_scene: PackedScene = preload("res://assets/buildings/course/envi
 
 const scene_library: Dictionary = {
 	AssetData.TYPE.CAMERA_CONTAINER: _camera_container_scene,
-	AssetData.TYPE.CAMERA: _camera_scene,
+	AssetData.TYPE.CAMERA: _rig_scene,
 	AssetData.TYPE.FORCE: _force_scene,
 	AssetData.TYPE.PATH: _path_scene,
 	AssetData.TYPE.CHARGE: _charge_scene,

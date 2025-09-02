@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cfdusnakbbbnq" path="res://resources/debug_mask.png" id="4_77li7"]
 [ext_resource type="PackedScene" uid="uid://ctgyvj14lfkpj" path="res://assets/items/common/aim_line.tscn" id="6_bvyjy"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lhwga"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fjqp4"]
 resource_local_to_scene = true
 albedo_color = Color(0.93, 0, 0, 1)
 detail_enabled = true
@@ -15,7 +15,7 @@ uv1_scale = Vector3(2, 2, 2)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_g710g"]
 resource_local_to_scene = true
-material = SubResource("StandardMaterial3D_lhwga")
+material = SubResource("StandardMaterial3D_fjqp4")
 height = 0.1
 
 [node name="ChargeDisk" type="Node3D" node_paths=PackedStringArray("charge_view", "aim_line", "disk_mesh") groups=["All", "Disk", "General"]]

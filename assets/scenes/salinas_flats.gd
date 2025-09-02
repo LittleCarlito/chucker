@@ -42,7 +42,9 @@ var asset_spawn_data: Array[SpawnData]
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# Spawn in Camera
-	var camera_data: AssetData = AssetData.new(AssetData.TYPE.CAMERA, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
+	var rig_data: AssetData = AssetData.new(AssetData.TYPE.CAMERA, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
+	var rig_location: Vector3 = Vector3(0, 1, 0)
+	var rig_spawn_data: SpawnData = SpawnData.new(rig_data, rig_location)
 	# TODO Will need to redo camera state shit below for all of them with new camera setup
 	# Spawn in Character
 	var chuck_data: AssetData = AssetData.new(AssetData.TYPE.PLAYER, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
@@ -74,6 +76,7 @@ func _ready() -> void:
 	var tree_spawn_data: SpawnData = SpawnData.new(tree_data, tree_location, self)
 	# Create and spawn master asset list
 	asset_spawn_data = [
+						rig_spawn_data,
 						chuck_spawn_data, 
 						path_spawn_data, 
 						force_spawn_data, 

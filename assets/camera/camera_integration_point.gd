@@ -19,7 +19,7 @@ func _init(
 	self.is_focused = incoming_focus
 	self.is_primary_freelook = incoming_primary_enabled
 	self.is_secondary_freelook = incoming_secondary_enabled
-	self.is_zoom_enabled = incoming_zoom_enabled
+	self.is_zoom = incoming_zoom_enabled
 
 func is_focusing() -> bool:
 	return self.is_focused

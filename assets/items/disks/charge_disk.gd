@@ -73,7 +73,9 @@ var stopwatch: Stopwatch
 # TODO Refactor state to be singular
 #		Don't want multiple state objects
 #		Right now Force disk has _update_state and it isn't part of ItemStateConfig
-# TODO Get configuration stuff to state and single game_config.gd
+# TODO Refactor configuration directory stuff
+#			Most can be @export options on objects in scenes
+#			Those that can't should fit into game_config.gd
 # TODO Do force disk TODOs
 # TODO Do salinas flats TODOs
 
