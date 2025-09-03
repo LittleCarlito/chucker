@@ -56,6 +56,9 @@ func set_item_mesh(new_mesh: DiskMesh) -> void:
 		old_mesh.queue_free()
 	self.disk_mesh = new_mesh
 
+func get_path_follow() -> PathFollow3D:
+	return self.path_follow
+
 func get_disk_camera() -> Camera3D:
 	return self.camera_container.get_camera()
 

@@ -5,7 +5,14 @@ const _FLIGHT_DATA_NOT_SET: String = "FlightData not set; Cannot set flight glob
 
 var stopwatch: Stopwatch
 
-# BUG Camera on path disk spins with disk
+# BUG Camera spins with disk
+# FIX Stabilization functions on camera rig
+#		Focus on fixing Charge disk launch to Force disk first
+#		@export the gimbal/stability controls
+#			Set them in code for launching though
+#			Have the camera keep normal "forward" from launcher/launched item perspective
+#			Then do a maintain min height amount
+#		Hopefully this stability will give some clarity to what needs stabilizing on path disks madness
 # OUTLINE
 # 	Will need to create new camera type
 #		Rework existing system while at it as well

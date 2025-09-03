@@ -27,6 +27,7 @@ const GET_FLIGHT_DATA: String = "_get_flight_data"
 const LAUNCH: String = "_launch"
 
 const GET_MESH: String = "get_mesh"
+const GET_PATH_FOLLOW: String = "get_path_follow"
 
 # Group names
 const ENVIRONMENT: String = "Environment"
