@@ -80,6 +80,8 @@ var stopwatch: Stopwatch
 # TODO Create GlobalCursorController
 #			Same as other global controllers
 #			Controls visibility of cursor/captured mode instead of having everyone grabbing at it
+# TODO Fix pull disk logic using GlobalCursorController to allow for pulling
+#			Have it captured again on release/launch
 # TODO Clean up all the remaining MOUSE_MODE type stuff to only be in the global if any remains
 # TODO Create InputController
 #			Have it post input events to actual game events in an event bus

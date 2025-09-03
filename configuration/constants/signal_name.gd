@@ -5,6 +5,7 @@ const ZOOM_OUT: String = "zoom_out"
 const TURN_HORIZONTAL: String = "turn_horizontal"
 const TIMEOUT: String = "timeout"
 const ROTATE: String = "rotate" # rotation_axis: Vector3, rotation_amount: float
+const HOLD_HEIGHT: String = "hold_height" # min_height: float
 const PRIMARY_ACTION: String = "primary_action"
 const PRIMARY_RELEASE: String = "primary_release"
 # TODO Rename users of this to primary_motion

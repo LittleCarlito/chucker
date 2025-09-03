@@ -94,6 +94,7 @@ func focus_character() -> void:
 		push_warning("No spawn assets in scene; Cannot focus character...")
 		return
 	SceneUtil.focus_character(spawned_assets)
+	GlobalCameraController.set_rig_height(2)
 
 func update_course_data() -> void:
 	get_tree().call_group(GroupData.GENERAL, GroupData.UPDATE_STATE)

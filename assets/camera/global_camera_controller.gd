@@ -3,6 +3,7 @@ extends Node
 signal request_camera(requesting_node: Node3D)
 signal change_mode(new_mode: TrackingMode)
 signal is_focusing(incoming_focus: bool)
+signal hold_height(new_min: float)
 
 enum TrackingMode {
 	FULL,
@@ -18,3 +19,6 @@ func set_rig_mode(incoming_mode: TrackingMode) -> void:
 
 func set_is_rig_focusing(incoming_focus: bool) -> void:
 	self.is_focusing.emit(incoming_focus)
+
+func set_rig_height(new_height: float) -> void:
+	self.hold_height.emit(new_height)
