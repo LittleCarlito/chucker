@@ -36,6 +36,7 @@ var _applied_flight_data: bool = false
 # TODO Need to get below used from CameraState from AssetData instead
 #			When camera rig takes something in to focus it it needs to set the camera status to TRACKED
 #			Other camera states need to be changed to AVAILABLE, UNAVAILABLE (for if camera can't view it), and UKNOWN (edge cases; should error)
+# TODO Ensure the camera state is properly tracked in other objects the camera can track as well (i.e. path disk, etc)
 var _is_tracked: bool = false
 
 func _ready() -> void:

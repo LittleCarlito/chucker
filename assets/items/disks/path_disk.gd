@@ -22,13 +22,7 @@ func _ready() -> void:
 	self.disk_mesh.set_type(AssetData.TYPE.PATH)
 	if self.asset_data != null and !self.asset_data.group_name.is_empty():
 		add_to_group(self.asset_data.group_name)
-
-func _input(event: InputEvent) -> void:
-	# Looking controls
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and self.camera_container != null and self.camera_container.is_current():
-		if event is InputEventMouseMotion:
-			var horizontal_rotation_amount: float = deg_to_rad(event.relative.x) * CameraConfig.get_horizontal_look_sense()
-			self.camera_container.horizontal_pan(horizontal_rotation_amount, self.global_position)
+	GlobalInputController.connect(SIGNAL_NAME.FREELOOK_MOTION, _handle_freelook_event)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -67,6 +61,10 @@ func is_current() -> bool:
 
 func pick_up() -> void:
 	self.queue_free()
+
+func _handle_freelook_event(v_motion: float, h_motion: float) -> void:
+	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and self.camera_container != null and self.camera_container.is_current():
+		self.camera_container.horizontal_pan(h_motion, self.global_position)
 
 # TODO Think on how different shot types would be implemented
 #			A shot where only increasing absolute values of z roation is added (aka it doesn't flatten out)
