@@ -116,6 +116,7 @@ static func _launch_asset(incoming_asset: Node3D, focus_flight: bool = false) ->
 		incoming_asset.call(GroupData.LAUNCH)
 		asset_launched = true
 		if focus_flight:
+			GlobalCameraController.set_rig_mode(GlobalCameraController.TrackingMode.POSITION)
 			if incoming_asset is PathDisk:
 				var path_follow: PathFollow3D = incoming_asset.call(GroupData.GET_PATH_FOLLOW)
 				GlobalCameraController.focus_new_node(path_follow)

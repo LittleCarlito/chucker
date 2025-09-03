@@ -1,16 +1,13 @@
 extends Node3D
 class_name CameraRig
 
-enum TrackingMode {
-	FULL,
-	POSITION
-}
+
 
 @export var integration_point: Node3D
 @export var camera_controller: Node3D
 @export var internal_camera: Camera3D
 @export var enable_rig_movement: bool
-@export var tracking_mode: TrackingMode = TrackingMode.FULL
+@export var tracking_mode: GlobalCameraController.TrackingMode = GlobalCameraController.TrackingMode.FULL
 
 var is_focused: bool
 var is_primary_freelook: bool
@@ -38,6 +35,7 @@ func _ready(
 	self.is_secondary_freelook = incoming_secondary_enabled
 	self.is_zoom = incoming_zoom_enabled
 	GlobalCameraController.connect(SIGNAL_NAME.REQUEST_CAMERA, _handle_camera_request)
+	GlobalCameraController.connect(SIGNAL_NAME.CHANGE_MODE, change_mode)
 
 # TODO Need to have it keep proper distance from the focus point as well as it moves
 func _process(_delta: float) -> void:
@@ -78,24 +76,24 @@ func focus_camera() -> void:
 
 func maintain_distance() -> void:
 	if integration_point != null:
-		if tracking_mode == TrackingMode.FULL:
+		if tracking_mode == GlobalCameraController.TrackingMode.FULL:
 			# Apply offset in local space relative to integration point's orientation
 			var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
 			var world_offset = integration_point.global_transform.basis * offset
 			# Set position and rotation to follow integration point with offset
 			camera_controller.global_position = integration_point.global_position + world_offset
 			camera_controller.global_rotation = integration_point.global_rotation
-		elif tracking_mode == TrackingMode.POSITION:
+		elif tracking_mode == GlobalCameraController.TrackingMode.POSITION:
 			# Apply offset in world space, maintain current orientation
 			var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
 			camera_controller.global_position = integration_point.global_position + offset
 	else:
 		push_warning("No integration point to maintain distance from")
 
-func set_tracking_mode(mode: TrackingMode) -> void:
+func set_tracking_mode(mode: GlobalCameraController.TrackingMode) -> void:
 	tracking_mode = mode
 
-func get_tracking_mode() -> TrackingMode:
+func get_tracking_mode() -> GlobalCameraController.TrackingMode:
 	return tracking_mode
 
 func pivot_vertically(incoming_rotation: float) -> void:
@@ -146,6 +144,9 @@ func enable_zoom() -> void:
 
 func disable_zoom() -> void:
 	self.is_zoom = false
+
+func change_mode(incoming_mode: GlobalCameraController.TrackingMode) -> void:
+	self.tracking_mode = incoming_mode
 
 func _handle_camera_request(new_foucs: Node3D) -> void:
 	self.set_integration_point(new_foucs, true)
