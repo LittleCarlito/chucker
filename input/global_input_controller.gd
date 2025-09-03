@@ -1,5 +1,6 @@
 extends Node
 
+# Action signals
 signal rotate(rotation_axis: Vector3, rotation_amount:float)
 signal primary_action
 signal primary_release
@@ -11,13 +12,19 @@ signal duo_action
 signal duo_release
 signal duo_movemnt(v_motion: float, h_motion: float)
 signal freelook_movement(v_motion: float, h_motion: float)
+# UI Signals
+signal pause_action
+signal pause_release
+signal tab_action
+signal tab_release
 
 func _input(incoming_event: InputEvent) -> void:
-	self._handle_action_input(incoming_event)
+	self._handle_action_events(incoming_event)
 	self._handle_movement_events(incoming_event)
+	self._handle_ui_events(incoming_event)
 
 # Allows chuck to look around with right/left click combinations when not equipped
-func _handle_action_input(incoming_event: InputEvent) -> void:
+func _handle_action_events(incoming_event: InputEvent) -> void:
 	var no_action_input: bool = not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY) and not Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY)
 	var only_secondary: bool = Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY) and not Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY)
 	# Primary clicked
@@ -57,3 +64,11 @@ func _handle_movement_events(incoming_event: InputEvent) -> void:
 		if incoming_event.is_action_pressed(InputConfig.USER_INPUT.ROTATE_DOWN):
 			rotation_adjust *= -1
 		self.rotate.emit(Vector3(1, 0, 0), rotation_adjust)
+
+func _handle_ui_events(inocming_event: InputEvent) -> void:
+	if inocming_event.is_action_pressed(InputConfig.USER_INPUT.PAUSE):
+		self.pause_action.emit()
+	if inocming_event.is_action_pressed(InputConfig.USER_INPUT.SCORE):
+		self.tab_action.emit()
+	if inocming_event.is_action_released(InputConfig.USER_INPUT.SCORE):
+		self.tab_release.emit()

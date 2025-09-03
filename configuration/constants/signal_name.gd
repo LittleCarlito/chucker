@@ -18,3 +18,7 @@ const DUO_RELEASE: String = "duo_release"
 # TODO Rename users of this to duo_motion
 const DUO_MOTION:String = "duo_movement" # v_motion: float, h_motion: float
 const FREELOOK_MOTION: String = "freelook_movement" # v_motion: float, h_motion:float
+const PAUSE_ACTION: String = "pause_action"
+const PAUSE_RELEASE: String = "pause_release"
+const TAB_ACTION: String = "tab_action"
+const TAB_RELEASE: String = "tab_release"

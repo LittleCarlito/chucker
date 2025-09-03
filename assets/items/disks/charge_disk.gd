@@ -75,6 +75,14 @@ var stopwatch: Stopwatch
 #			Have it post input events to actual game events in an event bus
 #			Things that then should be responding to those actions are then looking for them in the bus
 #				i.e. things that have movement enabled are looking for movement events in the bus and would move together
+# TODO Refactor menu system
+#			Get it on GlobalInputController
+#			No more nested menus
+#			Each menu screen is its own top level thing
+#			Each one just opens a different one
+#			ESC from options menu closes it and opens pause menu
+#			ESC in pause menu closes all menus and resume
+#			Clicking options from pause menu closes pause menu and opens options menu
 # TODO Refactor state to be singular
 #		Don't want multiple state objects
 #		Right now Force disk has _update_state and it isn't part of ItemStateConfig
