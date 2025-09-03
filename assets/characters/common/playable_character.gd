@@ -3,7 +3,6 @@ class_name PlayableCharacter
 
 func _ready() -> void:
 	super._ready()
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	GlobalInputController.connect(SIGNAL_NAME.ROTATE, _handle_horizontal_rotation_signal)
 
 func _physics_process(delta: float) -> void:

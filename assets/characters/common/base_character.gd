@@ -98,7 +98,7 @@ func horizontal_pan(rotation_amount: float, focus_location: Vector3 = Vector3.IN
 	self.camera_container.horizontal_pan(rotation_amount, focus_location)
 
 func snap_back(incoming_rotation: float = NUMBERS.FLOAT16_MAX) -> void:
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	# Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	self.camera_container.snap_back(incoming_rotation)
 
 func set_camera(incoming_camera: Camera3D) -> void:
@@ -138,12 +138,12 @@ func toggle_rotation() -> void:
 	disable_rotation_var = not disable_rotation_var
 
 func _handle_zoom_in() -> void:
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	# Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if camera_container.is_current():
 		camera_container.zoom_in()
 
 func _handle_zoom_out() -> void:
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	# Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	camera_container.snap_back(self.global_rotation.z)
 
 func _get_focus_point() -> Vector3:

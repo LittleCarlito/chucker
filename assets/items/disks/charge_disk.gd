@@ -77,6 +77,10 @@ var stopwatch: Stopwatch
 #				C is go down
 #				Mouse movements move the camera around the focal point just like rotation stuff currently works
 
+# TODO Create GlobalCursorController
+#			Same as other global controllers
+#			Controls visibility of cursor/captured mode instead of having everyone grabbing at it
+# TODO Clean up all the remaining MOUSE_MODE type stuff to only be in the global if any remains
 # TODO Create InputController
 #			Have it post input events to actual game events in an event bus
 #			Things that then should be responding to those actions are then looking for them in the bus

@@ -6,8 +6,8 @@ class_name CameraRig
 @export var integration_point: Node3D
 @export var camera_controller: Node3D
 @export var internal_camera: Camera3D
-@export var freelook_enabled: bool = false
-@export var freelook_sensitivity: float = 0.005
+@export var freelook_enabled: bool = true
+@export var freelook_sensitivity: float = 0.07
 @export var freelook_pitch_limit: float = 85.0 # degrees
 @export var enable_rig_movement: bool = false
 @export var tracking_mode: GlobalCameraController.TrackingMode = GlobalCameraController.TrackingMode.FULL
@@ -46,6 +46,10 @@ func _ready(
 	GlobalCameraController.connect(SIGNAL_NAME.CHANGE_MODE, change_mode)
 	# Input signal connections
 	GlobalInputController.connect(SIGNAL_NAME.FREELOOK_MOTION, _handle_freelook)
+	GlobalInputController.connect(SIGNAL_NAME.PRIMARY_ACTION, _handle_input)
+	GlobalInputController.connect(SIGNAL_NAME.SECONDARY_ACTION, _handle_input)
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
 
 # TODO Need to have it keep proper distance from the focus point as well as it moves
 func _process(_delta: float) -> void:
@@ -145,19 +149,34 @@ func disable_zoom() -> void:
 func change_mode(incoming_mode: GlobalCameraController.TrackingMode) -> void:
 	self.tracking_mode = incoming_mode
 
+func _handle_input() -> void:
+	if self.freelook_enabled and not self.is_focused:
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+			Logger.debug("GOING VISIBLE", [], self)
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		elif Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
+			Logger.debug("GOING CAPTURED", [], self)
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
 func _handle_freelook(v_motion: float, h_motion: float) -> void:
-	if is_focused:
-		# Skip freelook when focused
-		return
-	else:
-		# Update yaw (horizontal)
-		_freelook_yaw -= h_motion * freelook_sensitivity
-		# Update pitch (vertical) and clamp
-		_freelook_pitch = clamp(
-			_freelook_pitch - v_motion * freelook_sensitivity,
-			-deg_to_rad(freelook_pitch_limit),
-			deg_to_rad(freelook_pitch_limit)
-		)
+	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		if is_focused:
+			# TODO Have it orbit the GameConfig distance around the focus point using vertical and horizontal motion inputs for movement amounts around focal center
+			return
+		else:
+			# Update yaw (horizontal)
+			_freelook_yaw -= h_motion * freelook_sensitivity
+			# Update pitch (vertical) and clamp
+			_freelook_pitch = clamp(
+				_freelook_pitch - v_motion * freelook_sensitivity,
+				-deg_to_rad(freelook_pitch_limit),
+				deg_to_rad(freelook_pitch_limit)
+			)
+		# Build a new rotation basis
+		var yaw_basis := Basis(Vector3.UP, _freelook_yaw)
+		var pitch_basis := Basis(Vector3.RIGHT, _freelook_pitch)
+		# Apply to camera_controller
+		camera_controller.transform.basis = yaw_basis * pitch_basis
 
 func _handle_camera_request(new_foucs: Node3D) -> void:
 	self.set_integration_point(new_foucs, true)
