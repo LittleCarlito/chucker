@@ -1,8 +1,6 @@
 extends Node3D
 class_name CameraRig
 
-
-
 @export var integration_point: Node3D
 @export var camera_controller: Node3D
 @export var internal_camera: Camera3D
@@ -11,7 +9,6 @@ class_name CameraRig
 @export var freelook_pitch_limit: float = 85.0 # degrees
 @export var enable_rig_movement: bool = false
 @export var tracking_mode: GlobalCameraController.TrackingMode = GlobalCameraController.TrackingMode.FULL
-
 
 var is_focused: bool
 var _freelook_pitch: float = 0.0 # vertical angle
@@ -32,7 +29,7 @@ func _ready(
 			incoming_secondary_enabled: bool = false,
 			incoming_zoom_enabled: bool = false
 			) -> void:
-	self.maintain_distance()
+	self._maintain_distance()
 	if incoming_current:
 		self.make_current()
 	if incoming_integration != null:
@@ -44,17 +41,17 @@ func _ready(
 	# Camera signal connections
 	GlobalCameraController.connect(SIGNAL_NAME.REQUEST_CAMERA, _handle_camera_request)
 	GlobalCameraController.connect(SIGNAL_NAME.CHANGE_MODE, change_mode)
+	GlobalCameraController.connect(SIGNAL_NAME.IS_FOCUSING, _handle_rig_focus)
 	# Input signal connections
 	GlobalInputController.connect(SIGNAL_NAME.FREELOOK_MOTION, _handle_freelook)
 	GlobalInputController.connect(SIGNAL_NAME.PRIMARY_ACTION, _handle_input)
 	GlobalInputController.connect(SIGNAL_NAME.SECONDARY_ACTION, _handle_input)
+	# TODO Get this to the newly created GlobalCursorController
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
-
-# TODO Need to have it keep proper distance from the focus point as well as it moves
 func _process(_delta: float) -> void:
 	if is_focused && integration_point != null:
-		self.maintain_distance()
+		self._maintain_distance()
 		self.focus_camera()
 
 func set_integration_point(focus_node: Node3D, incoming_focus: bool = false) -> void:
@@ -87,22 +84,6 @@ func focus_camera() -> void:
 		camera_controller.look_at(focus_vector)
 	else:
 		push_warning("No integration point for rig to focus on")
-
-func maintain_distance() -> void:
-	if integration_point != null:
-		if tracking_mode == GlobalCameraController.TrackingMode.FULL:
-			# Apply offset in local space relative to integration point's orientation
-			var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
-			var world_offset = integration_point.global_transform.basis * offset
-			# Set position and rotation to follow integration point with offset
-			camera_controller.global_position = integration_point.global_position + world_offset
-			camera_controller.global_rotation = integration_point.global_rotation
-		elif tracking_mode == GlobalCameraController.TrackingMode.POSITION:
-			# Apply offset in world space, maintain current orientation
-			var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
-			camera_controller.global_position = integration_point.global_position + offset
-	else:
-		push_warning("No integration point to maintain distance from")
 
 func set_tracking_mode(mode: GlobalCameraController.TrackingMode) -> void:
 	tracking_mode = mode
@@ -149,8 +130,34 @@ func disable_zoom() -> void:
 func change_mode(incoming_mode: GlobalCameraController.TrackingMode) -> void:
 	self.tracking_mode = incoming_mode
 
+func _maintain_distance() -> void:
+	if integration_point != null:
+		if tracking_mode == GlobalCameraController.TrackingMode.FULL:
+			# Apply offset in local space relative to integration point's orientation
+			var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
+			var world_offset = integration_point.global_transform.basis * offset
+			# Set position and rotation to follow integration point with offset
+			camera_controller.global_position = integration_point.global_position + world_offset
+			camera_controller.global_rotation = integration_point.global_rotation
+		elif tracking_mode == GlobalCameraController.TrackingMode.POSITION:
+			# Apply offset in world space, maintain current orientation
+			var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
+			camera_controller.global_position = integration_point.global_position + offset
+		elif tracking_mode == GlobalCameraController.TrackingMode.TRACK:
+			# TRACK mode: maintain spherical coordinates around the moving integration point
+			var radius: float = GameConfig.DEFAULTS.controller_distance
+			var offset := Vector3(
+				radius * cos(_freelook_pitch) * sin(_freelook_yaw),
+				radius * sin(_freelook_pitch),
+				radius * cos(_freelook_pitch) * cos(_freelook_yaw)
+			)
+			camera_controller.global_position = integration_point.global_position + offset
+			camera_controller.look_at(integration_point.global_position, Vector3.UP)
+	else:
+		push_warning("No integration point to maintain distance from")
+
 func _handle_input() -> void:
-	if self.freelook_enabled and not self.is_focused:
+	if (self.freelook_enabled and not self.is_focused) || self.tracking_mode == GlobalCameraController.TrackingMode.TRACK:
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 			Logger.debug("GOING VISIBLE", [], self)
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -160,23 +167,61 @@ func _handle_input() -> void:
 
 func _handle_freelook(v_motion: float, h_motion: float) -> void:
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		if is_focused:
-			# TODO Have it orbit the GameConfig distance around the focus point using vertical and horizontal motion inputs for movement amounts around focal center
-			return
-		else:
-			# Update yaw (horizontal)
-			_freelook_yaw -= h_motion * freelook_sensitivity
-			# Update pitch (vertical) and clamp
+		if tracking_mode == GlobalCameraController.TrackingMode.TRACK and integration_point != null:
+			# TRACK mode: freelook controls camera around the moving object
+			_freelook_yaw += h_motion * freelook_sensitivity
 			_freelook_pitch = clamp(
-				_freelook_pitch - v_motion * freelook_sensitivity,
+				_freelook_pitch + v_motion * freelook_sensitivity,
 				-deg_to_rad(freelook_pitch_limit),
 				deg_to_rad(freelook_pitch_limit)
 			)
-		# Build a new rotation basis
-		var yaw_basis := Basis(Vector3.UP, _freelook_yaw)
-		var pitch_basis := Basis(Vector3.RIGHT, _freelook_pitch)
-		# Apply to camera_controller
-		camera_controller.transform.basis = yaw_basis * pitch_basis
+			# Distance from focus point
+			var radius: float = GameConfig.DEFAULTS.controller_distance
+			# Convert yaw/pitch to a position in spherical coordinates around the moving integration point
+			var offset := Vector3(
+				radius * cos(_freelook_pitch) * sin(_freelook_yaw),
+				radius * sin(_freelook_pitch),
+				radius * cos(_freelook_pitch) * cos(_freelook_yaw)
+			)
+			# Set camera position relative to the current integration point position
+			camera_controller.global_position = integration_point.global_position + offset
+			# Look at the focus point
+			camera_controller.look_at(integration_point.global_position, Vector3.UP)
+		elif is_focused and integration_point != null:
+			Logger.debug("BAZLORPA", [], self)
+			# Update yaw and pitch
+			_freelook_yaw += h_motion * freelook_sensitivity
+			_freelook_pitch = clamp(
+				_freelook_pitch + v_motion * freelook_sensitivity,
+				-deg_to_rad(freelook_pitch_limit),
+				deg_to_rad(freelook_pitch_limit)
+			)
+			# Distance from focus point
+			var radius: float = GameConfig.DEFAULTS.controller_distance
+			# Convert yaw/pitch to a position in spherical coordinates
+			var offset := Vector3(
+				radius * cos(_freelook_pitch) * sin(_freelook_yaw),
+				radius * sin(_freelook_pitch),
+				radius * cos(_freelook_pitch) * cos(_freelook_yaw)
+			)
+			# Set camera position relative to focus
+			camera_controller.global_position = integration_point.global_position + offset
+			# Look at the focus point
+			camera_controller.look_at(integration_point.global_position, Vector3.UP)
+		else:
+			# Free freelook (no integration point)
+			_freelook_yaw += h_motion * freelook_sensitivity
+			_freelook_pitch = clamp(
+				_freelook_pitch + v_motion * freelook_sensitivity,
+				-deg_to_rad(freelook_pitch_limit),
+				deg_to_rad(freelook_pitch_limit)
+			)
+			var yaw_basis := Basis(Vector3.UP, _freelook_yaw)
+			var pitch_basis := Basis(Vector3.RIGHT, _freelook_pitch)
+			camera_controller.transform.basis = yaw_basis * pitch_basis
 
 func _handle_camera_request(new_foucs: Node3D) -> void:
 	self.set_integration_point(new_foucs, true)
+
+func _handle_rig_focus(incoming_value: bool) -> void:
+	self.is_focused = incoming_value

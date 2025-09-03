@@ -3,6 +3,7 @@ class_name ChuckChucker
 
 @export var asset_data: AssetData
 
+
 func _ready() -> void:
 	super._ready()
 	if self.asset_data == null:

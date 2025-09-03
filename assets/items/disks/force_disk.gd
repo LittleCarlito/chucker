@@ -54,7 +54,6 @@ func _process(_delta: float) -> void:
 		self.angular_velocity.y = self.flight_data.get_flight_spin()
 		self._applied_flight_data = true
 
-
 func _handle_freelook_motion(v_motion: float, h_motion: float) -> void:
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and camera_container != null and camera_container.is_current():
 		camera_container.horizontal_pan(h_motion, self.global_position)
