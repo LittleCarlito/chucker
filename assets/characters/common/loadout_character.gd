@@ -1,6 +1,17 @@
 extends BaseCharacter
 class_name LoadoutCharacter
 
+# TODO OOOOO
+#		CAMERA RIG TRACKING OUTPUT
+#			Signal here for output
+#				Only output the signal if focusing_output
+#			Camera rig when connecting to node as focus point checks for signal
+#				If has signal connects to it for swapping tracking objects
+#			After throw signal is emitted and camera swaps to focus flying disk
+#			Disk gives instructions on how to handle input events in flight and then idle rotate on land
+#			Camera rig shoudl also have connected to Disks signal for swapping tracking objects
+#				After idle rotate disk emits signal having camera rig swap back to character
+
 @export var focusing_output: bool
 @export var front_detection: ShapeCast3D
 @export var item_container: ItemContainer

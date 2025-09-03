@@ -32,6 +32,7 @@ func _ready(
 	self.is_primary_freelook = incoming_primary_enabled
 	self.is_secondary_freelook = incoming_secondary_enabled
 	self.is_zoom = incoming_zoom_enabled
+	GlobalCameraController.connect(SIGNAL_NAME.REQUEST_CAMERA, _handle_camera_request)
 
 # TODO Need to have it keep proper distance from the focus poitn as well as it moves
 func _process(_delta: float) -> void:
@@ -129,3 +130,7 @@ func enable_zoom() -> void:
 
 func disable_zoom() -> void:
 	self.is_zoom = false
+
+func _handle_camera_request(new_foucs: Node3D) -> void:
+	Logger.debug("BAZINNNGA", [], self)
+	self.set_integration_point(new_foucs, true)

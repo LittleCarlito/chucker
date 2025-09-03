@@ -76,7 +76,7 @@ func _ready() -> void:
 	var tree_spawn_data: SpawnData = SpawnData.new(tree_data, tree_location, self)
 	# Create and spawn master asset list
 	asset_spawn_data = [
-						# rig_spawn_data,
+						rig_spawn_data,
 						chuck_spawn_data, 
 						path_spawn_data, 
 						force_spawn_data, 
@@ -116,6 +116,6 @@ func update_course_data() -> void:
 
 func _kickoff_data_load() -> void:
 	var spawned_assets: Dictionary = AssetDelivery.spawn_assets(asset_spawn_data)
-	# SceneUtil.focus_character(spawned_assets)
+	SceneUtil.focus_character(spawned_assets)
 	update_course_data()
 	_apply_settings()

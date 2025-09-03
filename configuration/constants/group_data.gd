@@ -26,6 +26,8 @@ const GET_FLIGHT_DATA: String = "_get_flight_data"
 # TODO Make sure to look at flight data if set to set camera to focused if containing camera and flight data is focused launch
 const LAUNCH: String = "_launch"
 
+const GET_MESH: String = "get_mesh"
+
 # Group names
 const ENVIRONMENT: String = "Environment"
 const PLAYER: String = "Player"

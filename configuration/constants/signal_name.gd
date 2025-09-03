@@ -22,3 +22,6 @@ const PAUSE_ACTION: String = "pause_action"
 const PAUSE_RELEASE: String = "pause_release"
 const TAB_ACTION: String = "tab_action"
 const TAB_RELEASE: String = "tab_release"
+
+# Global camera controller
+const REQUEST_CAMERA: String = "request_camera" # new_node: Node3D

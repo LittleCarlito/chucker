@@ -46,6 +46,9 @@ func _physics_process(delta: float) -> void:
 			self._collision_location = self.disk_mesh.global_position
 			self._swap_disk()
 
+func get_mesh() -> DiskMesh:
+	return self.disk_mesh
+
 func set_item_mesh(new_mesh: DiskMesh) -> void:
 	self.path_follow.add_child(new_mesh)
 	var old_mesh: DiskMesh = self.disk_mesh

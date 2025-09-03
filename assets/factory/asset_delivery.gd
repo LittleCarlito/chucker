@@ -35,7 +35,8 @@ func create_and_launch(flight_data: FlightData, asset_data: AssetData) -> Node3D
 		# Might need a check to ensure flight_path is populated first
 		if !flight_data.flight_path.is_empty():
 			if(_set_launch_parameters(new_asset, flight_data)):
-				if not _launch_asset(new_asset):
+				Logger.debug("BAASSSS Focus flight is %s", [flight_data.flight_details.focus_flight], self)
+				if not _launch_asset(new_asset, flight_data.flight_details.focus_flight):
 					Logger.debug(_LAUNCH_RESULT_STRING, [str(new_asset), _FAILURE], self)
 				# Regardless of flight result have the items in th given data group update their status data
 				if asset_data.group_name != null:
@@ -86,7 +87,6 @@ func spawn_assets(incoming_spawns: Array[SpawnData]) -> Dictionary:
 		spawned_assets[asset_type].append(spawned_asset)
 	return spawned_assets
 
-
 ## If using this function make sure that nodes check for AssetData in their _ready and add themselves to the group if one exists there
 func spawn_asset(spawn_data: SpawnData) -> Node3D:
 	var created_node: Node3D = AssetFactory.create_asset(spawn_data.asset_data.internal_type)
@@ -119,11 +119,17 @@ static func _set_launch_parameters(incoming_asset: Node3D, incoming_data: Flight
 		Logger.debug(Logger.NO_METHOD_FOUND, [GroupData.SET_FLIGHT_DATA, str(incoming_asset)], null)
 	return data_set
 
-static func _launch_asset(incoming_asset: Node3D) -> bool:
+static func _launch_asset(incoming_asset: Node3D, focus_flight: bool = false) -> bool:
 	var asset_launched: bool = false
 	if incoming_asset.has_method(GroupData.LAUNCH):
 		incoming_asset.call(GroupData.LAUNCH)
 		asset_launched = true
+		if focus_flight:
+			if incoming_asset is PathDisk:
+				var focus_mesh: DiskMesh = incoming_asset.call(GroupData.GET_MESH)
+				GlobalCameraController.focus_new_node(focus_mesh)
+			else:
+				GlobalCameraController.focus_new_node(incoming_asset)	
 	else:
 		Logger.debug(Logger.NO_METHOD_FOUND, [Logger.LAUNCH, str(incoming_asset)], null)
 	return asset_launched	

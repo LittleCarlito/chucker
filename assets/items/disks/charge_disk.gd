@@ -5,7 +5,6 @@ const _FLIGHT_DATA_NOT_SET: String = "FlightData not set; Cannot set flight glob
 
 var stopwatch: Stopwatch
 
-# BUG Camera event capturing is not disabled on character when equipped
 # BUG Camera on path disk spins with disk
 # OUTLINE
 # 	Will need to create new camera type
