@@ -5,6 +5,7 @@ extends Node3D
 @export var kickoff_timer: Timer
 var _spawned: bool = false
 var asset_spawn_data: Array[SpawnData]
+var spawned_assets: Dictionary # Key is asset type; Value list of nodes of that type
 
 # TODO Get Course objects to integrate data with Global Hole Data
 # TODO Make set controls work
@@ -88,9 +89,17 @@ func _ready() -> void:
 	kickoff_timer.connect(SIGNAL_NAME.TIMEOUT, _kickoff_data_load)
 	kickoff_timer.start()
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
+func focus_character() -> void:
+	if spawned_assets.is_empty():
+		push_warning("No spawn assets in scene; Cannot focus character...")
+		return
+	SceneUtil.focus_character(spawned_assets)
+
+func update_course_data() -> void:
+	get_tree().call_group(GroupData.GENERAL, GroupData.UPDATE_STATE)
+	# TODO Call to make all the hole numbers sequential
+	# TODO Continuation point for COURSE work
+	#GlobalHoleData._set_data_sequential()
 
 func _disable_character_movement() -> void:
 	get_tree().call_group(GroupData.PLAYER, GroupData.DISABLE_MOVEMENT)
@@ -108,14 +117,8 @@ func _enable_character_rotation() -> void:
 func _apply_settings() -> void:
 	get_tree().call_group(GroupData.GENERAL, GroupData.RELOAD_PROJECT_SETTINGS)
 
-func update_course_data() -> void:
-	get_tree().call_group(GroupData.GENERAL, GroupData.UPDATE_STATE)
-	# TODO Call to make all the hole numbers sequential
-	# TODO Continuation point for COURSE work
-	#GlobalHoleData._set_data_sequential()
-
 func _kickoff_data_load() -> void:
-	var spawned_assets: Dictionary = AssetDelivery.spawn_assets(asset_spawn_data)
-	SceneUtil.focus_character(spawned_assets)
+	spawned_assets = AssetDelivery.spawn_assets(asset_spawn_data)
+	self.focus_character()
 	update_course_data()
 	_apply_settings()

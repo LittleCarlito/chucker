@@ -6,10 +6,17 @@ class_name CameraRig
 @export var integration_point: Node3D
 @export var camera_controller: Node3D
 @export var internal_camera: Camera3D
-@export var enable_rig_movement: bool
+@export var freelook_enabled: bool = false
+@export var freelook_sensitivity: float = 0.005
+@export var freelook_pitch_limit: float = 85.0 # degrees
+@export var enable_rig_movement: bool = false
 @export var tracking_mode: GlobalCameraController.TrackingMode = GlobalCameraController.TrackingMode.FULL
 
+
 var is_focused: bool
+var _freelook_pitch: float = 0.0 # vertical angle
+var _freelook_yaw: float = 0.0   # horizontal angle
+
 var is_primary_freelook: bool
 var is_secondary_freelook: bool
 var is_zoom: bool
@@ -34,8 +41,11 @@ func _ready(
 	self.is_primary_freelook = incoming_primary_enabled
 	self.is_secondary_freelook = incoming_secondary_enabled
 	self.is_zoom = incoming_zoom_enabled
+	# Camera signal connections
 	GlobalCameraController.connect(SIGNAL_NAME.REQUEST_CAMERA, _handle_camera_request)
 	GlobalCameraController.connect(SIGNAL_NAME.CHANGE_MODE, change_mode)
+	# Input signal connections
+	GlobalInputController.connect(SIGNAL_NAME.FREELOOK_MOTION, _handle_freelook)
 
 # TODO Need to have it keep proper distance from the focus point as well as it moves
 func _process(_delta: float) -> void:
@@ -96,19 +106,6 @@ func set_tracking_mode(mode: GlobalCameraController.TrackingMode) -> void:
 func get_tracking_mode() -> GlobalCameraController.TrackingMode:
 	return tracking_mode
 
-func pivot_vertically(incoming_rotation: float) -> void:
-	# TODO 	Logic to tilt self in global space by incoming rotation
-	#			Everything should stay the same in local space
-	#			CameraContainer aka self is what rotates in global space
-	#			Since focus point is the objects node as well they will stay attached position wise
-	#				This allows the rotation of self safely keeping evrything else in line
-	pass
-
-func pivot_horizontally(incoming_rotation: float) -> void:
-	# TODO 	Same logic as above
-	#			Moveing self as a whole instead of camera container and trying to restrict it
-	pass
-
 func is_focusing() -> bool:
 	return self.is_focused
 
@@ -147,6 +144,20 @@ func disable_zoom() -> void:
 
 func change_mode(incoming_mode: GlobalCameraController.TrackingMode) -> void:
 	self.tracking_mode = incoming_mode
+
+func _handle_freelook(v_motion: float, h_motion: float) -> void:
+	if is_focused:
+		# Skip freelook when focused
+		return
+	else:
+		# Update yaw (horizontal)
+		_freelook_yaw -= h_motion * freelook_sensitivity
+		# Update pitch (vertical) and clamp
+		_freelook_pitch = clamp(
+			_freelook_pitch - v_motion * freelook_sensitivity,
+			-deg_to_rad(freelook_pitch_limit),
+			deg_to_rad(freelook_pitch_limit)
+		)
 
 func _handle_camera_request(new_foucs: Node3D) -> void:
 	self.set_integration_point(new_foucs, true)
