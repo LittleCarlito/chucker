@@ -9,9 +9,11 @@ const _EMPTY_CAMERA_CONTAINER: String = "CameraContainer from \"%s\" returned nu
 @export var camera_container: CameraContainer
 
 var height: float
-var _initial_camera_orientation: Transform3D
+var is_sprinting: bool = false
 var disable_movement_var: bool = false
 var disable_rotation_var: bool = false
+var _initial_camera_orientation: Transform3D
+var _pending_movement: bool = false
 
 func _ready() -> void:
 	self.height = base_mesh.get_aabb().size.y
@@ -21,6 +23,9 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	apply_gravity(delta)
+	if _pending_movement:
+		move_and_slide()
+		_pending_movement = false
 
 ## Movement functions
 
@@ -29,20 +34,30 @@ func jump(jump_multiplier: float = 1) -> void:
 	if self.is_on_floor() and self.is_movement_enabled():
 		self.velocity.y = GameConfig.DEFAULTS.jump_force * jump_multiplier
 
+# TODO Change the velocity x and z setting to use move toward with acceleration and deccelration considerations
 ## Character moves; Multiplier can be applied
-func move(move_direction: Vector3, speed_multiplier: float = 1) -> void:
+func move(move_direction: Vector3) -> void:
 	if is_movement_disabled():
 		velocity.x = 0
 		velocity.z = 0
 	else:
-		if move_direction:
-			velocity.x = move_direction.x * (GameConfig.DEFAULTS.run_speed * speed_multiplier)
-			velocity.z = move_direction.z * (GameConfig.DEFAULTS.run_speed * speed_multiplier)
+		var speed: float = GameConfig.DEFAULTS.run_speed
+		if move_direction != Vector3(0, 0, 0):
+			if self.is_sprinting:
+				speed *= GameConfig.DEFAULTS.sprint_multiplier
+			velocity.x = move_direction.x * speed
+			velocity.z = move_direction.z * speed
 		# Otherwise set velocity to start slowing down
 		elif self.is_on_floor():
-			velocity.x = move_toward(velocity.x, 0, GameConfig.DEFAULTS.run_speed)
-			velocity.z = move_toward(velocity.z, 0, GameConfig.DEFAULTS.run_speed)
-	move_and_slide()
+			velocity.x = move_toward(velocity.x, 0, speed)
+			velocity.z = move_toward(velocity.z, 0, speed)
+	self._pending_movement = true
+
+func start_sprint() -> void:
+	self.is_sprinting = true
+
+func stop_sprint() -> void:
+	self.is_sprinting = false
 
 ## Character rotates on y axis; Multiplier can be applied
 func rotate_y_axis(rotation_amount: float) -> void:

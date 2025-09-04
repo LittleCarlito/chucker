@@ -19,12 +19,6 @@ class_name LoadoutCharacter
 
 var just_output: bool
 
-func _ready() -> void:
-	super._ready()
-
-func _physics_process(delta: float) -> void:
-	super._physics_process(delta)
-
 ## Stores new_item internally and attempts to give it internal camera if possible
 ## Returns item that was equipped if one was previously
 func equip_item(new_item: Node3D) -> Variant:

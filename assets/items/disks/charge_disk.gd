@@ -103,9 +103,13 @@ var stopwatch: Stopwatch
 #		Don't want multiple state objects
 #		Right now Force disk has _update_state and it isn't part of ItemStateConfig
 # TODO After state is refactored
+#		- Fix assets input handling to ensure moving when want
+#			- Don't want chuck moving when camera isn't looking at him
+#				- This logic then gets rid of things like disable movement as the camera determines enablement
 #		- Fix idle rotate logic to work
 #		- Fix allow zoom/looking based off equipment and or character with calls to GlobalCameraController restricted by objects state
 #		Need state working for objects CAMERA_STATE to restrict Global calls for signals to things like idling
+# BUG Sprint doesn't work anymore
 # TODO Should probably have Global things keep records of callers/debug logs
 #		If relying on state for restricting signaling from things could get out of sync and need to know who it is
 # TODO Refactor configuration directory stuff

@@ -82,6 +82,18 @@ func pitch_vertical(rotation_amount: float) -> void:
 	)
 	_update_camera_position()
 
+func move_up() -> void:
+	pass
+
+func move_down() -> void:
+	pass
+
+func move_left() -> void:
+	pass
+
+func move_right() -> void:
+	pass
+
 func set_integration_point(focus_node: Node3D, incoming_focus: bool = false) -> void:
 	self.integration_point = focus_node
 	if incoming_focus:
@@ -232,8 +244,9 @@ func _handle_input() -> void:
 
 func _handle_freelook(v_motion: float, h_motion: float) -> void:
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		self.pan_horizontal(h_motion * freelook_sensitivity)
-		self.pitch_vertical(v_motion * freelook_sensitivity)
+		var inversion_multiplier: int = 1 if self.tracking_mode == GlobalCameraController.TrackingMode.TRACK else -1
+		self.pan_horizontal((h_motion * freelook_sensitivity) * inversion_multiplier) 
+		self.pitch_vertical((v_motion * freelook_sensitivity) * inversion_multiplier)
 
 func _handle_camera_request(new_foucs: Node3D) -> void:
 	self.set_integration_point(new_foucs, true)
