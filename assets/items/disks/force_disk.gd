@@ -119,6 +119,8 @@ func _handle_collision(body_rid: RID, _body: Node, _body_shape_index: int, _loca
 		camera_container.start_focus(self.global_basis, self.global_position)
 		self.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
 		self.angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
+	# TODO Refactor this to use accurate state ensuring it is tracked before emitting
+	# GlobalCameraController.set_rig_dile(true)
 
 func pick_up() -> void:
 	self.queue_free()

@@ -4,6 +4,7 @@ signal request_camera(requesting_node: Node3D)
 signal change_mode(new_mode: TrackingMode)
 signal is_focusing(incoming_focus: bool)
 signal hold_height(new_min: float)
+signal is_idling(incoming_value: bool)
 
 enum TrackingMode {
 	FULL,
@@ -22,3 +23,6 @@ func set_is_rig_focusing(incoming_focus: bool) -> void:
 
 func set_rig_height(new_height: float) -> void:
 	self.hold_height.emit(new_height)
+
+func set_rig_idle(incoming_value: bool) -> void:
+	self.is_idling.emit(incoming_value)

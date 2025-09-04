@@ -5,7 +5,11 @@ const _FLIGHT_DATA_NOT_SET: String = "FlightData not set; Cannot set flight glob
 
 var stopwatch: Stopwatch
 
-# BUG Camera spins with disk
+# TODO For below: 
+#		Still need WASD hookup to GlobalInputController for when no focus or whatever combination makes sense
+#		Still need zoom features
+#			Need them for when no focus/integration or whatever combos need handling
+#			Asset based signal handling will need to be dealt with after state is refactored/fixed
 # FIX Stabilization functions on camera rig
 #		Focus on fixing Charge disk launch to Force disk first
 #		@export the gimbal/stability controls
@@ -98,6 +102,12 @@ var stopwatch: Stopwatch
 # TODO Refactor state to be singular
 #		Don't want multiple state objects
 #		Right now Force disk has _update_state and it isn't part of ItemStateConfig
+# TODO After state is refactored
+#		- Fix idle rotate logic to work
+#		- Fix allow zoom/looking based off equipment and or character with calls to GlobalCameraController restricted by objects state
+#		Need state working for objects CAMERA_STATE to restrict Global calls for signals to things like idling
+# TODO Should probably have Global things keep records of callers/debug logs
+#		If relying on state for restricting signaling from things could get out of sync and need to know who it is
 # TODO Refactor configuration directory stuff
 #			Most can be @export options on objects in scenes
 #			Those that can't should fit into game_config.gd
