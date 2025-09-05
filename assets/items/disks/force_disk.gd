@@ -2,15 +2,10 @@ extends RigidBody3D
 class_name ForceDisk
 
 	# TODO Continue
-	# TODO Get path disk working again
-	# TODO Have the spawned course objects integrate their data with Global Hole Data
 	# TODO Get character stuff into state based
 	#			Jumping, moving, aiming, etc have it all determine an ENUM in the character
 	# TODO Add lerp to camera handoffs
 	#			make lerp speed global setting configurable
-	# TODO Shouldn't have to add special input handling
-	#		As long as camera_container exists and its conditionals are met its handling should take effect
-	#			Cause by inherit mode processing
 	# TODO Need to work on passing camera along to what is active
 	# TODO Use groups instead of item_owner/fallback_camera setup
 	#			Each ChuckChucker has their own group created using their scene name
@@ -21,16 +16,6 @@ class_name ForceDisk
 	#				Item one will set camera current to false and queue_free self
 	#				ChuckChucker type will enable camera and movement
 	# TODO Instead of queue_freeing objects work on pooling and reusing them
-	# TODO Look into using Entity Component System (ECS) over OOP
-	#		How godot (and game dev in general) is done
-	#		Composition over inheritance
-	#		Want an equipable object? Have a node that makes things equipable and include that node in the one you want equipable
-	#		Want a throwable object? Have a node that makes things throwable and include that node in the one you want throwable
-	#		Want a disk looking object? Include the disk mesh scene in the one you want with that mesh
-	#		Want a disk collision box? Include that
-	#		The path disk would include above and the rigid disk would not include the disk mesh or collision box but instead the rigid disk scene
-	# BUG Not sure about swap disk force adding direction; make sure it is the disk facing direction and not true north
-	# TODO Swap out disk creation stuff in swap disk with DiskFactory usage
 	# TODO See about slowing (maybe clamping) values as bounds get closer to make it feel like resistance
 
 const _NO_ITEM_DATA_LOG: String = "AssetData has not been initialized for this node"
@@ -44,27 +29,33 @@ var asset_data: AssetData
 var flight_data: FlightData
 var camera_container: CameraContainer
 var _collided: bool = false
+var _applied_flight_data: bool = false
+
+# TODO Fix to use variable below when switching to new camera
+#			Right now shit in CameraContainer is used but it will need to be from state instead
+# TODO Need to get below used from CameraState from AssetData instead
+#			When camera rig takes something in to focus it it needs to set the camera status to TRACKED
+#			Other camera states need to be changed to AVAILABLE, UNAVAILABLE (for if camera can't view it), and UKNOWN (edge cases; should error)
+# TODO Ensure the camera state is properly tracked in other objects the camera can track as well (i.e. path disk, etc)
+var _is_tracked: bool = false
 
 func _ready() -> void:
-	if asset_data == null:
-		asset_data = AssetData.new(GameConfig.DEFAULTS.item as AssetData.TYPE)
-		if !asset_data.group_name.is_empty():
-			add_to_group(asset_data.group_name)
-	disk_mesh.set_type(asset_data.creation_type)
-	_update_state()
+	if self.asset_data == null:
+		self.asset_data = AssetData.new(AssetData.TYPE.FORCE)
+		if !self.asset_data.group_name.is_empty():
+			add_to_group(self.asset_data.group_name)
+	self.disk_mesh.set_type(self.asset_data.creation_type)
+	self.angular_damp = 0.0
+	self._update_state()
+	GlobalInputController.connect(SIGNAL_NAME.FREELOOK_MOTION, _handle_freelook_motion)
 
 func _process(_delta: float) -> void:
-	pass
-
-func _input(event: InputEvent) -> void:
-	# Looking controls
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and camera_container != null and camera_container.is_current():
-		if event is InputEventMouseMotion:
-			var horizontal_rotation_amount: float = deg_to_rad(event.relative.x) * CameraConfig.get_horizontal_look_sens()
-			camera_container.horizontal_pan(horizontal_rotation_amount, self.global_position)
+	if self.flight_data != null && not self._applied_flight_data:
+		self.angular_velocity.y = self.flight_data.get_flight_spin()
+		self._applied_flight_data = true
 
 func set_internal_type(new_internal_type: AssetData.TYPE) -> void:
-	asset_data.internal_type = new_internal_type
+	asset_data.set_internal_type(new_internal_type)
 	disk_mesh.set_type(asset_data.internal_type)
 
 func set_creation_type(new_creation_type: AssetData.TYPE) -> void:
@@ -116,17 +107,23 @@ func set_disk_camera(new_camera: Camera3D) -> void:
 	camera_container.set_camera(new_camera)
 	_update_state()
 
+func pick_up() -> void:
+	self.queue_free()
+
+func _handle_freelook_motion(v_motion: float, h_motion: float) -> void:
+	# TODO Will need this using state isntead of the camera container stuff once it is figured out
+	if GlobalCursorController.is_captured_current() and camera_container != null and camera_container.is_current():
+		camera_container.horizontal_pan(h_motion, self.global_position)
+
 func _handle_collision(body_rid: RID, _body: Node, _body_shape_index: int, _local_shape_index: int) -> void:
 	_collided = true
 	disk_collision.store_collision(self.get_rid(), body_rid, self.global_position, flight_data, asset_data)
 	if camera_container != null && (camera_container.has_camera() && camera_container.is_current()):
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		camera_container.start_focus(self.global_basis, self.global_position)
 		self.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
 		self.angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
-
-func pick_up() -> void:
-	self.queue_free()
+	# TODO Refactor this to use accurate state ensuring it is tracked before emitting
+	# GlobalCameraController.set_rig_dile(true)
 
 ## Creates intneral camera_container object
 ## Should only be called intnernally
@@ -149,16 +146,17 @@ func _set_flight_data(incoming_data: FlightData) -> void:
 
 func _launch() -> void:
 	if flight_data != null:
-		self.global_position = flight_data.flight_path.path[0].point_position
-		self.basis = flight_data.flight_basis
-		self.linear_velocity = -self.transform.basis.z * flight_data.flight_speed
+		self.flight_data.print_details()
+		self.global_position = flight_data.get_actual_path()[0].point_position
+		self.basis = flight_data.get_flight_basis()
+		self.linear_velocity = -self.transform.basis.z * flight_data.get_flight_speed()
 		self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
-		if flight_data.focus_flight:
+		if flight_data.is_focus_flight():
 			_submit_camera_request()
 			camera_container.set_current()
 			camera_container.hold_min_height()
-			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
-				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+			if not GlobalCursorController.is_captured_current():
+				GlobalCursorController.request_captured(self, "Force disk launched")
 	else:
 		Logger.warn(Logger.MISSING_FLIGHT_DATA_LOG, [], self)
 
@@ -193,6 +191,7 @@ func _submit_camera_request() -> void:
 		var formatted_string: String = Logger.NO_GROUP_LOG + Logger.LOG_SEPARATOR + Logger.NOT_SUBMITTING
 		Logger.debug(formatted_string, [], self)
 
+# TODO Make this static and shared somehwere
 func _handle_child_logs(incoming_level: Logger.LEVEL, incoming_log: String, optional_params: Array) -> void:
 	match incoming_level:
 		Logger.LEVEL.DEBUG:

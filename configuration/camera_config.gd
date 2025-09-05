@@ -80,11 +80,11 @@ static func get_stationary_fov_value() -> int:
 	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.STATIONARY_FOV)
 
 ## Retrieves the configured horizontal aim sense value
-static func get_horizontal_aim_sens() -> float:
+static func get_horizontal_aim_sense() -> float:
 	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.HORIZONTAL_AIM_SENSITIVITY)
 
 ## Retrieves the configured horizontal look sense value
-static func get_horizontal_look_sens() -> float:
+static func get_horizontal_look_sense() -> float:
 	return UserSettingData.get_category_value(CameraConfig.NAME, CameraConfig.HORIZONTAL_LOOK_SENSITIVITY)
 
 ## Retrieves the configured veritical aim sense value

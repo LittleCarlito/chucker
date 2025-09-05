@@ -1,36 +1,25 @@
 extends ThrowableItem
 class_name PullDisk
 
-# TODO Need to add right click aiming
-# TODO Allow for holding space or something to set power but still pull for offset
-# TODO Make a maximum pull time like charge disk
-#		Probably make that part of ThrowableItem and not have it in both
-#		Make it shake the disk as timer gets closer until it finally just inaccurately launches
-
-@export var aim_line: AimLine
 @export var pull_draw: PullDraw
-@export var charge_view: ChargeView
-var asset_data: AssetData
-var flight_data: FlightData
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	charge_view.set_progress(-1)
-	flight_data = FlightData.new()
+	super._ready()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
+func _process(delta: float) -> void:
+	super._process(delta)
 
 # We know primary is held upon entering this function
 func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> void:
-	flight_data.focus_flight = incoming_focus
+	flight_data.set_is_focused(incoming_focus)
 	# Perform pull disk calls
 	var only_primary_held: bool = Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY)
 	if only_primary_held:
-		var flight_details: FlightDetails = pull_draw.begin_pull()
-		self.flight_data.flight_details = flight_details
-		Logger.debug("Pull draw power is %03f", [self.flight_data.flight_details.flight_power], self)
+		var pull_data: PullData = pull_draw.begin_pull()
+		self.flight_data.set_flight_power(pull_data.primary_pull)
+		self.flight_data.set_flight_aim(pull_data.secondary_pull)
 	## If right click is pressed while holding left reset throw
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.SECONDARY):
 		pull_draw.reset_pull()
@@ -40,17 +29,19 @@ func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> 
 	elif not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY):
 		charge_view.set_progress((pull_draw.last_length / GameConfig.DEFAULTS.max_pull) * 100)
 		var multiplier: float = (pull_draw.last_length / 100) * GameConfig.DEFAULTS.hold_multiplier
-		flight_data.flight_path = FlightPath.convert(aim_line.draw_aim_line(multiplier, pull_draw.last_offset * .01))
-		flight_data.flight_basis = incoming_basis
+		var new_path: FlightPath = FlightPath.convert(aim_line.draw_aim_line(multiplier, pull_draw.last_offset * .01))
+		flight_data.set_flight_path(new_path)
+		flight_data.set_flight_basis(incoming_basis)
 
 # We know primary was released upon entering this function
 func release_action(incoming_basis: Basis) -> void:
-	Logger.debug("Pull draw power ON RELEASE is %03f", [self.flight_data.flight_details.flight_power], self)
 	## If right click is not held launch the disk
 	if not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY) and pull_draw.last_length > GameConfig.DEFAULTS.min_pull:
 		var multiplier: float = min(GameConfig.DEFAULTS.max_hold, (pull_draw.last_length / 100)) * GameConfig.DEFAULTS.hold_multiplier
 		var final_speed: float = GameConfig.DEFAULTS.launch_speed * multiplier
-		flight_data = FlightData.new(final_speed, incoming_basis, flight_data.flight_details, flight_data.flight_path, flight_data.focus_flight)
+		flight_data.set_flight_speed(final_speed)
+		flight_data.set_flight_basis(incoming_basis)
+		flight_data.set_flight_spin(flight_data.get_max_offset())
 		# Create path_disk_data and pass it into the launch method
 		var path_disk_data: AssetData = self._get_next_asset_data()
 		AssetDelivery.create_and_launch(flight_data, path_disk_data)
@@ -62,7 +53,8 @@ func release_action(incoming_basis: Basis) -> void:
 
 func drop_item() -> void:
 	var drop_path: FlightPath = FlightPath.convert([self.global_position])
-	var drop_flight: FlightData = FlightData.new(0, self.global_basis, FlightDetails.new(), drop_path, false)
+	var drop_details: FlightDetails = FlightDetails.new(0, 0, self.global_basis, false, 0, 0)
+	var drop_flight: FlightData = FlightData.new(drop_details, drop_path)
 	var drop_asset: AssetData = self._get_next_asset_data(true)
 	AssetDelivery.create_and_launch(drop_flight, drop_asset)
 	self.queue_free()

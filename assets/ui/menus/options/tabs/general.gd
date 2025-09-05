@@ -35,11 +35,11 @@ func initialize_ui() -> void:
 	fov_slider.value = CameraConfig.get_fov_value()
 	fov_value.text = str(fov_slider.value)
 	# Set aim/look elements
-	horizontal_aim_sensitivity_slider.value = CameraConfig.get_horizontal_aim_sens()
+	horizontal_aim_sensitivity_slider.value = CameraConfig.get_horizontal_aim_sense()
 	horizontal_aim_sensitivity_value.text = str(horizontal_aim_sensitivity_slider.value)
 	vertical_aim_sensitivity_slider.value = CameraConfig.get_vertical_aim_sense()
 	vertical_aim_sensitivity_value.text = str(vertical_aim_sensitivity_slider.value)
-	horizontal_look_sensitivity_slider.value = CameraConfig.get_horizontal_look_sens()
+	horizontal_look_sensitivity_slider.value = CameraConfig.get_horizontal_look_sense()
 	horizontal_look_sensitivity_value.text = str(horizontal_look_sensitivity_slider.value)
 	vertical_look_sensitivity_slider.value = CameraConfig.get_vertical_look_sense()
 	vertical_look_sensitivity_value.text = str(vertical_look_sensitivity_slider.value)

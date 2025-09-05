@@ -1,18 +1,23 @@
 extends BaseCharacter
 class_name LoadoutCharacter
 
+# TODO OOOOO
+#		CAMERA RIG TRACKING OUTPUT
+#			Signal here for output
+#				Only output the signal if focusing_output
+#			Camera rig when connecting to node as focus point checks for signal
+#				If has signal connects to it for swapping tracking objects
+#			After throw signal is emitted and camera swaps to focus flying disk
+#			Disk gives instructions on how to handle input events in flight and then idle rotate on land
+#			Camera rig shoudl also have connected to Disks signal for swapping tracking objects
+#				After idle rotate disk emits signal having camera rig swap back to character
+
 @export var focusing_output: bool
 @export var front_detection: ShapeCast3D
 @export var item_container: ItemContainer
 @export var freeze_on_equip: bool = true
 
-var _just_output: bool
-
-func _ready() -> void:
-	super._ready()
-
-func _physics_process(delta: float) -> void:
-	super._physics_process(delta)
+var just_output: bool
 
 ## Stores new_item internally and attempts to give it internal camera if possible
 ## Returns item that was equipped if one was previously
@@ -52,11 +57,7 @@ func rotate_equipped_item(rotation_axis: Vector3, rotation_amount: float) -> voi
 func item_hold_action(delta: float, focus_output: bool = false) -> void:
 	if self.is_equipped():
 		self.item_container.hold_action(delta, focus_output)
-	else:
-		Logger.debug("Should really come up with an unarmed hold action...", [], self)
 
 func item_hold_release() -> void:
 	if self.is_equipped():
 		self.item_container.release_action()
-	else:
-		Logger.debug("Should really come up with an unarmed hold release action...", [], self)

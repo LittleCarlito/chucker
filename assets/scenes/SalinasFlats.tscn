@@ -1,16 +1,16 @@
 [gd_scene load_steps=8 format=3 uid="uid://0p7etoed8w0v"]
 
 [ext_resource type="Script" path="res://assets/scenes/salinas_flats.gd" id="1_nouo6"]
-[ext_resource type="Script" path="res://assets/common/factory/asset_data.gd" id="2_audb8"]
+[ext_resource type="Script" path="res://assets/data/asset_data.gd" id="2_audb8"]
 [ext_resource type="Environment" uid="uid://bm00mgoeg2ojv" path="res://resources/environment_default.tres" id="5_ll0n0"]
 [ext_resource type="PackedScene" uid="uid://dga2v203y41nq" path="res://assets/ui/menus/control_node.tscn" id="7_inl8g"]
 
 [sub_resource type="Resource" id="Resource_24efs"]
 script = ExtResource("2_audb8")
-internal_type = 4
-item_state = 2
-camera_state = 3
-creation_type = 99
+internal_type = 0
+item_state = 0
+camera_state = 0
+creation_type = 0
 group_name = ""
 owner_rid = RID()
 
@@ -52,4 +52,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50.6695, -6.53482)
 one_shot = true
 
 [connection signal="apply_settings" from="ControlNode" to="." method="_apply_settings"]
-[connection signal="timeout" from="KickoffTimer" to="." method="_kickoff_data_load"]

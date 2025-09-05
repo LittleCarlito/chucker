@@ -22,10 +22,12 @@ const GET_ASSET_DATA: String = "_get_asset_data"
 # TODO All holders of FlightData need getters and setters created
 const SET_FLIGHT_DATA: String = "_set_flight_data" # (incoming_data: FlightData)
 const GET_FLIGHT_DATA: String = "_get_flight_data"
-const SET_FLIGHT_BASIS: String = "_set_flight_basis" # (incoming_basis:Basis)
 # TODO All assets that need the ability to launch must implement below
 # TODO Make sure to look at flight data if set to set camera to focused if containing camera and flight data is focused launch
 const LAUNCH: String = "_launch"
+
+const GET_MESH: String = "get_mesh"
+const GET_PATH_FOLLOW: String = "get_path_follow"
 
 # Group names
 const ENVIRONMENT: String = "Environment"

@@ -8,7 +8,23 @@ const _NO_VALUE: String = "No value assicated in the creation matrix for \"%s\""
 ## Used for storing type property in engine Groups
 const TYPE_PROPERTY: String = "Type"
 ## Describes the type and assumed functionality of the object
-enum TYPE{FORCE = 0, PATH = 1, PULL = 2, CHARGE = 3, TEE = 10, HOLE_NODE = 11, HOLE = 12, ENV_TREE = 13, ITEM_CONTAINER = 20, CAMERA_CONTAINER = 21, CAMERA = 22, PLAYER = 100, LEVEL = 200, UNKNOWN = 999}
+enum TYPE{
+		FORCE = 0, 
+		PATH = 1, 
+		PULL = 2, 
+		CHARGE = 3, 
+		TEE = 10, 
+		HOLE_NODE = 11, 
+		HOLE = 12, 
+		ENV_TREE = 13, 
+		ITEM_CONTAINER = 20, 
+		CAMERA_CONTAINER = 21, 
+		CAMERA = 22, 
+		PLAYER = 100, 
+		LEVEL = 200, 
+		UNKNOWN = 999
+	}
+
 ## Describes the objects ability to see
 enum CAMERA_STATE{EXISTS = 0, TRACKABLE = 1, VIEWABLE = 2, ACTIVE = 3, UNKNOWN = 999}
 ## Describes if the object is in a controlled state
@@ -26,6 +42,8 @@ enum ITEM_STATE{DISABLED = 0, DEACTIVATED = 1, ACTIVATED = 2, UNKNOWN = 999}
 @export var group_name: String
 ## The owners RID if available
 @export var owner_rid: RID
+## Configuration for transition timings between states
+@export var item_state_config: ItemStateConfig
 
 const CREATION_MATRIX: Dictionary = {
 	TYPE.CHARGE: [TYPE.FORCE],
@@ -42,18 +60,23 @@ const ITEM_COLOR: Dictionary = {
 	AssetData.TYPE.UNKNOWN: GameConfig.DEFAULTS.color
 }
 
-func _init(incoming_internal: TYPE = TYPE.UNKNOWN,
+func _init(
+			incoming_internal: TYPE = TYPE.UNKNOWN,
 			incoming_state: ITEM_STATE = ITEM_STATE.DISABLED,
 			incoming_camera_state: CAMERA_STATE = CAMERA_STATE.EXISTS,
 			incoming_create: TYPE = AssetData.TYPE.UNKNOWN,
 			incoming_group: String = GameConfig.DEFAULTS.group,
-			incoming_owner_rid: RID = RID()) -> void:
+			incoming_owner_rid: RID = RID()
+			) -> void:
 	self.internal_type = incoming_internal
 	self.item_state = incoming_state
 	self.camera_state = incoming_camera_state
 	self.group_name = incoming_group
 	self.creation_type = incoming_create
 	self.owner_rid = incoming_owner_rid
+	self.item_state_config = STATE_DEFAULTS.get_default_config(self.internal_type)
+	if self.internal_type == 2:
+		self.item_state_config.print_details()
 	self._setup_local_to_scene()
 	
 
@@ -92,3 +115,34 @@ static func get_associated_creation_type(incoming_type: AssetData.TYPE, previous
 		var formatted_string: String = _NO_VALUE + Logger.LOG_SEPARATOR + Logger.RETURNING_UNKNOWN_LOG
 		Logger.debug(formatted_string, [str(incoming_type)], null)
 	return associated_type
+
+func set_internal_type(incoming_type: TYPE) -> void:
+	self.internal_type = incoming_type
+	self.item_state_config = STATE_DEFAULTS.get_default_config(self.internal_type)
+
+func get_next_valid_value() -> float:
+	return self.item_state_config.peak_next_valid_value()
+
+func reset_state() -> void:
+	self.item_state_config.reset_state()
+
+func get_current_state() -> ItemState.STATE:
+	return self.item_state_config.get_current_state()
+
+func get_nearest_state(incoming_value: float) -> String:
+	return self.item_state_config.get_nearest_state(incoming_value)
+
+func get_next_populated_state() -> ItemState.STATE:
+	return self.item_state_config.peak_next_populated()
+
+func get_next_valid_state() -> ItemState.STATE:
+	return self.item_state_config.peak_next_valid()
+
+func set_next_populated_state() -> ItemState.STATE:
+	return self.item_state_config.set_next_populated()
+
+func set_next_valid_state() -> ItemState.STATE:
+	return self.item_state_config.set_next_valid()
+
+func print_details() -> void:
+	self.item_state_config.print_details()

@@ -1,9 +1,12 @@
-extends Node
 class_name GameConfig
 
 const NAME: String = "game"
 
 const DEFAULTS: Dictionary = {
+	# Camera values
+	"controller_distance": 6.8,
+	"controller_height": 3.4,
+	"controller_speed": .5,
 	# Player values
 	"run_speed": 5.0,
 	"sprint_multiplier": 2.0,
@@ -22,6 +25,7 @@ const DEFAULTS: Dictionary = {
 	"max_offset": 250,
 	"rotate_adjust": .1,
 	"max_speed_reduce": .75,
+	"spin_multiplier": 15,
 	"item": AssetData.TYPE.FORCE,
 	"group": GroupData.ENVIRONMENT,
 	# Color values
@@ -33,15 +37,7 @@ const DEFAULTS: Dictionary = {
 	"default_location": Vector3(0, 1, 0),
 	"uknown_location": Vector3(NUMBERS.FLOAT16_MAX, NUMBERS.FLOAT16_MAX, NUMBERS.FLOAT16_MAX),
 	# Debug values
+	"debug_logs": true,
 	"extra_detail": false,
 	"flight_detail": false
 }
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass

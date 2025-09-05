@@ -3,6 +3,9 @@ extends Node3D
 @onready var control_node: ControlNode = $ControlNode
 @export var item_data: AssetData
 @export var kickoff_timer: Timer
+var _spawned: bool = false
+var asset_spawn_data: Array[SpawnData]
+var spawned_assets: Dictionary # Key is asset type; Value list of nodes of that type
 
 # TODO Get Course objects to integrate data with Global Hole Data
 # TODO Make set controls work
@@ -39,6 +42,11 @@ extends Node3D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	# Spawn in Camera
+	var rig_data: AssetData = AssetData.new(AssetData.TYPE.CAMERA, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
+	var rig_location: Vector3 = Vector3(0, 1, 0)
+	var rig_spawn_data: SpawnData = SpawnData.new(rig_data, rig_location)
+	# TODO Will need to redo camera state shit below for all of them with new camera setup
 	# Spawn in Character
 	var chuck_data: AssetData = AssetData.new(AssetData.TYPE.PLAYER, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
 	const chuck_location: Vector3 = Vector3(0, 1, 0)
@@ -68,21 +76,31 @@ func _ready() -> void:
 	const tree_location: Vector3 = Vector3(15, 0, -40)
 	var tree_spawn_data: SpawnData = SpawnData.new(tree_data, tree_location, self)
 	# Create and spawn master asset list
-	var asset_spawn_data: Array[SpawnData] = [
-											chuck_spawn_data, 
-											path_spawn_data, 
-											force_spawn_data, 
-											tee_spawn_data,
-											hole_node_spawn_data, 
-											hole_spawn_data, 
-											tree_spawn_data
-										]
-	AssetDelivery.spawn_assets(asset_spawn_data)
+	asset_spawn_data = [
+						rig_spawn_data,
+						chuck_spawn_data, 
+						path_spawn_data, 
+						force_spawn_data, 
+						tee_spawn_data,
+						hole_node_spawn_data, 
+						hole_spawn_data, 
+						tree_spawn_data
+						]
+	kickoff_timer.connect(SIGNAL_NAME.TIMEOUT, _kickoff_data_load)
 	kickoff_timer.start()
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
+func focus_character() -> void:
+	if spawned_assets.is_empty():
+		push_warning("No spawn assets in scene; Cannot focus character...")
+		return
+	SceneUtil.focus_character(spawned_assets)
+	GlobalCameraController.set_rig_height(2)
+
+func update_course_data() -> void:
+	get_tree().call_group(GroupData.GENERAL, GroupData.UPDATE_STATE)
+	# TODO Call to make all the hole numbers sequential
+	# TODO Continuation point for COURSE work
+	#GlobalHoleData._set_data_sequential()
 
 func _disable_character_movement() -> void:
 	get_tree().call_group(GroupData.PLAYER, GroupData.DISABLE_MOVEMENT)
@@ -100,12 +118,8 @@ func _enable_character_rotation() -> void:
 func _apply_settings() -> void:
 	get_tree().call_group(GroupData.GENERAL, GroupData.RELOAD_PROJECT_SETTINGS)
 
-func update_course_data() -> void:
-	get_tree().call_group(GroupData.GENERAL, GroupData.UPDATE_STATE)
-	# TODO Call to make all the hole numbers sequential
-	# TODO Continuation point for COURSE work
-	#GlobalHoleData._set_data_sequential()
-
 func _kickoff_data_load() -> void:
+	spawned_assets = AssetDelivery.spawn_assets(asset_spawn_data)
+	self.focus_character()
 	update_course_data()
 	_apply_settings()

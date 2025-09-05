@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://dondrpumwakd0"]
+
+[ext_resource type="Script" path="res://assets/camera/camera_rig.gd" id="1_hl3tp"]
+[ext_resource type="Script" path="res://assets/camera/camera_integration_point.gd" id="2_44w3r"]
+
+[node name="CameraRig" type="Node3D" node_paths=PackedStringArray("camera_controller", "internal_camera")]
+script = ExtResource("1_hl3tp")
+camera_controller = NodePath("CameraController")
+internal_camera = NodePath("CameraController/InternalCamera")
+
+[node name="CameraIntegrationPoint" type="Marker3D" parent="."]
+script = ExtResource("2_44w3r")
+
+[node name="CameraController" type="Node3D" parent="."]
+
+[node name="InternalCamera" type="Camera3D" parent="CameraController"]

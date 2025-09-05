@@ -87,15 +87,23 @@ func find_chucker(find_chuck: Node) -> Node:
 		else:
 			return Node.new()
 
-func get_horizontal_rotation_amount(event: InputEvent) -> float:
+# TODO Refactor to InputEvent helper
+
+func get_horizontal_look_amount(event: InputEvent) -> float:
+	return deg_to_rad(event.relative.x) * CameraConfig.get_horizontal_look_sense()
+
+func get_vertical_look_amount(event: InputEvent) -> float:
+	return deg_to_rad(event.relative.y) * CameraConfig.get_vertical_look_sense()
+
+func get_horizontal_aim_amount(event: InputEvent) -> float:
 	var h_inversion: int = -1
 	if CameraConfig.is_horizontal_invert():
 		h_inversion = 1
-	var h_sense: float = CameraConfig.get_horizontal_aim_sens()
+	var h_sense: float = CameraConfig.get_horizontal_aim_sense()
 	var h_rotation_amount: float = h_inversion * (event.relative.x / 1000 * h_sense)
 	return h_rotation_amount
 
-func get_vertical_rotation_amount(event: InputEvent) -> float:
+func get_vertical_aim_amount(event: InputEvent) -> float:
 	var v_inversion: int = -1
 	if CameraConfig.is_vertical_invert():
 		v_inversion = 1
