@@ -8,7 +8,7 @@ class_name CameraRig
 @export var freelook_enabled: bool = true
 @export var freelook_sensitivity: float = 0.07
 @export var freelook_pitch_limit: float = 85.0 # degrees
-@export var enable_rig_movement: bool = false
+@export var enable_rig_movement: bool = true
 @export var tracking_mode: GlobalCameraController.TrackingMode = GlobalCameraController.TrackingMode.FULL
 @export var min_height: float = -NUMBERS.FLOAT16_MAX
 @export var is_idle_rotate: bool = false
@@ -17,6 +17,7 @@ var is_focused: bool
 var _freelook_pitch: float = 0.0 # vertical angle
 var _freelook_yaw: float = 0.0   # horizontal angle
 var _min_height_warn: bool = false
+var _is_sprinting: bool = false
 
 var is_primary_freelook: bool
 var is_secondary_freelook: bool
@@ -49,6 +50,11 @@ func _ready(
 	GlobalInputController.connect(SIGNAL_NAME.FREELOOK_MOTION, _handle_freelook)
 	GlobalInputController.connect(SIGNAL_NAME.PRIMARY_ACTION, _handle_input)
 	GlobalInputController.connect(SIGNAL_NAME.SECONDARY_ACTION, _handle_input)
+	GlobalInputController.connect(SIGNAL_NAME.JUMP_HOLD, _handle_up_input)
+	GlobalInputController.connect(SIGNAL_NAME.CROUCH_HOLD, _handle_down_input)
+	GlobalInputController.connect(SIGNAL_NAME.WASD_INPUT_DIRECTION, _handle_input_direction)
+	GlobalInputController.connect(SIGNAL_NAME.SPRINT_ACTION, _handle_sprint_start)
+	GlobalInputController.connect(SIGNAL_NAME.SPRINT_RELEASE, _handle_sprint_stop)
 	# TODO Move this to GlobalCursorController
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
@@ -253,3 +259,32 @@ func _handle_camera_request(new_foucs: Node3D) -> void:
 
 func _handle_rig_focus(incoming_value: bool) -> void:
 	self.is_focused = incoming_value
+
+func _handle_up_input(_delta: float) -> void:
+	if self.enable_rig_movement:
+		var movement_amount: float = GameConfig.DEFAULTS.controller_speed
+		self.camera_controller.global_position.y += movement_amount
+
+func _handle_down_input(_delta: float) -> void:
+	if self.enable_rig_movement:
+		var movement_amount: float = GameConfig.DEFAULTS.controller_speed
+		var new_position: Vector3 = self.camera_controller.global_position
+		new_position.y -= movement_amount
+		self.camera_controller.global_position = _apply_min_height_constraint(new_position)
+
+func _handle_input_direction(incoming_direction: Vector2) -> void:
+	if self.enable_rig_movement and incoming_direction != Vector2.ZERO:
+		var speed: float = GameConfig.DEFAULTS.controller_speed
+		if self._is_sprinting:
+			speed *= GameConfig.DEFAULTS.sprint_multiplier
+		var movement_vector: Vector3 = Vector3(incoming_direction.x, 0, incoming_direction.y) * speed
+		var world_movement: Vector3 = self.camera_controller.global_transform.basis * movement_vector
+		world_movement.y = 0
+		var new_position: Vector3 = self.camera_controller.global_position + world_movement
+		self.camera_controller.global_position = _apply_min_height_constraint(new_position)
+
+func _handle_sprint_start() -> void:
+	self._is_sprinting = true
+
+func _handle_sprint_stop() -> void:
+	self._is_sprinting = false

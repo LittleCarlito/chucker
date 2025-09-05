@@ -56,8 +56,8 @@ const UP_RELEASE: String = "up_release"
 const DOWN_ACTION: String = "down_action"
 const DOWN_HOLD: String = "down_hold" # delta: float
 const DOWN_RELEASE: String = "down_release"
-const INPUT_DIRECTION: String = "input_direction" # incoming_direction Vector2
-
+const WQSE_INPUT_DIRECTION: String = "wqse_input_direction" # incoming_direction Vector2
+const WASD_INPUT_DIRECTION: String = "wasd_input_direction" # incoming_direction Vector2
 
 # Global camera controller
 const REQUEST_CAMERA: String = "request_camera" # new_node: Node3D

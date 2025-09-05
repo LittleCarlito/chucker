@@ -1,4 +1,3 @@
-extends Node
 class_name GameConfig
 
 const NAME: String = "game"
@@ -7,6 +6,7 @@ const DEFAULTS: Dictionary = {
 	# Camera values
 	"controller_distance": 6.8,
 	"controller_height": 3.4,
+	"controller_speed": .5,
 	# Player values
 	"run_speed": 5.0,
 	"sprint_multiplier": 2.0,
@@ -41,12 +41,3 @@ const DEFAULTS: Dictionary = {
 	"extra_detail": false,
 	"flight_detail": false
 }
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass

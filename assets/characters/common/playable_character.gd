@@ -11,7 +11,7 @@ func _ready() -> void:
 	GlobalInputController.connect(SIGNAL_NAME.JUMP_ACTION, _handle_jump_input)
 	GlobalInputController.connect(SIGNAL_NAME.LEFT_HOLD, _handle_left_hold)
 	GlobalInputController.connect(SIGNAL_NAME.RIGHT_HOLD, _handle_right_hold)
-	GlobalInputController.connect(SIGNAL_NAME.INPUT_DIRECTION, _handle_input_direction)
+	GlobalInputController.connect(SIGNAL_NAME.WQSE_INPUT_DIRECTION, _handle_input_direction)
 	GlobalInputController.connect(SIGNAL_NAME.SPRINT_ACTION, _handle_sprint_action)
 	GlobalInputController.connect(SIGNAL_NAME.SPRINT_RELEASE, _handle_sprint_release)
 

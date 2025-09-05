@@ -51,7 +51,8 @@ signal down_action
 signal down_hold(delta: float)
 signal down_release
 # Directional
-signal input_direction(incoming_direction: Vector2)
+signal wqse_input_direction(incoming_direction: Vector2)
+signal wasd_input_direction(incoming_direction: Vector2)
 # UI Signals
 signal pause_action
 signal pause_hold
@@ -116,7 +117,8 @@ var is_down_press: bool = false
 var is_down_hold: bool = false
 var is_down_release: bool = false
 # Directional
-var detected_input_direction: Vector2
+var detected_wqse_input_direction: Vector2
+var detected_wasd_input_direction: Vector2
 
 ## For checking events like mouse movement and scroll
 func _input(incoming_event: InputEvent) -> void:
@@ -261,7 +263,8 @@ func _handle_movement_state(delta: float) -> void:
 	if self.is_down_release:
 		self.down_release.emit()
 	# Directional (always emit; Users want to also know when know direction is input)
-	self.input_direction.emit(self.detected_input_direction)
+	self.wqse_input_direction.emit(self.detected_wqse_input_direction)
+	self.wasd_input_direction.emit(self.detected_wasd_input_direction)
 
 func _update_mouse_state() -> void:
 	# Figure out what is pressed (maybe could get this to a state object)
@@ -320,4 +323,5 @@ func _update_keyboard_state() -> void:
 	self.is_down_hold = Input.is_action_pressed(InputConfig.USER_INPUT.BACKWARD)
 	self.is_down_release = Input.is_action_just_released(InputConfig.USER_INPUT.BACKWARD)
 	# Directional
-	self.detected_input_direction = Input.get_vector(InputConfig.USER_INPUT.STRAFE_LEFT, InputConfig.USER_INPUT.STRAFE_RIGHT, InputConfig.USER_INPUT.FORWARD, InputConfig.USER_INPUT.BACKWARD)
+	self.detected_wqse_input_direction = Input.get_vector(InputConfig.USER_INPUT.STRAFE_LEFT, InputConfig.USER_INPUT.STRAFE_RIGHT, InputConfig.USER_INPUT.FORWARD, InputConfig.USER_INPUT.BACKWARD)
+	self.detected_wasd_input_direction = Input.get_vector(InputConfig.USER_INPUT.ROTATE_LEFT, InputConfig.USER_INPUT.ROTATE_RIGHT, InputConfig.USER_INPUT.FORWARD, InputConfig.USER_INPUT.BACKWARD)
