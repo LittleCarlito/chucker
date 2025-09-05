@@ -17,6 +17,10 @@ func _ready() -> void:
 
 func equip_item(new_item: Node3D) -> Variant:
 	self._give_camera(new_item)
+	# TODO Should have this based off state instead
+	#			If it is a playable character that is focused by a rig and equips something then do the mouse shit
+	#		But really should be state based so everything happens and at the end of the frame the state is checked and shit happens
+	GlobalCursorController.request_visible(self, "Equipped an item")
 	return super.equip_item(new_item)
 
 func reload_project_settings() -> void:

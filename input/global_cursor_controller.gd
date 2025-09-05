@@ -33,7 +33,7 @@ const RESOLUTION_ORDER: Array = [
 #	"reason": String,
 #	"frame_added": int
 # }]
-var _requests: Dictionary = {}
+var _frame_requests: Dictionary = {}
 var _current_state: CursorState = CursorState.VISIBLE
 # Frame-batching helpers:
 # Requests made in frame N set _dirty_this_frame = true.
@@ -51,7 +51,6 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	# START of frame: increment frame index, then resolve if last frame had requests
 	_frame_index += 1
-
 	if _dirty_last_frame:
 		_resolve_and_apply()
 	# END of frame: shift dirty flags so requests made this frame are resolved next frame
@@ -64,9 +63,8 @@ func request_state(requester: Object, state: CursorState, reason: String = "") -
 	# Defensive: ignore null.
 	if requester == null:
 		return
-
 	var id := requester.get_instance_id()
-	_requests[id] = {
+	_frame_requests[id] = {
 		"weak": weakref(requester),
 		"state": state,
 		"reason": reason,
@@ -92,12 +90,12 @@ func request_hidden(requester: Object, reason: String = "") -> void:
 func clear_request(requester: Object) -> void:
 	if requester == null:
 		return
-	_requests.erase(requester.get_instance_id())
+	_frame_requests.erase(requester.get_instance_id())
 	_dirty_this_frame = true
 
 # Remove all requests (scene changes, resets)
 func clear_all() -> void:
-	_requests.clear()
+	_frame_requests.clear()
 	_dirty_this_frame = true
 
 # Query current applied state (what OS currently has)
@@ -107,8 +105,8 @@ func get_current_state() -> CursorState:
 # Get a list of active request descriptions (helpful for debugging)
 func get_all_requests() -> Array:
 	var arr := []
-	for id in _requests.keys():
-		var req = _requests[id]
+	for id in _frame_requests.keys():
+		var req = _frame_requests[id]
 		var desc = _format_req_desc(req)
 		arr.append(desc)
 	return arr
@@ -116,30 +114,27 @@ func get_all_requests() -> Array:
 # Get who is requesting a specific state
 func get_effective_requesters(state: CursorState) -> Array:
 	var arr := []
-	for id in _requests.keys():
-		var req = _requests[id]
+	for id in _frame_requests.keys():
+		var req = _frame_requests[id]
 		if req.state == state and req.weak.get_ref() != null:
 			arr.append(req.weak.get_ref())
 	return arr
 
 func _resolve_and_apply() -> void:
-	# Cull dead requesters first (avoid memory leaks & stale votes)
 	var alive_requests: Array = []
-	for id in _requests.keys():
-		var req : Dictionary = _requests[id]
-		var obj = req.weak.get_ref()
-		if obj == null:
-			# The requester was freed — drop their vote
-			_requests.erase(id)
-		else:
+	for id in _frame_requests.keys():
+		var req: Dictionary = _frame_requests[id]
+		var w: WeakRef = req["weak"]
+		if w.get_ref() != null:
 			alive_requests.append(req)
-
+		else:
+			# The requester was freed — drop their vote
+			_frame_requests.erase(id)
 	# No active requests -> apply default (but only if different)
 	if alive_requests.is_empty():
 		if _current_state != default_state:
 			_apply_state(default_state, "fallback(default_state)", [])
 		return
-
 	# Find highest-precedence state that has at least one requester
 	var decided_state: CursorState = default_state
 	var deciders: Array = []
@@ -151,20 +146,18 @@ func _resolve_and_apply() -> void:
 		if not deciders.is_empty():
 			decided_state = state
 			break
-
 	# Logging about conflicts (before applying) — do this even if state won't change so you have record
 	if debug_enabled:
 		_log_conflicts(alive_requests, decided_state, deciders)
-
 	# Only apply when it actually changes to avoid spam
 	if decided_state != _current_state:
 		_apply_state(decided_state, _first_decider_name(deciders), deciders)
+	_frame_requests.clear()
 
 # Apply OS mouse mode and emit signal
 func _apply_state(state: CursorState, decided_by: String, deciders: Array) -> void:
 	var old_state := _current_state
 	_current_state = state
-
 	match state:
 		CursorState.VISIBLE:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -176,14 +169,12 @@ func _apply_state(state: CursorState, decided_by: String, deciders: Array) -> vo
 			Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 		_:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-
 	if debug_enabled:
 		Logger.debug(
 			"GlobalCursorController: applied %s (was %s) — decided_by=%s frame=%d",
 			[ _state_name(state), _state_name(old_state), decided_by, _frame_index ],
 			self
 		)
-
 	emit_signal("state_changed", old_state, state, deciders)
 
 func _log_conflicts(all_reqs: Array, decided_state: CursorState, deciders: Array) -> void:
@@ -191,7 +182,6 @@ func _log_conflicts(all_reqs: Array, decided_state: CursorState, deciders: Array
 	var winners := []
 	for r in deciders:
 		winners.append(_format_req_desc(r))
-
 	# For every request that lost, emit a debug line
 	for r in all_reqs:
 		if r.state != decided_state:
@@ -205,7 +195,6 @@ func _log_conflicts(all_reqs: Array, decided_state: CursorState, deciders: Array
 				],
 				self
 			)
-
 	# Summary
 	Logger.debug(
 		"GlobalCursorController: frame %d summary — decided=%s; winners=%s; total_requests=%d",
