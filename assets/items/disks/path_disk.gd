@@ -69,7 +69,8 @@ func pick_up() -> void:
 	self.queue_free()
 
 func _handle_freelook_event(v_motion: float, h_motion: float) -> void:
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and self.camera_container != null and self.camera_container.is_current():
+	# TODO Need to get this based off state instead of camera controller
+	if GlobalCursorController.is_captured_current() and self.camera_container != null and self.camera_container.is_current():
 		self.camera_container.horizontal_pan(h_motion, self.global_position)
 
 # TODO Think on how different shot types would be implemented
@@ -142,8 +143,8 @@ func _launch() -> void:
 			self.camera_container.hold_min_height()
 			self.camera_container.hold_steady()
 			self.disk_mesh.basis = flight_data.get_flight_basis()
-			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
-				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+			if not GlobalCursorController.is_captured_current():
+				GlobalCursorController.request_captured(self, "Path disk launched")
 		# Set path's curve equal to flight data's path
 		var flight_curve: Curve3D = Curve3D.new()
 		for flight_point in flight_data.get_actual_path():

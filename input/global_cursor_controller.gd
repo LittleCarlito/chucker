@@ -57,7 +57,6 @@ func _process(_delta: float) -> void:
 	_dirty_last_frame = _dirty_this_frame
 	_dirty_this_frame = false
 
-
 # Generic request method
 func request_state(requester: Object, state: CursorState, reason: String = "") -> void:
 	# Defensive: ignore null.
@@ -101,6 +100,19 @@ func clear_all() -> void:
 # Query current applied state (what OS currently has)
 func get_current_state() -> CursorState:
 	return _current_state
+
+# State checking functions
+func is_visible_current() -> bool:
+	return _current_state == CursorState.VISIBLE
+
+func is_captured_current() -> bool:
+	return _current_state == CursorState.CAPTURED
+
+func is_confined_current() -> bool:
+	return _current_state == CursorState.CONFINED
+
+func is_hidden_current() -> bool:
+	return _current_state == CursorState.HIDDEN
 
 # Get a list of active request descriptions (helpful for debugging)
 func get_all_requests() -> Array:

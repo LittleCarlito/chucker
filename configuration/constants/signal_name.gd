@@ -29,33 +29,41 @@ const TAB_ACTION: String = "tab_action"
 const TAB_HOLD: String = "tab_hold"
 const TAB_RELEASE: String = "tab_release"
 # Movement
+# Jump
 const JUMP_ACTION: String = "jump_action"
 const JUMP_HOLD: String = "jump_hold"
 const JUMP_RELEASE: String = "jump_release"
+# Crouch
 const CROUCH_ACTION: String = "crouch_action"
 const CROUCH_HOLD: String = "crouch_hold"
 const CROUCH_RELEASE: String = "crouch_release"
+# Sprint
 const SPRINT_ACTION: String = "sprint_action"
 const SPRINT_HOLD: String = "sprint_hold"
 const SPRINT_RELEASE: String = "sprint_release"
+# Left
 const LEFT_ACTION: String = "left_action"
 const LEFT_HOLD: String = "left_hold" # delta: float
 const LEFT_RELEASE: String = "left_release"
 const ALT_LEFT_ACTION: String = "alt_left_action"
 const ALT_LEFT_HOLD: String = "alt_left_hold" # delta
 const ALT_LEFT_RELEASE: String = "alt_left_release"
+# Right
 const RIGHT_ACTION: String = "right_action"
 const RIGHT_HOLD: String = "right_hold" # delta: float
 const RIGHT_RELEASE: String = "right_release"
 const ALT_RIGHT_ACTION: String = "alt_right_action"
 const ALT_RIGHT_HOLD: String = "alt_right_hold"
 const ALT_RIGHT_RELEASE: String = "alt_right_release"
+# Up
 const UP_ACTION: String = "up_action"
 const UP_HOLD: String = "up_hold" # delta: float
 const UP_RELEASE: String = "up_release"
+# Down
 const DOWN_ACTION: String = "down_action"
 const DOWN_HOLD: String = "down_hold" # delta: float
 const DOWN_RELEASE: String = "down_release"
+# Directional
 const WQSE_INPUT_DIRECTION: String = "wqse_input_direction" # incoming_direction Vector2
 const WASD_INPUT_DIRECTION: String = "wasd_input_direction" # incoming_direction Vector2
 

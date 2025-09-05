@@ -13,11 +13,7 @@ func _ready() -> void:
 
 func press_primary_action() -> void:
 	if self.is_unequipped():
-		pass
-		# TODO change into call made to new GlobalCursorController
-		#			Would think then what happens is going to be based off state of everything
-		#				Like if the camera is focusing and has an integration etc.
-		# Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		GlobalCursorController.request_captured(self, "Unequipped primary action")
 
 func press_primary_secondary_action() -> void:
 	self._reset_camera_control()

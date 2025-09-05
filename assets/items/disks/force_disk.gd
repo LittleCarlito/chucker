@@ -54,10 +54,6 @@ func _process(_delta: float) -> void:
 		self.angular_velocity.y = self.flight_data.get_flight_spin()
 		self._applied_flight_data = true
 
-func _handle_freelook_motion(v_motion: float, h_motion: float) -> void:
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and camera_container != null and camera_container.is_current():
-		camera_container.horizontal_pan(h_motion, self.global_position)
-
 func set_internal_type(new_internal_type: AssetData.TYPE) -> void:
 	asset_data.set_internal_type(new_internal_type)
 	disk_mesh.set_type(asset_data.internal_type)
@@ -111,19 +107,23 @@ func set_disk_camera(new_camera: Camera3D) -> void:
 	camera_container.set_camera(new_camera)
 	_update_state()
 
+func pick_up() -> void:
+	self.queue_free()
+
+func _handle_freelook_motion(v_motion: float, h_motion: float) -> void:
+	# TODO Will need this using state isntead of the camera container stuff once it is figured out
+	if GlobalCursorController.is_captured_current() and camera_container != null and camera_container.is_current():
+		camera_container.horizontal_pan(h_motion, self.global_position)
+
 func _handle_collision(body_rid: RID, _body: Node, _body_shape_index: int, _local_shape_index: int) -> void:
 	_collided = true
 	disk_collision.store_collision(self.get_rid(), body_rid, self.global_position, flight_data, asset_data)
 	if camera_container != null && (camera_container.has_camera() && camera_container.is_current()):
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		camera_container.start_focus(self.global_basis, self.global_position)
 		self.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
 		self.angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
 	# TODO Refactor this to use accurate state ensuring it is tracked before emitting
 	# GlobalCameraController.set_rig_dile(true)
-
-func pick_up() -> void:
-	self.queue_free()
 
 ## Creates intneral camera_container object
 ## Should only be called intnernally
@@ -155,8 +155,8 @@ func _launch() -> void:
 			_submit_camera_request()
 			camera_container.set_current()
 			camera_container.hold_min_height()
-			if !(Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
-				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+			if not GlobalCursorController.is_captured_current():
+				GlobalCursorController.request_captured(self, "Force disk launched")
 	else:
 		Logger.warn(Logger.MISSING_FLIGHT_DATA_LOG, [], self)
 

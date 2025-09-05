@@ -13,7 +13,7 @@ func _ready() -> void:
 	self.camera_container.add_to_group(self.name)
 	self.item_container.connect(SIGNAL_NAME.ZOOM_IN, _handle_zoom_in)
 	self.item_container.connect(SIGNAL_NAME.ZOOM_OUT, _handle_zoom_out)
-	self.item_container.connect(SIGNAL_NAME.TURN_HORIZONTAL, _handle_horizontal_rotation)
+	self.item_container.connect(SIGNAL_NAME.TURN_HORIZONTAL, _handle_item_rotation_signal)
 	self._update_state()
 
 func _physics_process(delta: float) -> void:
@@ -64,3 +64,7 @@ func _update_state() -> void:
 func _handle_interact_input() -> void:
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.INTERACT):
 		self.equip_frontmost_object();
+
+func _handle_item_rotation_signal(incoming_rotation: float) -> void:
+	if self.is_unequipped():
+		self._handle_horizontal_rotation(incoming_rotation)

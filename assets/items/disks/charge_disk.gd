@@ -5,17 +5,7 @@ const _FLIGHT_DATA_NOT_SET: String = "FlightData not set; Cannot set flight glob
 
 var stopwatch: Stopwatch
 
-# TODO Fix pull disk logic using GlobalCursorController to allow for pulling
-#			Have it captured again on release/launch
-# TODO Clean up all the remaining MOUSE_MODE type stuff to only be in the global if any remains
-# TODO Refactor menu system
-#			Get it on GlobalInputController
-#			No more nested menus
-#			Each menu screen is its own top level thing
-#			Each one just opens a different one
-#			ESC from options menu closes it and opens pause menu
-#			ESC in pause menu closes all menus and resume
-#			Clicking options from pause menu closes pause menu and opens options menu
+
 # TODO Refactor state to be singular
 #		Don't want multiple state objects
 #		Right now Force disk has _update_state and it isn't part of ItemStateConfig
@@ -26,12 +16,21 @@ var stopwatch: Stopwatch
 #		- Fix idle rotate logic to work
 #		- Fix allow zoom/looking based off equipment and or character with calls to GlobalCameraController restricted by objects state
 #		Need state working for objects CAMERA_STATE to restrict Global calls for signals to things like idling
-# BUG Sprint doesn't work anymore
-# TODO Should probably have Global things keep records of callers/debug logs
-#		If relying on state for restricting signaling from things could get out of sync and need to know who it is
+# TODO Refactor menu system
+#			Get it on GlobalInputController
+#			No more nested menus
+#			Each menu screen is its own top level thing
+#			Each one just opens a different one
+#			ESC from options menu closes it and opens pause menu
+#			ESC in pause menu closes all menus and resume
+#			Clicking options from pause menu closes pause menu and opens options menu
 # TODO Refactor configuration directory stuff
 #			Most can be @export options on objects in scenes
 #			Those that can't should fit into game_config.gd
+# BUG Need mouse VISIBLE on disk collisions
+#		Should give mouse back and then idle around for a few seconds
+#		Users in this state shoudl be able to click and control camera as well
+#			Clicking again then makes the mouse VISIBLE again
 # TODO Do SIGNAL_NAME TODOs
 # TODO Do Node Util TODOs
 # TODO Do force disk TODOs

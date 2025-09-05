@@ -252,7 +252,7 @@ func _handle_input() -> void:
 			GlobalCursorController.request_state(self, GlobalCursorController.CursorState.CAPTURED, cursor_reasoning)
 
 func _handle_freelook(v_motion: float, h_motion: float) -> void:
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+	if GlobalCursorController.is_captured_current():
 		var inversion_multiplier: int = 1 if self.tracking_mode == GlobalCameraController.TrackingMode.TRACK else -1
 		self.pan_horizontal((h_motion * freelook_sensitivity) * inversion_multiplier) 
 		self.pitch_vertical((v_motion * freelook_sensitivity) * inversion_multiplier)
