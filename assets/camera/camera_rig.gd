@@ -55,8 +55,10 @@ func _ready(
 	GlobalInputController.connect(SIGNAL_NAME.WASD_INPUT_DIRECTION, _handle_input_direction)
 	GlobalInputController.connect(SIGNAL_NAME.SPRINT_ACTION, _handle_sprint_start)
 	GlobalInputController.connect(SIGNAL_NAME.SPRINT_RELEASE, _handle_sprint_stop)
-	# TODO Move this to GlobalCursorController
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	# Set mouse mode
+	# TODO Have this done in scene setup calls for state setting
+	#			This shoudl be done as a result of the final state of the camera rig befroe starting the scene is unfocused or tracking (just like with the gating on _handle_input)
+	GlobalCursorController.request_state(self, GlobalCursorController.CursorState.CAPTURED, "Should be done in camera or scene state stuff")
 
 func _process(_delta: float) -> void:
 	if is_focused && integration_point != null:
@@ -243,10 +245,11 @@ func _update_camera_position() -> void:
 
 func _handle_input() -> void:
 	if (self.freelook_enabled and not self.is_focused) || self.tracking_mode == GlobalCameraController.TrackingMode.TRACK:
-		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		elif Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
-			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		var cursor_reasoning: String = "Camera rig is in freelook or tracking state"
+		if GlobalCursorController.get_current_state() == GlobalCursorController.CursorState.CAPTURED:
+			GlobalCursorController.request_state(self, GlobalCursorController.CursorState.VISIBLE, cursor_reasoning)
+		elif GlobalCursorController.get_current_state() == GlobalCursorController.CursorState.VISIBLE:
+			GlobalCursorController.request_state(self, GlobalCursorController.CursorState.CAPTURED, cursor_reasoning)
 
 func _handle_freelook(v_motion: float, h_motion: float) -> void:
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:

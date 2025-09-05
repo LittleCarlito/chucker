@@ -5,92 +5,9 @@ const _FLIGHT_DATA_NOT_SET: String = "FlightData not set; Cannot set flight glob
 
 var stopwatch: Stopwatch
 
-# TODO For below: 
-#		Still need WASD hookup to GlobalInputController for when no focus or whatever combination makes sense
-#		Still need zoom features
-#			Need them for when no focus/integration or whatever combos need handling
-#			Asset based signal handling will need to be dealt with after state is refactored/fixed
-# FIX Stabilization functions on camera rig
-#		Focus on fixing Charge disk launch to Force disk first
-#		@export the gimbal/stability controls
-#			Set them in code for launching though
-#			Have the camera keep normal "forward" from launcher/launched item perspective
-#			Then do a maintain min height amount
-#		Hopefully this stability will give some clarity to what needs stabilizing on path disks madness
-# OUTLINE
-# 	Will need to create new camera type
-#		Rework existing system while at it as well
-#		Need a camera that exists in a container and scene
-#			Then uses RemoteTransform with transforms on matching object to keep up
-#				Would do transforms like mvoement but not rotation to avoid the spin
-# FIRST
-#	Need to determine how the camera(s) are being made in the scene currently
-#	Create a new flow where one is made in the scene file with the other assets
-#		This will be the new camera type that operates like written notes from notebook
-# SECOND
-#	Come up with way to toggle of current camera setup
-#	The toggle for disabling current camera setup should enable the new setup
-# THIRD
-#	Come up with actual design for new camera system
-#
-# RESEARCH RESULTS
-#	FIRST
-# 		.populate_camera_control() on camera container is how cameras are created and activated
-#			Both ChuckChucker and ChuckTee rely on this to create their cameras
-#				Both set to active when createc
-#			ChuckTee then detects any ChuckChucker in it and deactivates its camera
-#	SECOND
-#		Create boolean variable in Application Config
-#			Used to set value between current and new camera setup
-#		If new variable true populate cameras in containers with current calls
-#			If false use new way of camera handling
-#	THIRD
-#		New camera created in scene _ready() function with asset spawn data
-#			See if you can get the factory/delivery to handle it as well just for consistency
-#		Camera Structure
-#			Same as Camera container
-#			Camera, inside a camera rig inside the camera controller
-#			New part is a Node3D which is at 0 0 0 which is what the camera focuses on
-#				Could move node in local space and camera should track it
-#					But the idea would be to just keep it at origin locally
-#			Camera sits an 000 locally in its rig which sits and orients looking at the new Node3D point at origin
-#			CameraContainer is then just the scturcture that holds all this
-#				Will want to keep that name as I think the other way will just be deleted
-#				But for transition will need a temporary name
-#		Asset Structure
-#			Assets no longer have camera containers in new structure
-#				Will keep them for this transition though but once new type works it is getting renamed and old is deleted
-#			New part is
-#				A Node3D that is part of the character referencing where on the body it would want the camera to focus
-#				The Node should be returnable so the camera can have a reference to it
-#			Characters and items you would want to be able to follow with a camera would need this new structure for proper "docking"
-#				Could just have the camera track the RID or something but this seems more fun/customizable with focal point
-#		Camera & Asset Logic
-#			Assets need to have new signals made for remotely controlling the camera based off events/detected input
-#				Need to be able to tell from source of truth for equiped/input what to do with camera
-#					Could be item or character
-#				Will have fallback logic on camera container if what it is connected to has nothing
-#			New camera setup needs logic to handle new signals
-#				Will need to have these functions hooked up in its docking functions
-#			New camera needs its own input handling
-#				When docked/focusing need to ensure to respect that Assets functions
-#					If nothing found or nothing there have its own logic handle it
-#			When not connected to anything (or no overriding function in connected object)  should be
-#				WASD controls based off Node3D focal point
-#				Space is go up
-#				C is go down
-#				Mouse movements move the camera around the focal point just like rotation stuff currently works
-
-# TODO Create GlobalCursorController
-#			Same as other global controllers
-#			Controls visibility of cursor/captured mode instead of having everyone grabbing at it
 # TODO Fix pull disk logic using GlobalCursorController to allow for pulling
 #			Have it captured again on release/launch
 # TODO Clean up all the remaining MOUSE_MODE type stuff to only be in the global if any remains
-# TODO Create InputController
-#			Have it post input events to actual game events in an event bus
-#			Things that then should be responding to those actions are then looking for them in the bus
-#				i.e. things that have movement enabled are looking for movement events in the bus and would move together
 # TODO Refactor menu system
 #			Get it on GlobalInputController
 #			No more nested menus
