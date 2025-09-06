@@ -1,3 +1,9 @@
+# TODO Move most of this into state
+#			Objects should just
+#				Know their current state
+#				Know how to behave when in each state
+#			Knowledge of all types and states and transfers etc belong global state
+
 extends LocalResource
 ## Stores data about this instance of the associated asset
 ## Used in interaction, contruction, and deconstruction of assets in the world
@@ -33,17 +39,15 @@ enum ITEM_STATE{DISABLED = 0, DEACTIVATED = 1, ACTIVATED = 2, UNKNOWN = 999}
 ## The type of this instance of the asset
 @export var internal_type: AssetData.TYPE
 ## The controllable state of this asset
-@export var item_state: AssetData.ITEM_STATE
+# @export var item_state: AssetData.ITEM_STATE
 ## The state of this asset's internal camera
-@export var camera_state: AssetData.CAMERA_STATE
+# @export var camera_state: AssetData.CAMERA_STATE
 ## The type of asset created by this instance of the asset
 @export var creation_type: AssetData.TYPE
 ## The group_name set via code for this instance of the asset
 @export var group_name: String
 ## The owners RID if available
 @export var owner_rid: RID
-## Configuration for transition timings between states
-@export var item_state_config: ItemStateConfig
 
 const CREATION_MATRIX: Dictionary = {
 	TYPE.CHARGE: [TYPE.FORCE],
@@ -62,39 +66,35 @@ const ITEM_COLOR: Dictionary = {
 
 func _init(
 			incoming_internal: TYPE = TYPE.UNKNOWN,
-			incoming_state: ITEM_STATE = ITEM_STATE.DISABLED,
-			incoming_camera_state: CAMERA_STATE = CAMERA_STATE.EXISTS,
+			# incoming_state: ITEM_STATE = ITEM_STATE.DISABLED,
+			# incoming_camera_state: CAMERA_STATE = CAMERA_STATE.EXISTS,
 			incoming_create: TYPE = AssetData.TYPE.UNKNOWN,
 			incoming_group: String = GameConfig.DEFAULTS.group,
 			incoming_owner_rid: RID = RID()
 			) -> void:
 	self.internal_type = incoming_internal
-	self.item_state = incoming_state
-	self.camera_state = incoming_camera_state
+	# self.item_state = incoming_state
+	# self.camera_state = incoming_camera_state
 	self.group_name = incoming_group
 	self.creation_type = incoming_create
 	self.owner_rid = incoming_owner_rid
-	self.item_state_config = STATE_DEFAULTS.get_default_config(self.internal_type)
-	if self.internal_type == 2:
-		self.item_state_config.print_details()
 	self._setup_local_to_scene()
 	
-
 ## Takes in type and returns corresponding color
 ## Returns UNKNOWN COLOR_DEFAULT from GlobalSettings if type is not known
 static func get_item_color(incoming_type: AssetData.TYPE) -> Color:
 	return ITEM_COLOR.get(incoming_type, GameConfig.DEFAULTS.color)
 
 ## Takes CameraController and determines the AssetData.CAMERA_STATE equivalent given that CameraContainers properties
-static func get_camera_state(camera_container: CameraContainer = null) -> AssetData.CAMERA_STATE:
-	var updated_state: AssetData.CAMERA_STATE = AssetData.CAMERA_STATE.EXISTS
-	if camera_container != null:
-		updated_state = AssetData.CAMERA_STATE.TRACKABLE
-		if camera_container.has_camera():
-			updated_state = AssetData.CAMERA_STATE.VIEWABLE
-			if camera_container.is_current():
-				updated_state = AssetData.CAMERA_STATE.ACTIVE
-	return updated_state
+# static func get_camera_state(camera_container: CameraContainer = null) -> AssetData.CAMERA_STATE:
+# 	var updated_state: AssetData.CAMERA_STATE = AssetData.CAMERA_STATE.EXISTS
+# 	if camera_container != null:
+# 		updated_state = AssetData.CAMERA_STATE.TRACKABLE
+# 		if camera_container.has_camera():
+# 			updated_state = AssetData.CAMERA_STATE.VIEWABLE
+# 			if camera_container.is_current():
+# 				updated_state = AssetData.CAMERA_STATE.ACTIVE
+# 	return updated_state
 
 ## Retrieves the creation type associated with the given incoming_type
 ## Takes previous_internal_type into account if multiple creation values are possible
@@ -118,31 +118,3 @@ static func get_associated_creation_type(incoming_type: AssetData.TYPE, previous
 
 func set_internal_type(incoming_type: TYPE) -> void:
 	self.internal_type = incoming_type
-	self.item_state_config = STATE_DEFAULTS.get_default_config(self.internal_type)
-
-func get_next_valid_value() -> float:
-	return self.item_state_config.peak_next_valid_value()
-
-func reset_state() -> void:
-	self.item_state_config.reset_state()
-
-func get_current_state() -> ItemState.STATE:
-	return self.item_state_config.get_current_state()
-
-func get_nearest_state(incoming_value: float) -> String:
-	return self.item_state_config.get_nearest_state(incoming_value)
-
-func get_next_populated_state() -> ItemState.STATE:
-	return self.item_state_config.peak_next_populated()
-
-func get_next_valid_state() -> ItemState.STATE:
-	return self.item_state_config.peak_next_valid()
-
-func set_next_populated_state() -> ItemState.STATE:
-	return self.item_state_config.set_next_populated()
-
-func set_next_valid_state() -> ItemState.STATE:
-	return self.item_state_config.set_next_valid()
-
-func print_details() -> void:
-	self.item_state_config.print_details()

@@ -3,7 +3,6 @@ class_name ChuckChucker
 
 @export var asset_data: AssetData
 
-
 func _ready() -> void:
 	super._ready()
 	if self.asset_data == null:
@@ -14,7 +13,6 @@ func _ready() -> void:
 	self.item_container.connect(SIGNAL_NAME.ZOOM_IN, _handle_zoom_in)
 	self.item_container.connect(SIGNAL_NAME.ZOOM_OUT, _handle_zoom_out)
 	self.item_container.connect(SIGNAL_NAME.TURN_HORIZONTAL, _handle_item_rotation_signal)
-	self._update_state()
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
@@ -27,7 +25,6 @@ func equip_item(new_item: Node3D) -> Variant:
 	var displaced_item: Variant = super.equip_item(new_item)
 	if displaced_item != null && displaced_item is Node3D:
 		AssetDelivery.drop_asset(displaced_item)
-	_update_state()
 	return
 
 func _process(_delta: float) -> void:
@@ -37,12 +34,10 @@ func _process(_delta: float) -> void:
 func release_action() -> void:
 	self.unequip_item()
 	# Update the status of the character if the item took the camera with it
-	self._update_state()
 	# If the camera was released for the launch disable movement
-	if asset_data.camera_state != AssetData.CAMERA_STATE.ACTIVE:
-		self.just_output = true
-		self.disable_movement()
-		self.disable_rotation()
+	self.just_output = true
+	self.disable_movement()
+	self.disable_rotation()
 
 func get_group_name() -> String:
 	return self.asset_data.group_name
@@ -50,15 +45,10 @@ func get_group_name() -> String:
 # Extended here to update state
 func disable_camera() -> void:
 	super.disable_camera()
-	self._update_state()
 
 # Extended here to update state
 func enable_camera() -> void:
 	super.enable_camera()
-	self._update_state()
-
-func _update_state() -> void:
-	asset_data.camera_state = AssetData.get_camera_state(camera_container)
 
 # Specific to chuck as each character type might want their own interaction type
 func _handle_interact_input() -> void:

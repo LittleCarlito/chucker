@@ -3,14 +3,6 @@ class_name PullDisk
 
 @export var pull_draw: PullDraw
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	super._ready()
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	super._process(delta)
-
 # We know primary is held upon entering this function
 func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> void:
 	flight_data.set_is_focused(incoming_focus)
@@ -74,8 +66,8 @@ func _get_next_asset_data(is_force_disk: bool = false) -> AssetData:
 	if(is_force_disk):
 		return AssetData.new(
 			AssetData.TYPE.FORCE, 
-			self.asset_data.item_state, 
-			self.asset_data.camera_state, 
+			# self.asset_data.item_state, 
+			# self.asset_data.camera_state, 
 			AssetData.TYPE.PULL,
 			self.asset_data.group_name, 
 			self.asset_data.owner_rid
@@ -83,8 +75,8 @@ func _get_next_asset_data(is_force_disk: bool = false) -> AssetData:
 	else:
 		return AssetData.new(
 			self.asset_data.creation_type, 
-			self.asset_data.item_state, 
-			self.asset_data.camera_state, 
+			# self.asset_data.item_state, 
+			# self.asset_data.camera_state, 
 			AssetData.TYPE.FORCE,
 			self.asset_data.group_name, 
 			self.asset_data.owner_rid

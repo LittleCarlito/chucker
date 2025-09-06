@@ -46,7 +46,6 @@ func _ready() -> void:
 			add_to_group(self.asset_data.group_name)
 	self.disk_mesh.set_type(self.asset_data.creation_type)
 	self.angular_damp = 0.0
-	self._update_state()
 	GlobalInputController.connect(SIGNAL_NAME.FREELOOK_MOTION, _handle_freelook_motion)
 
 func _process(_delta: float) -> void:
@@ -73,7 +72,6 @@ func get_item_type() -> AssetData.TYPE:
 func toggle_camera() -> void:
 	if camera_container != null && camera_container.has_camera():
 		camera_container.toggle_camera()
-	_update_state()
 
 func get_mesh() -> DiskMesh:
 	return disk_mesh
@@ -105,7 +103,6 @@ func set_disk_camera(new_camera: Camera3D) -> void:
 		Logger.warn(formatted_string, [_SET_DISK_CAMERA], self)
 		_create_camera_container()
 	camera_container.set_camera(new_camera)
-	_update_state()
 
 func pick_up() -> void:
 	self.queue_free()
@@ -134,9 +131,6 @@ func _create_camera_container() -> void:
 		_set_camera_container(new_camera_container)
 	else:
 		Logger.warn(Logger.ALREADY_EXISTS_LOG, [Logger.CAMERA_CONTAINER], self)
-
-func _update_state() -> void:
-	asset_data.camera_state = AssetData.get_camera_state(camera_container)
 
 func _set_asset_data(incoming_data: AssetData) -> void:
 	asset_data = incoming_data

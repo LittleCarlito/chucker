@@ -43,20 +43,20 @@ var spawned_assets: Dictionary # Key is asset type; Value list of nodes of that 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# Spawn in Camera
-	var rig_data: AssetData = AssetData.new(AssetData.TYPE.CAMERA, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
+	var rig_data: AssetData = AssetData.new(AssetData.TYPE.CAMERA)
 	var rig_location: Vector3 = Vector3(0, 1, 0)
 	var rig_spawn_data: SpawnData = SpawnData.new(rig_data, rig_location)
 	# TODO Will need to redo camera state shit below for all of them with new camera setup
 	# Spawn in Character
-	var chuck_data: AssetData = AssetData.new(AssetData.TYPE.PLAYER, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE)
+	var chuck_data: AssetData = AssetData.new(AssetData.TYPE.PLAYER)
 	const chuck_location: Vector3 = Vector3(0, 1, 0)
 	var chuck_spawn_data: SpawnData = SpawnData.new(chuck_data, chuck_location, self)
 	# Spawn Path disk
-	var path_data: AssetData = AssetData.new(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.TRACKABLE, AssetData.TYPE.PULL)
+	var path_data: AssetData = AssetData.new(AssetData.TYPE.FORCE, AssetData.TYPE.PULL)
 	const path_location: Vector3 = Vector3(2, 4, -2)
 	var path_spawn_data: SpawnData = SpawnData.new(path_data, path_location, self)
 	# Spawn in ForceDisk
-	var force_data: AssetData = AssetData.new(AssetData.TYPE.FORCE, AssetData.ITEM_STATE.DEACTIVATED, AssetData.CAMERA_STATE.EXISTS, AssetData.TYPE.CHARGE)
+	var force_data: AssetData = AssetData.new(AssetData.TYPE.FORCE, AssetData.TYPE.CHARGE)
 	const force_location: Vector3 = Vector3(-2, 4, -2)
 	var force_spawn_data: SpawnData = SpawnData.new(force_data, force_location, self)
 	# Spawn in TeeBox

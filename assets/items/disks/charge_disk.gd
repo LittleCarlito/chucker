@@ -9,6 +9,18 @@ var stopwatch: Stopwatch
 # TODO Refactor state to be singular
 #		Don't want multiple state objects
 #		Right now Force disk has _update_state and it isn't part of ItemStateConfig
+
+# OUTLINE: STATE
+#			Get it all cleaned out so itemconfig can be deleted and all non "real" state files can be purged
+#			Work all properties and things like AssetData into state
+#			Then have everythign working again from there
+#				Includes spin
+#				State setting on holds
+#				Camera focusing
+#				Zooming
+#				Idle rotating
+
+# TODO Hunt down the rest of Input. reads that aren't in GlobalInputController
 # TODO After state is refactored
 #		- Fix assets input handling to ensure moving when want
 #			- Don't want chuck moving when camera isn't looking at him
@@ -42,14 +54,6 @@ func _ready() -> void:
 	self.stopwatch = Stopwatch.new()
 	if self.asset_data != null and !self.asset_data.group_name.is_empty():
 		add_to_group(self.asset_data.group_name)
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	var current_state: ItemState.STATE = self.asset_data.get_current_state()
-	super._process(delta)
-	var new_state: ItemState.STATE = self.asset_data.get_current_state()
-	if new_state != current_state:
-		self._update_spin_value()
 
 # TODO Refactor to take in global_basis and set it in flight data as well
 # TODO Figure out default value for Basis
@@ -123,14 +127,13 @@ func _set_asset_data(incoming_data: AssetData) -> void:
 func _get_next_asset_data() -> AssetData:
 	return AssetData.new(
 		self.asset_data.creation_type, 
-		self.asset_data.item_state, 
-		self.asset_data.camera_state, 
 		self.asset_data.internal_type, 
 		self.asset_data.group_name, 
 		self.asset_data.owner_rid
 		)
 
-func _update_spin_value() -> void:
-	var current_state: ItemState.STATE = self.get_current_state()
-	var spin_amount: float = STATE_DEFAULTS.get_spin_amount(current_state) * GameConfig.DEFAULTS.spin_multiplier
-	self.flight_data.set_flight_spin(spin_amount)
+# TODO Fix this once state is workign again
+# func _update_spin_value() -> void:
+# 	var current_state: ItemState.STATE = self.get_current_state()
+# 	var spin_amount: float = STATE_DEFAULTS.get_spin_amount(current_state) * GameConfig.DEFAULTS.spin_multiplier
+# 	self.flight_data.set_flight_spin(spin_amount)

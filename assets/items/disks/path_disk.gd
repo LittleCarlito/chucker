@@ -105,8 +105,6 @@ func _swap_disk(drop_disk: bool = false) -> void:
 		## Create a force disk
 		var spawn_disk_data: AssetData = AssetData.new(
 														self.asset_data.creation_type, 
-														AssetData.ITEM_STATE.DEACTIVATED, 
-														AssetData.CAMERA_STATE.TRACKABLE, 
 														AssetData.TYPE.PULL, 
 														self.asset_data.group_name, 
 														self.asset_data.owner_rid

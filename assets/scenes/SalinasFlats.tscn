@@ -8,8 +8,6 @@
 [sub_resource type="Resource" id="Resource_24efs"]
 script = ExtResource("2_audb8")
 internal_type = 0
-item_state = 0
-camera_state = 0
 creation_type = 0
 group_name = ""
 owner_rid = RID()
