@@ -7,7 +7,6 @@ extends Node
 
 signal state_game_change(new_state: GameState)
 signal status_game_change(new_status: GameState.STATUS)
-signal state_instance_change(new_state: InstanceState)
 signal state_input_change(new_state: InputState)
 signal state_configuration_change(new_state: ConfigurationState)
 
@@ -16,7 +15,6 @@ var _game_state: GameState
 func _ready() -> void:
 	self._game_state = GameState.new()
 	self._game_state.connect(SIGNAL_NAME.STATUS_GAME_CHANGE, _handle_game_status_change)
-	self._game_state.connect(SIGNAL_NAME.STATE_INSTANCE_CHANGE, _handle_instance_state_change)
 	self._game_state.connect(SIGNAL_NAME.STATE_INPUT_CHANGE, _handle_input_state_change)
 	self._game_state.connect(SIGNAL_NAME.STATE_CONFIGURATION_CHANGE, _handle_configuration_state_change)
 
@@ -39,9 +37,6 @@ func is_unknown() -> bool:
 	return self._game_state.get_current_status() == GameState.STATUS.UNKNOWN
 
 func _handle_game_status_change(new_status: GameState.STATUS) -> void:
-	pass
-
-func _handle_instance_state_change(new_state: InstanceState) -> void:
 	pass
 
 func _handle_input_state_change(new_state: InputState) -> void:

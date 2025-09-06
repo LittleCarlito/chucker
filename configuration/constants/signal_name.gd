@@ -1,6 +1,7 @@
 class_name SIGNAL_NAME
 
 # Application State
+const STATE_CHANGE: String = "state_change" # new_state: StateData
 const STATE_GAME_CHANGE: String = "state_game_change" # new_state: GameState
 const STATUS_GAME_CHANGE: String = "status_game_change" # new_status: GameState.STATUS
 const STATE_INSTANCE_CHANGE: String = "state_instance_change" # new_state: InstanceStatus

@@ -1,4 +1,4 @@
-extends StateData
+# Game instance settings including physics parameters, player count, and environmental modifiers
 class_name ConfigurationState
 
 var _configuration_state: Dictionary

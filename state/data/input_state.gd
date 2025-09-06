@@ -1,4 +1,4 @@
-extends StateData
+# Holds current input device states including keyboard, mouse, and controller inputs
 class_name InputState
 
 var input_state: Dictionary
