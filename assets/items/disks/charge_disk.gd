@@ -11,7 +11,13 @@ var stopwatch: Stopwatch
 #		Right now Force disk has _update_state and it isn't part of ItemStateConfig
 
 # OUTLINE: STATE
-#			Get it all cleaned out so itemconfig can be deleted and all non "real" state files can be purged
+#		X 	Get it all cleaned out so itemconfig can be deleted and all non "real" state files can be purged
+#			Look at how branding is working
+#				Ensure UUIDs are made for uniqueness in multiplayer as well
+#				Use UUIDs as keys in the dictionaries for getting states
+#			TODO Create a camera_state like the others
+#					For tracking the camera(s)
+#					Probably will need a CameraStateData or something too
 #			Work all properties and things like AssetData into state
 #			Then have everythign working again from there
 #				Includes spin

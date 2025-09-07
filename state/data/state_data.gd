@@ -15,7 +15,8 @@ const _GET_STATE_DATA: String = "get_state_data"
 signal state_change(new_state: StateData)
 
 var _owner_name: String
-var _current_state: StateConstants.STATE
+var _owner_type: String
+var _current_state: AssetTypes.TYPE
 var _current_state_duration: float
 var _state_windows: Dictionary
 var _valid_transitions: Dictionary

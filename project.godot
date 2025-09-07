@@ -33,7 +33,7 @@ AssetDelivery="*res://assets/factory/asset_delivery.gd"
 GlobalInputController="*res://input/global_input_controller.gd"
 GlobalCameraController="*res://assets/camera/global_camera_controller.gd"
 GlobalCursorController="*res://input/global_cursor_controller.gd"
-ApplicationState="*res://state/application_state.gd"
+GlobalStateController="*res://state/global_state_controller.gd"
 
 [display]
 
