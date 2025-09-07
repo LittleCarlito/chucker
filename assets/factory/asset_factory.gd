@@ -35,6 +35,8 @@ const scene_library: Dictionary = {
 
 const _INSTANTIATE_PACKED_SCENE: String = "_instantiate_packed_scene"
 
+static var _local_counter: int = 0
+
 static func create_asset(asset_type: AssetData.TYPE) -> Node3D:
 	var new_packed_scene: PackedScene = scene_library.get(asset_type, null)
 	return _instantiate_packed_scene(new_packed_scene)
@@ -111,4 +113,16 @@ static func new_env_tree() -> Node3D:
 	return env_tree
 
 static func _brand(incoming_node: Node) -> void:
+	var new_guid: String = _generate_unique_id()
+	incoming_node.set_meta("guid", new_guid)
 	incoming_node.name = incoming_node.name + "-" + str(incoming_node.get_instance_id())
+
+static func _generate_unique_id() -> String:
+	_local_counter += 1
+	var tree: SceneTree = Engine.get_main_loop()
+	if tree is SceneTree:
+		var peer_id := (tree as SceneTree).get_multiplayer().get_unique_id()
+		return "%d-%d" % [peer_id, _local_counter]
+	else:
+		# fallback for cases where main_loop isn't a SceneTree
+		return "0-%d" % _local_counter

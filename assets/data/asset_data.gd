@@ -3,6 +3,8 @@
 #				Know their current state
 #				Know how to behave when in each state
 #			Knowledge of all types and states and transfers etc belong global state
+#		Will still exist just wont' have stateful information in it
+#			But using its guid can access its state information from the global state manager
 
 extends LocalResource
 ## Stores data about this instance of the associated asset
@@ -48,6 +50,7 @@ enum ITEM_STATE{DISABLED = 0, DEACTIVATED = 1, ACTIVATED = 2, UNKNOWN = 999}
 @export var group_name: String
 ## The owners RID if available
 @export var owner_rid: RID
+var _guid: String
 
 const CREATION_MATRIX: Dictionary = {
 	TYPE.CHARGE: [TYPE.FORCE],
