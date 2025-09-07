@@ -1,5 +1,7 @@
 class_name StateConfiguration
 
+# TODO Get the camera states in  here
+
 enum STATE {
 	READY = 0,
 	IS_WINDUP = 100,

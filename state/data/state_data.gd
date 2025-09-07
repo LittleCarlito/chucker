@@ -1,4 +1,4 @@
-# Base state structure shared between players and items containing position, velocity, and core properties
+# Base state structure shared between players, cameras, and items containing position, velocity, and core properties
 class_name StateData
 
 var _NO_VALID_TRANSITION: String = "Current item \"%s\" with state \"%s\" does not have valid transition states"
