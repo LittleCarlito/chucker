@@ -19,6 +19,7 @@ var _player_states: Dictionary
 var _item_states: Dictionary
 var _current_input_state: InputState
 var _current_configuration_state: ConfigurationState
+var _current_camera_state: CameraState
 
 func _init(incoming_status: STATUS = STATUS.UNKNOWN) -> void:
 	self._current_game_status = incoming_status
@@ -26,6 +27,10 @@ func _init(incoming_status: STATUS = STATUS.UNKNOWN) -> void:
 	self._item_states = {}
 	self._current_input_state = InputState.new()
 	self._current_configuration_state = ConfigurationState.new()
+	self._current_camera_state = CameraState.new()
+
+func register_new_rig(incoming_rig: CameraRig) -> CameraStateData:
+	return self._current_camera_state.register_new_rig(incoming_rig)
 
 func get_current_status() -> STATUS:
 	return self._current_game_status
@@ -69,3 +74,31 @@ func duplicate(deep_clone: bool = false) -> GameState:
 		new_state._current_input_state = self._current_input_state
 		new_state._current_configuration_state = self._current_configuration_state
 	return new_state
+
+func print_details() -> void:
+	Logger.debug("GameState Status: \"%s\" Players: \"%d\" Items: \"%d\" Camera States: \"%d\"", [_get_status_string(), _player_states.size(), _item_states.size(), _current_camera_state._cameras.size()], self)
+	# Print camera state details
+	_current_camera_state.print_details()
+	# Print player state details
+	for player_id in _player_states.keys():
+		for state in _player_states[player_id]:
+			if state.has_method("print_details"):
+				state.print_details()
+	# Print item state details
+	for item_id in _item_states.keys():
+		for state in _item_states[item_id]:
+			if state.has_method("print_details"):
+				state.print_details()
+
+func _get_status_string() -> String:
+	match _current_game_status:
+		STATUS.MAIN_MENU:
+			return "MAIN_MENU"
+		STATUS.PAUSE_MENU:
+			return "PAUSE_MENU"
+		STATUS.RUNNING_SCENE:
+			return "RUNNING_SCENE"
+		STATUS.UNKNOWN:
+			return "UNKNOWN"
+		_:
+			return "INVALID"

@@ -16,7 +16,7 @@ const _NO_VALUE: String = "No value assicated in the creation matrix for \"%s\""
 ## Used for storing type property in engine Groups
 const TYPE_PROPERTY: String = "Type"
 ## Describes the type and assumed functionality of the object
-enum TYPE{
+enum TYPE {
 		FORCE = 0, 
 		PATH = 1, 
 		PULL = 2, 
@@ -50,7 +50,6 @@ enum ITEM_STATE{DISABLED = 0, DEACTIVATED = 1, ACTIVATED = 2, UNKNOWN = 999}
 @export var group_name: String
 ## The owners RID if available
 @export var owner_rid: RID
-var _guid: String
 
 const CREATION_MATRIX: Dictionary = {
 	TYPE.CHARGE: [TYPE.FORCE],

@@ -5,6 +5,8 @@ extends Node
 ##		Acts as gatekeeper for what non-state users can do
 ##		Logs their interactions and status of their attempts with reasoning
 
+# TODO Change to batching to send state updates as singular signal
+
 signal state_game_change(new_state: GameState)
 signal status_game_change(new_status: GameState.STATUS)
 signal state_input_change(new_state: InputState)
@@ -17,6 +19,12 @@ func _ready() -> void:
 	self._game_state.connect(SIGNAL_NAME.STATUS_GAME_CHANGE, _handle_game_status_change)
 	self._game_state.connect(SIGNAL_NAME.STATE_INPUT_CHANGE, _handle_input_state_change)
 	self._game_state.connect(SIGNAL_NAME.STATE_CONFIGURATION_CHANGE, _handle_configuration_state_change)
+
+func register_node(incoming_node: Node3D) -> StateData:
+	var return_data: StateData = null
+	if incoming_node is CameraRig:
+		return_data = self._game_state.register_new_rig(incoming_node as CameraRig)
+	return return_data
 
 func get_game_state() -> GameState:
 	return self._game_state.duplicate(true)
@@ -35,6 +43,9 @@ func is_running_scene() -> bool:
 
 func is_unknown() -> bool:
 	return self._game_state.get_current_status() == GameState.STATUS.UNKNOWN
+
+func print_details() -> void:
+	self._game_state.print_details()
 
 func _handle_game_status_change(new_status: GameState.STATUS) -> void:
 	pass

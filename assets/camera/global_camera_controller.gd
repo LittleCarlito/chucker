@@ -6,6 +6,7 @@ signal is_focusing(incoming_focus: bool)
 signal hold_height(new_min: float)
 signal is_idling(incoming_value: bool)
 
+# TODO Move these to state constants
 enum TrackingMode {
 	FULL,
 	POSITION,

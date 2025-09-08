@@ -114,8 +114,9 @@ static func new_env_tree() -> Node3D:
 
 static func _brand(incoming_node: Node) -> void:
 	var new_guid: String = _generate_unique_id()
-	incoming_node.set_meta("guid", new_guid)
+	incoming_node.set_meta(GroupData.GUID, new_guid)
 	incoming_node.name = incoming_node.name + "-" + str(incoming_node.get_instance_id())
+	GlobalStateController.register_node(incoming_node)
 
 static func _generate_unique_id() -> String:
 	_local_counter += 1
