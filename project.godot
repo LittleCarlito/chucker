@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Chuck"
-run/main_scene="res://assets/scenes/SalinasFlats.tscn"
+run/main_scene="res://scenes/SalinasFlats.tscn"
 config/use_custom_user_dir=true
 config/project_settings_override="user://settings/override.cfg"
 config/features=PackedStringArray("4.3", "Forward Plus")
