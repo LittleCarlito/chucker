@@ -121,7 +121,6 @@ func _handle_collision(body_rid: RID, _body: Node, _body_shape_index: int, _loca
 		self.angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
 	# TODO Refactor this to use accurate state ensuring it is tracked before emitting
 	# GlobalCameraController.set_rig_dile(true)
-	GlobalStateController.print_details()
 
 ## Creates intneral camera_container object
 ## Should only be called intnernally

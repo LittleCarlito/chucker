@@ -11,7 +11,8 @@ class_name CameraRig
 @export var min_height: float = -NUMBERS.FLOAT16_MAX
 @export var primary_freelook_enabled: bool
 @export var secondary_freelook_enabled: bool
-@export var is_zoom_enabled: bool
+@export var zoom_enabled: bool
+@export var movement_enabled: bool
 
 func _ready() -> void:
 	self._maintain_distance()

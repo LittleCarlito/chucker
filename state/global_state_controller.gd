@@ -23,7 +23,11 @@ func _ready() -> void:
 func register_node(incoming_node: Node3D) -> StateData:
 	var return_data: StateData = null
 	if incoming_node is CameraRig:
-		return_data = self._game_state.register_new_rig(incoming_node as CameraRig)
+		return_data = self._game_state.register_rig(incoming_node as CameraRig)
+	elif incoming_node is BaseCharacter:
+		return_data = self._game_state.register_player(incoming_node)
+	else:
+		return_data = self._game_state.register_asset(incoming_node)
 	return return_data
 
 func get_game_state() -> GameState:

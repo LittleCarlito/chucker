@@ -5,26 +5,39 @@ const _FLIGHT_DATA_NOT_SET: String = "FlightData not set; Cannot set flight glob
 
 var stopwatch: Stopwatch
 
-
-# TODO Refactor state to be singular
-#		Don't want multiple state objects
-#		Right now Force disk has _update_state and it isn't part of ItemStateConfig
-
 # OUTLINE: STATE
 #		X 	Get it all cleaned out so itemconfig can be deleted and all non "real" state files can be purged
-#			Look at how branding is working
+#		X 	Look at how branding is working
 #				Ensure UUIDs are made for uniqueness in multiplayer as well
 #				Use UUIDs as keys in the dictionaries for getting states
-#			TODO Create a camera_state like the others
+#		X 	TODO Create a camera_state like the others
 #					For tracking the camera(s)
 #					Probably will need a CameraStateData or something too
-#			Work all properties and things like AssetData into state
+#		X 	Work all properties and things like AssetData into state
 #			Then have everythign working again from there
 #				Includes spin
 #				State setting on holds
 #				Camera focusing
 #				Zooming
 #				Idle rotating
+
+
+# OUTLINE FOR "Getting everything workign again" with state
+#	TODO	StateData needs to have CameraState stored within it
+#				Creating the scene we dictate which one is "TRACKING"
+#					This ould be the object/player the camera is following
+#				If more than one has "TRACKING" then select the first found
+#					Log it and set the others to the "READY" or whatever it is status
+#				These values are outside of the currently existing STATES enum
+#					Make a new VIEW_STATE enum or something
+#	TODO	Add additional states to the existing STATES enum for the other objects that are not throwables
+#				Then have their states properly set to start
+#	TODO 	Have BaseCharacter extended classes EquipableCharacter make calls to update the object state as things change
+#	TODO 	Update other locations where object/player state has changed
+#				This should include all the movement stuff for player
+#				Like is sprinting and is jumping and shit
+#				Remember that these input things need to be true false values and not STATEs
+#					Player can be sprinting and jumping AND in a STATE of READY or WINDUP or whatever it is
 
 # TODO Hunt down the rest of Input. reads that aren't in GlobalInputController
 # TODO After state is refactored

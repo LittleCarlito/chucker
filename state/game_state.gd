@@ -14,6 +14,8 @@ enum STATUS {
 	UNKNOWN
 }
 
+const _MISSING_GUID: String = "Couldn't create %s; Incoming object \"%s\" is missing GUID metadata; Ensure it was created through AssetDelivery"
+
 var _current_game_status: STATUS
 var _player_states: Dictionary
 var _item_states: Dictionary
@@ -29,8 +31,29 @@ func _init(incoming_status: STATUS = STATUS.UNKNOWN) -> void:
 	self._current_configuration_state = ConfigurationState.new()
 	self._current_camera_state = CameraState.new()
 
-func register_new_rig(incoming_rig: CameraRig) -> CameraStateData:
+func register_rig(incoming_rig: CameraRig) -> CameraStateData:
 	return self._current_camera_state.register_new_rig(incoming_rig)
+
+func register_player(incoming_player: Node3D) -> StateData:
+	var new_state: StateData = self._create_state_data(incoming_player, StateTypes.PLAYER_STATE)
+	if new_state:
+		self._player_states[incoming_player.get_meta(GroupData.GUID)] = new_state
+	# No need to log again that it was not able to create the state so just return (logged in create state already)
+	return new_state
+
+func register_asset(incoming_item: Node3D) -> StateData:
+	var new_state: StateData = self._create_state_data(incoming_item, StateTypes.ITEM_STATE)
+	if new_state:
+		self._item_states[incoming_item.get_meta(GroupData.GUID)] = new_state
+	return new_state
+
+func _create_state_data(incoming_node: Node3D, incoming_type: String) -> StateData:
+	var new_state: StateData = null
+	if incoming_node.has_meta(GroupData.GUID):
+		new_state = StateData.new(incoming_node.get_meta(GroupData.GUID), incoming_node.name)
+	else:
+		Logger.error(self._MISSING_GUID, [incoming_type, incoming_node.name], self)
+	return new_state
 
 func get_current_status() -> STATUS:
 	return self._current_game_status
@@ -81,14 +104,14 @@ func print_details() -> void:
 	_current_camera_state.print_details()
 	# Print player state details
 	for player_id in _player_states.keys():
-		for state in _player_states[player_id]:
-			if state.has_method("print_details"):
-				state.print_details()
+		var state = _player_states[player_id]
+		if state.has_method("print_details"):
+			state.print_details()
 	# Print item state details
 	for item_id in _item_states.keys():
-		for state in _item_states[item_id]:
-			if state.has_method("print_details"):
-				state.print_details()
+		var state = _item_states[item_id]
+		if state.has_method("print_details"):
+			state.print_details()
 
 func _get_status_string() -> String:
 	match _current_game_status:

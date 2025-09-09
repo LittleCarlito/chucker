@@ -1,13 +1,3 @@
-# TODO OOOOOO
-#			Create a constructor in CameraState to handle the incoming rig
-#			Ensure that CameraState has a duplicate function
-#			Ensure that null can be returned after the log (don't think it can)
-#			Then get AssetFactory passing in newly created cameras to here to ahve their states registered
-#	->		Then confirm that cameras are in fact in state
-#			Then get the other types of stuff integrated and registered on creation with state
-#			Then confirm other created things are in fact in state
-#			THEN finally get to integrating the global state controller with this stuff and the actual logic
-
 # Holds current camera information
 class_name CameraState
 
