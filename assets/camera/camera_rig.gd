@@ -6,6 +6,7 @@ const _FOCUS_NODE: String = "Focus node"
 const _RIG_ACTION: String = "Rig focus action"
 const _MISSING_GUID: String = "%s does not have a guid set in its data"
 const _INTEGRATIN_DEBUG: String = "Now integrated with guid \"%s\" with focus set to \"%s\""
+const _NO_INTEGRATION: String = "No integration point for rig to focus on"
 
 # TODO Break camera down into multiple extension classes and have these up the path with the functions that make sense
 # TODO Move majority of this to state
@@ -92,18 +93,19 @@ func move_right() -> void:
 func focus_guid(incoming_guid: String) -> void:
 	self._focus_node = GlobalStateController.retrieve_node(incoming_guid)
 
-func set_integration_point(focus_node: Node3D, incoming_focus: bool) -> void:
+func set_integration_point(incoming_node: Node3D, incoming_focus: bool) -> void:
 	# Focus node in state
 	if self.has_meta(GroupData.GUID):
-		if focus_node.has_meta(GroupData.GUID):
+		if incoming_node.has_meta(GroupData.GUID):
 			var integrate_action_dictionary: Dictionary = {
 				GameAction.OWNER_GUID: self.get_meta(GroupData.GUID),
-				GameAction.TARGET_GUID: focus_node.get_meta(GroupData.GUID)
+				GameAction.TARGET_GUID: incoming_node.get_meta(GroupData.GUID)
 			}
 			var integrate_action: GameAction = GameAction.new(GameAction.TYPE.SET_RIG_FOCUS, integrate_action_dictionary)
 			GlobalStateController.dispatch(integrate_action)
+			self._focus_node = incoming_node
 		else:
-			var focus_identifier: String = self._FOCUS + " " + "\"" + focus_node.name + "\""
+			var focus_identifier: String = self._FOCUS + " " + "\"" + incoming_node.name + "\""
 			Logger.error(self._MISSING_GUID, [focus_identifier], self)
 			return
 	# Update the camrea state to the incoming_focus value
@@ -118,13 +120,14 @@ func set_integration_point(focus_node: Node3D, incoming_focus: bool) -> void:
 		Logger.error(self._MISSING_GUID, [self._SELF], self)
 		return
 	# Log results; If made it here has GUID meta
-	Logger.debug(self._INTEGRATIN_DEBUG, [focus_node.get_meta(GroupData.GUID), incoming_focus], self)
+	Logger.debug(self._INTEGRATIN_DEBUG, [incoming_node.get_meta(GroupData.GUID), incoming_focus], self)
 
 func get_integration_point() -> Node3D:
-	return self.integration_point
+	return self._focus_node
 
 func deintegrate() -> void:
-	self.integration_point = Node3D.new()
+	# TODO Update state first only on success do we clear to null
+	self._focus_node = null
 
 func is_current() -> bool:
 	return self.internal_camera.is_current()
@@ -136,12 +139,11 @@ func clear_current() -> void:
 	self.internal_camera.clear_current()
 
 func focus_camera() -> void:
-	pass
-	#if self.integrwation_point != null:
-		#var focus_vector: Vector3 = self.integration_point.position
-		#self.camera_controller.look_at(focus_vector)
-	#else:
-		#push_warning("No integration point for rig to focus on")
+	if self._focus_node != null:
+		var focus_vector: Vector3 = self._focus_node.position
+		self.camera_controller.look_at(focus_vector)
+	else:
+		Logger.warn(self._NO_INTEGRATION, [], self)
 
 func set_tracking_mode(mode: GlobalCameraController.TrackingMode) -> void:
 	self.tracking_mode = mode
@@ -248,9 +250,9 @@ func _update_camera_position() -> void:
 		radius * sin(self._freelook_pitch),
 		radius * cos(self._freelook_pitch) * cos(self._freelook_yaw)
 	)
-	var new_position = self.integration_point.global_position + offset
+	var new_position = self._focus_node.global_position + offset
 	self.camera_controller.global_position = _apply_min_height_constraint(new_position)
-	self.camera_controller.look_at(self.integration_point.global_position, Vector3.UP)
+	self.camera_controller.look_at(self._focus_node.global_position, Vector3.UP)
 	#elif is_focused and self.integration_point != null:
 		## Focused mode: position camera in spherical coordinates around focus point
 		#var radius: float = GameConfig.DEFAULTS.controller_distance
