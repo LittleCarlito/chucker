@@ -1,5 +1,4 @@
 extends StateData
-
 class_name CameraStateData
 
 const _MISSING_GUID: String = "Incoming associated rig \"%s\" is missing a GUID"
@@ -12,16 +11,11 @@ var _min_height_warn: bool = false
 var _is_sprinting: bool
 var _is_idle_roatating: bool
 
-func _init(associated_rig: CameraRig) -> void:
-	if associated_rig != null and associated_rig.has_meta(GroupData.GUID):
-		super._init(associated_rig.get_meta(GroupData.GUID), associated_rig.name)
-	elif associated_rig != null:
-		Logger.error(self._MISSING_GUID, [associated_rig.name], self)
+func set_focus(incoming_guid: String) -> void:
+	self.focused_guid = incoming_guid
 
 func duplicate() -> CameraStateData:
-	var copy := CameraStateData.new(null) # skip init with rig
-	copy._owner_guid = _owner_guid
-	copy._owner_name = _owner_name
+	var copy: CameraStateData = CameraStateData.new(_owner_guid, _owner_name) # skip init with rig
 	copy.focused_guid = focused_guid
 	copy.is_focused = is_focused
 	copy.freelook_pitch = freelook_pitch

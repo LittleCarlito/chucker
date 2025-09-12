@@ -1,5 +1,7 @@
 class_name StateUtil
 
+const _MISSING_GUID: String = "Incoming node \"%s\" is missing guid meta"
+
 static func get_state_string(state_value: int) -> String:
 	match state_value:
 		StateConfiguration.STATE.READY:

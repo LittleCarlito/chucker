@@ -21,7 +21,7 @@ var stopwatch: Stopwatch
 #				Zooming
 #				Idle rotating
 
-
+# TODO Update change state update to allow for array of successful state updates for single guid
 # OUTLINE FOR "Getting everything workign again" with state
 #	TODO	StateData needs to have CameraState stored within it
 #				Creating the scene we dictate which one is "TRACKING"

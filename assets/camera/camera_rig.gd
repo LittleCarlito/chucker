@@ -1,6 +1,12 @@
 extends Node3D
 class_name CameraRig
 
+const _SELF: String = "Self"
+const _FOCUS_NODE: String = "Focus node"
+const _RIG_ACTION: String = "Rig focus action"
+const _MISSING_GUID: String = "%s does not have a guid set in its data"
+const _INTEGRATIN_DEBUG: String = "Now integrated with guid \"%s\" with focus set to \"%s\""
+
 # TODO Break camera down into multiple extension classes and have these up the path with the functions that make sense
 # TODO Move majority of this to state
 # Below stays
@@ -13,6 +19,7 @@ class_name CameraRig
 @export var secondary_freelook_enabled: bool
 @export var zoom_enabled: bool
 @export var movement_enabled: bool
+var _focus_node: Node3D
 
 func _ready() -> void:
 	self._maintain_distance()
@@ -35,6 +42,8 @@ func _ready() -> void:
 	# TODO Have this done in scene setup calls for state setting
 	#			This shoudl be done as a result of the final state of the camera rig befroe starting the scene is unfocused or tracking (just like with the gating on _handle_input)
 	GlobalCursorController.request_state(self, GlobalCursorController.CursorState.CAPTURED, "Should be done in camera or scene state stuff")
+	# State connections
+	GlobalStateController.connect(SIGNAL_NAME.STATE_UPDATED, _handle_state_updated)
 
 # TODO Shouldn't exist after state refactor; look below shoudl ahve state pushing down everythign we need
 func _process(_delta: float) -> void:
@@ -80,11 +89,36 @@ func move_left() -> void:
 func move_right() -> void:
 	pass
 
-func set_integration_point(focus_node: Node3D, incoming_focus: bool = false) -> void:
-	pass
-	#self.integration_point = focus_node
-	#if incoming_focus:
-		#self.enable_focus()
+func focus_guid(incoming_guid: String) -> void:
+	self._focus_node = GlobalStateController.retrieve_node(incoming_guid)
+
+func set_integration_point(focus_node: Node3D, incoming_focus: bool) -> void:
+	# Focus node in state
+	if self.has_meta(GroupData.GUID):
+		if focus_node.has_meta(GroupData.GUID):
+			var integrate_action_dictionary: Dictionary = {
+				GameAction.OWNER_GUID: self.get_meta(GroupData.GUID),
+				GameAction.TARGET_GUID: focus_node.get_meta(GroupData.GUID)
+			}
+			var integrate_action: GameAction = GameAction.new(GameAction.TYPE.SET_RIG_FOCUS, integrate_action_dictionary)
+			GlobalStateController.dispatch(integrate_action)
+		else:
+			var focus_identifier: String = self._FOCUS + " " + "\"" + focus_node.name + "\""
+			Logger.error(self._MISSING_GUID, [focus_identifier], self)
+			return
+	# Update the camrea state to the incoming_focus value
+	if incoming_focus:
+		var focus_action_dictionary: Dictionary = {
+			GameAction.OWNER_GUID: self.get_meta(GroupData.GUID),
+			GameAction.FOCUS_RIG: incoming_focus
+		}
+		var focus_action: GameAction = GameAction.new(GameAction.TYPE.FOCUS_RIG, focus_action_dictionary)
+		GlobalStateController.dispatch(focus_action)
+	else:
+		Logger.error(self._MISSING_GUID, [self._SELF], self)
+		return
+	# Log results; If made it here has GUID meta
+	Logger.debug(self._INTEGRATIN_DEBUG, [focus_node.get_meta(GroupData.GUID), incoming_focus], self)
 
 func get_integration_point() -> Node3D:
 	return self.integration_point
@@ -122,13 +156,19 @@ func set_idle_rotate(incoming_value: bool) -> void:
 	self.is_idle_rotate = incoming_value
 
 func is_focusing() -> bool:
-	return self.is_focused
+	return false
+	# TODO Redo to use global state
+	# self.is_focused = true
 
 func enable_focus() -> void:
-	self.is_focused = true
+	pass
+	# TODO Redo to use global state
+	# self.is_focused = true
 
 func reset_focus() -> void:
-	self.is_focused = false
+	pass
+	# TODO Redo to use global state
+	# self.is_focused = false
 
 func is_primary_freelook_enabled() -> bool:
 	return self.primary_freelook_enabled
@@ -283,3 +323,19 @@ func _handle_sprint_start() -> void:
 func _handle_sprint_stop() -> void:
 	pass
 	#self._is_sprinting = false
+
+func _handle_state_updated(update_details: Dictionary) -> void:
+	if self.has_meta(GroupData.GUID):
+		if update_details.keys().has(self.get_meta(GroupData.GUID)):
+			var state_update: GameAction = update_details.get(self.get_meta(GroupData.GUID))
+			match state_update.action_type:
+				GameAction.TYPE.SET_RIG_FOCUS:
+					if state_update.payload.has(GameAction.TARGET_GUID):
+						var focus_guid: String = state_update.payload.get(GameAction.TARGET_GUID)
+						self.focus_guid(focus_guid)
+					else:
+						Logger.error(self._MISSING_GUID, [self.SET_RIG_FOCUS], self)
+				_:
+					pass
+	else:
+		Logger.error(self._MISSING_GUID, [self._SELF], self)

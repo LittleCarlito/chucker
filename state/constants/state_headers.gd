@@ -6,3 +6,6 @@ const CURRENT_STATE_DURATION: String = "current_state_duration"
 const STATE_WINDOWS: String = "state_windows"
 const VALID_TRANSITIONS: String = "valid_transitions"
 const STATE_VALUES: String = "state_values"
+
+const STATE_DATA: String = "state_data"
+const STATE_NODE: String = "state_node"

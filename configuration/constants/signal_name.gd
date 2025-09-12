@@ -2,12 +2,7 @@ class_name SIGNAL_NAME
 
 # Application State
 const STATE_CHANGE: String = "state_change" # new_state: StateData
-const STATE_GAME_CHANGE: String = "state_game_change" # new_state: GameState
-const STATUS_GAME_CHANGE: String = "status_game_change" # new_status: GameState.STATUS
-const STATE_INSTANCE_CHANGE: String = "state_instance_change" # new_state: InstanceStatus
-const STATE_INPUT_CHANGE: String = "state_input_change" # new_state: InputState
-const STATE_CONFIGURATION_CHANGE: String = "state_configuration_change" # new_state: ConfigurationState
-const STATE_ITEM_CHANGE: String = "state_item_change" # new_state: ItemState
+const STATE_UPDATED: String = "state_updated" # update_details: Dictionary
 
 const ZOOM_IN: String = "zoom_in"
 const ZOOM_OUT: String = "zoom_out"
