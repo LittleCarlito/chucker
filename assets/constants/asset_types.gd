@@ -13,7 +13,6 @@ const CAMERA_CONTAINER: String = "camera_container"
 const CAMERA: String = "camera"
 const PLAYER: String = "player"
 const LEVEL: String = "level"
-const UNKOWN: String = "unkown"
 
 enum TYPE {
 		FORCE = 0, 
@@ -46,7 +45,7 @@ const TYPE_TO_STRING: Dictionary = {
 	TYPE.CAMERA: CAMERA,
 	TYPE.PLAYER: PLAYER,
 	TYPE.LEVEL: LEVEL,
-	TYPE.UNKNOWN: UNKNOWN,
+	TYPE.UNKNOWN: GroupData.UNKNOWN,
 }
 
 const STRING_TO_TYPE: Dictionary = {
@@ -63,11 +62,11 @@ const STRING_TO_TYPE: Dictionary = {
 	CAMERA: TYPE.CAMERA,
 	PLAYER: TYPE.PLAYER,
 	LEVEL: TYPE.LEVEL,
-	UNKNOWN: TYPE.UNKNOWN,
+	GroupData.UNKNOWN: TYPE.UNKNOWN,
 }
 
 static func to_string(type_value: TYPE) -> String:
-	return TYPE_TO_STRING.get(type_value, UNKNOWN)
+	return TYPE_TO_STRING.get(type_value, GroupData.UNKNOWN)
 
 static func from_string(type_name: String) -> TYPE:
 	return STRING_TO_TYPE.get(type_name, TYPE.UNKNOWN)

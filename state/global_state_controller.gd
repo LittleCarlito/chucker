@@ -5,6 +5,8 @@ extends Node
 ##		Acts as gatekeeper for what non-state users can do
 ##		Logs their interactions and status of their attempts with reasoning
 
+const _UNSUPPORTED_HEADER: String = "Incoming header type \"%s\" was not supported; Incoming header enum value \"%d\""
+
 signal state_updated(update_details: Dictionary)
 
 var _game_state: GameState
@@ -29,14 +31,20 @@ func dispatch(incoming_action: GameAction) -> void:
 func node_has_state(incoming_guid: String) -> bool:
 	return self._game_state.has_guid(incoming_guid)
 
-func get_game_state() -> GameState:
-	return self._game_state.duplicate(true)
-
 func get_current_status() -> GameState.STATUS:
 	return self._game_state.get_current_status()
 
-func retrieve_node(incoming_guid: String) -> Node3D:
-	return self._game_state.retrieve_node(incoming_guid)
+func get_header_data(incoming_guid: String, header_type: StateHeaders.TYPE):
+	match header_type:
+		StateHeaders.TYPE.DATA_STORAGE:
+			return self._game_state.duplicate(true)
+		StateHeaders.TYPE.DATA:
+			return self._game_state.retrieve_state_data(incoming_guid)
+		StateHeaders.TYPE.NODE:
+			return self._game_state.retrieve_node(incoming_guid)
+		_:
+			var type_string: String = StateHeaders.get_type_string(header_type)
+			Logger.error(self._UNSUPPORTED_HEADER, [type_string, header_type], self)
 
 func is_main_menu() -> bool:
 	return self._game_state.get_current_status() == GameState.STATUS.MAIN_MENU

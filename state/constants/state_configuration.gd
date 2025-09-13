@@ -3,7 +3,9 @@ class_name StateConfiguration
 # TODO Get the camera states in  here
 
 enum STATE {
+	# Default
 	READY = 0,
+	# Throw action
 	IS_WINDUP = 100,
 	WINDUP_UNDERCOOKED = 110,
 	WINDUP_VERY_EARLY = 120,
@@ -20,9 +22,16 @@ enum STATE {
 	FOLLOW_THRU_UNDER = 325,
 	FOLLOW_THRU_PERFECT = 350,
 	FOLLOW_THRU_OVER = 375,
-	TRACKING = 500,
+	# Camera
+	IS_TRACKING = 500,
+	FULL_TRACKING = 501,
+	POS_TRACKING = 502,
+	FREE_TRACKING = 503,
 	IDLE_ROTATE = 550,
-	FREELOOK = 550,
+	IS_FREELOOK = 550,
+	FREELOOK_MOVE = 551,
+	FREELOOK_STUCK = 552,
 	DISABLED = 600,
+	# General
 	UNKNOWN = -999
 }

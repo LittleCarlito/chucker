@@ -1,5 +1,6 @@
 extends StateDataStorage
-class_name CameraState
+# TODO Rename to CameraStateStorage
+class_name CameraDataStorage
 
 const _MISSING_NODE: String = "Could not perform %s \"$s\" was missing"
 const _FOCUS_GUID: String = "Focus GUID"
@@ -10,7 +11,7 @@ func set_camera_focus(camera_guid: String, focus_guid: String) -> void:
 	var has_camera: bool = self.has_guid(camera_guid)
 	var node_exists: bool = GlobalStateController.node_has_state(focus_guid)
 	if has_camera and node_exists:
-		var camera_state_data: CameraStateData = self.get_guid_data(camera_guid)
+		var camera_state_data: CameraStateData = self.get_header_data(camera_guid, StateHeaders.TYPE.DATA)
 		camera_state_data.set_focus(focus_guid)
 	else:
 		var missing_variable: String = self._CAMERA if !has_camera else ""

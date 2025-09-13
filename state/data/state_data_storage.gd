@@ -3,6 +3,7 @@ class_name StateDataStorage
 const _MISSING_GUID: String = "Incoming node \"%s\" is missing a GUID and cannot be registered"
 const _GUID_NOT_FOUND: String = "Requested GUID \"%s\" does not exist in dictionary"
 const _DICTIONARY_DATA_NOT_FOUND: String = "Requested GUID \"%s\" dictionary does not contain %s"
+const _UNSUPPORTED_TYPE: String = "Incoming state header type \"%s\" for guid \"%s\" is not supported; Type numeric value \"%d\""
 
 var _state_dictionary: Dictionary
 
@@ -34,11 +35,14 @@ func register_new_node(incoming_node: Node3D) -> StateData:
 func has_guid(incoming_guid: String) -> bool:
 	return self._state_dictionary.has(incoming_guid)
 
-func get_guid_data(incoming_guid: String) -> StateData:
-	return self._get_guid_value(incoming_guid, StateHeaders.STATE_DATA)
-
-func get_guid_node(incoming_guid: String) -> Node3D:
-	return self._get_guid_value(incoming_guid, StateHeaders.STATE_NODE)
+func get_header_data(incoming_guid: String, incoming_type: StateHeaders.TYPE):
+	var header_string: String = StateHeaders.get_type_string(incoming_type)
+	match incoming_type:
+		StateHeaders.TYPE.DATA, StateHeaders.TYPE.NODE:
+			return self._get_guid_value(incoming_guid, header_string)
+		_:
+			Logger.error(self._UNSUPPORTED_TYPE, [header_string, incoming_guid, incoming_type], self)
+			return null
 
 func storage_size() -> int:
 	return _state_dictionary.size()

@@ -8,15 +8,36 @@ enum STATUS {
 	UNKNOWN
 }
 
+enum DATA_TYPE {
+	PLAYER,
+	ITEM,
+	CAMERA
+}
+
+const _PLAYER: String = "Player"
+const _ITEM: String = "Item"
+const _CAMERA: String = "Camera"
+
+static func get_data_type_string(incoming_type: DATA_TYPE) -> String:
+	match incoming_type:
+		DATA_TYPE.PLAYER:
+			return _PLAYER
+		DATA_TYPE.ITEM:
+			return _ITEM
+		DATA_TYPE.CAMERA:
+			return _CAMERA
+		_:
+			return GroupData.UNKNOWN
+
 const _MISSING_GUID: String = "Couldn't create %s; Incoming object \"%s\" is missing GUID metadata; Ensure it was created through AssetDelivery"
 const _GUID_MISSING_STATE: String = "GUID \"%s\" did not have any data stored in game state; Ensure it was created through Asset Factory/Delivery"
 const _MISSING_STATE_NODE: String = "State dictionary is missing associated state node; %s"
-const _DUPLICATE_GUID: String = "GUID \"%s\" has been found in both player and item state Dictionaries"
+const _DUPLICATE_GUID: String = "GUID \"%s\" has been found in too many dictionaries; Location array \"%s\""
 const _BAD_ACTION_FORMAT: String = "Incoming action \"%s\" was missing property %s and could not be processed"
 const _MISSING_GUID_STATE: String = "GUID \"%s\" state dictionary is missing %s"
 
-# TODO OOOOOO YOU WERE HERE
-#		Get all the Actions that went off succesfully into update details and just send that shit out
+const _MISSING_DATA: String = "%s dictionary is missing %s for guid \"%s\""
+
 signal state_updated(update_details: Dictionary)
 
 var _successful_actions: Dictionary
@@ -31,7 +52,7 @@ var _player_states: Dictionary
 var _item_states: Dictionary
 var _current_input_state: InputState
 var _current_configuration_state: ConfigurationState
-var _current_camera_state: CameraState
+var _current_camera_state: CameraDataStorage
 
 func _init(incoming_status: STATUS = STATUS.UNKNOWN) -> void:
 	self._current_game_status = incoming_status
@@ -39,7 +60,7 @@ func _init(incoming_status: STATUS = STATUS.UNKNOWN) -> void:
 	self._item_states = {}
 	self._current_input_state = InputState.new()
 	self._current_configuration_state = ConfigurationState.new()
-	self._current_camera_state = CameraState.new()
+	self._current_camera_state = CameraDataStorage.new()
 
 func register_rig(incoming_rig: Node3D) -> StateData:
 	return self._current_camera_state.register_new_node(incoming_rig)
@@ -63,30 +84,27 @@ func register_asset(incoming_item: Node3D) -> StateData:
 		}
 	return new_state
 
-func retrieve_node(incoming_guid: String) -> Node3D:
-	var in_player: bool = self._player_states.has(incoming_guid)
-	var in_item: bool = self._item_states.has(incoming_guid)
-	if in_player or in_item:
-		if in_player and in_item:
-			Logger.error(self._DUPLICATE_GUID, [], self)
-			return null
-		else:
-			if in_player:
-				return self._get_node_from_dictionary(self._player_states.get(incoming_guid))
-			return self._get_node_from_dictionary(self._item_states.get(incoming_guid))
-	else:
+func retrieve_state_data(incoming_guid: String) -> StateData:
+	var data_location: Array[DATA_TYPE] = self._find_in_data(incoming_guid)
+	if data_location.is_empty():
 		Logger.error(self._GUID_MISSING_STATE, [incoming_guid], self)
 		return null
+	if data_location.size() > 1:
+		Logger.warn(self._DUPLICATE_GUID, [data_location], self)
+	var state_data: StateData = self._retrieve_from_location(data_location[0], StateHeaders.TYPE.DATA, incoming_guid)
+	return state_data
+
+func retrieve_node(incoming_guid: String) -> Node3D:
+	var data_location: Array[DATA_TYPE] = self._find_in_data(incoming_guid)
+	if data_location.is_empty():
+		Logger.error(self._GUID_MISSING_STATE, [incoming_guid], self)
+		return null
+	if data_location.size() > 1:
+		Logger.warn(self._DUPLICATE_GUID, [data_location], self)
+	return self._retrieve_from_location(data_location[0], StateHeaders.TYPE.NODE, incoming_guid)
 
 func has_guid(incoming_guid: String) -> bool:
-	var in_player: bool = self._player_states.has(incoming_guid)
-	var in_item: bool = self._item_states.has(incoming_guid)
-	if in_player or in_item:
-		if in_player and in_item:
-			Logger.warn(self._DUPLICATE_GUID, [], self)
-		return true
-	else:
-		return false
+	return !self._find_in_data(incoming_guid).is_empty()
 
 func get_current_status() -> STATUS:
 	return self._current_game_status
@@ -158,6 +176,46 @@ func _get_status_string() -> String:
 			return "UNKNOWN"
 		_:
 			return "INVALID"
+
+func _find_in_data(incoming_guid) -> Array[DATA_TYPE]:
+	var return_array: Array[DATA_TYPE] = []
+	var in_player: bool = self._player_states.has(incoming_guid)
+	if in_player:
+		return_array.append(DATA_TYPE.PLAYER)
+	var in_item: bool = self._item_states.has(incoming_guid)
+	if in_item:
+		return_array.append(DATA_TYPE.ITEM)
+	var in_camera: bool = self._current_camera_state.has_guid(incoming_guid)
+	if in_camera:
+		return_array.append(DATA_TYPE.CAMERA)
+	return return_array
+
+func _retrieve_from_location(incoming_type: DATA_TYPE, incoming_header: StateHeaders.TYPE, incoming_guid: String):
+	var header_string: String = StateHeaders.get_type_string(incoming_header)
+	match incoming_type:
+		DATA_TYPE.PLAYER:
+			# TODO Make sure this is refined down in state_data_storage for camera and these eventually
+			if !self._player_states.has(incoming_guid):
+				Logger.error(self._MISSING_DATA, [DATA_TYPE.PLAYER, StateHeaders.STATE_DICTIONARY, incoming_guid], self)
+			var player_dictionary: Dictionary = self._player_states.get(incoming_guid)
+			if !player_dictionary.has(header_string):
+				Logger.error(self._MISSING_DATA, [DATA_TYPE.PLAYER, header_string, incoming_guid], self)
+				return null
+			return player_dictionary.get(header_string)				
+		DATA_TYPE.ITEM:
+			# TODO Make sure this is refined down in state_data_storage for camera and these eventually
+			if !self._item_states.has(incoming_guid):
+				Logger.error(self._MISSING_DATA, [DATA_TYPE.PLAYER, StateHeaders.STATE_DICTIONARY, incoming_guid], self)
+			var item_dictionary: Dictionary = self._item_states.get(incoming_guid)
+			if !item_dictionary.has(header_string):
+				Logger.error(self._MISSING_DATA, [DATA_TYPE.ITEM, header_string, incoming_guid], self)
+				return null
+			return item_dictionary.get(header_string)
+		DATA_TYPE.CAMERA:
+			if !self._current_camera_state.has_guid(incoming_guid):
+				Logger.error(self._MISSING_DATA, [DATA_TYPE.CAMERA, header_string, incoming_guid], self)
+				return null
+			return self._current_camera_state.get_header_data(incoming_guid, incoming_header)
 
 func _create_state_data(incoming_node: Node3D, incoming_type: String) -> StateData:
 	var new_state: StateData = null

@@ -39,6 +39,9 @@ var stopwatch: Stopwatch
 #				Remember that these input things need to be true false values and not STATEs
 #					Player can be sprinting and jumping AND in a STATE of READY or WINDUP or whatever it is
 
+# TODO Create StatefulAsset class that extends Node3D and have everything that registers its state be one
+#			Implements shared logic to get state data references
+#				Allows easier refactoring as this whole setup is ripe for the refactor
 # TODO Hunt down the rest of Input. reads that aren't in GlobalInputController
 # TODO After state is refactored
 #		- Fix assets input handling to ensure moving when want

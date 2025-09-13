@@ -8,6 +8,8 @@ const _MISSING_GUID: String = "%s does not have a guid set in its data"
 const _INTEGRATIN_DEBUG: String = "Now integrated with guid \"%s\" with focus set to \"%s\""
 const _NO_INTEGRATION: String = "No integration point for rig to focus on"
 
+const _MISSING_DATA: String = "Missing %s data"
+
 # TODO Break camera down into multiple extension classes and have these up the path with the functions that make sense
 # TODO Move majority of this to state
 # Below stays
@@ -91,7 +93,7 @@ func move_right() -> void:
 	pass
 
 func focus_guid(incoming_guid: String) -> void:
-	self._focus_node = GlobalStateController.retrieve_node(incoming_guid)
+	self._focus_node = GlobalStateController.get_header_data(incoming_guid, StateHeaders.TYPE.NODE)
 
 func set_integration_point(incoming_node: Node3D, incoming_focus: bool) -> void:
 	# Focus node in state
@@ -218,57 +220,62 @@ func _apply_min_height_constraint(position: Vector3) -> Vector3:
 # TODO Have all this run through state somehow instead
 #			Probably have state push down details to camera, so it will have all it needs as parameters
 func _maintain_distance() -> void:
-	pass
-	##if integration_point != null:
-	#var new_position: Vector3
-	#if self.tracking_mode == GlobalCameraController.TrackingMode.FULL:
-		## Apply offset in local space relative to integration point's orientation
-		#var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
-		#var world_offset = self.integration_point.global_transform.basis * offset
-		## Set position and rotation to follow integration point with offset
-		#new_position = self.integration_point.global_position + world_offset
-		#self.camera_controller.global_position = _apply_min_height_constraint(new_position)
-		#self.camera_controller.global_rotation = self.integration_point.global_rotation
-	#elif self.tracking_mode == GlobalCameraController.TrackingMode.POSITION:
-		## Apply offset in world space, maintain current orientation
-		#var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
-		#new_position = self.integration_point.global_position + offset
-		#self.camera_controller.global_position = _apply_min_height_constraint(new_position)
-	#elif self.tracking_mode == GlobalCameraController.TrackingMode.TRACK:
-		## TRACK mode: maintain spherical coordinates around the moving integration point
-		#_update_camera_position()
-	##else:
-		##push_warning("No integration point to maintain distance from")
+	if _focus_node != null:
+		if self._verify_integrity():
+			var new_position: Vector3
+			var camera_state: StateData = GlobalStateController.get_header_data(self.get_meta(GroupData.GUID), StateHeaders.TYPE.DATA)
+			var current_state: StateConfiguration.STATE = camera_state.get_current_state()
+			if current_state == StateConfiguration.STATE.FULL_TRACKING:
+				# Apply offset in local space relative to integration point's orientation
+				var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
+				var world_offset = self._focus_node.global_transform.basis * offset
+				# Set position and rotation to follow integration point with offset
+				new_position = self._focus_node.global_position + world_offset
+				self.camera_controller.global_position = self._apply_min_height_constraint(new_position)
+				self.camera_controller.global_rotation = self._focus_node.global_rotation
+			elif current_state == StateConfiguration.STATE.POS_TRACKING:
+				# Apply offset in world space, maintain current orientation
+				var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
+				new_position = self._focus_node.global_position + offset
+				self.camera_controller.global_position = self._apply_min_height_constraint(new_position)
+			elif current_state == StateConfiguration.STATE.FREE_TRACKING:
+				# TRACK mode: maintain spherical coordinates around the moving integration point
+				self._update_camera_position()
+	else:
+		Logger.warn(self._NO_INTEGRATION, [], self)
 
 # TODO Again like above should be having everything it needs pushed down from state
 func _update_camera_position() -> void:
-	#if tracking_mode == GlobalCameraController.TrackingMode.TRACK and self.integration_point != null:
-	# TRACK mode: position camera in spherical coordinates around the moving integration point
-	var radius: float = GameConfig.DEFAULTS.controller_distance
-	var offset := Vector3(
-		radius * cos(self._freelook_pitch) * sin(self._freelook_yaw),
-		radius * sin(self._freelook_pitch),
-		radius * cos(self._freelook_pitch) * cos(self._freelook_yaw)
-	)
-	var new_position = self._focus_node.global_position + offset
-	self.camera_controller.global_position = _apply_min_height_constraint(new_position)
-	self.camera_controller.look_at(self._focus_node.global_position, Vector3.UP)
-	#elif is_focused and self.integration_point != null:
-		## Focused mode: position camera in spherical coordinates around focus point
-		#var radius: float = GameConfig.DEFAULTS.controller_distance
-		#var offset := Vector3(
-			#radius * cos(self._freelook_pitch) * sin(self._freelook_yaw),
-			#radius * sin(self._freelook_pitch),
-			#radius * cos(self._freelook_pitch) * cos(self._freelook_yaw)
-		#)
-		#var new_position = self.integration_point.global_position + offset
-		#self.camera_controller.global_position = _apply_min_height_constraint(new_position)
-		#self.camera_controller.look_at(self.integration_point.global_position, Vector3.UP)
-	#else:
-		## Free freelook (no integration point)
-		#var yaw_basis := Basis(Vector3.UP, self._freelook_yaw)
-		#var pitch_basis := Basis(Vector3.RIGHT, self._freelook_pitch)
-		#self.camera_controller.transform.basis = yaw_basis * pitch_basis
+	if self._verify_integrity():
+		var camera_state: StateData = GlobalStateController.get_header_data(self.get_meta(GroupData.GUID), StateHeaders.TYPE.DATA)
+		var current_state: StateConfiguration.STATE = camera_state.get_current_state()
+		if current_state == StateConfiguration.STATE.FREE_TRACKING and self._focus_node != null:
+			# TRACK mode: position camera in spherical coordinates around the moving integration point
+			var radius: float = GameConfig.DEFAULTS.controller_distance
+			var offset := Vector3(
+				radius * cos(self._freelook_pitch) * sin(self._freelook_yaw),
+				radius * sin(self._freelook_pitch),
+				radius * cos(self._freelook_pitch) * cos(self._freelook_yaw)
+			)
+			var new_position = self._focus_node.global_position + offset
+			self.camera_controller.global_position = self._apply_min_height_constraint(new_position)
+			self.camera_controller.look_at(self._focus_node.global_position, Vector3.UP)
+		elif camera_state.is_focused and self._focus_node != null:
+			# Focused mode: position camera in spherical coordinates around focus point
+			var radius: float = GameConfig.DEFAULTS.controller_distance
+			var offset := Vector3(
+				radius * cos(self._freelook_pitch) * sin(self._freelook_yaw),
+				radius * sin(self._freelook_pitch),
+				radius * cos(self._freelook_pitch) * cos(self._freelook_yaw)
+			)
+			var new_position = self._focus_node.global_position + offset
+			self.camera_controller.global_position = _apply_min_height_constraint(new_position)
+			self.camera_controller.look_at(self._focus_node.global_position, Vector3.UP)
+		else:
+			# Free freelook (no integration point)
+			var yaw_basis := Basis(Vector3.UP, self._freelook_yaw)
+			var pitch_basis := Basis(Vector3.RIGHT, self._freelook_pitch)
+			self.camera_controller.transform.basis = yaw_basis * pitch_basis
 
 func _handle_input() -> void:
 	pass
@@ -341,3 +348,9 @@ func _handle_state_updated(update_details: Dictionary) -> void:
 					pass
 	else:
 		Logger.error(self._MISSING_GUID, [self._SELF], self)
+
+func _verify_integrity() -> bool:
+	if !self.has_meta(GroupData.GUID):
+		Logger.error(self._MISSING_DATA, [GroupData.GUID], self)
+		return false
+	return true
