@@ -14,6 +14,9 @@ var _is_idle_roatating: bool
 func set_focus(incoming_guid: String) -> void:
 	self.focused_guid = incoming_guid
 
+func set_is_focused(incoming_value: bool) -> void:
+	self.is_focused = incoming_value
+
 func duplicate(deep_clone: bool = false) -> CameraStateData:
 	var copy: CameraStateData = CameraStateData.new(_owner_guid, _owner_name) # skip init with rig
 	copy.focused_guid = self.focused_guid

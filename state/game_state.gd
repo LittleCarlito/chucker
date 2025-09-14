@@ -208,8 +208,8 @@ func _handle_focus_action(incoming_action: GameAction) -> void:
 		if incoming_action.payload.has(GameAction.FOCUS_RIG):
 			var camera_guid: String = incoming_action.payload.get(GameAction.OWNER_GUID)
 			var focus_value: bool = incoming_action.payload.get(GameAction.FOCUS_RIG)
-			# TODO Get the camera by guid and set its focus state value to the given variable value
-			var camera_rig: CameraRig = self._camera_state.get_header_data(camera_guid, StateHeaders.TYPE.NODE)
+			var rig_state_data: CameraStateData = self._camera_state.get_header_data(camera_guid, StateHeaders.TYPE.DATA)
+			rig_state_data.set_is_focused(focus_value)
 		else:
 			Logger.error(self._BAD_ACTION_FORMAT, [incoming_action, GameAction.FOCUS_RIG], self)
 	else:
