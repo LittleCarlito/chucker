@@ -52,12 +52,12 @@ func get_state_data() -> Dictionary:
 		StateHeaders.STATE_VALUES: _state_values.duplicate(true),
 	}
 
-func duplicate() -> StateData:
-	var new_state: StateData = StateData.new(self._owner_guid, self._owner_name, self._state_windows.duplicate(true))
+func duplicate(deep_clone: bool = false) -> StateData:
+	var new_state: StateData = StateData.new(self._owner_guid, self._owner_name, self._state_windows.duplicate(deep_clone))
 	new_state._current_state = _current_state
 	new_state._current_state_duration = _current_state_duration
-	new_state._valid_transitions = _valid_transitions.duplicate(true)
-	new_state._state_values = _state_values.duplicate(true)
+	new_state._valid_transitions = _valid_transitions.duplicate(deep_clone)
+	new_state._state_values = _state_values.duplicate(deep_clone)
 	return new_state
 
 func get_current_state() -> StateConfiguration.STATE:

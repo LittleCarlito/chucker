@@ -23,14 +23,14 @@ func register_new_node(incoming_node: Node3D) -> StateData:
 			StateHeaders.STATE_DATA: camera_state_data,
 			StateHeaders.STATE_NODE: incoming_node
 		}
-		return camera_state_data.duplicate()
+		return camera_state_data.duplicate(true)
 	else:
 		var state_data: StateData = StateData.new(incoming_node.get_meta(GroupData.GUID), incoming_node.name)
 		self._state_dictionary[incoming_node.get_meta(GroupData.GUID)] = {
 			StateHeaders.STATE_DATA: state_data,
 			StateHeaders.STATE_NODE: incoming_node
 		}
-		return state_data.duplicate()
+		return state_data.duplicate(true)
 
 func has_guid(incoming_guid: String) -> bool:
 	return self._state_dictionary.has(incoming_guid)
@@ -47,11 +47,11 @@ func get_header_data(incoming_guid: String, incoming_type: StateHeaders.TYPE):
 func storage_size() -> int:
 	return _state_dictionary.size()
 
-func duplicate() -> StateDataStorage:
+func duplicate(deep_clone: bool = false) -> StateDataStorage:
 	var copy: StateDataStorage = StateDataStorage.new()
 	for guid in self._state_dictionary.keys():
 		var state_data: StateData = self._state_dictionary[guid]
-		copy._state_dictionary[guid] = state_data.duplicate()
+		copy._state_dictionary[guid] = state_data.duplicate(deep_clone)
 	return copy
 
 func print_details() -> void:

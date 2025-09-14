@@ -6,7 +6,7 @@ var input_state: Dictionary
 func get_state_data() -> Dictionary:
 	return self.input_state.duplicate(true)
 
-func duplicate() -> InputState:
+func duplicate(deep_clone: bool = false) -> InputState:
 	var new_state = InputState.new()
-	new_state.input_state = self.input_state.duplicate(true)
+	new_state.input_state = self.input_state.duplicate(deep_clone)
 	return new_state

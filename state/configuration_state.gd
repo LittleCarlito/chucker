@@ -6,7 +6,7 @@ var _configuration_state: Dictionary
 func get_state_data() -> Dictionary:
 	return self._configuration_state.duplicate(true)
 
-func duplicate() -> ConfigurationState:
+func duplicate(deep_clone: bool = false) -> ConfigurationState:
 	var new_state = ConfigurationState.new()
-	new_state._configuration_state = self._configuration_state.duplicate(true)
+	new_state._configuration_state = self._configuration_state.duplicate(deep_clone)
 	return new_state

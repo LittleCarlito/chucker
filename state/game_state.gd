@@ -43,46 +43,28 @@ signal state_updated(update_details: Dictionary)
 var _successful_actions: Dictionary
 var _flush_scheduled: bool
 var _current_game_status: STATUS
-# TODO Make a generalized parent state type class that holds the dictionary
-#			Is the CameraState class just changed into a generalized form
-#			Then should be able to use that same object for player item and camera states
-#			There should be a Player Item and Camera one that extend each with the functions to get/deal with the dictioanry by type
-#				This will also be where headers/constants are stored for each type
-var _player_states: Dictionary
-var _item_states: Dictionary
-var _current_input_state: InputState
-var _current_configuration_state: ConfigurationState
-var _current_camera_state: CameraDataStorage
+var _player_state: StateDataStorage
+var _item_state: StateDataStorage
+var _input_state: InputState
+var _configuration_state: ConfigurationState
+var _camera_state: CameraDataStorage
 
 func _init(incoming_status: STATUS = STATUS.UNKNOWN) -> void:
 	self._current_game_status = incoming_status
-	self._player_states = {}
-	self._item_states = {}
-	self._current_input_state = InputState.new()
-	self._current_configuration_state = ConfigurationState.new()
-	self._current_camera_state = CameraDataStorage.new()
+	self._player_state = StateDataStorage.new()
+	self._item_state = StateDataStorage.new()
+	self._input_state = InputState.new()
+	self._configuration_state = ConfigurationState.new()
+	self._camera_state = CameraDataStorage.new()
 
 func register_rig(incoming_rig: Node3D) -> StateData:
-	return self._current_camera_state.register_new_node(incoming_rig)
+	return self._camera_state.register_new_node(incoming_rig)
 
 func register_player(incoming_player: Node3D) -> StateData:
-	var new_state: StateData = self._create_state_data(incoming_player, StateTypes.PLAYER_STATE)
-	if new_state:
-		self._player_states[incoming_player.get_meta(GroupData.GUID)] = {
-			StateHeaders.STATE_DATA: new_state,
-			StateHeaders.STATE_NODE: incoming_player
-		}
-	# No need to log again that it was not able to create the state so just return (logged in create state already)
-	return new_state
+	return self._player_state.register_new_node(incoming_player)
 
 func register_asset(incoming_item: Node3D) -> StateData:
-	var new_state: StateData = self._create_state_data(incoming_item, StateTypes.ITEM_STATE)
-	if new_state:
-		self._item_states[incoming_item.get_meta(GroupData.GUID)] = {
-			StateHeaders.STATE_DATA: new_state,
-			StateHeaders.STATE_NODE: incoming_item
-		}
-	return new_state
+	return self._item_state.register_new_node(incoming_item)
 
 func retrieve_state_data(incoming_guid: String) -> StateData:
 	var data_location: Array[DATA_TYPE] = self._find_in_data(incoming_guid)
@@ -109,60 +91,39 @@ func has_guid(incoming_guid: String) -> bool:
 func get_current_status() -> STATUS:
 	return self._current_game_status
 
-func get_player_states() -> Dictionary:
-	return self._player_states
+func get_player_state() -> StateDataStorage:
+	return self._player_state
 
-func get_item_states() -> Dictionary:
-	return self._item_states
-
-func get_state_data() -> Dictionary:
-	var state_data = {}
-	state_data[StateTypes.GAME_STATUS] = self._current_game_status
-	state_data[StateTypes.PLAYER_STATE] = self._player_states.duplicate(true)
-	state_data[StateTypes.ITEM_STATE] = self._item_states.duplicate(true)
-	if self._current_input_state != null:
-		state_data[StateTypes.INPUT_STATE] = self._current_input_state.get_state_data()
-	if self._current_configuration_state != null:
-		state_data[StateTypes.CONFIGURATION_STATE] = self._current_configuration_state.get_state_data()
-	return state_data
+func get_item_state() -> StateDataStorage:
+	return self._item_state
 
 func duplicate(deep_clone: bool = false) -> GameState:
-	var new_state = GameState.new()
+	var new_state := GameState.new()
 	new_state._current_game_status = self._current_game_status
 	if deep_clone:
-		for player_id in self._player_states.keys():
-			new_state._player_states[player_id] = []
-			for state in self._player_states[player_id]:
-				new_state._player_states[player_id].append(state.duplicate())
-		for item_id in self._item_states.keys():
-			new_state._item_states[item_id] = []
-			for state in self._item_states[item_id]:
-				new_state._item_states[item_id].append(state.duplicate())
-		if self._current_input_state != null:
-			new_state._current_input_state = self._current_input_state.duplicate()
-		if self._current_configuration_state != null:
-			new_state._current_configuration_state = self._current_configuration_state.duplicate()
+		# Use storage-level duplication (assumes StateDataStorage and CameraDataStorage implement duplicate())
+		new_state._player_state = self._player_state.duplicate(true)
+		new_state._item_state = self._item_state.duplicate(true)
+		new_state._camera_state = self._camera_state.duplicate(true)
+		if self._input_state != null:
+			new_state._input_state = self._input_state.duplicate(true)
+		if self._configuration_state != null:
+			new_state._configuration_state = self._configuration_state.duplicate(true)
 	else:
-		new_state._player_states = self._player_states
-		new_state._item_states = self._item_states
-		new_state._current_input_state = self._current_input_state
-		new_state._current_configuration_state = self._current_configuration_state
+		# Shallow reference copy
+		new_state._player_state = self._player_state
+		new_state._item_state = self._item_state
+		new_state._camera_state = self._camera_state
+		new_state._input_state = self._input_state
+		new_state._configuration_state = self._configuration_state
 	return new_state
 
 func print_details() -> void:
-	Logger.debug("GameState Status: \"%s\" Players: \"%d\" Items: \"%d\" Camera States: \"%d\"", [self._get_status_string(), self._player_states.size(), self._item_states.size(), _current_camera_state.storage_size()], self)
+	Logger.debug("GameState Status: \"%s\" Players: \"%d\" Items: \"%d\" Camera States: \"%d\"", [self._get_status_string(), self._player_state.size(), self._item_states.size(), _camera_state.storage_size()], self)
 	# Print camera state details
-	self._current_camera_state.print_details()
-	# Print player state details
-	for player_id in _player_states.keys():
-		var state: StateData = _player_states[player_id]
-		if state.has_method("print_details"):
-			state.print_details()
-	# Print item state details
-	for item_id in self._item_states.keys():
-		var state: StateData = self._item_states[item_id]
-		if state.has_method("print_details"):
-			state.print_details()
+	self._camera_state.print_details()
+	self._player_state.print_details()
+	self._item_states.print_details()
 
 func _get_status_string() -> String:
 	match _current_game_status:
@@ -179,13 +140,13 @@ func _get_status_string() -> String:
 
 func _find_in_data(incoming_guid) -> Array[DATA_TYPE]:
 	var return_array: Array[DATA_TYPE] = []
-	var in_player: bool = self._player_states.has(incoming_guid)
+	var in_player: bool = self._player_state.has_guid(incoming_guid)
 	if in_player:
 		return_array.append(DATA_TYPE.PLAYER)
-	var in_item: bool = self._item_states.has(incoming_guid)
+	var in_item: bool = self._item_state.has_guid(incoming_guid)
 	if in_item:
 		return_array.append(DATA_TYPE.ITEM)
-	var in_camera: bool = self._current_camera_state.has_guid(incoming_guid)
+	var in_camera: bool = self._camera_state.has_guid(incoming_guid)
 	if in_camera:
 		return_array.append(DATA_TYPE.CAMERA)
 	return return_array
@@ -195,27 +156,27 @@ func _retrieve_from_location(incoming_type: DATA_TYPE, incoming_header: StateHea
 	match incoming_type:
 		DATA_TYPE.PLAYER:
 			# TODO Make sure this is refined down in state_data_storage for camera and these eventually
-			if !self._player_states.has(incoming_guid):
+			if !self._player_state.has(incoming_guid):
 				Logger.error(self._MISSING_DATA, [DATA_TYPE.PLAYER, StateHeaders.STATE_DICTIONARY, incoming_guid], self)
-			var player_dictionary: Dictionary = self._player_states.get(incoming_guid)
+			var player_dictionary: Dictionary = self._player_state.get(incoming_guid)
 			if !player_dictionary.has(header_string):
 				Logger.error(self._MISSING_DATA, [DATA_TYPE.PLAYER, header_string, incoming_guid], self)
 				return null
 			return player_dictionary.get(header_string)				
 		DATA_TYPE.ITEM:
 			# TODO Make sure this is refined down in state_data_storage for camera and these eventually
-			if !self._item_states.has(incoming_guid):
+			if !self._item_state.has(incoming_guid):
 				Logger.error(self._MISSING_DATA, [DATA_TYPE.PLAYER, StateHeaders.STATE_DICTIONARY, incoming_guid], self)
-			var item_dictionary: Dictionary = self._item_states.get(incoming_guid)
+			var item_dictionary: Dictionary = self._item_state.get(incoming_guid)
 			if !item_dictionary.has(header_string):
 				Logger.error(self._MISSING_DATA, [DATA_TYPE.ITEM, header_string, incoming_guid], self)
 				return null
 			return item_dictionary.get(header_string)
 		DATA_TYPE.CAMERA:
-			if !self._current_camera_state.has_guid(incoming_guid):
+			if !self._camera_state.has_guid(incoming_guid):
 				Logger.error(self._MISSING_DATA, [DATA_TYPE.CAMERA, header_string, incoming_guid], self)
 				return null
-			return self._current_camera_state.get_header_data(incoming_guid, incoming_header)
+			return self._camera_state.get_header_data(incoming_guid, incoming_header)
 
 func _create_state_data(incoming_node: Node3D, incoming_type: String) -> StateData:
 	var new_state: StateData = null
@@ -248,7 +209,7 @@ func _handle_focus_action(incoming_action: GameAction) -> void:
 			var camera_guid: String = incoming_action.payload.get(GameAction.OWNER_GUID)
 			var focus_value: bool = incoming_action.payload.get(GameAction.FOCUS_RIG)
 			# TODO Get the camera by guid and set its focus state value to the given variable value
-
+			var camera_rig: CameraRig = self._camera_state.get_header_data(camera_guid, StateHeaders.TYPE.NODE)
 		else:
 			Logger.error(self._BAD_ACTION_FORMAT, [incoming_action, GameAction.FOCUS_RIG], self)
 	else:
@@ -258,7 +219,7 @@ func _handle_rig_focus_action(incoming_action: GameAction) -> void:
 	var has_camera_guid: bool = incoming_action.payload.has(GameAction.OWNER_GUID)
 	var has_focus_guid: bool = incoming_action.payload.has(GameAction.TARGET_GUID)
 	if has_camera_guid and has_focus_guid:
-		self._current_camera_state.set_camera_focus(incoming_action.payload.get(GameAction.OWNER_GUID), incoming_action.payload.get(GameAction.TARGET_GUID))
+		self._camera_state.set_camera_focus(incoming_action.payload.get(GameAction.OWNER_GUID), incoming_action.payload.get(GameAction.TARGET_GUID))
 	else:
 		var missing_variable: String = GameAction.OWNER_GUID if !has_camera_guid else ""
 		if missing_variable != "":

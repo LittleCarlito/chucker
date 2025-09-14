@@ -14,15 +14,15 @@ var _is_idle_roatating: bool
 func set_focus(incoming_guid: String) -> void:
 	self.focused_guid = incoming_guid
 
-func duplicate() -> CameraStateData:
+func duplicate(deep_clone: bool = false) -> CameraStateData:
 	var copy: CameraStateData = CameraStateData.new(_owner_guid, _owner_name) # skip init with rig
-	copy.focused_guid = focused_guid
-	copy.is_focused = is_focused
-	copy.freelook_pitch = freelook_pitch
-	copy.freelook_yaw = freelook_yaw
-	copy._min_height_warn = _min_height_warn
-	copy._is_sprinting = _is_sprinting
-	copy._is_idle_roatating = _is_idle_roatating
+	copy.focused_guid = self.focused_guid
+	copy.is_focused = self.is_focused
+	copy.freelook_pitch = self.freelook_pitch
+	copy.freelook_yaw = self.freelook_yaw
+	copy._min_height_warn = self._min_height_warn
+	copy._is_sprinting = self._is_sprinting
+	copy._is_idle_roatating = self._is_idle_roatating
 	return copy
 
 func print_details() -> void:
