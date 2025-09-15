@@ -4,6 +4,7 @@ class_name GroupData
 # General method names
 const GUID: String = "guid"
 const UNKNOWN: String = "unknown"
+const EMPTY: String  = ""
 const LOG_OUTPUT: String = "log_output"
 const SYNC_ASSET: String = "sync_asset"
 # TODO Need to implement this method in all assets that contain CameraContainer

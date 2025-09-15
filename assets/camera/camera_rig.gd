@@ -53,7 +53,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	#if is_focused && integration_point != null:
 	self._maintain_distance()
-	self.focus_camera()
+	self.focus_on_target()
 
 # TODO Not sure on this one; Might still need after state refactor to hold height
 func _physics_process(_delta: float) -> void:
@@ -102,7 +102,7 @@ func focus_guid(incoming_guid: String) -> void:
 
 func set_integration_point(incoming_node: Node3D, incoming_focus: bool) -> void:
 	# Focus node in state
-	if self.has_meta(GroupData.GUID):
+	if self._verify_integrity():
 		if incoming_node.has_meta(GroupData.GUID):
 			var integrate_action_dictionary: Dictionary = {
 				GameAction.OWNER_GUID: self.get_meta(GroupData.GUID),
@@ -132,9 +132,20 @@ func set_integration_point(incoming_node: Node3D, incoming_focus: bool) -> void:
 func get_integration_point() -> Node3D:
 	return self._focus_node
 
+## Clears the integrated point and loses focus
 func deintegrate() -> void:
-	# TODO Update state first only on success do we clear to null
-	self._focus_node = null
+	if self._verify_integrity():
+		# lose integration in state
+		var lose_integration_dictionary: Dictionary = {
+			GameAction.OWNER_GUID: self.get_meta(GroupData.GUID),
+			GameAction.TARGET_GUID: GroupData.EMPTY
+		}
+		var lose_integration_action: GameAction = GameAction.new(self.get_meta(GroupData.GUID), lose_integration_dictionary)
+		GlobalStateController.dispatch(lose_integration_action)
+		# lose focus in state
+		self.set_focus(false)
+		# Clear internal reference
+		self._focus_node = null
 
 func is_current() -> bool:
 	return self.internal_camera.is_current()
@@ -145,7 +156,7 @@ func make_current() -> void:
 func clear_current() -> void:
 	self.internal_camera.clear_current()
 
-func focus_camera() -> void:
+func focus_on_target() -> void:
 	if self._focus_node != null:
 		var focus_vector: Vector3 = self._focus_node.position
 		self.camera_controller.look_at(focus_vector)
@@ -164,20 +175,20 @@ func is_idling() -> bool:
 func set_idle_rotate(incoming_value: bool) -> void:
 	self.is_idle_rotate = incoming_value
 
+func set_focus(incoming_value: bool) -> void:
+	var set_focus_dictionary: Dictionary = {
+		GameAction.OWNER_GUID: self.get_meta(GroupData.GUID),
+		GameAction.FOCUS_RIG : false
+	}
+	var set_focus_action: GameAction = GameAction.new(GameAction.TYPE.FOCUS_RIG, set_focus_dictionary)
+	GlobalStateController.dispatch(set_focus_action)
+
 func is_focusing() -> bool:
+	if self._verify_integrity():
+		var self_guid: String = self.get_meta(GroupData.GUID)
+		var camera_state_data: CameraStateData = GlobalStateController.get_header_data(self_guid, StateHeaders.TYPE.DATA)
+		return camera_state_data.is_focused()
 	return false
-	# TODO Redo to use global state
-	# self.is_focused = true
-
-func enable_focus() -> void:
-	pass
-	# TODO Redo to use global state
-	# self.is_focused = true
-
-func reset_focus() -> void:
-	pass
-	# TODO Redo to use global state
-	# self.is_focused = false
 
 func is_primary_freelook_enabled() -> bool:
 	return self.primary_freelook_enabled
@@ -206,9 +217,17 @@ func enable_zoom() -> void:
 func disable_zoom() -> void:
 	self.is_zoom = false
 
+
+# TODO OOOOO
+#		Need to change this to transition_state
+#		Need to ensure that camera rig has proper transition shit set up
+#			Wheter this means allowing all camera statuses to transition to eachother or restiricting it needs to be done
+#			Ensures that cameras also will only take on camera based statuses unless we specifically program otherwise (to include those in the transition dictionary)
 func change_mode(incoming_mode: GlobalCameraController.TrackingMode) -> void:
 	pass
 	#self.tracking_mode = incoming_mode
+
+
 
 func get_min_height() -> float:
 	return self.min_height

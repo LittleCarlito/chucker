@@ -4,9 +4,9 @@ class_name CameraStateData
 const _MISSING_GUID: String = "Incoming associated rig \"%s\" is missing a GUID"
 
 var focused_guid: String
-var is_focused: bool
 var freelook_pitch: float
 var freelook_yaw: float
+var _is_focused: bool
 var _is_sprinting: bool
 var _is_idle_roatating: bool
 var _is_height_held: bool
@@ -17,7 +17,10 @@ func set_focus(incoming_guid: String) -> void:
 	self.focused_guid = incoming_guid
 
 func set_is_focused(incoming_value: bool) -> void:
-	self.is_focused = incoming_value
+	self._is_focused = incoming_value
+
+func is_focused() -> bool:
+	return self._is_focused
 
 func log(incoming_message: String, incoming_level: Logger.LEVEL) -> void:
 	var is_min_log: bool = self._min_log_detect(incoming_message)
