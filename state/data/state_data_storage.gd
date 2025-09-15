@@ -18,7 +18,20 @@ func register_new_node(incoming_node: Node3D) -> StateData:
 		Logger.error(self._MISSING_GUID, [incoming_node.name], self)
 		return null
 	if incoming_node is CameraRig:
-		var camera_state_data: CameraStateData = CameraStateData.new(incoming_node.get_meta(GroupData.GUID), incoming_node.name)
+
+
+
+		# TODO Here is where you need to be passing in the valid transitions to camera state data 
+		#		We need to ensure that the transition shit is respected and the literal HEART of this state system
+		var camera_state_data: CameraStateData = CameraStateData.new(
+													incoming_node.get_meta(GroupData.GUID), 
+													incoming_node.name,
+													CameraStateConfiguration.VALID_TRANSITIONS
+													)
+		
+
+
+
 		self._state_dictionary[incoming_node.get_meta(GroupData.GUID)] = {
 			StateHeaders.STATE_DATA: camera_state_data,
 			StateHeaders.STATE_NODE: incoming_node

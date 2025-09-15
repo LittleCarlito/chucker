@@ -26,10 +26,11 @@ var _state_windows: Dictionary
 var _valid_transitions: Dictionary
 var _state_values: Dictionary # String key, Float value; Whatever data you need to store (as long as its a (String, float))
 
-func _init(incoming_guid: String, incoming_name: String, incoming_windows: Dictionary = {}) -> void:
+func _init(incoming_guid: String, incoming_name: String, incoming_transitions: Dictionary = {}, incoming_windows: Dictionary = {}) -> void:
 	self._owner_guid = incoming_guid
 	self._owner_name = incoming_name
 	self.name = incoming_name + self._STATE_IDENTIFIER
+	self._valid_transitions = incoming_transitions
 	self._state_windows = incoming_windows
 	_validate_window_configuration()
 
@@ -96,10 +97,10 @@ func try_set_state(to_state: StateConfiguration.STATE) -> bool:
 
 func get_all_states() -> Array[StateConfiguration.STATE]:
 	var all_states: Array[StateConfiguration.STATE] = []
-	for state in _valid_transitions.keys():
+	for state in self._valid_transitions.keys():
 		if not all_states.has(state):
 			all_states.append(state)
-		for transition_state in _valid_transitions[state]:
+		for transition_state in self._valid_transitions[state]:
 			if not all_states.has(transition_state):
 				all_states.append(transition_state)
 	all_states.sort()
@@ -162,9 +163,9 @@ func get_state_value(incoming_value: StateConfiguration.STATE) -> float:
 		return 0
 
 func is_valid_state(incoming_state: StateConfiguration.STATE) -> bool:
-	if _valid_transitions.has(incoming_state):
+	if self._valid_transitions.has(incoming_state):
 		return true
-	for state_transitions in _valid_transitions.values():
+	for state_transitions in self._valid_transitions.values():
 		if state_transitions.has(incoming_state):
 			return true
 	return false
@@ -189,12 +190,12 @@ func print_details() -> void:
 func as_string() -> String:
 	var current_state_name: String = StateUtil.get_state_string(_current_state)
 	var details: String = "StateData[%s]: current_state=%s(%d), duration=%.2f" % [_owner_name, current_state_name, _current_state, _current_state_duration]
-	details += ", windows=%d, transitions=%d, values=%d" % [_state_windows.size(), _valid_transitions.size(), _state_values.size()]
+	details += ", windows=%d, transitions=%d, values=%d" % [_state_windows.size(), self._valid_transitions.size(), _state_values.size()]
 	return details
 
 func _get_sorted_transitions(state: StateConfiguration.STATE) -> Array[StateConfiguration.STATE]:
-	if _valid_transitions.has(state):
-		var transitions: Array[StateConfiguration.STATE] = _valid_transitions[state]
+	if self._valid_transitions.has(state):
+		var transitions: Array[StateConfiguration.STATE] = self._valid_transitions[state]
 		transitions.sort()
 		return transitions
 	else:

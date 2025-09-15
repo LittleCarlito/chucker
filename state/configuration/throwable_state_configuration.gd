@@ -1,48 +1,87 @@
 class_name ThrowableStateConfiguration
 
+
+# TODO None of this shit is right anymore; all of those constants have moved
+
 const WINDOW_VALUES: Dictionary = {
-	ItemState.STATE.READY: 0,
-	ItemState.STATE.WINDUP_UNDERCOOKED: 0.3,
-	ItemState.STATE.WINDUP_VERY_EARLY: 0.6,
-	ItemState.STATE.WINDUP_EARLY: 1,
-	ItemState.STATE.WINDUP_PERFECT: 1.3,
-	ItemState.STATE.WINDUP_LATE: 1.6,
-	ItemState.STATE.WINDUP_VERY_LATE: 2,
-	ItemState.STATE.WINDUP_OVERCOOKED: 2.3
+	StateConfiguration.STATE.READY: 0,
+	StateConfiguration.STATE.WINDUP_UNDERCOOKED: 0.3,
+	StateConfiguration.STATE.WINDUP_VERY_EARLY: 0.6,
+	StateConfiguration.STATE.WINDUP_EARLY: 1,
+	StateConfiguration.STATE.WINDUP_PERFECT: 1.3,
+	StateConfiguration.STATE.WINDUP_LATE: 1.6,
+	StateConfiguration.STATE.WINDUP_VERY_LATE: 2,
+	StateConfiguration.STATE.WINDUP_OVERCOOKED: 2.3
 }
 
 const VALID_TRANSITIONS: Dictionary = {
-	self.STATE.READY: 	[
-				self.STATE.WINDUP_UNDERCOOKED,
-				self.STATE.WINDUP_VERY_EARLY,
-				self.STATE.WINDUP_EARLY,
-				self.STATE.WINDUP_PERFECT,
-				self.STATE.WINDUP_LATE,
-				self.STATE.WINDUP_VERY_LATE,
-				self.STATE.WINDUP_OVERCOOKED
+	StateConfiguration.STATE.READY: 	[
+				StateConfiguration.STATE.WINDUP_UNDERCOOKED,
+				StateConfiguration.STATE.WINDUP_VERY_EARLY,
+				StateConfiguration.STATE.WINDUP_EARLY,
+				StateConfiguration.STATE.WINDUP_PERFECT,
+				StateConfiguration.STATE.WINDUP_LATE,
+				StateConfiguration.STATE.WINDUP_VERY_LATE,
+				StateConfiguration.STATE.WINDUP_OVERCOOKED
 	],
-	self.STATE.WINDUP_UNDERCOOKED: [self.STATE.READY, self.STATE.WINDUP_VERY_EARLY, self.STATE.THROWING_UNDER],
-	self.STATE.WINDUP_VERY_EARLY: [self.STATE.READY, self.STATE.WINDUP_EARLY, self.STATE.THROWING_UNDER],
-	self.STATE.WINDUP_EARLY: [self.STATE.READY, self.STATE.WINDUP_PERFECT, self.STATE.THROWING_UNDER],
-	self.STATE.WINDUP_PERFECT: [self.STATE.READY, self.STATE.WINDUP_LATE, self.STATE.THROWING_PERFECT],
-	self.STATE.WINDUP_LATE: [self.STATE.READY, self.STATE.WINDUP_VERY_LATE, self.STATE.THROWING_OVER],
-	self.STATE.WINDUP_VERY_LATE: [self.STATE.READY, self.STATE.WINDUP_OVERCOOKED, self.STATE.THROWING_OVER],
-	self.STATE.WINDUP_OVERCOOKED: [self.STATE.READY, self.STATE.THROWING_OVER],
-	self.STATE.THROWING_UNDER: [self.STATE.READY, self.STATE.FOLLOW_THRU_UNDER],
-	self.STATE.THROWING_PERFECT: [self.STATE.READY, self.STATE.FOLLOW_THRU_PERFECT],
-	self.STATE.THROWING_OVER: [self.STATE.READY, self.STATE.FOLLOW_THRU_OVER],
-	self.STATE.FOLLOW_THRU_UNDER: [self.STATE.READY],
-	self.STATE.FOLLOW_THRU_PERFECT: [self.STATE.READY],
-	self.STATE.FOLLOW_THRU_OVER: [self.STATE.READY]
+	StateConfiguration.STATE.WINDUP_UNDERCOOKED: [
+				StateConfiguration.STATE.READY, 
+				StateConfiguration.STATE.WINDUP_VERY_EARLY, 
+				StateConfiguration.STATE.THROWING_UNDER
+	],
+	StateConfiguration.STATE.WINDUP_VERY_EARLY: [
+				StateConfiguration.STATE.READY,
+				StateConfiguration.STATE.WINDUP_EARLY,
+				StateConfiguration.STATE.THROWING_UNDER
+	],
+	StateConfiguration.STATE.WINDUP_EARLY: [
+				StateConfiguration.STATE.READY, 
+				StateConfiguration.STATE.WINDUP_PERFECT, 
+				StateConfiguration.STATE.THROWING_UNDER
+	],
+	StateConfiguration.STATE.WINDUP_PERFECT: [
+				StateConfiguration.STATE.READY, 
+				StateConfiguration.STATE.WINDUP_LATE, 
+				StateConfiguration.STATE.THROWING_PERFECT
+	],
+	StateConfiguration.STATE.WINDUP_LATE: [
+				StateConfiguration.STATE.READY, 
+				StateConfiguration.STATE.WINDUP_VERY_LATE, 
+				StateConfiguration.STATE.THROWING_OVER
+	],
+	StateConfiguration.STATE.WINDUP_VERY_LATE: [
+				StateConfiguration.STATE.READY, 
+				StateConfiguration.STATE.WINDUP_OVERCOOKED, 
+				StateConfiguration.STATE.THROWING_OVER
+	],
+	StateConfiguration.STATE.WINDUP_OVERCOOKED: [
+				StateConfiguration.STATE.READY, 
+				StateConfiguration.STATE.THROWING_OVER
+	],
+	StateConfiguration.STATE.THROWING_UNDER: [
+				StateConfiguration.STATE.READY, 
+				StateConfiguration.STATE.FOLLOW_THRU_UNDER
+	],
+	StateConfiguration.STATE.THROWING_PERFECT: [
+				StateConfiguration.STATE.READY, 
+				StateConfiguration.STATE.FOLLOW_THRU_PERFECT
+	],
+	StateConfiguration.STATE.THROWING_OVER: [
+				StateConfiguration.STATE.READY, 
+				StateConfiguration.STATE.FOLLOW_THRU_OVER
+	],
+	StateConfiguration.STATE.FOLLOW_THRU_UNDER: [StateConfiguration.STATE.READY],
+	StateConfiguration.STATE.FOLLOW_THRU_PERFECT: [StateConfiguration.STATE.READY],
+	StateConfiguration.STATE.FOLLOW_THRU_OVER: [StateConfiguration.STATE.READY]
 }
 
 const SPIN_VALUES: Dictionary = {
-	ItemState.STATE.READY: 0,
-	ItemState.STATE.WINDUP_UNDERCOOKED: 0.2,
-	ItemState.STATE.WINDUP_VERY_EARLY: 0.3,
-	ItemState.STATE.WINDUP_EARLY: .6,
-	ItemState.STATE.WINDUP_PERFECT: 1.0,
-	ItemState.STATE.WINDUP_LATE: 1.4,
-	ItemState.STATE.WINDUP_VERY_LATE: 1.7,
-	ItemState.STATE.WINDUP_OVERCOOKED: 2.0
+	StateConfiguration.STATE.READY: 0,
+	StateConfiguration.STATE.WINDUP_UNDERCOOKED: 0.2,
+	StateConfiguration.STATE.WINDUP_VERY_EARLY: 0.3,
+	StateConfiguration.STATE.WINDUP_EARLY: .6,
+	StateConfiguration.STATE.WINDUP_PERFECT: 1.0,
+	StateConfiguration.STATE.WINDUP_LATE: 1.4,
+	StateConfiguration.STATE.WINDUP_VERY_LATE: 1.7,
+	StateConfiguration.STATE.WINDUP_OVERCOOKED: 2.0
 }
