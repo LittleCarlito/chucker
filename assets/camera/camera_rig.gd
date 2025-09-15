@@ -219,10 +219,10 @@ func disable_zoom() -> void:
 
 
 # TODO OOOOO
-#		Need to change this to transition_state
-#		Need to ensure that camera rig has proper transition shit set up
-#			Wheter this means allowing all camera statuses to transition to eachother or restiricting it needs to be done
-#			Ensures that cameras also will only take on camera based statuses unless we specifically program otherwise (to include those in the transition dictionary)
+# TODO Refactor to be transition_state (or whatever the existing function for asset state stuff, if it exists, is called)
+#		Ensure transition configuration shit is respected
+#			If bad transition is attempted it should fail
+#			Maybe after having it working try having the configuration not allow transition and test
 func change_mode(incoming_mode: GlobalCameraController.TrackingMode) -> void:
 	pass
 	#self.tracking_mode = incoming_mode

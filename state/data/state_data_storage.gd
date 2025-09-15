@@ -18,25 +18,31 @@ func register_new_node(incoming_node: Node3D) -> StateData:
 		Logger.error(self._MISSING_GUID, [incoming_node.name], self)
 		return null
 	if incoming_node is CameraRig:
-
-
-
-		# TODO Here is where you need to be passing in the valid transitions to camera state data 
-		#		We need to ensure that the transition shit is respected and the literal HEART of this state system
+		# TODO Create a test to ensure transitions are respected
 		var camera_state_data: CameraStateData = CameraStateData.new(
 													incoming_node.get_meta(GroupData.GUID), 
 													incoming_node.name,
-													CameraStateConfiguration.VALID_TRANSITIONS
+													CameraStateConfiguration.VALID_TRANSITIONS,
+													CameraStateConfiguration.SPIN_VALUES
 													)
-		
-
-
-
 		self._state_dictionary[incoming_node.get_meta(GroupData.GUID)] = {
 			StateHeaders.STATE_DATA: camera_state_data,
 			StateHeaders.STATE_NODE: incoming_node
 		}
 		return camera_state_data.duplicate(true)
+	elif incoming_node is ThrowableItem:
+		var throwable_state_data: StateData =  StateData.new(
+									incoming_node.get_meta(GroupData.GUID),
+									incoming_node.name,
+									ThrowableStateConfiguration.VALID_TRANSITIONS,
+									ThrowableStateConfiguration.SPIN_VALUES,
+									ThrowableStateConfiguration.WINDOW_VALUES
+									)
+		self._state_dictionary[incoming_node.get_meta(GroupData.GUID)] = {
+			StateHeaders.STATE_DATA: throwable_state_data,
+			StateHeaders.STATE_NODE: incoming_node
+		}
+		return throwable_state_data.duplicate(true)
 	else:
 		var state_data: StateData = StateData.new(incoming_node.get_meta(GroupData.GUID), incoming_node.name)
 		self._state_dictionary[incoming_node.get_meta(GroupData.GUID)] = {

@@ -22,17 +22,24 @@ var _owner_name: String
 var _owner_type: String
 var _current_state: StateConfiguration.STATE
 var _current_state_duration: float
-var _state_windows: Dictionary
+# State data dictionaries
 var _valid_transitions: Dictionary
 var _state_values: Dictionary # String key, Float value; Whatever data you need to store (as long as its a (String, float))
+var _state_windows: Dictionary
 
-func _init(incoming_guid: String, incoming_name: String, incoming_transitions: Dictionary = {}, incoming_windows: Dictionary = {}) -> void:
+func _init(
+			incoming_guid: String, incoming_name: String, 
+			incoming_transitions: Dictionary = {}, 
+			incoming_values: Dictionary = {},
+			incoming_windows: Dictionary = {}
+			) -> void:
 	self._owner_guid = incoming_guid
 	self._owner_name = incoming_name
 	self.name = incoming_name + self._STATE_IDENTIFIER
 	self._valid_transitions = incoming_transitions
-	self._state_windows = incoming_windows
-	_validate_window_configuration()
+	self._state_values = incoming_values
+	if self._validate_window_configuration(incoming_windows):
+		self._state_windows = incoming_windows
 
 func reset_state() -> StateConfiguration.STATE:
 	var lowest_state: StateConfiguration.STATE = StateConfiguration.STATE.READY
@@ -226,14 +233,14 @@ func _find_previous_valid_state() -> StateConfiguration.STATE:
 			return s
 	return _current_state
 
-func _validate_window_configuration() -> bool:
-	if _state_windows.is_empty():
+func _validate_window_configuration(incoming_windows: Dictionary) -> bool:
+	if incoming_windows.is_empty():
 		return true
-	var sorted_states: Array = _state_windows.keys()
+	var sorted_states: Array = incoming_windows.keys()
 	sorted_states.sort()
 	var previous_value: float = -INF
 	for state in sorted_states:
-		var current_value: float = _state_windows[state]
+		var current_value: float = incoming_windows[state]
 		if current_value < previous_value:
 			var state_string: String = StateUtil.get_state_string(state)
 			Logger.warn(_DECREASING_WINDOW, [_owner_name, state_string, previous_value, current_value], self)
