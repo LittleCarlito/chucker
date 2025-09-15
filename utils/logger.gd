@@ -42,6 +42,7 @@ const OR_SEPARATOR: String = " OR "
 const EITHER_STARTER: String = "Either "
 const NO_METHOD_FOUND: String = "No method \"%s\" found on object \"%s\""
 
+const LOG_LEVEL_TYPE: String = "LOG LEVEL TYPE"
 enum LEVEL {
 	DEBUG,
 	INFO,

@@ -37,6 +37,7 @@ const _BAD_ACTION_FORMAT: String = "Incoming action \"%s\" was missing property 
 const _MISSING_GUID_STATE: String = "GUID \"%s\" state dictionary is missing %s"
 
 const _MISSING_DATA: String = "%s dictionary is missing %s for guid \"%s\""
+const _UNSUPPORTED_TYPE: String = "Incoming action type \"%s\" is not supported"
 
 signal state_updated(update_details: Dictionary)
 
@@ -199,8 +200,11 @@ func _handle_action(incoming_action: GameAction) -> void:
 			self._handle_rig_focus_action(incoming_action)
 		GameAction.TYPE.FOCUS_RIG:
 			self._handle_focus_action(incoming_action)
+		GameAction.TYPE.WARN:
+			self._handle_warn_action(incoming_action)
 		_:
-			pass
+			var type_string: String = GameAction.get_type_string(incoming_action.action_type)
+			Logger.error(self._UNSUPPORTED_TYPE, [type_string], self)
 	self._schedule_state_update(incoming_action)
 
 func _handle_focus_action(incoming_action: GameAction) -> void:
@@ -216,16 +220,32 @@ func _handle_focus_action(incoming_action: GameAction) -> void:
 		Logger.error(self._BAD_ACTION_FORMAT, [incoming_action, GameAction.OWNER_GUID], self)
 
 func _handle_rig_focus_action(incoming_action: GameAction) -> void:
-	var has_camera_guid: bool = incoming_action.payload.has(GameAction.OWNER_GUID)
-	var has_focus_guid: bool = incoming_action.payload.has(GameAction.TARGET_GUID)
-	if has_camera_guid and has_focus_guid:
-		self._camera_state.set_camera_focus(incoming_action.payload.get(GameAction.OWNER_GUID), incoming_action.payload.get(GameAction.TARGET_GUID))
+	var missing_keys := _get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID, GameAction.TARGET_GUID])
+	if missing_keys.is_empty():
+		_camera_state.set_camera_focus(
+			incoming_action.payload[GameAction.OWNER_GUID],
+			incoming_action.payload[GameAction.TARGET_GUID]
+			)
 	else:
-		var missing_variable: String = GameAction.OWNER_GUID if !has_camera_guid else ""
-		if missing_variable != "":
-			missing_variable += "; "
-		missing_variable += GameAction.TARGET_GUID if !has_focus_guid else ""
-		Logger.error(self._BAD_ACTION_FORMAT, [incoming_action, missing_variable], self)
+		Logger.error(_BAD_ACTION_FORMAT, [incoming_action, missing_keys], self)
+
+func _handle_warn_action(incoming_action: GameAction) -> void:
+	var missing_keys := _get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID, GameAction.MESSAGE])
+	if missing_keys.is_empty():
+		var incoming_guid: String = incoming_action.payload[GameAction.OWNER_GUID]
+		var incoming_message: String = incoming_action.payload[GameAction.MESSAGE]
+		var guid_state_data: StateData = self.retrieve_state_data(incoming_guid)
+		guid_state_data.log(incoming_message, Logger.LEVEL.WARN)
+	else:
+		Logger.error(_BAD_ACTION_FORMAT, [incoming_action, missing_keys], self)
+
+# Shared helper
+func _get_missing_keys(payload: Dictionary, required_keys: Array[String]) -> String:
+	var missing: Array[String] = []
+	for key in required_keys:
+		if not payload.has(key):
+			missing.append(key)
+	return "; ".join(missing)
 
 func _schedule_state_update(successful_action: GameAction) -> void:
 	var action_owner_guid: String = successful_action.payload.get(GameAction.OWNER_GUID)

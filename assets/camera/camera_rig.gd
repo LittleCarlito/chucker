@@ -9,6 +9,7 @@ const _INTEGRATIN_DEBUG: String = "Now integrated with guid \"%s\" with focus se
 const _NO_INTEGRATION: String = "No integration point for rig to focus on"
 
 const _MISSING_DATA: String = "Missing %s data"
+const _MIN_HEIGHT_WARN: String = "Is now having its height artificially held to min height of \"%f\""
 
 # TODO Break camera down into multiple extension classes and have these up the path with the functions that make sense
 # TODO Move majority of this to state
@@ -56,13 +57,17 @@ func _process(_delta: float) -> void:
 
 # TODO Not sure on this one; Might still need after state refactor to hold height
 func _physics_process(_delta: float) -> void:
-	var is_height_held: bool = false
 	if self.min_height != -NUMBERS.FLOAT16_MAX:
-		is_height_held = self.min_height > self.camera_controller.global_position.y
+		var is_height_held: bool = self.min_height > self.camera_controller.global_position.y
 		self.camera_controller.global_position.y = max(self.min_height, self.camera_controller.global_position.y)
-	#if is_height_held and not _min_height_warn:
-		#push_warning("Camera rig height being force held")
-		#self._min_height_warn = true
+		if is_height_held && self._verify_integrity():
+			var height_warning: String = self._MIN_HEIGHT_WARN % self.min_height
+			var warn_payload: Dictionary = {
+				GameAction.OWNER_GUID: self.get_meta(GroupData.GUID),
+				GameAction.MESSAGE: height_warning
+			}
+			var warn_action: GameAction = GameAction.new(GameAction.TYPE.WARN, warn_payload)
+			GlobalStateController.dispatch(warn_action)
 
 func idle_rotate(delta: float, rotation_speed: float = CameraConfig.get_idle_rotate_speed()) -> void:
 	var rotation_amount: float = delta * rotation_speed

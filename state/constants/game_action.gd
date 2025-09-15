@@ -4,11 +4,29 @@ class_name GameAction
 enum TYPE {
 	SET_RIG_FOCUS,
 	FOCUS_RIG,
+	WARN,
 	UKNOWN
 }
+const GAME_ACTION_TYPE: String = "GAME ACTION TYPE"
+const _SET_RIG_FOCUS: String = "Set Rig Focus"
+const _FOCUS_RIG: String = "Focus Rig"
+const _WARN: String = "Warn"
 
+static func get_type_string(incoming_type: TYPE) -> String:
+	match incoming_type:
+		TYPE.SET_RIG_FOCUS:
+			return _SET_RIG_FOCUS
+		TYPE.FOCUS_RIG:
+			return _FOCUS_RIG
+		TYPE.WARN:
+			return _WARN
+		_:
+			return GroupData.UNKNOWN
+
+# General headers
 const OWNER_GUID: String = "owner_guid"
 const TARGET_GUID: String = "target_guid"
+const MESSAGE: String = "message"
 # Camera headers
 const FOCUS_RIG: String = "focus_rig"
 

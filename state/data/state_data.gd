@@ -1,4 +1,5 @@
 # Base state structure shared between players, cameras, and items containing position, velocity, and core properties
+extends Node
 class_name StateData
 
 var _NO_VALID_TRANSITION: String = "Current item \"%s\" with state \"%s\" does not have valid transition states"
@@ -8,9 +9,11 @@ var _MIN_VALID_STATE: String = "Item \"%s\" has reached its minimum configured s
 var _NO_VALUE: String = "Item \"%s\" does not have a value assoicated to incoming state \"%s\""
 var _DECREASING_WINDOW: String = "Item \"%s\" has decreasing window values at state \"%s\": previous value \"%f\" > current value \"%f\""
 var _CLOSEST_STATE_NOT_FOUND: String = "Item \"%s\" could not find closest state to value \"%f\" - no state values configured"
+const _UNSUPPORTED_TYPE: String = "Incoming %s type \"%s\" is not supported; %s"
 
 const _NAME: String = "[StateData]"
 const _GET_STATE_DATA: String = "get_state_data"
+const _STATE_IDENTIFIER: String = "_state"
 
 signal state_change(new_state: StateData)
 
@@ -26,6 +29,7 @@ var _state_values: Dictionary # String key, Float value; Whatever data you need 
 func _init(incoming_guid: String, incoming_name: String, incoming_windows: Dictionary = {}) -> void:
 	self._owner_guid = incoming_guid
 	self._owner_name = incoming_name
+	self.name = incoming_name + self._STATE_IDENTIFIER
 	self._state_windows = incoming_windows
 	_validate_window_configuration()
 
@@ -51,14 +55,6 @@ func get_state_data() -> Dictionary:
 		StateHeaders.VALID_TRANSITIONS: _valid_transitions.duplicate(true),
 		StateHeaders.STATE_VALUES: _state_values.duplicate(true),
 	}
-
-func duplicate(deep_clone: bool = false) -> StateData:
-	var new_state: StateData = StateData.new(self._owner_guid, self._owner_name, self._state_windows.duplicate(deep_clone))
-	new_state._current_state = _current_state
-	new_state._current_state_duration = _current_state_duration
-	new_state._valid_transitions = _valid_transitions.duplicate(deep_clone)
-	new_state._state_values = _state_values.duplicate(deep_clone)
-	return new_state
 
 func get_current_state() -> StateConfiguration.STATE:
 	return self._current_state
@@ -172,6 +168,19 @@ func is_valid_state(incoming_state: StateConfiguration.STATE) -> bool:
 		if state_transitions.has(incoming_state):
 			return true
 	return false
+
+func log(incoming_message: String, incoming_level: Logger.LEVEL) -> void:
+	match incoming_level:
+		Logger.LEVEL.INFO:
+			Logger.info(incoming_message, [], self)
+		Logger.LEVEL.DEBUG:
+			Logger.debug(incoming_message, [], self)
+		Logger.LEVEL.WARN:
+			Logger.warn(incoming_message, [], self)
+		Logger.LEVEL.ERROR:
+			Logger.error(incoming_message, [], self)
+		_:
+			Logger.error(self._UNSUPPORTED_TYPE, [Logger.LOG_LEVEL_TYPE, incoming_level, ], self)
 
 func print_details() -> void:
 	var current_state_name: String = StateUtil.get_state_string(_current_state)

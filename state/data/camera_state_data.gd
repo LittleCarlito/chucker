@@ -7,9 +7,11 @@ var focused_guid: String
 var is_focused: bool
 var freelook_pitch: float
 var freelook_yaw: float
-var _min_height_warn: bool = false
 var _is_sprinting: bool
 var _is_idle_roatating: bool
+var _is_height_held: bool
+var _min_height_warn: bool = false
+
 
 func set_focus(incoming_guid: String) -> void:
 	self.focused_guid = incoming_guid
@@ -17,16 +19,19 @@ func set_focus(incoming_guid: String) -> void:
 func set_is_focused(incoming_value: bool) -> void:
 	self.is_focused = incoming_value
 
-func duplicate(deep_clone: bool = false) -> CameraStateData:
-	var copy: CameraStateData = CameraStateData.new(_owner_guid, _owner_name) # skip init with rig
-	copy.focused_guid = self.focused_guid
-	copy.is_focused = self.is_focused
-	copy.freelook_pitch = self.freelook_pitch
-	copy.freelook_yaw = self.freelook_yaw
-	copy._min_height_warn = self._min_height_warn
-	copy._is_sprinting = self._is_sprinting
-	copy._is_idle_roatating = self._is_idle_roatating
-	return copy
+func log(incoming_message: String, incoming_level: Logger.LEVEL) -> void:
+	var is_min_log: bool = self._min_log_detect(incoming_message)
+	if is_min_log and not _min_height_warn:
+		super.log(incoming_message, incoming_level)
+		self._min_height_warn = true
+	else:
+		super.log(incoming_message, incoming_level)
 
 func print_details() -> void:
 	Logger.debug("CameraStateData \"%s\" Focused: \"%s\" IsFocused: \"%s\" Pitch: \"%.2f\" Yaw: \"%.2f\" Sprinting: \"%s\"", [_owner_name, focused_guid, is_focused, freelook_pitch, freelook_yaw, _is_sprinting], self)
+
+func _min_log_detect(incoming_message: String) -> bool:
+	var regex = RegEx.new()
+	var pattern = CameraRig._MIN_HEIGHT_WARN.replace("%f", ".*")
+	regex.compile(pattern)
+	return regex.search(incoming_message) != null
