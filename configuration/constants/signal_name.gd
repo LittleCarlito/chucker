@@ -73,6 +73,5 @@ const WASD_INPUT_DIRECTION: String = "wasd_input_direction" # incoming_direction
 
 # Global camera controller
 const REQUEST_CAMERA: String = "request_camera" # new_node: Node3D
-const CHANGE_MODE: String = "change_mode" # new_mode: GlobalCameraController.TrackingMode
 const IS_FOCUSING: String = "is_focusing" # incoming_focus: bool
 const IS_IDLING: String = "is_idling" # incoming_value: bool

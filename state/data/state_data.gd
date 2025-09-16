@@ -89,9 +89,11 @@ func can_transition(to_state: StateConfiguration.STATE) -> bool:
 		if current_valid_transitions.has(to_state):
 			return true
 		else:
-			Logger.debug(_INVALID_TRANSITION, [self._owner_name, to_state, self._current_state], self)
+			var to_state_string: String = StateConfiguration.get_state_string(to_state)
+			var current_state_string: String = StateConfiguration.get_state_string(self._current_state)
+			Logger.warn(_INVALID_TRANSITION, [self._owner_name, to_state_string, current_state_string], self)
 	else:
-		Logger.warn(self._NO_VALID_TRANSITION, [self._owner_name, self._current_state], self)
+		Logger.error(self._NO_VALID_TRANSITION, [self._owner_name, self._current_state], self)
 	return false
 
 func try_set_state(to_state: StateConfiguration.STATE) -> bool:
@@ -168,6 +170,9 @@ func get_state_value(incoming_value: StateConfiguration.STATE) -> float:
 		var incoming_state_string: String = StateUtil.get_state_string(incoming_value)
 		Logger.warn(self._NO_VALUE, [self._owner_name, incoming_state_string], self)
 		return 0
+
+func get_owner_guid() -> String:
+	return self._owner_guid
 
 func is_valid_state(incoming_state: StateConfiguration.STATE) -> bool:
 	if self._valid_transitions.has(incoming_state):

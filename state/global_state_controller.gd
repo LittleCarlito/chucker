@@ -6,6 +6,8 @@ extends Node
 ##		Logs their interactions and status of their attempts with reasoning
 
 const _UNSUPPORTED_HEADER: String = "Incoming header type \"%s\" was not supported; Incoming header enum value \"%d\""
+const _UNSUPPORTED_TYPE: String = "Incoming type \"%s\" is not supported; %s"
+const _NO_PRIMARY: String = "Items do not have a \"primary\" to retireve"
 
 signal state_updated(update_details: Dictionary)
 
@@ -45,6 +47,9 @@ func get_header_data(incoming_guid: String, header_type: StateHeaders.TYPE):
 		_:
 			var type_string: String = StateHeaders.get_type_string(header_type)
 			Logger.error(self._UNSUPPORTED_HEADER, [type_string, header_type], self)
+
+func get_primary_guid(incoming_type: GameState.DATA_TYPE) -> String:
+	return self._game_state.get_primary_guid(incoming_type)
 
 func is_main_menu() -> bool:
 	return self._game_state.get_current_status() == GameState.STATUS.MAIN_MENU

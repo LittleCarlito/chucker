@@ -10,6 +10,7 @@ const _NO_INTEGRATION: String = "No integration point for rig to focus on"
 
 const _MISSING_DATA: String = "Missing %s data"
 const _MIN_HEIGHT_WARN: String = "Is now having its height artificially held to min height of \"%f\""
+const _SUCCESSFUL_TRANSITION: String = "Successfully transitioned from \"%s\" state to \"%s\""
 
 # TODO Break camera down into multiple extension classes and have these up the path with the functions that make sense
 # TODO Move majority of this to state
@@ -29,7 +30,6 @@ func _ready() -> void:
 	self._maintain_distance()
 	# Camera signal connections
 	GlobalCameraController.connect(SIGNAL_NAME.REQUEST_CAMERA, _handle_camera_request)
-	GlobalCameraController.connect(SIGNAL_NAME.CHANGE_MODE, change_mode)
 	GlobalCameraController.connect(SIGNAL_NAME.IS_FOCUSING, _handle_rig_focus)
 	GlobalCameraController.connect(SIGNAL_NAME.HOLD_HEIGHT, set_min_height)
 	GlobalCameraController.connect(SIGNAL_NAME.IS_IDLING, set_idle_rotate)
@@ -217,17 +217,16 @@ func enable_zoom() -> void:
 func disable_zoom() -> void:
 	self.is_zoom = false
 
-
-# TODO OOOOO
-# TODO Refactor to be transition_state (or whatever the existing function for asset state stuff, if it exists, is called)
-#		Ensure transition configuration shit is respected
-#			If bad transition is attempted it should fail
-#			Maybe after having it working try having the configuration not allow transition and test
-func change_mode(incoming_mode: GlobalCameraController.TrackingMode) -> void:
-	pass
-	#self.tracking_mode = incoming_mode
-
-
+# TODO Test trying to set wrong state; ensure it doesn't work and logs
+func transition_state(incoming_state: StateConfiguration.STATE) -> void:
+	if self._verify_integrity():
+		var camera_guid: String = self.get_meta(GroupData.GUID)
+		var camera_state_data: CameraStateData = GlobalStateController.get_header_data(camera_guid, StateHeaders.TYPE.DATA)
+		var old_state: StateConfiguration.STATE = camera_state_data.get_current_state()
+		if camera_state_data.try_set_state(incoming_state):
+			var from_state_string: String = StateConfiguration.get_state_string(old_state)
+			var to_state_string: String = StateConfiguration.get_state_string(incoming_state)
+			Logger.debug(self._SUCCESSFUL_TRANSITION, [from_state_string, to_state_string], self)
 
 func get_min_height() -> float:
 	return self.min_height
@@ -268,7 +267,7 @@ func _maintain_distance() -> void:
 	else:
 		Logger.warn(self._NO_INTEGRATION, [], self)
 
-# TODO Again like above should be having everything it needs pushed down from state
+# TODO Again like above function should be having everything it needs pushed down from state
 func _update_camera_position() -> void:
 	if self._verify_integrity():
 		var camera_state: StateData = GlobalStateController.get_header_data(self.get_meta(GroupData.GUID), StateHeaders.TYPE.DATA)

@@ -12,7 +12,6 @@ var _is_idle_roatating: bool
 var _is_height_held: bool
 var _min_height_warn: bool = false
 
-
 func set_focus(incoming_guid: String) -> void:
 	self.focused_guid = incoming_guid
 

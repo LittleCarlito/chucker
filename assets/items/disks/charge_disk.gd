@@ -21,6 +21,10 @@ var stopwatch: Stopwatch
 #				Zooming
 #				Idle rotating
 
+# TODO Delete GlobalCameraController
+#			Move everythign it does to GlobalStateController
+# TODO Cleanup enums for TYPES, DATA_TYPES, etc
+#			Spread out over a few files
 # TODO Update change state update to allow for array of successful state updates for single guid
 # OUTLINE FOR "Getting everything workign again" with state
 #	TODO	StateData needs to have CameraState stored within it

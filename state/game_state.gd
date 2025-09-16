@@ -38,6 +38,11 @@ const _MISSING_GUID_STATE: String = "GUID \"%s\" state dictionary is missing %s"
 
 const _MISSING_DATA: String = "%s dictionary is missing %s for guid \"%s\""
 const _UNSUPPORTED_TYPE: String = "Incoming action type \"%s\" is not supported"
+const _EMPTY_DICTIONARY: String = "Cannot retrieve %s because %s is empty"
+
+const _PRIMARY_GUID: String = "Primary GUID"
+const _PLAYER_DICTIONARY: String = "Player Dictionary"
+const _CAMERA_DICTIONARY: String = "Camera Dictionary"
 
 signal state_updated(update_details: Dictionary)
 
@@ -67,6 +72,7 @@ func register_player(incoming_player: Node3D) -> StateData:
 func register_asset(incoming_item: Node3D) -> StateData:
 	return self._item_state.register_new_node(incoming_item)
 
+# TODO Add null handling to callers
 func retrieve_state_data(incoming_guid: String) -> StateData:
 	var data_location: Array[DATA_TYPE] = self._find_in_data(incoming_guid)
 	if data_location.is_empty():
@@ -74,9 +80,9 @@ func retrieve_state_data(incoming_guid: String) -> StateData:
 		return null
 	if data_location.size() > 1:
 		Logger.warn(self._DUPLICATE_GUID, [data_location], self)
-	var state_data: StateData = self._retrieve_from_location(data_location[0], StateHeaders.TYPE.DATA, incoming_guid)
-	return state_data
+	return self._retrieve_from_location(data_location[0], StateHeaders.TYPE.DATA, incoming_guid)
 
+# TODO Add null handling to callers
 func retrieve_node(incoming_guid: String) -> Node3D:
 	var data_location: Array[DATA_TYPE] = self._find_in_data(incoming_guid)
 	if data_location.is_empty():
@@ -97,6 +103,32 @@ func get_player_state() -> StateDataStorage:
 
 func get_item_state() -> StateDataStorage:
 	return self._item_state
+
+func get_primary_guid(incoming_type: GameState.DATA_TYPE) -> String:
+	match incoming_type:
+		GameState.DATA_TYPE.PLAYER:
+			if self._player_state.is_empty:
+				Logger.error(self._EMPTY_DICTIONARY, [self._PRIMARY_GUID, self._PLAYER_DICTIONARY], self)
+				return GroupData.EMPTY
+			else:
+				var player_keys: Array[String] = self._player_state.keys()
+				var primary_player_data: StateData = self._player_state[player_keys[0]]
+				return primary_player_data.get_owner_guid()
+		GameState.DATA_TYPE.CAMERA:
+			if self._camera_state.is_empty():
+				Logger.error(self._EMPTY_DICTIONARY, [self._PRIMARY_GUID, self._CAMERA_DICTIONARY], self)
+				return GroupData.EMPTY
+			else:
+				var camera_keys: Array = self._camera_state.keys()
+				var primary_camera_data: StateData = self._camera_state.get_header_data(camera_keys[0], StateHeaders.TYPE.DATA)
+				return primary_camera_data.get_owner_guid()
+		GameState.DATA_TYPE.ITEM:
+			Logger.error(self._NO_PRIMARY, [], self)
+			return GroupData.EMPTY
+		_:
+			var type_string: String = GameState.get_data_type_string(incoming_type)
+			Logger.error(self._UNSUPPORTED_TYPE, [type_string, incoming_type], self)
+	return GroupData.EMPTY
 
 func duplicate(deep_clone: bool = false) -> GameState:
 	var new_state := GameState.new()
@@ -154,30 +186,29 @@ func _find_in_data(incoming_guid) -> Array[DATA_TYPE]:
 
 func _retrieve_from_location(incoming_type: DATA_TYPE, incoming_header: StateHeaders.TYPE, incoming_guid: String):
 	var header_string: String = StateHeaders.get_type_string(incoming_header)
+	# TODO Shoud do a check on the incoming header type to ensure it is something we store in a state dictionary
 	match incoming_type:
 		DATA_TYPE.PLAYER:
 			# TODO Make sure this is refined down in state_data_storage for camera and these eventually
-			if !self._player_state.has(incoming_guid):
+			if !self._player_state.has_guid(incoming_guid):
 				Logger.error(self._MISSING_DATA, [DATA_TYPE.PLAYER, StateHeaders.STATE_DICTIONARY, incoming_guid], self)
-			var player_dictionary: Dictionary = self._player_state.get(incoming_guid)
-			if !player_dictionary.has(header_string):
-				Logger.error(self._MISSING_DATA, [DATA_TYPE.PLAYER, header_string, incoming_guid], self)
 				return null
-			return player_dictionary.get(header_string)				
+			return self._player_state.get_header_data(incoming_guid, incoming_header)			
 		DATA_TYPE.ITEM:
 			# TODO Make sure this is refined down in state_data_storage for camera and these eventually
-			if !self._item_state.has(incoming_guid):
+			if !self._item_state.has_guid(incoming_guid):
 				Logger.error(self._MISSING_DATA, [DATA_TYPE.PLAYER, StateHeaders.STATE_DICTIONARY, incoming_guid], self)
-			var item_dictionary: Dictionary = self._item_state.get(incoming_guid)
-			if !item_dictionary.has(header_string):
-				Logger.error(self._MISSING_DATA, [DATA_TYPE.ITEM, header_string, incoming_guid], self)
 				return null
-			return item_dictionary.get(header_string)
+			return self._item_state.get_header_data(incoming_guid, incoming_header)
 		DATA_TYPE.CAMERA:
 			if !self._camera_state.has_guid(incoming_guid):
 				Logger.error(self._MISSING_DATA, [DATA_TYPE.CAMERA, header_string, incoming_guid], self)
 				return null
 			return self._camera_state.get_header_data(incoming_guid, incoming_header)
+		_:
+			var type_string: String = self.get_data_type_string(incoming_type)
+			Logger.error("Incoming type \"%s\" is not supported", [type_string], self)
+			return null
 
 func _create_state_data(incoming_node: Node3D, incoming_type: String) -> StateData:
 	var new_state: StateData = null
@@ -220,7 +251,7 @@ func _handle_focus_action(incoming_action: GameAction) -> void:
 		Logger.error(self._BAD_ACTION_FORMAT, [incoming_action, GameAction.OWNER_GUID], self)
 
 func _handle_rig_focus_action(incoming_action: GameAction) -> void:
-	var missing_keys := _get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID, GameAction.TARGET_GUID])
+	var missing_keys := self._get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID, GameAction.TARGET_GUID])
 	if missing_keys.is_empty():
 		_camera_state.set_camera_focus(
 			incoming_action.payload[GameAction.OWNER_GUID],
@@ -230,7 +261,7 @@ func _handle_rig_focus_action(incoming_action: GameAction) -> void:
 		Logger.error(_BAD_ACTION_FORMAT, [incoming_action, missing_keys], self)
 
 func _handle_warn_action(incoming_action: GameAction) -> void:
-	var missing_keys := _get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID, GameAction.MESSAGE])
+	var missing_keys := self._get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID, GameAction.MESSAGE])
 	if missing_keys.is_empty():
 		var incoming_guid: String = incoming_action.payload[GameAction.OWNER_GUID]
 		var incoming_message: String = incoming_action.payload[GameAction.MESSAGE]

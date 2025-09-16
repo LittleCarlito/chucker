@@ -89,3 +89,9 @@ func _get_guid_value(incoming_guid: String, key: String):
 		Logger.error(self._DICTIONARY_DATA_NOT_FOUND, [incoming_guid, key], self)
 		return null
 	return guid_dictionary.get(key)
+
+func is_empty() -> bool:
+	return self._state_dictionary.is_empty()
+
+func keys() -> Array:
+	return self._state_dictionary.keys()

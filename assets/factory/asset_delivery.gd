@@ -8,6 +8,7 @@ const _LAUNCH_NOT_SET: String = "Launch parameters coulnd't be set on \"%s\"; Wi
 const _EMPTY_FLIGHT_PATH: String = "Flight data had an empty flight path; Flight data: \"%s\""
 const _INVALID_INCOMING_ITEM: String = "Incoming item \"%s\" is invalid for asset creation and could not be equipped"
 const _REQUIRES_ONE_VECTOR: String = "Requires at least one Vector3"
+const _BAD_ASSET: String = "Asset given to launch asset does not have GUID assigned; Ensure it was created through AssetFactory"
 const _FAILURE: String = "Failure"
 
 ## Creates new item based off incoming item data
@@ -116,12 +117,41 @@ static func _launch_asset(incoming_asset: Node3D, focus_flight: bool = false) ->
 		incoming_asset.call(GroupData.LAUNCH)
 		asset_launched = true
 		if focus_flight:
-			GlobalCameraController.set_rig_mode(GlobalCameraController.TrackingMode.TRACK)
-			if incoming_asset is PathDisk:
-				var path_follow: PathFollow3D = incoming_asset.call(GroupData.GET_PATH_FOLLOW)
-				GlobalCameraController.focus_new_node(path_follow)
+
+			# var focus_node: Node3D
+			# TODO Make a global state controller request to have the rig integrate with the determined part based off asset type below
+			#		Should be able to use existing logic for integrate shit in camera state
+			#		Should be able to pass in the guid and the Node3D that we want to track as reference with that guid
+			# if incoming_asset is PathDisk:
+			# 	focus_node = incoming_asset.call(GroupData.GET_PATH_FOLLOW)
+				# GlobalCameraController.focus_new_node(path_follow)
+			# else:
+			# 	focus_node = incoming_asset
+				# GlobalCameraController.focus_new_node(incoming_asset)
+			# TODO Create action to dispatch integrate camera with launched asset
+			# TODO Need to get primary camera rig guid
+			#			Create a new function in GlobalStateController for this
+
+			# TODO OOOOO
+			# TODO Above pretty much boils down to "Create underlying StatefulObject class" for all things that can be associated to state data
+			#			Then create a get integration node function in that new class
+			#				Implmenters like path disk then return shit like their path_follow above from that function
+			#					Thigns like force disk just return themselves
+			#				Then when a camera tries to integrate based off GUID it gets the correct part of the asset
+
+			if incoming_asset.has_meta(GroupData.GUID):
+				var primary_camera_guid: String = GlobalStateController.get_primary_guid(GameState.DATA_TYPE.CAMERA)
+				var target_guid: String = incoming_asset.get_meta(GroupData.GUID)
+				var focus_asset_dictionary: Dictionary = {
+					GameAction.OWNER_GUID: primary_camera_guid,
+					GameAction.TARGET_GUID: target_guid
+				}
+				var focus_asset_action: GameAction = GameAction.new(GameAction.TYPE.SET_RIG_FOCUS, focus_asset_dictionary)
+				GlobalStateController.dispatch(focus_asset_action)
 			else:
-				GlobalCameraController.focus_new_node(incoming_asset)	
+				Logger.error(_BAD_ASSET, [], null)
+
+
 	else:
 		Logger.debug(Logger.NO_METHOD_FOUND, [Logger.LAUNCH, str(incoming_asset)], null)
 	return asset_launched	
