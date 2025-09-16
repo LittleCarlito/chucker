@@ -11,6 +11,7 @@ const _NO_INTEGRATION: String = "No integration point for rig to focus on"
 const _MISSING_DATA: String = "Missing %s data"
 const _MIN_HEIGHT_WARN: String = "Is now having its height artificially held to min height of \"%f\""
 const _SUCCESSFUL_TRANSITION: String = "Successfully transitioned from \"%s\" state to \"%s\""
+const _FREELOOK_REASONING: String = "Camera rig is in freelook or tracking state"
 
 # TODO Break camera down into multiple extension classes and have these up the path with the functions that make sense
 # TODO Move majority of this to state
@@ -301,13 +302,14 @@ func _update_camera_position() -> void:
 			self.camera_controller.transform.basis = yaw_basis * pitch_basis
 
 func _handle_input() -> void:
-	pass
-	#if (self.freelook_enabled and not self.is_focused) || self.tracking_mode == GlobalCameraController.TrackingMode.TRACK:
-		#var cursor_reasoning: String = "Camera rig is in freelook or tracking state"
-		#if GlobalCursorController.get_current_state() == GlobalCursorController.CursorState.CAPTURED:
-			#GlobalCursorController.request_state(self, GlobalCursorController.CursorState.VISIBLE, cursor_reasoning)
-		#elif GlobalCursorController.get_current_state() == GlobalCursorController.CursorState.VISIBLE:
-			#GlobalCursorController.request_state(self, GlobalCursorController.CursorState.CAPTURED, cursor_reasoning)
+	if self._verify_integrity():
+		var camera_state_data: CameraStateData = GlobalStateController.get_header_data(self.get_meta(GroupData.GUID), StateHeaders.TYPE.DATA)
+		var current_state: StateConfiguration.STATE = camera_state_data.get_current_state()
+		if current_state >= StateConfiguration.STATE.IS_TRACKING and current_state < StateConfiguration.STATE.FREELOOK_STUCK:
+			if GlobalCursorController.get_current_state() == GlobalCursorController.CursorState.CAPTURED:
+				GlobalCursorController.request_state(self, GlobalCursorController.CursorState.VISIBLE, self._FREELOOK_REASONING)
+			elif GlobalCursorController.get_current_state() == GlobalCursorController.CursorState.VISIBLE:
+				GlobalCursorController.request_state(self, GlobalCursorController.CursorState.CAPTURED, self._FREELOOK_REASONING)
 
 func _handle_freelook(v_motion: float, h_motion: float) -> void:
 	pass
