@@ -22,6 +22,9 @@ var _owner_name: String
 var _owner_type: String
 var _current_state: StateConfiguration.STATE
 var _current_state_duration: float
+var _owner_rotation: Quaternion
+var _owner_position: Vector3
+var _owner_scale: Vector3
 # State data dictionaries
 var _valid_transitions: Dictionary
 var _state_values: Dictionary # String key, Float value; Whatever data you need to store (as long as its a (String, float))
@@ -40,6 +43,15 @@ func _init(
 	self._state_values = incoming_values
 	if self._validate_window_configuration(incoming_windows):
 		self._state_windows = incoming_windows
+
+func update_rotation(incoming_quaternion: Quaternion) -> void:
+	self._owner_rotation *= incoming_quaternion
+
+func update_position(incoming_vector: Vector3) -> void:
+	self._owner_position += incoming_vector
+
+func update_scale(incoming_vector: Vector3) -> void:
+	self._owner_scale *= incoming_vector
 
 func reset_state() -> StateConfiguration.STATE:
 	var lowest_state: StateConfiguration.STATE = StateConfiguration.STATE.READY

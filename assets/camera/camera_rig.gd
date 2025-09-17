@@ -75,6 +75,10 @@ func idle_rotate(delta: float, rotation_speed: float = CameraConfig.get_idle_rot
 	self.pan_horizontal(rotation_amount)
 
 func pan_horizontal(rotation_amount: float) -> void:
+	# TODO Do this to all the freelook_yaw refrences
+	# TODO Create a new action type
+	#		Try to make it generalized enough that it isn't just rotation
+	# TODO Create action for setting rotation of self state data
 	self._freelook_yaw += rotation_amount
 	self._update_camera_position()
 
@@ -247,8 +251,7 @@ func _maintain_distance() -> void:
 	if _focus_node != null:
 		if self._verify_integrity():
 			var new_position: Vector3
-			var camera_state: StateData = GlobalStateController.get_header_data(self.get_meta(GroupData.GUID), StateHeaders.TYPE.DATA)
-			var current_state: StateConfiguration.STATE = camera_state.get_current_state()
+			var current_state: StateConfiguration.STATE = self._get_camera_state()
 			if current_state == StateConfiguration.STATE.FULL_TRACKING:
 				# Apply offset in local space relative to integration point's orientation
 				var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
@@ -284,6 +287,7 @@ func _update_camera_position() -> void:
 			var new_position = self._focus_node.global_position + offset
 			self.camera_controller.global_position = self._apply_min_height_constraint(new_position)
 			self.camera_controller.look_at(self._focus_node.global_position, Vector3.UP)
+		# TODO Swap this to be GlobalState based instead
 		elif camera_state.is_focused and self._focus_node != null:
 			# Focused mode: position camera in spherical coordinates around focus point
 			var radius: float = GameConfig.DEFAULTS.controller_distance
@@ -312,11 +316,10 @@ func _handle_input() -> void:
 				GlobalCursorController.request_state(self, GlobalCursorController.CursorState.CAPTURED, self._FREELOOK_REASONING)
 
 func _handle_freelook(v_motion: float, h_motion: float) -> void:
-	pass
-	#if GlobalCursorController.is_captured_current():
-		#var inversion_multiplier: int = 1 if self.tracking_mode == GlobalCameraController.TrackingMode.TRACK else -1
-		#self.pan_horizontal((h_motion * freelook_sensitivity) * inversion_multiplier) 
-		#self.pitch_vertical((v_motion * freelook_sensitivity) * inversion_multiplier)
+	if GlobalCursorController.is_captured_current():
+		var inversion_multiplier: int = 1 if self._is_camera_tracking() else -1
+		self.pan_horizontal((h_motion * freelook_sensitivity) * inversion_multiplier) 
+		self.pitch_vertical((v_motion * freelook_sensitivity) * inversion_multiplier)
 
 func _handle_camera_request(new_foucs: Node3D) -> void:
 	self.set_integration_point(new_foucs, true)
@@ -379,3 +382,11 @@ func _verify_integrity() -> bool:
 		Logger.error(self._MISSING_DATA, [GroupData.GUID], self)
 		return false
 	return true
+
+func _get_camera_state() -> StateConfiguration.STATE:
+	var camera_state_data: CameraStateData = GlobalStateController.get_header_data(self.get_meta(GroupData.GUID), StateHeaders.TYPE.DATA)
+	return camera_state_data.get_current_state()
+
+func _is_camera_tracking() -> bool:
+	var current_state: StateConfiguration.STATE = self._get_camera_state()
+	return (current_state >= 500 and current_state <= 503)
