@@ -4,8 +4,8 @@ class_name GameAction
 enum TYPE {
 	SET_STATE,
 	# TODO Combine rig focus and focus rig to a single action (dictionary can hold all details)
-	SET_RIG_FOCUS,
-	FOCUS_RIG,
+	SET_RIG_FOCUS, # Setting the guid the camera is focused on
+	FOCUS_RIG, # Focusing the camera
 	TRANSFORM,
 	WARN,
 	UKNOWN

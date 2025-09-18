@@ -25,7 +25,7 @@ const _FREELOOK_REASONING: String = "Camera rig is in freelook or tracking state
 @export var secondary_freelook_enabled: bool
 @export var zoom_enabled: bool
 # TODO Really this (and probably above ones too) should just be based off what state it is in
-@export var movement_enabled: bool
+@export var movement_enabled: bool = true
 var _focus_node: Node3D
 
 func _ready() -> void:
@@ -349,12 +349,17 @@ func _handle_freelook(v_motion: float, h_motion: float) -> void:
 func _handle_camera_request(new_foucs: Node3D) -> void:
 	self.set_integration_point(new_foucs, true)
 
-# TODO OOOOO
-# TODO Refactor to use GlobalStateController
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
 func _handle_rig_focus(incoming_value: bool) -> void:
-	self.is_focused = incoming_value
+	if self._verify_integrity():
+		var self_guid: String = self.get_meta(GroupData.GUID)
+		var focus_action_dictionary: Dictionary = {
+			GameAction.OWNER_GUID: self_guid,
+			GameAction.FOCUS_RIG: incoming_value
+		}
+		var focus_action: GameAction = GameAction.new(GameAction.TYPE.FOCUS_RIG, focus_action_dictionary)
+		GlobalStateController.dispatch(focus_action)
 
 # TODO Should be a lower class function after camera refactor
 #		Higher class
@@ -375,12 +380,18 @@ func _handle_up_input(_delta: float) -> void:
 # TODO Should be a lower class function after camera refactor
 #		Higher class
 func _handle_down_input(_delta: float) -> void:
-	pass
-	#if self.enable_rig_movement:
-		#var movement_amount: float = GameConfig.DEFAULTS.controller_speed
-		#var new_position: Vector3 = self.camera_controller.global_position
-		#new_position.y -= movement_amount
-		#self.camera_controller.global_position = _apply_min_height_constraint(new_position)
+	if self._verify_integrity():
+		var self_guid: String = self.get_meta(GroupData.GUID)
+		var movement_amount: float = -GameConfig.DEFAULTS.controller_speed
+		var transform_dictionary: Dictionary = {
+			GameAction.Y: movement_amount
+		}
+		var transform_action_dictionary: Dictionary = {
+			GameAction.OWNER_GUID: self_guid,
+			GameAction.POSITION: transform_dictionary
+		}
+		var transform_action: GameAction = GameAction.new(GameAction.TYPE.TRANSFORM, transform_action_dictionary)
+		GlobalStateController.dispatch(transform_action)
 
 # TODO Should be a lower class function after camera refactor
 #		Higher class
