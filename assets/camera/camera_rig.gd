@@ -24,6 +24,7 @@ const _FREELOOK_REASONING: String = "Camera rig is in freelook or tracking state
 @export var primary_freelook_enabled: bool
 @export var secondary_freelook_enabled: bool
 @export var zoom_enabled: bool
+# TODO Really this (and probably above ones too) should just be based off what state it is in
 @export var movement_enabled: bool
 var _focus_node: Node3D
 
@@ -50,13 +51,15 @@ func _ready() -> void:
 	# State connections
 	GlobalStateController.connect(SIGNAL_NAME.STATE_UPDATED, _handle_state_updated)
 
-# TODO Shouldn't exist after state refactor; look below shoudl ahve state pushing down everythign we need
+# TODO Figure out how to have this pushed down from state instead
+#			Will probably require EVERYTHING functioning off state first to work though
 func _process(_delta: float) -> void:
 	#if is_focused && integration_point != null:
 	self._maintain_distance()
 	self.focus_on_target()
 
-# TODO Not sure on this one; Might still need after state refactor to hold height
+# TODO Figure out how to have this pushed down from state instead
+#			Will probably require EVERYTHING functioning off state first to work though
 func _physics_process(_delta: float) -> void:
 	if self.min_height != -NUMBERS.FLOAT16_MAX:
 		var is_height_held: bool = self.min_height > self.camera_controller.global_position.y
@@ -70,10 +73,18 @@ func _physics_process(_delta: float) -> void:
 			var warn_action: GameAction = GameAction.new(GameAction.TYPE.WARN, warn_payload)
 			GlobalStateController.dispatch(warn_action)
 
-# TODO Redo to just be setting state of camera instead
+## Sets state to idle rotate
 func idle_rotate(delta: float, rotation_speed: float = CameraConfig.get_idle_rotate_speed()) -> void:
-	var rotation_amount: float = delta * rotation_speed
-	self.pan_horizontal(rotation_amount)
+	if self._verify_integrity():
+		var self_guid: String = self.get_meta(GroupData.GUID)
+		var rotation_amount: float = delta * rotation_speed
+		var idle_string: String = StateConfiguration.get_state_string(StateConfiguration.STATE.IDLE_ROTATE)
+		var idle_action_dictionary: Dictionary = {
+			GameAction.OWNER_GUID: self_guid,
+			GameAction.STATE: idle_string
+		}
+		var idle_action: GameAction = GameAction.new(GameAction.TYPE.SET_STATE, idle_action_dictionary)
+		GlobalStateController.dispatch(idle_action)
 
 func pan_horizontal(rotation_amount: float) -> void:
 	if self._verify_integrity():
@@ -89,7 +100,6 @@ func pan_horizontal(rotation_amount: float) -> void:
 
 func pitch_vertical(rotation_amount: float) -> void:
 	if self._verify_integrity():
-		# TODO Need to get current state and "pitch" for the clamp below
 		var self_guid: String = self.get_meta(GroupData.GUID)
 		var camera_state_data: StateData = GlobalStateController.get_header_data(self_guid, StateHeaders.TYPE.DATA)
 		var current_pitch: float = camera_state_data.get_current_rotation().x
@@ -246,8 +256,8 @@ func set_min_height(incoming_min: float) -> void:
 	Logger.debug("Incoming new min height is %f", [incoming_min], self)
 	self.min_height = incoming_min
 
-# TODO Have all this run through state somehow instead
-#			Probably have state push down details to camera, so it will have all it needs as parameters
+# TODO Should be a lower class function after camera refactor
+#		Lowest class
 func _maintain_distance() -> void:
 	if _focus_node != null:
 		if self._verify_integrity():
@@ -272,7 +282,8 @@ func _maintain_distance() -> void:
 	else:
 		Logger.warn(self._NO_INTEGRATION, [], self)
 
-# TODO Again like above function should be having everything it needs pushed down from state
+# TODO Should be a lower class function after camera refactor
+#		Lowest class
 func _update_camera_position() -> void:
 	if self._verify_integrity():
 		var camera_state: StateData = GlobalStateController.get_header_data(self.get_meta(GroupData.GUID), StateHeaders.TYPE.DATA)
@@ -306,11 +317,15 @@ func _update_camera_position() -> void:
 			var pitch_basis: Basis = Basis(Vector3.RIGHT, self._freelook_pitch)
 			self.camera_controller.transform.basis = yaw_basis * pitch_basis
 
+# TODO Should be a lower class function after camera refactor
+#		Lowest class
 func _apply_min_height_constraint(position: Vector3) -> Vector3:
 	if self.min_height != -NUMBERS.FLOAT16_MAX:
 		position.y = max(self.min_height, position.y)
 	return position
 
+# TODO Should be a lower class function after camera refactor
+#		Higher class
 func _handle_input() -> void:
 	if self._verify_integrity():
 		var camera_state_data: CameraStateData = GlobalStateController.get_header_data(self.get_meta(GroupData.GUID), StateHeaders.TYPE.DATA)
@@ -321,24 +336,44 @@ func _handle_input() -> void:
 			elif GlobalCursorController.get_current_state() == GlobalCursorController.CursorState.VISIBLE:
 				GlobalCursorController.request_state(self, GlobalCursorController.CursorState.CAPTURED, self._FREELOOK_REASONING)
 
+# TODO Should be a lower class function after camera refactor
+#		Higher class
 func _handle_freelook(v_motion: float, h_motion: float) -> void:
 	if GlobalCursorController.is_captured_current():
 		var inversion_multiplier: int = 1 if self._is_camera_tracking() else -1
 		self.pan_horizontal((h_motion * freelook_sensitivity) * inversion_multiplier) 
 		self.pitch_vertical((v_motion * freelook_sensitivity) * inversion_multiplier)
 
+# TODO Should be a lower class function after camera refactor
+#		Lowest class
 func _handle_camera_request(new_foucs: Node3D) -> void:
 	self.set_integration_point(new_foucs, true)
 
+# TODO OOOOO
+# TODO Refactor to use GlobalStateController
+# TODO Should be a lower class function after camera refactor
+#		Lowest class
 func _handle_rig_focus(incoming_value: bool) -> void:
 	self.is_focused = incoming_value
 
+# TODO Should be a lower class function after camera refactor
+#		Higher class
 func _handle_up_input(_delta: float) -> void:
-	pass
-	#if self.enable_rig_movement:
-		#var movement_amount: float = GameConfig.DEFAULTS.controller_speed
-		#self.camera_controller.global_position.y += movement_amount
+	if self.movement_enabled and self._verify_integrity():
+		var self_guid: String = self.get_meta(GroupData.GUID)
+		var movement_amount: float = GameConfig.DEFAULTS.controller_speed
+		var transform_dictionary: Dictionary = {
+			GameAction.Y: movement_amount
+		}
+		var transform_action_dictionary: Dictionary = {
+			GameAction.OWNER_GUID: self_guid,
+			GameAction.POSITION: transform_dictionary
+		}
+		var transform_action: GameAction = GameAction.new(GameAction.TYPE.TRANSFORM, transform_action_dictionary)
+		GlobalStateController.dispatch(transform_action)
 
+# TODO Should be a lower class function after camera refactor
+#		Higher class
 func _handle_down_input(_delta: float) -> void:
 	pass
 	#if self.enable_rig_movement:
@@ -347,6 +382,8 @@ func _handle_down_input(_delta: float) -> void:
 		#new_position.y -= movement_amount
 		#self.camera_controller.global_position = _apply_min_height_constraint(new_position)
 
+# TODO Should be a lower class function after camera refactor
+#		Higher class
 func _handle_input_direction(incoming_direction: Vector2) -> void:
 	pass
 	#if self.enable_rig_movement and incoming_direction != Vector2.ZERO:
@@ -359,14 +396,20 @@ func _handle_input_direction(incoming_direction: Vector2) -> void:
 		#var new_position: Vector3 = self.camera_controller.global_position + world_movement
 		#self.camera_controller.global_position = _apply_min_height_constraint(new_position)
 
+# TODO Should be a lower class function after camera refactor
+#		Lowest class
 func _handle_sprint_start() -> void:
 	pass
 	#self._is_sprinting = true
 
+# TODO Should be a lower class function after camera refactor
+#		Lowest class
 func _handle_sprint_stop() -> void:
 	pass
 	#self._is_sprinting = false
 
+# TODO Should be a lower class function after camera refactor
+#		Lowest class
 func _handle_state_updated(update_details: Dictionary) -> void:
 	if self._verify_integrity():
 		var self_guid: String = self.get_meta(GroupData.GUID)
@@ -381,6 +424,8 @@ func _handle_state_updated(update_details: Dictionary) -> void:
 					var update_type_string: String = GameAction.get_type_string(update_action.action_type)
 					Logger.warn("Incoming update type \"%s\" is not supported", [update_type_string], self)
 
+# TODO Should be a lower class function after camera refactor
+#		Lowest class
 func _handle_transform(incoming_action: GameAction) -> void:
 	if self._verify_integrity():
 		var missing_transform_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.ROTATION, GameAction.POSITION, GameAction.SCALE])
@@ -400,6 +445,8 @@ func _handle_transform(incoming_action: GameAction) -> void:
 			var missing_transform_string: String = "; ".join(missing_transform_keys)
 			Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, missing_transform_string], self)
 
+# TODO Should be a lower class function after camera refactor
+#		Lowest class
 func _handle_set_rig_focus(incoming_action: GameAction) -> void:
 	if incoming_action.payload.has(GameAction.TARGET_GUID):
 		var focus_guid: String = incoming_action.payload.get(GameAction.TARGET_GUID)
@@ -407,16 +454,22 @@ func _handle_set_rig_focus(incoming_action: GameAction) -> void:
 	else:
 		Logger.error(self._MISSING_GUID, [self.SET_RIG_FOCUS], self)
 
+# TODO Should be a lower class function after camera refactor
+#		Lowest class
 func _verify_integrity() -> bool:
 	if !self.has_meta(GroupData.GUID):
 		Logger.error(self._MISSING_DATA, [GroupData.GUID], self)
 		return false
 	return true
 
+# TODO Should be a lower class function after camera refactor
+#		Lowest class
 func _get_camera_state() -> StateConfiguration.STATE:
 	var camera_state_data: CameraStateData = GlobalStateController.get_header_data(self.get_meta(GroupData.GUID), StateHeaders.TYPE.DATA)
 	return camera_state_data.get_current_state()
 
+# TODO Should be a lower class function after camera refactor
+#		Lowest class
 func _is_camera_tracking() -> bool:
 	var current_state: StateConfiguration.STATE = self._get_camera_state()
 	return (current_state >= 500 and current_state <= 503)

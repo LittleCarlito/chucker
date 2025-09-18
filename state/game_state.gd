@@ -227,21 +227,35 @@ func _get_node_from_dictionary(state_dictionary: Dictionary) -> Node3D:
 
 func _handle_action(incoming_action: GameAction) -> void:
 	match incoming_action.action_type:
+		GameAction.TYPE.SET_STATE:
+			self._handle_state_action(incoming_action)
+		# TODO Combine SET_RIG_FOCUS and FOCUS_RIG actions to single action
 		GameAction.TYPE.SET_RIG_FOCUS:
 			self._handle_rig_focus_action(incoming_action)
-			self._schedule_state_update(incoming_action)
 		GameAction.TYPE.FOCUS_RIG:
 			self._handle_focus_action(incoming_action)
-			self._schedule_state_update(incoming_action)
 		GameAction.TYPE.TRANSFORM:
 			self._handle_transform_action(incoming_action)
-			self._schedule_state_update(incoming_action)
 		GameAction.TYPE.WARN:
 			self._handle_warn_action(incoming_action)
 		_:
 			var type_string: String = GameAction.get_type_string(incoming_action.action_type)
 			Logger.error(self._UNSUPPORTED_TYPE, [type_string], self)
 
+func _handle_state_action(incoming_action: GameAction) -> void:
+	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID, GameAction.STATE])
+	if missing_keys.is_empty():
+		var subject_guid: String = incoming_action.payload[GameAction.OWNER_GUID]
+		var new_state_string: String = incoming_action.payload[GameAction.STATE]
+		var new_state: StateConfiguration.STATE = StateConfiguration.get_state_from_string(new_state_string)
+		var subject_state_data: StateData = GlobalStateController.retrieve_state_data(subject_guid)
+		if subject_state_data.try_set_state(new_state):
+			self._schedule_state_update(incoming_action)
+	else:
+		self._log_bad_action(incoming_action, missing_keys)
+
+# TODO Refactor to use missing keys
+#			But also going to be refactored to be combined with below function anywasys so maybe not worth
 func _handle_focus_action(incoming_action: GameAction) -> void:
 	if incoming_action.payload.has(GameAction.OWNER_GUID):
 		if incoming_action.payload.has(GameAction.FOCUS_RIG):
@@ -249,6 +263,7 @@ func _handle_focus_action(incoming_action: GameAction) -> void:
 			var focus_value: bool = incoming_action.payload.get(GameAction.FOCUS_RIG)
 			var rig_state_data: CameraStateData = self._camera_state.get_header_data(camera_guid, StateHeaders.TYPE.DATA)
 			rig_state_data.set_is_focused(focus_value)
+			self._schedule_state_update(incoming_action)
 		else:
 			Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, GameAction.FOCUS_RIG], self)
 	else:
@@ -257,13 +272,13 @@ func _handle_focus_action(incoming_action: GameAction) -> void:
 func _handle_rig_focus_action(incoming_action: GameAction) -> void:
 	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID, GameAction.TARGET_GUID])
 	if missing_keys.is_empty():
-		_camera_state.set_camera_focus(
+		if self._camera_state.set_camera_focus(
 			incoming_action.payload[GameAction.OWNER_GUID],
 			incoming_action.payload[GameAction.TARGET_GUID]
-			)
+			):
+			self._schedule_state_update(incoming_action)
 	else:
-		var missing_string: String = "; ".join(missing_keys)
-		Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, missing_string], self)
+		self._log_bad_action(incoming_action, missing_keys)
 
 func _handle_transform_action(incoming_action: GameAction) -> void:
 	var missing_owner_guid: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID])
@@ -288,6 +303,7 @@ func _handle_transform_action(incoming_action: GameAction) -> void:
 		var scale_vector: Vector3 = StateUtil.extract_vector3(incoming_action.payload[GameAction.SCALE], incoming_action)
 		if scale_vector != Vector3.ZERO:
 			owner_state_data.update_scale(scale_vector)
+	self._schedule_state_update(incoming_action)
 
 func _handle_warn_action(incoming_action: GameAction) -> void:
 	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID, GameAction.MESSAGE])
@@ -297,8 +313,11 @@ func _handle_warn_action(incoming_action: GameAction) -> void:
 		var guid_state_data: StateData = self.retrieve_state_data(incoming_guid)
 		guid_state_data.log(incoming_message, Logger.LEVEL.WARN)
 	else:
-		var missing_string: String = "; ".join(missing_keys)
-		Logger.error(Logger._BAD_ACTION_FORMAT, [incoming_action, missing_string], self)
+		self._log_bad_action(incoming_action, missing_keys)
+
+func _log_bad_action(incoming_action: GameAction, missing_keys: Array[String]) -> void:
+	var missing_string: String = "; ".join(missing_keys)
+	Logger.error(Logger._BAD_ACTION_FORMAT, [incoming_action, missing_string], self)
 
 # Shared helper
 func _schedule_state_update(successful_action: GameAction) -> void:
