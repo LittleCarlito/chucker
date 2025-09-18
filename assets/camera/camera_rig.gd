@@ -25,7 +25,7 @@ const _FREELOOK_REASONING: String = "Camera rig is in freelook or tracking state
 @export var secondary_freelook_enabled: bool
 @export var zoom_enabled: bool
 # TODO Really this (and probably above ones too) should just be based off what state it is in
-@export var movement_enabled: bool = true
+@export var movement_enabled: bool
 var _focus_node: Node3D
 
 func _ready() -> void:
@@ -396,16 +396,18 @@ func _handle_down_input(_delta: float) -> void:
 # TODO Should be a lower class function after camera refactor
 #		Higher class
 func _handle_input_direction(incoming_direction: Vector2) -> void:
-	pass
-	#if self.enable_rig_movement and incoming_direction != Vector2.ZERO:
-		#var speed: float = GameConfig.DEFAULTS.controller_speed
-		#if self._is_sprinting:
-			#speed *= GameConfig.DEFAULTS.sprint_multiplier
-		#var movement_vector: Vector3 = Vector3(incoming_direction.x, 0, incoming_direction.y) * speed
-		#var world_movement: Vector3 = self.camera_controller.global_transform.basis * movement_vector
-		#world_movement.y = 0
-		#var new_position: Vector3 = self.camera_controller.global_position + world_movement
-		#self.camera_controller.global_position = _apply_min_height_constraint(new_position)
+	if self.movement_enabled and self._verify_integrity():
+		var self_guid: String = self.get_meta(GroupData.GUID)
+		var transform_dictionary: Dictionary = {
+			GameAction.X: incoming_direction.x,
+			GameAction.Z: incoming_direction.y
+		}
+		var transform_action_dictionary: Dictionary = {
+			GameAction.OWNER_GUID: self_guid,
+			GameAction.POSITION: transform_dictionary
+		}
+		var transform_action: GameAction = GameAction.new(GameAction.TYPE.TRANSFORM, transform_action_dictionary)
+		GlobalStateController.dispatch(transform_action)
 
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
