@@ -40,6 +40,7 @@ const SCALE: String = "scale"
 const X: String = "x"
 const Y: String = "y"
 const Z: String = "z"
+const DIMENSION_KEYS: Array[String] = [GameAction.X, GameAction.Y, GameAction.Z]
 
 @export var action_type: TYPE
 @export var payload: Dictionary = {}

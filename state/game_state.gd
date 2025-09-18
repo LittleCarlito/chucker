@@ -1,6 +1,8 @@
 # Master container holding player/item dictionaries and current application mode (menu, running, paused)
 class_name GameState
 
+signal state_updated(update_details: Dictionary)
+
 enum STATUS {
 	MAIN_MENU,
 	PAUSE_MENU,
@@ -33,7 +35,6 @@ const _MISSING_GUID: String = "Couldn't create %s; Incoming object \"%s\" is mis
 const _GUID_MISSING_STATE: String = "GUID \"%s\" did not have any data stored in game state; Ensure it was created through Asset Factory/Delivery"
 const _MISSING_STATE_NODE: String = "State dictionary is missing associated state node; %s"
 const _DUPLICATE_GUID: String = "GUID \"%s\" has been found in too many dictionaries; Location array \"%s\""
-const _BAD_ACTION_FORMAT: String = "Incoming action \"%s\" was missing property %s and could not be processed"
 const _MISSING_GUID_STATE: String = "GUID \"%s\" state dictionary is missing %s"
 
 const _MISSING_DATA: String = "%s dictionary is missing %s for guid \"%s\""
@@ -43,8 +44,6 @@ const _EMPTY_DICTIONARY: String = "Cannot retrieve %s because %s is empty"
 const _PRIMARY_GUID: String = "Primary GUID"
 const _PLAYER_DICTIONARY: String = "Player Dictionary"
 const _CAMERA_DICTIONARY: String = "Camera Dictionary"
-
-signal state_updated(update_details: Dictionary)
 
 var _successful_actions: Dictionary
 var _flush_scheduled: bool
@@ -251,12 +250,12 @@ func _handle_focus_action(incoming_action: GameAction) -> void:
 			var rig_state_data: CameraStateData = self._camera_state.get_header_data(camera_guid, StateHeaders.TYPE.DATA)
 			rig_state_data.set_is_focused(focus_value)
 		else:
-			Logger.error(self._BAD_ACTION_FORMAT, [incoming_action, GameAction.FOCUS_RIG], self)
+			Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, GameAction.FOCUS_RIG], self)
 	else:
-		Logger.error(self._BAD_ACTION_FORMAT, [incoming_action, GameAction.OWNER_GUID], self)
+		Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, GameAction.OWNER_GUID], self)
 
 func _handle_rig_focus_action(incoming_action: GameAction) -> void:
-	var missing_keys: Array[String] = self._get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID, GameAction.TARGET_GUID])
+	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID, GameAction.TARGET_GUID])
 	if missing_keys.is_empty():
 		_camera_state.set_camera_focus(
 			incoming_action.payload[GameAction.OWNER_GUID],
@@ -264,59 +263,34 @@ func _handle_rig_focus_action(incoming_action: GameAction) -> void:
 			)
 	else:
 		var missing_string: String = "; ".join(missing_keys)
-		Logger.error(_BAD_ACTION_FORMAT, [incoming_action, missing_string], self)
+		Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, missing_string], self)
 
 func _handle_transform_action(incoming_action: GameAction) -> void:
-	var missing_owner_guid: Array[String] = self._get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID])
-	var missing_keys: Array[String] = self._get_missing_keys(incoming_action.payload, [GameAction.ROTATION, GameAction.POSITION, GameAction.SCALE])
+	var missing_owner_guid: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID])
+	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.ROTATION, GameAction.POSITION, GameAction.SCALE])
 	if !missing_owner_guid.is_empty() or missing_keys.size() >= 3:
 		var missing_string: String = "; ".join(missing_keys + missing_owner_guid)
-		Logger.error(_BAD_ACTION_FORMAT, [incoming_action, missing_string], self)
+		Logger.error(Logger._BAD_ACTION_FORMAT, [incoming_action, missing_string], self)
 		return
 	var owner_guid: String = incoming_action.payload[GameAction.OWNER_GUID]
 	var owner_state_data: StateData = self.retrieve_state_data(owner_guid)
 	if owner_state_data == null:
 		return
 	if !missing_keys.has(GameAction.ROTATION):
-		var rotation_quaternion: Quaternion = _extract_rotation(incoming_action.payload[GameAction.ROTATION], incoming_action)
+		var rotation_quaternion: Quaternion = StateUtil.extract_rotation(incoming_action.payload[GameAction.ROTATION], incoming_action)
 		if rotation_quaternion != Quaternion.IDENTITY:
 			owner_state_data.update_rotation(rotation_quaternion)
 	if !missing_keys.has(GameAction.POSITION):
-		var position_vector: Vector3 = _extract_vector3(incoming_action.payload[GameAction.POSITION], incoming_action)
+		var position_vector: Vector3 = StateUtil.extract_vector3(incoming_action.payload[GameAction.POSITION], incoming_action)
 		if position_vector != Vector3.ZERO:
 			owner_state_data.update_position(position_vector)
 	if !missing_keys.has(GameAction.SCALE):
-		var scale_vector: Vector3 = _extract_vector3(incoming_action.payload[GameAction.SCALE], incoming_action)
+		var scale_vector: Vector3 = StateUtil.extract_vector3(incoming_action.payload[GameAction.SCALE], incoming_action)
 		if scale_vector != Vector3.ZERO:
 			owner_state_data.update_scale(scale_vector)
 
-func _extract_rotation(rotation_data: Dictionary, incoming_action: GameAction) -> Quaternion:
-	var dimension_keys: Array[String] = [GameAction.X, GameAction.Y, GameAction.Z]
-	var missing_rotation_keys: Array[String] = self._get_missing_keys(rotation_data, dimension_keys)
-	if missing_rotation_keys.size() >= 3:
-		var missing_rotation_string: String = "; ".join(missing_rotation_keys)
-		Logger.error(self._BAD_ACTION_FORMAT, [incoming_action, missing_rotation_string], self)
-		return Quaternion.IDENTITY
-	var x_rotation_value: float = 0 if missing_rotation_keys.has(GameAction.X) else deg_to_rad(rotation_data[GameAction.X])
-	var y_rotation_value: float = 0 if missing_rotation_keys.has(GameAction.Y) else deg_to_rad(rotation_data[GameAction.Y])
-	var z_rotation_value: float = 0 if missing_rotation_keys.has(GameAction.Z) else deg_to_rad(rotation_data[GameAction.Z])
-	return Quaternion.from_euler(Vector3(x_rotation_value, y_rotation_value, z_rotation_value))
-
-func _extract_vector3(vector_data: Dictionary, incoming_action: GameAction) -> Vector3:
-	var dimension_keys: Array[String] = [GameAction.X, GameAction.Y, GameAction.Z]
-	var missing_keys: Array[String] = self._get_missing_keys(vector_data, dimension_keys)
-	if missing_keys.size() >= 3:
-		var missing_string: String = "; ".join(missing_keys)
-		Logger.error(self._BAD_ACTION_FORMAT, [incoming_action, missing_string], self)
-		return Vector3.ZERO
-	var x_value: float = 0 if missing_keys.has(GameAction.X) else vector_data[GameAction.X]
-	var y_value: float = 0 if missing_keys.has(GameAction.Y) else vector_data[GameAction.Y]
-	var z_value: float = 0 if missing_keys.has(GameAction.Z) else vector_data[GameAction.Z]
-	return Vector3(x_value, y_value, z_value)
-
-
 func _handle_warn_action(incoming_action: GameAction) -> void:
-	var missing_keys: Array[String] = self._get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID, GameAction.MESSAGE])
+	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID, GameAction.MESSAGE])
 	if missing_keys.is_empty():
 		var incoming_guid: String = incoming_action.payload[GameAction.OWNER_GUID]
 		var incoming_message: String = incoming_action.payload[GameAction.MESSAGE]
@@ -324,16 +298,9 @@ func _handle_warn_action(incoming_action: GameAction) -> void:
 		guid_state_data.log(incoming_message, Logger.LEVEL.WARN)
 	else:
 		var missing_string: String = "; ".join(missing_keys)
-		Logger.error(_BAD_ACTION_FORMAT, [incoming_action, missing_string], self)
+		Logger.error(Logger._BAD_ACTION_FORMAT, [incoming_action, missing_string], self)
 
 # Shared helper
-func _get_missing_keys(payload: Dictionary, required_keys: Array[String]) -> Array[String]:
-	var missing: Array[String] = []
-	for key in required_keys:
-		if not payload.has(key):
-			missing.append(key)
-	return missing
-
 func _schedule_state_update(successful_action: GameAction) -> void:
 	var action_owner_guid: String = successful_action.payload.get(GameAction.OWNER_GUID)
 	self._successful_actions[action_owner_guid] = successful_action

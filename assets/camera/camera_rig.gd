@@ -70,37 +70,43 @@ func _physics_process(_delta: float) -> void:
 			var warn_action: GameAction = GameAction.new(GameAction.TYPE.WARN, warn_payload)
 			GlobalStateController.dispatch(warn_action)
 
+# TODO Redo to just be setting state of camera instead
 func idle_rotate(delta: float, rotation_speed: float = CameraConfig.get_idle_rotate_speed()) -> void:
 	var rotation_amount: float = delta * rotation_speed
 	self.pan_horizontal(rotation_amount)
 
 func pan_horizontal(rotation_amount: float) -> void:
-	# TODO Do this to all the freelook_yaw refrences
-	# TODO Create a new action type
-	#		Try to make it generalized enough that it isn't just rotation
-	# TODO Create action for setting rotation of self state data
-	self._freelook_yaw += rotation_amount
-	self._update_camera_position()
+	if self._verify_integrity():
+		var rotation_dictionary: Dictionary = {
+			GameAction.Y: rotation_amount
+		}
+		var rotation_action_dictionary: Dictionary = {
+			GameAction.OWNER_GUID: self.get_meta(GroupData.GUID),
+			GameAction.ROTATION: rotation_dictionary
+		}
+		var rotation_action: GameAction = GameAction.new(GameAction.TYPE.TRANSFORM, rotation_action_dictionary)
+		GlobalStateController.dispatch(rotation_action)
 
 func pitch_vertical(rotation_amount: float) -> void:
-	self._freelook_pitch = clamp(
-		self._freelook_pitch + rotation_amount,
+	if self._verify_integrity():
+		# TODO Need to get current state and "pitch" for the clamp below
+		var self_guid: String = self.get_meta(GroupData.GUID)
+		var camera_state_data: StateData = GlobalStateController.get_header_data(self_guid, StateHeaders.TYPE.DATA)
+		var current_pitch: float = camera_state_data.get_current_rotation().x
+		var new_pitch: float = clamp(
+		current_pitch + rotation_amount,
 		-deg_to_rad(self.freelook_pitch_limit),
 		deg_to_rad(self.freelook_pitch_limit)
-	)
-	_update_camera_position()
-
-func move_up() -> void:
-	pass
-
-func move_down() -> void:
-	pass
-
-func move_left() -> void:
-	pass
-
-func move_right() -> void:
-	pass
+		)
+		var pitch_dictionary: Dictionary = {
+			GameAction.X: new_pitch
+		}
+		var pitch_action_dictionary: Dictionary = {
+			GameAction.OWNER_GUID: self_guid,
+			GameAction.ROTATION: pitch_dictionary
+		}
+		var pitch_action: GameAction = GameAction.new(GameAction.TYPE.TRANSFORM, pitch_action_dictionary)
+		GlobalStateController.dispatch(pitch_action)
 
 func focus_guid(incoming_guid: String) -> void:
 	self._focus_node = GlobalStateController.get_header_data(incoming_guid, StateHeaders.TYPE.NODE)
@@ -151,6 +157,17 @@ func deintegrate() -> void:
 		self.set_focus(false)
 		# Clear internal reference
 		self._focus_node = null
+
+# TODO Test trying to set wrong state; ensure it doesn't work and logs
+func transition_state(incoming_state: StateConfiguration.STATE) -> void:
+	if self._verify_integrity():
+		var camera_guid: String = self.get_meta(GroupData.GUID)
+		var camera_state_data: CameraStateData = GlobalStateController.get_header_data(camera_guid, StateHeaders.TYPE.DATA)
+		var old_state: StateConfiguration.STATE = camera_state_data.get_current_state()
+		if camera_state_data.try_set_state(incoming_state):
+			var from_state_string: String = StateConfiguration.get_state_string(old_state)
+			var to_state_string: String = StateConfiguration.get_state_string(incoming_state)
+			Logger.debug(self._SUCCESSFUL_TRANSITION, [from_state_string, to_state_string], self)
 
 func is_current() -> bool:
 	return self.internal_camera.is_current()
@@ -222,28 +239,12 @@ func enable_zoom() -> void:
 func disable_zoom() -> void:
 	self.is_zoom = false
 
-# TODO Test trying to set wrong state; ensure it doesn't work and logs
-func transition_state(incoming_state: StateConfiguration.STATE) -> void:
-	if self._verify_integrity():
-		var camera_guid: String = self.get_meta(GroupData.GUID)
-		var camera_state_data: CameraStateData = GlobalStateController.get_header_data(camera_guid, StateHeaders.TYPE.DATA)
-		var old_state: StateConfiguration.STATE = camera_state_data.get_current_state()
-		if camera_state_data.try_set_state(incoming_state):
-			var from_state_string: String = StateConfiguration.get_state_string(old_state)
-			var to_state_string: String = StateConfiguration.get_state_string(incoming_state)
-			Logger.debug(self._SUCCESSFUL_TRANSITION, [from_state_string, to_state_string], self)
-
 func get_min_height() -> float:
 	return self.min_height
 
 func set_min_height(incoming_min: float) -> void:
 	Logger.debug("Incoming new min height is %f", [incoming_min], self)
 	self.min_height = incoming_min
-
-func _apply_min_height_constraint(position: Vector3) -> Vector3:
-	if self.min_height != -NUMBERS.FLOAT16_MAX:
-		position.y = max(self.min_height, position.y)
-	return position
 
 # TODO Have all this run through state somehow instead
 #			Probably have state push down details to camera, so it will have all it needs as parameters
@@ -279,31 +280,36 @@ func _update_camera_position() -> void:
 		if current_state == StateConfiguration.STATE.FREE_TRACKING and self._focus_node != null:
 			# TRACK mode: position camera in spherical coordinates around the moving integration point
 			var radius: float = GameConfig.DEFAULTS.controller_distance
-			var offset := Vector3(
+			var offset: Vector3 = Vector3(
 				radius * cos(self._freelook_pitch) * sin(self._freelook_yaw),
 				radius * sin(self._freelook_pitch),
 				radius * cos(self._freelook_pitch) * cos(self._freelook_yaw)
 			)
-			var new_position = self._focus_node.global_position + offset
+			var new_position: Vector3 = self._focus_node.global_position + offset
 			self.camera_controller.global_position = self._apply_min_height_constraint(new_position)
 			self.camera_controller.look_at(self._focus_node.global_position, Vector3.UP)
 		# TODO Swap this to be GlobalState based instead
 		elif camera_state.is_focused and self._focus_node != null:
 			# Focused mode: position camera in spherical coordinates around focus point
 			var radius: float = GameConfig.DEFAULTS.controller_distance
-			var offset := Vector3(
+			var offset: Vector3 = Vector3(
 				radius * cos(self._freelook_pitch) * sin(self._freelook_yaw),
 				radius * sin(self._freelook_pitch),
 				radius * cos(self._freelook_pitch) * cos(self._freelook_yaw)
 			)
-			var new_position = self._focus_node.global_position + offset
+			var new_position: Vector3 = self._focus_node.global_position + offset
 			self.camera_controller.global_position = _apply_min_height_constraint(new_position)
 			self.camera_controller.look_at(self._focus_node.global_position, Vector3.UP)
 		else:
 			# Free freelook (no integration point)
-			var yaw_basis := Basis(Vector3.UP, self._freelook_yaw)
-			var pitch_basis := Basis(Vector3.RIGHT, self._freelook_pitch)
+			var yaw_basis: Basis = Basis(Vector3.UP, self._freelook_yaw)
+			var pitch_basis: Basis = Basis(Vector3.RIGHT, self._freelook_pitch)
 			self.camera_controller.transform.basis = yaw_basis * pitch_basis
+
+func _apply_min_height_constraint(position: Vector3) -> Vector3:
+	if self.min_height != -NUMBERS.FLOAT16_MAX:
+		position.y = max(self.min_height, position.y)
+	return position
 
 func _handle_input() -> void:
 	if self._verify_integrity():
@@ -362,20 +368,44 @@ func _handle_sprint_stop() -> void:
 	#self._is_sprinting = false
 
 func _handle_state_updated(update_details: Dictionary) -> void:
-	if self.has_meta(GroupData.GUID):
-		if update_details.keys().has(self.get_meta(GroupData.GUID)):
-			var state_update: GameAction = update_details.get(self.get_meta(GroupData.GUID))
-			match state_update.action_type:
+	if self._verify_integrity():
+		var self_guid: String = self.get_meta(GroupData.GUID)
+		if self_guid in update_details:
+			var update_action: GameAction = update_details[self_guid]
+			match update_action.action_type:
 				GameAction.TYPE.SET_RIG_FOCUS:
-					if state_update.payload.has(GameAction.TARGET_GUID):
-						var focus_guid: String = state_update.payload.get(GameAction.TARGET_GUID)
-						self.focus_guid(focus_guid)
-					else:
-						Logger.error(self._MISSING_GUID, [self.SET_RIG_FOCUS], self)
+					self._handle_set_rig_focus(update_action)
+				GameAction.TYPE.TRANSFORM:
+					self._handle_transform(update_action)
 				_:
-					pass
+					var update_type_string: String = GameAction.get_type_string(update_action.action_type)
+					Logger.warn("Incoming update type \"%s\" is not supported", [update_type_string], self)
+
+func _handle_transform(incoming_action: GameAction) -> void:
+	if self._verify_integrity():
+		var missing_transform_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.ROTATION, GameAction.POSITION, GameAction.SCALE])
+		if missing_transform_keys.size() < 3:
+			var self_guid: String = self.get_meta(GroupData.GUID)
+			var camera_state_data: StateData = GlobalStateController.get_header_data(self_guid, StateHeaders.TYPE.DATA)
+			if incoming_action.payload.has(GameAction.ROTATION):
+				var new_rotation: Quaternion = camera_state_data.get_current_rotation()
+				self.transform.basis = Basis(new_rotation.normalized())
+			if incoming_action.payload.has(GameAction.POSITION):
+				var new_position: Vector3 = camera_state_data.get_current_position()
+				self.position = new_position
+			if incoming_action.payload.has(GameAction.SCALE):
+				var new_scale: Vector3 = camera_state_data.get_current_scale()
+				self.scale = new_scale
+		else:
+			var missing_transform_string: String = "; ".join(missing_transform_keys)
+			Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, missing_transform_string], self)
+
+func _handle_set_rig_focus(incoming_action: GameAction) -> void:
+	if incoming_action.payload.has(GameAction.TARGET_GUID):
+		var focus_guid: String = incoming_action.payload.get(GameAction.TARGET_GUID)
+		self.focus_guid(focus_guid)
 	else:
-		Logger.error(self._MISSING_GUID, [self._SELF], self)
+		Logger.error(self._MISSING_GUID, [self.SET_RIG_FOCUS], self)
 
 func _verify_integrity() -> bool:
 	if !self.has_meta(GroupData.GUID):

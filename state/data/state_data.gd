@@ -15,8 +15,6 @@ const _NAME: String = "[StateData]"
 const _GET_STATE_DATA: String = "get_state_data"
 const _STATE_IDENTIFIER: String = "_state"
 
-signal state_change(new_state: StateData)
-
 var _owner_guid: String
 var _owner_name: String
 var _owner_type: String
@@ -152,7 +150,6 @@ func transition_next_state() -> StateConfiguration.STATE:
 	var next_state := _find_next_valid_state()
 	if next_state != _current_state:
 		_current_state = next_state
-		self.state_change.emit(self)
 	else:
 		Logger.debug(self._MAX_VALID_STATE, [_owner_name, _current_state], self)
 	return _current_state
@@ -170,7 +167,6 @@ func transition_previous_state() -> StateConfiguration.STATE:
 	var prev_state := _find_previous_valid_state()
 	if prev_state != _current_state:
 		_current_state = prev_state
-		self.state_change.emit(self)
 	else:
 		Logger.debug(self._MIN_VALID_STATE, [_owner_name, _current_state], self)
 	return _current_state
@@ -185,6 +181,15 @@ func get_state_value(incoming_value: StateConfiguration.STATE) -> float:
 
 func get_owner_guid() -> String:
 	return self._owner_guid
+
+func get_current_rotation() -> Quaternion:
+	return self._owner_rotation
+
+func get_current_position() -> Vector3:
+	return self._owner_position
+
+func get_current_scale() -> Vector3:
+	return self._owner_scale
 
 func is_valid_state(incoming_state: StateConfiguration.STATE) -> bool:
 	if self._valid_transitions.has(incoming_state):
