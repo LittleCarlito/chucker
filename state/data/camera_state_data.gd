@@ -2,6 +2,7 @@ extends StateData
 class_name CameraStateData
 
 const _MISSING_GUID: String = "Incoming associated rig \"%s\" is missing a GUID"
+const _NOT_FOCUSED: String = "Not focused returning empty string"
 
 var focused_guid: String
 var freelook_pitch: float
@@ -10,6 +11,13 @@ var _is_focused: bool
 var _is_idle_roatating: bool
 var _is_height_held: bool
 var _min_height_warn: bool = false
+
+func get_focus_guid() -> String:
+	if self.self._is_focused():
+		return self.focused_guid
+	else:
+		Logger.warn(self._NOT_FOCUSED, [], self)
+		return GroupData.EMPTY
 
 func set_focus(incoming_guid: String) -> void:
 	self.focused_guid = incoming_guid

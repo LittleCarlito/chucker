@@ -90,7 +90,7 @@ func get_nearest_state(incoming_value: float) -> StateConfiguration.STATE:
 
 func can_transition(to_state: StateConfiguration.STATE) -> bool:
 	if self._valid_transitions.has(self._current_state):
-		var current_valid_transitions: Array[StateConfiguration.STATE] = _get_sorted_transitions(_current_state)
+		var current_valid_transitions: Array = _get_sorted_transitions(_current_state)
 		if current_valid_transitions.has(to_state):
 			return true
 		else:
@@ -104,7 +104,6 @@ func can_transition(to_state: StateConfiguration.STATE) -> bool:
 func try_set_state(to_state: StateConfiguration.STATE) -> bool:
 	if self.can_transition(to_state):
 		self._current_state = to_state
-		self.state_item_change.emit(self)
 		return true
 	else:
 		return false
@@ -232,9 +231,9 @@ func as_string() -> String:
 	details += ", windows=%d, transitions=%d, values=%d" % [_state_windows.size(), self._valid_transitions.size(), _state_values.size()]
 	return details
 
-func _get_sorted_transitions(state: StateConfiguration.STATE) -> Array[StateConfiguration.STATE]:
+func _get_sorted_transitions(state: StateConfiguration.STATE) -> Array:
 	if self._valid_transitions.has(state):
-		var transitions: Array[StateConfiguration.STATE] = self._valid_transitions[state]
+		var transitions: Array = self._valid_transitions[state]
 		transitions.sort()
 		return transitions
 	else:

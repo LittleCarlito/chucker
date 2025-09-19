@@ -12,9 +12,11 @@ const _MISSING_DATA: String = "Missing %s data"
 const _MIN_HEIGHT_WARN: String = "Is now having its height artificially held to min height of \"%f\""
 const _SUCCESSFUL_TRANSITION: String = "Successfully transitioned from \"%s\" state to \"%s\""
 const _FREELOOK_REASONING: String = "Camera rig is in freelook or tracking state"
+const _INVALID_STATE: String = "Invalid state configuration; %s"
+const _FOCUSED_NO_GUID: String = "State is TRACKING but there is no guid to focus on"
 
 # TODO OOOOO
-# TODO Get freelook working
+# TODO Freelook working but needs tweaking
 # TODO Then get tracking working
 # TODO Then do rest of todos in file
 
@@ -23,14 +25,15 @@ const _FREELOOK_REASONING: String = "Camera rig is in freelook or tracking state
 # Below stays
 @export var camera_controller: Node3D
 @export var internal_camera: Camera3D
-@export var freelook_sensitivity: float = 0.07
+@export var freelook_sensitivity: float = 2.0
 @export var freelook_pitch_limit: float = 85.0 # degrees
 @export var min_height: float = -NUMBERS.FLOAT16_MAX
 @export var primary_freelook_enabled: bool
 @export var secondary_freelook_enabled: bool
 @export var zoom_enabled: bool
 # TODO Really this (and probably above ones too) should just be based off what state it is in
-@export var movement_enabled: bool = true
+@export var movement_enabled: bool
+# TODO Get rid of this; Should be able to use GlobalStateController to get anything via guid
 var _focus_node: Node3D
 
 func _ready() -> void:
@@ -271,7 +274,7 @@ func _maintain_distance() -> void:
 		if self._verify_integrity():
 			var new_position: Vector3
 			var current_state: StateConfiguration.STATE = self._get_camera_state()
-			if current_state == StateConfiguration.STATE.FULL_TRACKING:
+			if current_state == StateConfiguration.STATE.TRACKING_FULL:
 				# Apply offset in local space relative to integration point's orientation
 				var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
 				var world_offset = self._focus_node.global_transform.basis * offset
@@ -279,12 +282,12 @@ func _maintain_distance() -> void:
 				new_position = self._focus_node.global_position + world_offset
 				self.camera_controller.global_position = self._apply_min_height_constraint(new_position)
 				self.camera_controller.global_rotation = self._focus_node.global_rotation
-			elif current_state == StateConfiguration.STATE.POS_TRACKING:
+			elif current_state == StateConfiguration.STATE.TRACKING_POS:
 				# Apply offset in world space, maintain current orientation
 				var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
 				new_position = self._focus_node.global_position + offset
 				self.camera_controller.global_position = self._apply_min_height_constraint(new_position)
-			elif current_state == StateConfiguration.STATE.FREE_TRACKING:
+			elif current_state == StateConfiguration.STATE.TRACKING_FREE:
 				# TRACK mode: maintain spherical coordinates around the moving integration point
 				self._update_camera_position()
 	else:
@@ -292,36 +295,38 @@ func _maintain_distance() -> void:
 		# TODO Make sure these debug toggles reset on new focus/lose focus
 		# Logger.warn(self._NO_INTEGRATION, [], self)
 		pass
-	
+
+# TODO OOOOO
+# TODO Below and Above need to be refactored to be using state object
+#		Below also has gimbal lock issues that need addressing
+#			But hopefully in the course of fixing this shit it will just resolve
+#			If it is still there after fixing then address
+
+# TODO Need to refactor name to track guid position
+#			Have it just updating state
+#		Then ensure this class has proper position/rotation/scale reaction shit to state updates
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
 func _update_camera_position() -> void:
 	if self._verify_integrity():
-		var camera_state: StateData = GlobalStateController.get_header_data(self.get_meta(GroupData.GUID), StateHeaders.TYPE.DATA)
+		var camera_state: CameraStateData = GlobalStateController.get_header_data(self.get_meta(GroupData.GUID), StateHeaders.TYPE.DATA)
+		var focused_guid: String = camera_state.get_focus_guid()
 		var current_state: StateConfiguration.STATE = camera_state.get_current_state()
-		if current_state == StateConfiguration.STATE.FREE_TRACKING and self._focus_node != null:
-			# TRACK mode: position camera in spherical coordinates around the moving integration point
-			var radius: float = GameConfig.DEFAULTS.controller_distance
-			var offset: Vector3 = Vector3(
-				radius * cos(self._freelook_pitch) * sin(self._freelook_yaw),
-				radius * sin(self._freelook_pitch),
-				radius * cos(self._freelook_pitch) * cos(self._freelook_yaw)
-			)
-			var new_position: Vector3 = self._focus_node.global_position + offset
-			self.camera_controller.global_position = self._apply_min_height_constraint(new_position)
-			self.camera_controller.look_at(self._focus_node.global_position, Vector3.UP)
-		# TODO Swap this to be GlobalState based instead
-		elif camera_state.is_focused and self._focus_node != null:
-			# Focused mode: position camera in spherical coordinates around focus point
-			var radius: float = GameConfig.DEFAULTS.controller_distance
-			var offset: Vector3 = Vector3(
-				radius * cos(self._freelook_pitch) * sin(self._freelook_yaw),
-				radius * sin(self._freelook_pitch),
-				radius * cos(self._freelook_pitch) * cos(self._freelook_yaw)
-			)
-			var new_position: Vector3 = self._focus_node.global_position + offset
-			self.camera_controller.global_position = _apply_min_height_constraint(new_position)
-			self.camera_controller.look_at(self._focus_node.global_position, Vector3.UP)
+		if current_state >= 500 and current_state <= 503:
+			if !focused_guid.is_empty():
+				# TODO Need to have different behavior based off state
+				var current_rotation: Quaternion = camera_state.get_current_rotation()
+				var radius: float = GameConfig.DEFAULTS.controller_distance
+				var base_offset: Vector3 = Vector3(0, 0, radius)
+				var offset: Vector3 = current_rotation * base_offset
+				var focus_node: Node3D = GlobalStateController.get_header_data(focused_guid, StateHeaders.TYPE.NODE)
+				if focus_node != null:
+					var new_position: Vector3 = focus_node.global_position + offset
+					self.camera_controller.global_position = self._apply_min_height_constraint(new_position)
+					self.camera_controller.look_at(focus_node.global_position, Vector3.UP)
+			else:
+				Logger.error(self._INVALID_STATE, [self._FOCUSED_NO_GUID], self)
+				return
 		else:
 			# Free freelook (no integration point)
 			var yaw_basis: Basis = Basis(Vector3.UP, self._freelook_yaw)
@@ -351,10 +356,14 @@ func _handle_input() -> void:
 # TODO Should be a lower class function after camera refactor
 #		Higher class
 func _handle_freelook(v_motion: float, h_motion: float) -> void:
-	if GlobalCursorController.is_captured_current():
-		var inversion_multiplier: int = 1 if self._is_camera_tracking() else -1
-		self.pan_horizontal((h_motion * freelook_sensitivity) * inversion_multiplier) 
-		self.pitch_vertical((v_motion * freelook_sensitivity) * inversion_multiplier)
+	if self._verify_integrity():
+		var self_guid: String = self.get_meta(GroupData.GUID)
+		var camera_state_data: StateData = GlobalStateController.get_header_data(self_guid, StateHeaders.TYPE.DATA)
+		var current_state: StateConfiguration.STATE = camera_state_data.get_current_state()
+		if current_state >= 550 and current_state <= 552:
+			var inversion_multiplier: int = 1 if self._is_camera_tracking() else -1
+			self.pan_horizontal((h_motion * freelook_sensitivity) * inversion_multiplier) 
+			self.pitch_vertical((v_motion * freelook_sensitivity) * inversion_multiplier)
 
 # TODO Should be a lower class function after camera refactor
 #		Lowest class

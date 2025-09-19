@@ -248,7 +248,7 @@ func _handle_state_action(incoming_action: GameAction) -> void:
 		var subject_guid: String = incoming_action.payload[GameAction.OWNER_GUID]
 		var new_state_string: String = incoming_action.payload[GameAction.STATE]
 		var new_state: StateConfiguration.STATE = StateConfiguration.get_state_from_string(new_state_string)
-		var subject_state_data: StateData = GlobalStateController.retrieve_state_data(subject_guid)
+		var subject_state_data: StateData = self.retrieve_state_data(subject_guid)
 		if subject_state_data.try_set_state(new_state):
 			self._schedule_state_update(incoming_action)
 	else:

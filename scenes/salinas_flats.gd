@@ -96,6 +96,17 @@ func focus_character() -> void:
 	SceneUtil.focus_character(spawned_assets)
 	GlobalCameraController.set_rig_height(2)
 
+func _freelook_camera() -> void:
+	var primary_camera_guid: String = GlobalStateController.get_primary_guid(GameState.DATA_TYPE.CAMERA)
+	var primary_camera_state: StateData = GlobalStateController.get_header_data(primary_camera_guid, StateHeaders.TYPE.DATA)
+	var new_state_string: String = StateConfiguration.get_state_string(StateConfiguration.STATE.FREELOOK_MOVE)
+	var update_state_dictionary: Dictionary = {
+		GameAction.OWNER_GUID: primary_camera_guid,
+		GameAction.STATE: new_state_string
+	}
+	var update_state_action: GameAction = GameAction.new(GameAction.TYPE.SET_STATE, update_state_dictionary)
+	GlobalStateController.dispatch(update_state_action)
+
 func update_course_data() -> void:
 	get_tree().call_group(GroupData.GENERAL, GroupData.UPDATE_STATE)
 	# TODO Call to make all the hole numbers sequential
@@ -120,6 +131,7 @@ func _apply_settings() -> void:
 
 func _kickoff_data_load() -> void:
 	spawned_assets = AssetDelivery.spawn_assets(asset_spawn_data)
-	# self.focus_character()
+	self.focus_character()
+	# self._freelook_camera()
 	update_course_data()
 	_apply_settings()
