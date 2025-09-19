@@ -120,6 +120,6 @@ func _apply_settings() -> void:
 
 func _kickoff_data_load() -> void:
 	spawned_assets = AssetDelivery.spawn_assets(asset_spawn_data)
-	self.focus_character()
+	# self.focus_character()
 	update_course_data()
 	_apply_settings()

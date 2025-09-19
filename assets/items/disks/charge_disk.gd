@@ -73,6 +73,10 @@ var stopwatch: Stopwatch
 # TODO Do Node Util TODOs
 # TODO Do force disk TODOs
 # TODO Do salinas flats TODOs
+# TODO Exportable tags with STATEs
+#		Allow for things like default state to be designated for resetting
+#			Could allow for tagging of states for any type of functionality
+#			An alternative to the valid array could be tag based transitioning
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

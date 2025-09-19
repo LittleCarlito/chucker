@@ -20,9 +20,11 @@ var _owner_name: String
 var _owner_type: String
 var _current_state: StateConfiguration.STATE
 var _current_state_duration: float
+# Scene based details
 var _owner_rotation: Quaternion
 var _owner_position: Vector3
 var _owner_scale: Vector3
+var _is_sprinting: bool
 # State data dictionaries
 var _valid_transitions: Dictionary
 var _state_values: Dictionary # String key, Float value; Whatever data you need to store (as long as its a (String, float))
@@ -42,15 +44,8 @@ func _init(
 	if self._validate_window_configuration(incoming_windows):
 		self._state_windows = incoming_windows
 
-func update_rotation(incoming_quaternion: Quaternion) -> void:
-	self._owner_rotation *= incoming_quaternion
-
-func update_position(incoming_vector: Vector3) -> void:
-	self._owner_position += incoming_vector
-
-func update_scale(incoming_vector: Vector3) -> void:
-	self._owner_scale *= incoming_vector
-
+# TODO Refactor this
+#		Should work its way through valid transitions to the lowest non -999 state
 func reset_state() -> StateConfiguration.STATE:
 	var lowest_state: StateConfiguration.STATE = StateConfiguration.STATE.READY
 	var found_state: bool = false
@@ -178,6 +173,21 @@ func get_state_value(incoming_value: StateConfiguration.STATE) -> float:
 		var incoming_state_string: String = StateUtil.get_state_string(incoming_value)
 		Logger.warn(self._NO_VALUE, [self._owner_name, incoming_state_string], self)
 		return 0
+
+func update_rotation(incoming_quaternion: Quaternion) -> void:
+	self._owner_rotation *= incoming_quaternion
+
+func update_position(incoming_vector: Vector3) -> void:
+	self._owner_position += incoming_vector
+
+func update_scale(incoming_vector: Vector3) -> void:
+	self._owner_scale *= incoming_vector
+
+func update_is_sprinting(incoming_value: bool) -> void:
+	self._is_sprinting = incoming_value
+
+func is_sprinting() -> bool:
+	return self._is_sprinting
 
 func get_owner_guid() -> String:
 	return self._owner_guid

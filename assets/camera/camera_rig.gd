@@ -13,6 +13,11 @@ const _MIN_HEIGHT_WARN: String = "Is now having its height artificially held to 
 const _SUCCESSFUL_TRANSITION: String = "Successfully transitioned from \"%s\" state to \"%s\""
 const _FREELOOK_REASONING: String = "Camera rig is in freelook or tracking state"
 
+# TODO OOOOO
+# TODO Get freelook working
+# TODO Then get tracking working
+# TODO Then do rest of todos in file
+
 # TODO Break camera down into multiple extension classes and have these up the path with the functions that make sense
 # TODO Move majority of this to state
 # Below stays
@@ -25,7 +30,7 @@ const _FREELOOK_REASONING: String = "Camera rig is in freelook or tracking state
 @export var secondary_freelook_enabled: bool
 @export var zoom_enabled: bool
 # TODO Really this (and probably above ones too) should just be based off what state it is in
-@export var movement_enabled: bool
+@export var movement_enabled: bool = true
 var _focus_node: Node3D
 
 func _ready() -> void:
@@ -193,8 +198,11 @@ func focus_on_target() -> void:
 		var focus_vector: Vector3 = self._focus_node.position
 		self.camera_controller.look_at(focus_vector)
 	else:
-		Logger.warn(self._NO_INTEGRATION, [], self)
-
+		# TODO Create a debug toggle
+		# TODO Make sure these debug toggles reset on new focus/lose focus
+		# Logger.warn(self._NO_INTEGRATION, [], self)
+		pass
+		
 func set_tracking_mode(mode: GlobalCameraController.TrackingMode) -> void:
 	self.tracking_mode = mode
 
@@ -280,8 +288,11 @@ func _maintain_distance() -> void:
 				# TRACK mode: maintain spherical coordinates around the moving integration point
 				self._update_camera_position()
 	else:
-		Logger.warn(self._NO_INTEGRATION, [], self)
-
+		# TODO Create a debug toggle
+		# TODO Make sure these debug toggles reset on new focus/lose focus
+		# Logger.warn(self._NO_INTEGRATION, [], self)
+		pass
+	
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
 func _update_camera_position() -> void:
@@ -324,6 +335,7 @@ func _apply_min_height_constraint(position: Vector3) -> Vector3:
 		position.y = max(self.min_height, position.y)
 	return position
 
+# TODO Specify if mouse or keyboard (pretty sure its mouse)
 # TODO Should be a lower class function after camera refactor
 #		Higher class
 func _handle_input() -> void:
@@ -366,7 +378,8 @@ func _handle_rig_focus(incoming_value: bool) -> void:
 func _handle_up_input(_delta: float) -> void:
 	if self.movement_enabled and self._verify_integrity():
 		var self_guid: String = self.get_meta(GroupData.GUID)
-		var movement_amount: float = GameConfig.DEFAULTS.controller_speed
+		var sprint_multiplier: float = self._get_sprint_value(self_guid)
+		var movement_amount: float = GameConfig.DEFAULTS.controller_speed * sprint_multiplier
 		var transform_dictionary: Dictionary = {
 			GameAction.Y: movement_amount
 		}
@@ -382,7 +395,8 @@ func _handle_up_input(_delta: float) -> void:
 func _handle_down_input(_delta: float) -> void:
 	if self._verify_integrity():
 		var self_guid: String = self.get_meta(GroupData.GUID)
-		var movement_amount: float = -GameConfig.DEFAULTS.controller_speed
+		var sprint_multiplier: float = self._get_sprint_value(self_guid)
+		var movement_amount: float = -(GameConfig.DEFAULTS.controller_speed * sprint_multiplier)
 		var transform_dictionary: Dictionary = {
 			GameAction.Y: movement_amount
 		}
@@ -398,9 +412,12 @@ func _handle_down_input(_delta: float) -> void:
 func _handle_input_direction(incoming_direction: Vector2) -> void:
 	if self.movement_enabled and self._verify_integrity():
 		var self_guid: String = self.get_meta(GroupData.GUID)
+		var sprint_multiplier: float = self._get_sprint_value(self_guid)
+		var x_amount = incoming_direction.x * sprint_multiplier
+		var y_amount = incoming_direction.y * sprint_multiplier
 		var transform_dictionary: Dictionary = {
-			GameAction.X: incoming_direction.x,
-			GameAction.Z: incoming_direction.y
+			GameAction.X: x_amount,
+			GameAction.Z: y_amount
 		}
 		var transform_action_dictionary: Dictionary = {
 			GameAction.OWNER_GUID: self_guid,
@@ -409,17 +426,37 @@ func _handle_input_direction(incoming_direction: Vector2) -> void:
 		var transform_action: GameAction = GameAction.new(GameAction.TYPE.TRANSFORM, transform_action_dictionary)
 		GlobalStateController.dispatch(transform_action)
 
+# BUG right now only up and down inputs are workign
+func _get_sprint_value(self_guid: String) -> float:
+	var sprint_value: float = 1.0
+	var camera_state_data: StateData = GlobalStateController.get_header_data(self_guid, StateHeaders.TYPE.DATA)
+	if camera_state_data.is_sprinting():
+		sprint_value = GameConfig.DEFAULTS.sprint_multiplier
+	return sprint_value
+
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
 func _handle_sprint_start() -> void:
-	pass
-	#self._is_sprinting = true
+	if self._verify_integrity():
+		var self_guid: String = self.get_meta(GroupData.GUID)
+		var transform_action_dictionary: Dictionary = {
+			GameAction.OWNER_GUID: self_guid,
+			GameAction.IS_SPRINTING: GroupData.TRUE
+		}
+		var transform_action: GameAction = GameAction.new(GameAction.TYPE.TRANSFORM, transform_action_dictionary)
+		GlobalStateController.dispatch(transform_action)
 
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
 func _handle_sprint_stop() -> void:
-	pass
-	#self._is_sprinting = false
+	if self._verify_integrity():
+		var self_guid: String = self.get_meta(GroupData.GUID)
+		var transform_action_dictionary: Dictionary = {
+			GameAction.OWNER_GUID: self_guid,
+			GameAction.IS_SPRINTING: GroupData.FALSE
+		}
+		var transform_action: GameAction = GameAction.new(GameAction.TYPE.TRANSFORM, transform_action_dictionary)
+		GlobalStateController.dispatch(transform_action)
 
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
@@ -441,8 +478,8 @@ func _handle_state_updated(update_details: Dictionary) -> void:
 #		Lowest class
 func _handle_transform(incoming_action: GameAction) -> void:
 	if self._verify_integrity():
-		var missing_transform_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.ROTATION, GameAction.POSITION, GameAction.SCALE])
-		if missing_transform_keys.size() < 3:
+		var missing_transform_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, GameAction.TRANSFORM_KEYS)
+		if missing_transform_keys.size() < GameAction.TRANSFORM_KEYS.size():
 			var self_guid: String = self.get_meta(GroupData.GUID)
 			var camera_state_data: StateData = GlobalStateController.get_header_data(self_guid, StateHeaders.TYPE.DATA)
 			if incoming_action.payload.has(GameAction.ROTATION):

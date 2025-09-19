@@ -282,8 +282,8 @@ func _handle_rig_focus_action(incoming_action: GameAction) -> void:
 
 func _handle_transform_action(incoming_action: GameAction) -> void:
 	var missing_owner_guid: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID])
-	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.ROTATION, GameAction.POSITION, GameAction.SCALE])
-	if !missing_owner_guid.is_empty() or missing_keys.size() >= 3:
+	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, GameAction.TRANSFORM_KEYS)
+	if !missing_owner_guid.is_empty() or missing_keys.size() >= GameAction.TRANSFORM_KEYS.size():
 		var missing_string: String = "; ".join(missing_keys + missing_owner_guid)
 		Logger.error(Logger._BAD_ACTION_FORMAT, [incoming_action, missing_string], self)
 		return
@@ -303,6 +303,10 @@ func _handle_transform_action(incoming_action: GameAction) -> void:
 		var scale_vector: Vector3 = StateUtil.extract_vector3(incoming_action.payload[GameAction.SCALE], incoming_action)
 		if scale_vector != Vector3.ZERO:
 			owner_state_data.update_scale(scale_vector)
+	if !missing_keys.has(GameAction.IS_SPRINTING):
+		var sprint_value: bool = StateUtil.extract_bool(incoming_action.payload[GameAction.IS_SPRINTING])
+		if sprint_value != null:
+			owner_state_data.update_is_sprinting(sprint_value)
 	self._schedule_state_update(incoming_action)
 
 func _handle_warn_action(incoming_action: GameAction) -> void:

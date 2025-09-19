@@ -7,7 +7,6 @@ var focused_guid: String
 var freelook_pitch: float
 var freelook_yaw: float
 var _is_focused: bool
-var _is_sprinting: bool
 var _is_idle_roatating: bool
 var _is_height_held: bool
 var _min_height_warn: bool = false

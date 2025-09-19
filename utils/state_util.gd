@@ -61,3 +61,13 @@ static func extract_vector3(vector_data: Dictionary, incoming_action: GameAction
 	var y_value: float = 0 if missing_keys.has(GameAction.Y) else vector_data[GameAction.Y]
 	var z_value: float = 0 if missing_keys.has(GameAction.Z) else vector_data[GameAction.Z]
 	return Vector3(x_value, y_value, z_value)
+
+static func extract_bool(incoming_string: String) -> Variant:
+	match incoming_string.to_lower():
+		GroupData.TRUE:
+			return true
+		GroupData.FALSE:
+			return false
+		_:
+			Logger.error("Incoming string does not map to true or false", [], null)
+			return null
