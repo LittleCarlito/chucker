@@ -138,16 +138,20 @@ static func _launch_asset(incoming_asset: Node3D, focus_flight: bool = false) ->
 			#				Implmenters like path disk then return shit like their path_follow above from that function
 			#					Thigns like force disk just return themselves
 			#				Then when a camera tries to integrate based off GUID it gets the correct part of the asset
-
+			
 			if incoming_asset.has_meta(GroupData.GUID):
 				var primary_camera_guid: String = GlobalStateController.get_primary_guid(GameState.DATA_TYPE.CAMERA)
+				var state_string: String = StateConfiguration.get_state_string(StateConfiguration.STATE.TRACKING_FULL)
 				var target_guid: String = incoming_asset.get_meta(GroupData.GUID)
-				var focus_asset_dictionary: Dictionary = {
+				# TODO Refactor this to be a state setting action instead
+				# TODO Then chase the state action handling logic through dispatch to ensure the state shit handles all data
+				var set_state_dictionary: Dictionary = {
 					GameAction.OWNER_GUID: primary_camera_guid,
+					GameAction.STATE: state_string,
 					GameAction.TARGET_GUID: target_guid
 				}
-				var focus_asset_action: GameAction = GameAction.new(GameAction.TYPE.SET_RIG_FOCUS, focus_asset_dictionary)
-				GlobalStateController.dispatch(focus_asset_action)
+				var state_action: GameAction = GameAction.new(GameAction.TYPE.SET_STATE, set_state_dictionary)
+				GlobalStateController.dispatch(state_action)
 			else:
 				Logger.error(_BAD_ASSET, [], null)
 

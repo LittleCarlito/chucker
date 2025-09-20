@@ -24,6 +24,7 @@ var _current_state_duration: float
 var _owner_rotation: Quaternion
 var _owner_position: Vector3
 var _owner_scale: Vector3
+var _focused_guid: String
 var _is_sprinting: bool
 # State data dictionaries
 var _valid_transitions: Dictionary
@@ -172,6 +173,15 @@ func get_state_value(incoming_value: StateConfiguration.STATE) -> float:
 		var incoming_state_string: String = StateUtil.get_state_string(incoming_value)
 		Logger.warn(self._NO_VALUE, [self._owner_name, incoming_state_string], self)
 		return 0
+
+func set_focused_guid(incoming_guid: String) -> void:
+	self._focused_guid = incoming_guid
+
+func get_focused_guid() -> String:
+	return self._focused_guid
+
+func is_focused() -> bool:
+	return self._focused_guid != null and !self._focused_guid.strip_edges().is_empty()
 
 func update_rotation(incoming_quaternion: Quaternion) -> void:
 	self._owner_rotation *= incoming_quaternion

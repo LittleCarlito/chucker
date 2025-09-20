@@ -3,7 +3,11 @@ class_name CameraStateData
 
 const _NOT_FOCUSED: String = "Not focused returning empty string"
 
+# TODO MOVE THIS TO STATE DATA
+# TODO MAKE IT PRIVATE
 var focused_guid: String
+
+
 var freelook_pitch: float
 var freelook_yaw: float
 # TODO Two below should be based off state not these bools

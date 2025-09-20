@@ -124,36 +124,31 @@ func pitch_vertical(rotation_amount: float) -> void:
 func focus_guid(incoming_guid: String) -> void:
 	self._focus_node = GlobalStateController.get_header_data(incoming_guid, StateHeaders.TYPE.NODE)
 
+# TODO Really should be refactored to just be state based and not rely on Node3D
+#			Should be taking in guid only and not node + state
 func set_integration_point(
 		incoming_node: Node3D, 
 		incoming_state: StateConfiguration.STATE = StateConfiguration.STATE.TRACKING_FULL
 		) -> void:
 	# Focus node in state
 	if self._verify_integrity():
+		var self_guid: String = self.get_meta(GroupData.GUID)
 		if incoming_node.has_meta(GroupData.GUID):
-			var integrate_action_dictionary: Dictionary = {
-				GameAction.OWNER_GUID: self.get_meta(GroupData.GUID),
-				GameAction.TARGET_GUID: incoming_node.get_meta(GroupData.GUID)
+			# TODO Change this to a state update action instead
+			# TODO Then follow the dispatch logic through to ensure the state action handling logic will pull all the info you put
+			var state_string: String = StateConfiguration.get_state_string(incoming_state)
+			var target_guid: String = incoming_node.get_meta(GroupData.GUID)
+			var integrate_state_dictionary: Dictionary = {
+				GameAction.OWNER_GUID: self_guid,
+				GameAction.STATE: state_string,
+				GameAction.TARGET_GUID: target_guid
 			}
-			var integrate_action: GameAction = GameAction.new(GameAction.TYPE.SET_RIG_FOCUS, integrate_action_dictionary)
+			var integrate_action: GameAction = GameAction.new(GameAction.TYPE.SET_STATE, integrate_state_dictionary)
 			GlobalStateController.dispatch(integrate_action)
-			self._focus_node = incoming_node
-			self._update_state_ref()
-			# Update the camrea state
-			var status_string: String = StateConfiguration.get_state_string(incoming_state)
-			var set_state_dictionary: Dictionary = {
-				GameAction.OWNER_GUID: self.get_meta(GroupData.GUID),
-				GameAction.STATE: status_string
-			}
-			var set_state_action: GameAction = GameAction.new(GameAction.TYPE.SET_STATE, set_state_dictionary)
-			GlobalStateController.dispatch(set_state_action)
 		else:
 			var focus_identifier: String = self._FOCUS + " " + "\"" + incoming_node.name + "\""
 			Logger.error(self._MISSING_GUID, [focus_identifier], self)
-			return
 
-	else:
-		return
 
 func get_integration_point() -> Node3D:
 	return self._focus_node
@@ -472,8 +467,6 @@ func _handle_new_state_signal(update_details: Dictionary) -> void:
 			match update_action.action_type:
 				GameAction.TYPE.SET_STATE:
 					self._handle_state_update(update_action)
-				GameAction.TYPE.SET_RIG_FOCUS:
-					self._handle_set_rig_focus(update_action)
 				GameAction.TYPE.TRANSFORM:
 					self._handle_transform(update_action)
 				_:
@@ -482,7 +475,7 @@ func _handle_new_state_signal(update_details: Dictionary) -> void:
 
 func _handle_state_update(incoming_action: GameAction) -> void:
 	# TODO OOOOOO
-	# TODO In here is where all the important offset/
+	# TODO In here is where all the important offset shit happens
 	self._update_state_ref()
 
 # TODO Should be a lower class function after camera refactor
@@ -505,15 +498,6 @@ func _handle_transform(incoming_action: GameAction) -> void:
 		else:
 			var missing_transform_string: String = "; ".join(missing_transform_keys)
 			Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, missing_transform_string], self)
-
-# TODO Should be a lower class function after camera refactor
-#		Lowest class
-func _handle_set_rig_focus(incoming_action: GameAction) -> void:
-	if incoming_action.payload.has(GameAction.TARGET_GUID):
-		var focus_guid: String = incoming_action.payload.get(GameAction.TARGET_GUID)
-		self.focus_guid(focus_guid)
-	else:
-		Logger.error(self._MISSING_GUID, [self.SET_RIG_FOCUS], self)
 
 # TODO Should be a lower class function after camera refactor
 #		Lowest class

@@ -4,18 +4,12 @@ class_name SceneUtil
 static func focus_character(incoming_assets: Dictionary) -> void:
 	var primary_player_guid: String = GlobalStateController.get_primary_guid(GameState.DATA_TYPE.PLAYER)
 	var primary_camera_guid: String = GlobalStateController.get_primary_guid(GameState.DATA_TYPE.CAMERA)
-	# Focus the camera on player
-	var focus_camera_dictionary: Dictionary = {
-		GameAction.OWNER_GUID: primary_camera_guid,
-		GameAction.TARGET_GUID: primary_camera_guid
-	}
-	var focus_camera_action: GameAction = GameAction.new(GameAction.TYPE.SET_RIG_FOCUS, focus_camera_dictionary)
-	GlobalStateController.dispatch(focus_camera_action)
-	# Set the camera to track the player
 	var state_string: String = StateConfiguration.get_state_string(StateConfiguration.STATE.TRACKING_FULL)
-	var set_state_dictionary: Dictionary = {
+	# TODO Follow dispatch code all the way through and ensure it handles all stored data
+	var focus_state_dictionary: Dictionary = {
 		GameAction.OWNER_GUID: primary_camera_guid,
-		GameAction.STATE: state_string
+		GameAction.STATE:  state_string,
+		GameAction.TARGET_GUID: primary_player_guid
 	}
-	var set_state_action: GameAction = GameAction.new(GameAction.TYPE.SET_STATE, set_state_dictionary)
-	GlobalStateController.dispatch(set_state_action)
+	var focus_action: GameAction = GameAction.new(GameAction.TYPE.SET_STATE, focus_state_dictionary)
+	GlobalStateController.dispatch(focus_action)

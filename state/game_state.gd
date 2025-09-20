@@ -231,9 +231,6 @@ func _handle_action(incoming_action: GameAction) -> void:
 	match incoming_action.action_type:
 		GameAction.TYPE.SET_STATE:
 			self._handle_state_action(incoming_action)
-		# TODO Combine SET_RIG_FOCUS and FOCUS_RIG actions to single action
-		GameAction.TYPE.SET_RIG_FOCUS:
-			self._handle_rig_focus_action(incoming_action)
 		GameAction.TYPE.TRANSFORM:
 			self._handle_transform_action(incoming_action)
 		GameAction.TYPE.WARN:
@@ -249,19 +246,19 @@ func _handle_state_action(incoming_action: GameAction) -> void:
 		var new_state_string: String = incoming_action.payload[GameAction.STATE]
 		var new_state: StateConfiguration.STATE = StateConfiguration.get_state_from_string(new_state_string)
 		var subject_state_data: StateData = self.retrieve_state_data(subject_guid)
-		if subject_state_data.try_set_state(new_state):
-			self._schedule_state_update(incoming_action)
-	else:
-		self._log_bad_action(incoming_action, missing_keys)
-
-func _handle_rig_focus_action(incoming_action: GameAction) -> void:
-	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID, GameAction.TARGET_GUID])
-	if missing_keys.is_empty():
-		if self._camera_state.set_camera_focus(
-			incoming_action.payload[GameAction.OWNER_GUID],
-			incoming_action.payload[GameAction.TARGET_GUID]
-			):
-			self._schedule_state_update(incoming_action)
+		# Tracking bounds
+		if new_state >= 500 and new_state <= 503:
+			var missing_track_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.TARGET_GUID])
+			if missing_track_keys.is_empty():
+				if subject_state_data.try_set_state(new_state):
+					var track_target_guid: String = incoming_action.payload[GameAction.TARGET_GUID]
+					subject_state_data.set_focused_guid(track_target_guid)
+					self._schedule_state_update(incoming_action)
+			else:
+				self._log_bad_action(incoming_action, missing_track_keys)
+		else:
+			if subject_state_data.try_set_state(new_state):
+				self._schedule_state_update(incoming_action)
 	else:
 		self._log_bad_action(incoming_action, missing_keys)
 
