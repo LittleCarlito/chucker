@@ -249,27 +249,24 @@ func _update_state_ref() -> void:
 		self._state_ref = camera_state_data.get_current_state()
 
 # TODO OOOOOO
-#		You were here
-#			What needs to be done next is
-#				Finish getting rid of SET_RIG_FOCUS action
-#					Combine it with SET_STATE
-#				Then improve camera rigs handling of state changes to properly do shit
-#				Everything that happens is based off a state change or a transform action (or a warn i guess)
-#					So something like integrate target just creates a set state action with the guid and state to set
-#						Handling of state change deals with the rest after it gets to that point
-#							Initial state change sets position with offset if tracking
-#								Only if going from non tracking to tracking state
-#									Tracking to anything else (tracking or non) does nothing
-#							After that state tracking is done via state signal watching for integrated guid
-#								Moves to the same position as the tracked guid but with the offset applied
-#					Then with the integration logic it should be wathcing for state data changes for the guid it is integrated with
-#						So on transform/state changes it too can react properly
+# OUTLINE
+# Then improve camera rigs handling of state changes to properly do shit
+# Everything that happens is based off a state change or a transform action (or a warn i guess)
+# 	So something like integrate target just creates a set state action with the guid and state to set
+# 		Handling of state change deals with the rest after it gets to that point
+# 			Initial state change sets position with offset if tracking
+# 				Only if going from non tracking to tracking state
+# 					Tracking to anything else (tracking or non) does nothing
+# 			After that state tracking is done via state signal watching for integrated guid
+# 				Moves to the same position as the tracked guid but with the offset applied
+# 	Then with the integration logic it should be wathcing for state data changes for the guid it is integrated with
+# 		So on transform/state changes it too can react properly
 #		TLDR: SET_RIG_FOCUS -> SET_STATE; State transition reactions -> addition guid tracking + reactions
 
-#		Integrate needs to just dispatch an action setting the focus guid to the camera rig state
-#			As well as setting the state to tracking of some sort
-#		Handling
-
+# TODO WORK ITEMS
+# Refactor characters to use and navigate the world based off state shit instead of direct manipulation
+# 	Once they work off their state data
+# 		Camera logic can be updated to react/move to its state update signals as well and keep up/focus on the correct thing
 
 # TODO Tracking offset needs to be entirely based off state transitions
 #				Non tracking to tracking; offset added

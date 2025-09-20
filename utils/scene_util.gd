@@ -5,7 +5,6 @@ static func focus_character(incoming_assets: Dictionary) -> void:
 	var primary_player_guid: String = GlobalStateController.get_primary_guid(GameState.DATA_TYPE.PLAYER)
 	var primary_camera_guid: String = GlobalStateController.get_primary_guid(GameState.DATA_TYPE.CAMERA)
 	var state_string: String = StateConfiguration.get_state_string(StateConfiguration.STATE.TRACKING_FULL)
-	# TODO Follow dispatch code all the way through and ensure it handles all stored data
 	var focus_state_dictionary: Dictionary = {
 		GameAction.OWNER_GUID: primary_camera_guid,
 		GameAction.STATE:  state_string,
