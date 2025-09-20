@@ -84,6 +84,8 @@ func retrieve_state_data(incoming_guid: String) -> StateData:
 
 # TODO Add null handling to callers
 func retrieve_node(incoming_guid: String) -> Node3D:
+	var player_size: int = self._player_state.storage_size()
+	var debug_guid: String = incoming_guid
 	var data_location: Array[DATA_TYPE] = self._find_in_data(incoming_guid)
 	if data_location.is_empty():
 		Logger.error(self._GUID_MISSING_STATE, [incoming_guid], self)
@@ -232,8 +234,6 @@ func _handle_action(incoming_action: GameAction) -> void:
 		# TODO Combine SET_RIG_FOCUS and FOCUS_RIG actions to single action
 		GameAction.TYPE.SET_RIG_FOCUS:
 			self._handle_rig_focus_action(incoming_action)
-		GameAction.TYPE.FOCUS_RIG:
-			self._handle_focus_action(incoming_action)
 		GameAction.TYPE.TRANSFORM:
 			self._handle_transform_action(incoming_action)
 		GameAction.TYPE.WARN:
@@ -253,21 +253,6 @@ func _handle_state_action(incoming_action: GameAction) -> void:
 			self._schedule_state_update(incoming_action)
 	else:
 		self._log_bad_action(incoming_action, missing_keys)
-
-# TODO Refactor to use missing keys
-#			But also going to be refactored to be combined with below function anywasys so maybe not worth
-func _handle_focus_action(incoming_action: GameAction) -> void:
-	if incoming_action.payload.has(GameAction.OWNER_GUID):
-		if incoming_action.payload.has(GameAction.FOCUS_RIG):
-			var camera_guid: String = incoming_action.payload.get(GameAction.OWNER_GUID)
-			var focus_value: bool = incoming_action.payload.get(GameAction.FOCUS_RIG)
-			var rig_state_data: CameraStateData = self._camera_state.get_header_data(camera_guid, StateHeaders.TYPE.DATA)
-			rig_state_data.set_is_focused(focus_value)
-			self._schedule_state_update(incoming_action)
-		else:
-			Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, GameAction.FOCUS_RIG], self)
-	else:
-		Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, GameAction.OWNER_GUID], self)
 
 func _handle_rig_focus_action(incoming_action: GameAction) -> void:
 	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.OWNER_GUID, GameAction.TARGET_GUID])

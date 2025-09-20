@@ -27,20 +27,20 @@ const _FOCUSED_NO_GUID: String = "State is TRACKING but there is no guid to focu
 @export var internal_camera: Camera3D
 @export var freelook_sensitivity: float = 2.0
 @export var freelook_pitch_limit: float = 85.0 # degrees
+@export var distance_threshold: float = 0.001  # Adjust this threshold as needed
 @export var min_height: float = -NUMBERS.FLOAT16_MAX
 @export var primary_freelook_enabled: bool
 @export var secondary_freelook_enabled: bool
 @export var zoom_enabled: bool
 # TODO Really this (and probably above ones too) should just be based off what state it is in
 @export var movement_enabled: bool
+var _state_ref: StateConfiguration.STATE
 # TODO Get rid of this; Should be able to use GlobalStateController to get anything via guid
 var _focus_node: Node3D
 
 func _ready() -> void:
-	self._maintain_distance()
 	# Camera signal connections
 	GlobalCameraController.connect(SIGNAL_NAME.REQUEST_CAMERA, _handle_camera_request)
-	GlobalCameraController.connect(SIGNAL_NAME.IS_FOCUSING, _handle_rig_focus)
 	GlobalCameraController.connect(SIGNAL_NAME.HOLD_HEIGHT, set_min_height)
 	GlobalCameraController.connect(SIGNAL_NAME.IS_IDLING, set_idle_rotate)
 	# Input signal connections
@@ -57,14 +57,9 @@ func _ready() -> void:
 	#			This shoudl be done as a result of the final state of the camera rig befroe starting the scene is unfocused or tracking (just like with the gating on _handle_input)
 	GlobalCursorController.request_state(self, GlobalCursorController.CursorState.CAPTURED, "Should be done in camera or scene state stuff")
 	# State connections
-	GlobalStateController.connect(SIGNAL_NAME.STATE_UPDATED, _handle_state_updated)
+	GlobalStateController.connect(SIGNAL_NAME.STATE_UPDATED, _handle_new_state_signal)
 
-# TODO Figure out how to have this pushed down from state instead
-#			Will probably require EVERYTHING functioning off state first to work though
-func _process(_delta: float) -> void:
-	#if is_focused && integration_point != null:
-	self._maintain_distance()
-	self.focus_on_target()
+
 
 # TODO Figure out how to have this pushed down from state instead
 #			Will probably require EVERYTHING functioning off state first to work though
@@ -129,7 +124,10 @@ func pitch_vertical(rotation_amount: float) -> void:
 func focus_guid(incoming_guid: String) -> void:
 	self._focus_node = GlobalStateController.get_header_data(incoming_guid, StateHeaders.TYPE.NODE)
 
-func set_integration_point(incoming_node: Node3D, incoming_focus: bool) -> void:
+func set_integration_point(
+		incoming_node: Node3D, 
+		incoming_state: StateConfiguration.STATE = StateConfiguration.STATE.TRACKING_FULL
+		) -> void:
 	# Focus node in state
 	if self._verify_integrity():
 		if incoming_node.has_meta(GroupData.GUID):
@@ -140,27 +138,28 @@ func set_integration_point(incoming_node: Node3D, incoming_focus: bool) -> void:
 			var integrate_action: GameAction = GameAction.new(GameAction.TYPE.SET_RIG_FOCUS, integrate_action_dictionary)
 			GlobalStateController.dispatch(integrate_action)
 			self._focus_node = incoming_node
+			self._update_state_ref()
+			# Update the camrea state
+			var status_string: String = StateConfiguration.get_state_string(incoming_state)
+			var set_state_dictionary: Dictionary = {
+				GameAction.OWNER_GUID: self.get_meta(GroupData.GUID),
+				GameAction.STATE: status_string
+			}
+			var set_state_action: GameAction = GameAction.new(GameAction.TYPE.SET_STATE, set_state_dictionary)
+			GlobalStateController.dispatch(set_state_action)
 		else:
 			var focus_identifier: String = self._FOCUS + " " + "\"" + incoming_node.name + "\""
 			Logger.error(self._MISSING_GUID, [focus_identifier], self)
 			return
-	# Update the camrea state to the incoming_focus value
-	if incoming_focus:
-		var focus_action_dictionary: Dictionary = {
-			GameAction.OWNER_GUID: self.get_meta(GroupData.GUID),
-			GameAction.FOCUS_RIG: incoming_focus
-		}
-		var focus_action: GameAction = GameAction.new(GameAction.TYPE.FOCUS_RIG, focus_action_dictionary)
-		GlobalStateController.dispatch(focus_action)
+
 	else:
-		Logger.error(self._MISSING_GUID, [self._SELF], self)
 		return
-	# Log results; If made it here has GUID meta
-	Logger.debug(self._INTEGRATIN_DEBUG, [incoming_node.get_meta(GroupData.GUID), incoming_focus], self)
 
 func get_integration_point() -> Node3D:
 	return self._focus_node
 
+# TODO NEEDS TO BE REFACTORED
+#			Moving to new state based everything combining the focus and focus guid actions to state action
 ## Clears the integrated point and loses focus
 func deintegrate() -> void:
 	if self._verify_integrity():
@@ -172,7 +171,6 @@ func deintegrate() -> void:
 		var lose_integration_action: GameAction = GameAction.new(self.get_meta(GroupData.GUID), lose_integration_dictionary)
 		GlobalStateController.dispatch(lose_integration_action)
 		# lose focus in state
-		self.set_focus(false)
 		# Clear internal reference
 		self._focus_node = null
 
@@ -196,16 +194,6 @@ func make_current() -> void:
 func clear_current() -> void:
 	self.internal_camera.clear_current()
 
-func focus_on_target() -> void:
-	if self._focus_node != null:
-		var focus_vector: Vector3 = self._focus_node.position
-		self.camera_controller.look_at(focus_vector)
-	else:
-		# TODO Create a debug toggle
-		# TODO Make sure these debug toggles reset on new focus/lose focus
-		# Logger.warn(self._NO_INTEGRATION, [], self)
-		pass
-		
 func set_tracking_mode(mode: GlobalCameraController.TrackingMode) -> void:
 	self.tracking_mode = mode
 
@@ -217,21 +205,6 @@ func is_idling() -> bool:
 
 func set_idle_rotate(incoming_value: bool) -> void:
 	self.is_idle_rotate = incoming_value
-
-func set_focus(incoming_value: bool) -> void:
-	var set_focus_dictionary: Dictionary = {
-		GameAction.OWNER_GUID: self.get_meta(GroupData.GUID),
-		GameAction.FOCUS_RIG : false
-	}
-	var set_focus_action: GameAction = GameAction.new(GameAction.TYPE.FOCUS_RIG, set_focus_dictionary)
-	GlobalStateController.dispatch(set_focus_action)
-
-func is_focusing() -> bool:
-	if self._verify_integrity():
-		var self_guid: String = self.get_meta(GroupData.GUID)
-		var camera_state_data: CameraStateData = GlobalStateController.get_header_data(self_guid, StateHeaders.TYPE.DATA)
-		return camera_state_data.is_focused()
-	return false
 
 func is_primary_freelook_enabled() -> bool:
 	return self.primary_freelook_enabled
@@ -267,71 +240,105 @@ func set_min_height(incoming_min: float) -> void:
 	Logger.debug("Incoming new min height is %f", [incoming_min], self)
 	self.min_height = incoming_min
 
-# TODO Should be a lower class function after camera refactor
-#		Lowest class
-func _maintain_distance() -> void:
-	if _focus_node != null:
-		if self._verify_integrity():
-			var new_position: Vector3
-			var current_state: StateConfiguration.STATE = self._get_camera_state()
-			if current_state == StateConfiguration.STATE.TRACKING_FULL:
-				# Apply offset in local space relative to integration point's orientation
-				var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
-				var world_offset = self._focus_node.global_transform.basis * offset
-				# Set position and rotation to follow integration point with offset
-				new_position = self._focus_node.global_position + world_offset
-				self.camera_controller.global_position = self._apply_min_height_constraint(new_position)
-				self.camera_controller.global_rotation = self._focus_node.global_rotation
-			elif current_state == StateConfiguration.STATE.TRACKING_POS:
-				# Apply offset in world space, maintain current orientation
-				var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
-				new_position = self._focus_node.global_position + offset
-				self.camera_controller.global_position = self._apply_min_height_constraint(new_position)
-			elif current_state == StateConfiguration.STATE.TRACKING_FREE:
-				# TRACK mode: maintain spherical coordinates around the moving integration point
-				self._update_camera_position()
+## Tracking handling
+func _perform_tracking(_delta: float) -> void:
+	self._follow_target()
+	self._focus_on_target()
+
+# TODO Once below TODOs are done this shouldnt' be needed
+#			The creation of this is a result of trying to mix the two state storage ideas
+func _update_state_ref() -> void:
+	if self._verify_integrity():
+		var self_guid: String = self.get_meta(GroupData.GUID)
+		var camera_state_data: StateData = GlobalStateController.get_header_data(self_guid, StateHeaders.TYPE.DATA)
+		self._state_ref = camera_state_data.get_current_state()
+
+# TODO OOOOOO
+#		You were here
+#			What needs to be done next is
+#				Finish getting rid of SET_RIG_FOCUS action
+#					Combine it with SET_STATE
+#				Then improve camera rigs handling of state changes to properly do shit
+#				Everything that happens is based off a state change or a transform action (or a warn i guess)
+#					So something like integrate target just creates a set state action with the guid and state to set
+#						Handling of state change deals with the rest after it gets to that point
+#							Initial state change sets position with offset if tracking
+#								Only if going from non tracking to tracking state
+#									Tracking to anything else (tracking or non) does nothing
+#							After that state tracking is done via state signal watching for integrated guid
+#								Moves to the same position as the tracked guid but with the offset applied
+#					Then with the integration logic it should be wathcing for state data changes for the guid it is integrated with
+#						So on transform/state changes it too can react properly
+#		TLDR: SET_RIG_FOCUS -> SET_STATE; State transition reactions -> addition guid tracking + reactions
+
+#		Integrate needs to just dispatch an action setting the focus guid to the camera rig state
+#			As well as setting the state to tracking of some sort
+#		Handling
+
+
+# TODO Tracking offset needs to be entirely based off state transitions
+#				Non tracking to tracking; offset added
+#				tracking to tracking; no action
+#				tracking to non tracking; offset removed
+# TODO change deintegrate to instead be a state update
+# TODO In handle state update function
+#				leave stuff looking for own guid
+#				add a check to see if there is a focused guid
+#					if there is a focused guid also track those updates
+# TODO Make a function to handle state updates to focused object
+#			When the focused object position change is detected
+#				Get the global position of the object
+#				set the cameras position to that position with the offset
+# TODO Get rid of the focus boolean
+
+func _focus_on_target() -> void:
+	if self._focus_node != null:
+		var focus_vector: Vector3 = self._focus_node.position
+		var direction: Vector3 = focus_vector - self.camera_controller.global_position
+		# Check if we're vertically aligned to prevent look_at error
+		if abs(direction.normalized().dot(Vector3.UP)) > 0.99:
+			# Use forward vector as up when vertically aligned
+			self.camera_controller.look_at(focus_vector, Vector3.FORWARD)
+		else:
+			# Normal case - use default up vector
+			self.camera_controller.look_at(focus_vector, Vector3.UP)
 	else:
 		# TODO Create a debug toggle
 		# TODO Make sure these debug toggles reset on new focus/lose focus
 		# Logger.warn(self._NO_INTEGRATION, [], self)
 		pass
 
-# TODO OOOOO
-# TODO Below and Above need to be refactored to be using state object
-#		Below also has gimbal lock issues that need addressing
-#			But hopefully in the course of fixing this shit it will just resolve
-#			If it is still there after fixing then address
-
-# TODO Need to refactor name to track guid position
-#			Have it just updating state
-#		Then ensure this class has proper position/rotation/scale reaction shit to state updates
-# TODO Should be a lower class function after camera refactor
-#		Lowest class
-func _update_camera_position() -> void:
+func _follow_target() -> void:
 	if self._verify_integrity():
-		var camera_state: CameraStateData = GlobalStateController.get_header_data(self.get_meta(GroupData.GUID), StateHeaders.TYPE.DATA)
-		var focused_guid: String = camera_state.get_focus_guid()
-		var current_state: StateConfiguration.STATE = camera_state.get_current_state()
-		if current_state >= 500 and current_state <= 503:
-			if !focused_guid.is_empty():
-				# TODO Need to have different behavior based off state
-				var current_rotation: Quaternion = camera_state.get_current_rotation()
-				var radius: float = GameConfig.DEFAULTS.controller_distance
-				var base_offset: Vector3 = Vector3(0, 0, radius)
-				var offset: Vector3 = current_rotation * base_offset
-				var focus_node: Node3D = GlobalStateController.get_header_data(focused_guid, StateHeaders.TYPE.NODE)
-				if focus_node != null:
-					var new_position: Vector3 = focus_node.global_position + offset
-					self.camera_controller.global_position = self._apply_min_height_constraint(new_position)
-					self.camera_controller.look_at(focus_node.global_position, Vector3.UP)
-			else:
-				Logger.error(self._INVALID_STATE, [self._FOCUSED_NO_GUID], self)
-				return
-		else:
-			# Free freelook (no integration point)
-			var yaw_basis: Basis = Basis(Vector3.UP, self._freelook_yaw)
-			var pitch_basis: Basis = Basis(Vector3.RIGHT, self._freelook_pitch)
-			self.camera_controller.transform.basis = yaw_basis * pitch_basis
+		var self_guid: String = self.get_meta(GroupData.GUID)
+		var camera_state_data: CameraStateData = GlobalStateController.get_header_data(self_guid, StateHeaders.TYPE.DATA)
+		var tracking_guid: String = camera_state_data.get_focus_guid()
+		# TODO Once characters are fully on state we should be able to use its state and ditch Node3D references
+		var tracking_node: Node3D = GlobalStateController.get_header_data(tracking_guid, StateHeaders.TYPE.NODE)
+		
+		# TODO Will probably need to create player offset vector3 from game config and add it to this position for proper view
+		var offset = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
+		var world_offset = tracking_node.global_transform.basis * offset
+		# Set position and rotation to follow integration point with offset		
+		var expected_position: Vector3 = tracking_node.global_position + world_offset
+		
+		# Use the state data position instead of the node position to avoid feedback loop
+		var current_position: Vector3 = camera_state_data.get_current_position()
+		var position_difference: Vector3 = expected_position - current_position
+
+		if position_difference.length() > self.distance_threshold:
+			# Create and dispatch transform action
+			var transform_dictionary: Dictionary = {
+				GameAction.X: expected_position.x,
+				GameAction.Y: expected_position.y,
+				GameAction.Z: expected_position.z
+			}
+			var transform_action_dictionary: Dictionary = {
+				GameAction.OWNER_GUID: self_guid,
+				GameAction.POSITION: transform_dictionary
+			}
+			var transform_action: GameAction = GameAction.new(GameAction.TYPE.TRANSFORM, transform_action_dictionary)
+			GlobalStateController.dispatch(transform_action)
 
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
@@ -368,19 +375,7 @@ func _handle_freelook(v_motion: float, h_motion: float) -> void:
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
 func _handle_camera_request(new_foucs: Node3D) -> void:
-	self.set_integration_point(new_foucs, true)
-
-# TODO Should be a lower class function after camera refactor
-#		Lowest class
-func _handle_rig_focus(incoming_value: bool) -> void:
-	if self._verify_integrity():
-		var self_guid: String = self.get_meta(GroupData.GUID)
-		var focus_action_dictionary: Dictionary = {
-			GameAction.OWNER_GUID: self_guid,
-			GameAction.FOCUS_RIG: incoming_value
-		}
-		var focus_action: GameAction = GameAction.new(GameAction.TYPE.FOCUS_RIG, focus_action_dictionary)
-		GlobalStateController.dispatch(focus_action)
+	self.set_integration_point(new_foucs)
 
 # TODO Should be a lower class function after camera refactor
 #		Higher class
@@ -469,12 +464,14 @@ func _handle_sprint_stop() -> void:
 
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
-func _handle_state_updated(update_details: Dictionary) -> void:
+func _handle_new_state_signal(update_details: Dictionary) -> void:
 	if self._verify_integrity():
 		var self_guid: String = self.get_meta(GroupData.GUID)
 		if self_guid in update_details:
 			var update_action: GameAction = update_details[self_guid]
 			match update_action.action_type:
+				GameAction.TYPE.SET_STATE:
+					self._handle_state_update(update_action)
 				GameAction.TYPE.SET_RIG_FOCUS:
 					self._handle_set_rig_focus(update_action)
 				GameAction.TYPE.TRANSFORM:
@@ -482,6 +479,11 @@ func _handle_state_updated(update_details: Dictionary) -> void:
 				_:
 					var update_type_string: String = GameAction.get_type_string(update_action.action_type)
 					Logger.warn("Incoming update type \"%s\" is not supported", [update_type_string], self)
+
+func _handle_state_update(incoming_action: GameAction) -> void:
+	# TODO OOOOOO
+	# TODO In here is where all the important offset/
+	self._update_state_ref()
 
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
@@ -516,7 +518,8 @@ func _handle_set_rig_focus(incoming_action: GameAction) -> void:
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
 func _verify_integrity() -> bool:
-	if !self.has_meta(GroupData.GUID):
+	var existing_guid: String = self.get_meta(GroupData.GUID)
+	if existing_guid == null or existing_guid.strip_edges().is_empty():
 		Logger.error(self._MISSING_DATA, [GroupData.GUID], self)
 		return false
 	return true

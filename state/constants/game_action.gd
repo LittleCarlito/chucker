@@ -2,17 +2,19 @@ extends Resource
 class_name GameAction
 
 enum TYPE {
+	# TODO Combine SET_RIG_FOCUS and FOCUS_RIG into SET_STATE
+	#			Really are just details of state change so it makes sense
 	SET_STATE,
 	# TODO Combine rig focus and focus rig to a single action (dictionary can hold all details)
 	SET_RIG_FOCUS, # Setting the guid the camera is focused on
-	FOCUS_RIG, # Focusing the camera
+
+
 	TRANSFORM,
 	WARN,
 	UKNOWN
 }
 const GAME_ACTION_TYPE: String = "GAME ACTION TYPE"
 const _SET_RIG_FOCUS: String = "Set Rig Focus"
-const _FOCUS_RIG: String = "Focus Rig"
 const _TRANSFORM: String = "Transform"
 const _WARN: String = "Warn"
 
@@ -20,8 +22,6 @@ static func get_type_string(incoming_type: TYPE) -> String:
 	match incoming_type:
 		TYPE.SET_RIG_FOCUS:
 			return _SET_RIG_FOCUS
-		TYPE.FOCUS_RIG:
-			return _FOCUS_RIG
 		TYPE.TRANSFORM:
 			return _TRANSFORM
 		TYPE.WARN:
@@ -34,8 +34,6 @@ const OWNER_GUID: String = "owner_guid"
 const TARGET_GUID: String = "target_guid"
 const STATE: String = "state_string"
 const MESSAGE: String = "message"
-# Camera headers
-const FOCUS_RIG: String = "focus_rig"
 # Transform
 const IS_SPRINTING: String = "is_sprinting"
 const ROTATION: String = "rotation"

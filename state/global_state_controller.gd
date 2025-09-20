@@ -8,6 +8,8 @@ extends Node
 const _UNSUPPORTED_HEADER: String = "Incoming header type \"%s\" was not supported; Incoming header enum value \"%d\""
 const _UNSUPPORTED_TYPE: String = "Incoming type \"%s\" is not supported; %s"
 const _NO_PRIMARY: String = "Items do not have a \"primary\" to retireve"
+const _EMPTY_GUID: String = "GUID must be populated"
+const _INVALID_HEAD_REQEUST: String = "Invalid header data request; %s"
 
 signal state_updated(update_details: Dictionary)
 
@@ -27,6 +29,7 @@ func register_node(incoming_node: Node3D) -> StateData:
 		return_data = self._game_state.register_asset(incoming_node)
 	return return_data
 
+# TODO Make a dispatch_all function; Handle the array iterating in this class
 func dispatch(incoming_action: GameAction) -> void:
 	self._game_state._handle_action(incoming_action)
 
@@ -36,7 +39,10 @@ func node_has_state(incoming_guid: String) -> bool:
 func get_current_status() -> GameState.STATUS:
 	return self._game_state.get_current_status()
 
-func get_header_data(incoming_guid: String, header_type: StateHeaders.TYPE):
+func get_header_data(incoming_guid: String, header_type: StateHeaders.TYPE) -> Variant:
+	if incoming_guid.is_empty():
+		Logger.error(self._INVALID_HEAD_REQEUST, [self._EMPTY_GUID], self)
+		return null
 	match header_type:
 		StateHeaders.TYPE.DATA_STORAGE:
 			return self._game_state.duplicate(true)
@@ -47,6 +53,7 @@ func get_header_data(incoming_guid: String, header_type: StateHeaders.TYPE):
 		_:
 			var type_string: String = StateHeaders.get_type_string(header_type)
 			Logger.error(self._UNSUPPORTED_HEADER, [type_string, header_type], self)
+			return null
 
 func get_primary_guid(incoming_type: GameState.DATA_TYPE) -> String:
 	return self._game_state.get_primary_guid(incoming_type)
