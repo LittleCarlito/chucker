@@ -14,14 +14,16 @@ func get_state_dictionary() -> Dictionary:
 	return self._state_dictionary
 
 func register_new_node(incoming_node: Node3D) -> StateData:
+	var incoming_name: String = incoming_node.name
 	if not incoming_node.has_meta(GroupData.GUID):
-		Logger.error(self._MISSING_GUID, [incoming_node.name], self)
+		Logger.error(self._MISSING_GUID, [incoming_name], self)
 		return null
+	var incoming_guid: String = incoming_node.get_meta(GroupData.GUID)
 	if incoming_node is CameraRig:
 		# TODO Create a test to ensure transitions are respected
 		var camera_state_data: CameraStateData = CameraStateData.new(
-													incoming_node.get_meta(GroupData.GUID), 
-													incoming_node.name,
+													incoming_guid, 
+													incoming_name,
 													CameraStateConfiguration.VALID_TRANSITIONS,
 													CameraStateConfiguration.SPIN_VALUES
 													)
@@ -32,20 +34,31 @@ func register_new_node(incoming_node: Node3D) -> StateData:
 		return camera_state_data.duplicate(true)
 	elif incoming_node is ThrowableItem:
 		var throwable_state_data: StateData =  StateData.new(
-									incoming_node.get_meta(GroupData.GUID),
-									incoming_node.name,
-									ThrowableStateConfiguration.VALID_TRANSITIONS,
-									ThrowableStateConfiguration.SPIN_VALUES,
-									ThrowableStateConfiguration.WINDOW_VALUES
-									)
-		self._state_dictionary[incoming_node.get_meta(GroupData.GUID)] = {
+												incoming_guid,
+												incoming_name,
+												ThrowableStateConfiguration.VALID_TRANSITIONS,
+												ThrowableStateConfiguration.SPIN_VALUES,
+												ThrowableStateConfiguration.WINDOW_VALUES
+												)
+		self._state_dictionary[incoming_guid] = {
 			StateHeaders.STATE_DATA: throwable_state_data,
 			StateHeaders.STATE_NODE: incoming_node
 		}
 		return throwable_state_data.duplicate(true)
+	elif incoming_node is BaseCharacter:
+		var character_state_data: StateData = StateData.new(
+												incoming_guid,
+												incoming_name,
+												PlayerStateConfiguration.VALID_TRANSITIONS
+												)
+		self._state_dictionary[incoming_guid] = {
+			StateHeaders.STATE_DATA: character_state_data,
+			StateHeaders.STATE_NODE: incoming_node
+		}
+		return character_state_data.duplicate(true)
 	else:
-		var state_data: StateData = StateData.new(incoming_node.get_meta(GroupData.GUID), incoming_node.name)
-		self._state_dictionary[incoming_node.get_meta(GroupData.GUID)] = {
+		var state_data: StateData = StateData.new(incoming_guid, incoming_name)
+		self._state_dictionary[incoming_guid] = {
 			StateHeaders.STATE_DATA: state_data,
 			StateHeaders.STATE_NODE: incoming_node
 		}

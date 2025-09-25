@@ -1,7 +1,7 @@
 class_name StateUtil
 
 static func is_tracking(incoming_state: StateConfiguration.STATE) -> bool:
-	if incoming_state >= 500 and incoming_state <= 504:
+	if incoming_state >= 500 and incoming_state <= 503:
 		return true
 	return false
 

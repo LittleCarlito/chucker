@@ -283,10 +283,6 @@ func _perform_tracking(_delta: float) -> void:
 #		TLDR: SET_RIG_FOCUS -> SET_STATE; State transition reactions -> addition guid tracking + reactions
 
 # TODO WORK ITEMS
-# implment the state change function. ITS EMPTY
-
-
-# TODO AFTER
 
 # TODO We need to get characters fully using state as well
 #		But before we can do that we need to solve some issues with how camera rig does things to give ourselves exmamples
@@ -302,6 +298,17 @@ func _perform_tracking(_delta: float) -> void:
 					#	If we dont' need the info just keep the bool true and wait (lazy) until the data is needed
 					#		Then refresh and reset bool
 					#			That way you don't spam pull with spam state changes if data isn't needed
+
+# TODO AFTER
+# TODO We need to get actions that take place in the game as a result of the character/objects to change state properly
+#			i.e. 
+				# tracking on throw, 
+				# tracking spawned disk from path disk, 
+				# idle rotating on disk rest, 
+				# return to character after throw idle,
+				# idle rotate character on idle sit,
+				# snap back to tracking on control usage,
+				# etc
 
 
 #	I get that characters aren't on state system yet but we can still program as though they are
@@ -524,8 +531,6 @@ func _handle_new_state_signal(update_details: Dictionary) -> void:
 				# TODO Get log to a constant
 				Logger.warn("Incoming update type \"%s\" is not supported", [update_type_string], self)
 
-# TODO OOOOOO
-# TODO In here is where all the important offset shit happens
 func _handle_state_update(incoming_action: GameAction) -> void:
 	var current_state_data: StateData = self._get_state_ref()
 	var current_state: StateConfiguration.STATE = current_state_data.get_current_state()
