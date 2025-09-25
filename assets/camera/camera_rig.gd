@@ -16,8 +16,10 @@ const _INVALID_STATE: String = "Invalid state configuration; %s"
 const _FOCUSED_NO_GUID: String = "State is TRACKING but there is no guid to focus on"
 const _NO_STATE_DATA: String = "State Data in Global Controller"
 const _OWN_GUID: String = "Self GUID"
+const _TRACKING_GUID: String = "Tracking GUID"
 const _ILLEGAL_STATE: String = "%s is missing from camera rig asset; Application is in IllegalState"
 const _CANT_PERFORM: String = "\"%s\" could not be found; \"%s\" can not be performed"
+const _UPDATE_FAILED: String = "Failed to update state to new status \"%s\""
 const _OWN_STATE: String = "Self state"
 const _FOLLOW_TARGET: String = "Follow target"
 const _PAN_HORIZONTAL: String = "Pan horizontal"
@@ -392,9 +394,8 @@ func _handle_freelook(v_motion: float, h_motion: float) -> void:
 		return
 	var current_state: StateConfiguration.STATE = camera_state_data.get_current_state()
 	if current_state >= 550 and current_state <= 552:
-		var inversion_multiplier: int = 1 if self._is_camera_tracking() else -1
-		self.pan_horizontal((h_motion * freelook_sensitivity) * inversion_multiplier) 
-		self.pitch_vertical((v_motion * freelook_sensitivity) * inversion_multiplier)
+		self.pan_horizontal(h_motion * freelook_sensitivity)
+		self.pitch_vertical(v_motion * freelook_sensitivity)
 
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
@@ -481,7 +482,7 @@ func _get_sprint_value(incoming_state: StateData) -> float:
 func _handle_sprint_start() -> void:
 	var self_guid: String = self._get_guid_ref()
 	if self_guid == null:
-		Logger.error(self._CANT_PERFORM, [self._OWN_GUID self._HANDLE_SPRINT_START], self)
+		Logger.error(self._CANT_PERFORM, [self._OWN_GUID, self._HANDLE_SPRINT_START], self)
 		return
 	var transform_action_dictionary: Dictionary = {
 		GameAction.OWNER_GUID: self_guid,
@@ -495,7 +496,7 @@ func _handle_sprint_start() -> void:
 func _handle_sprint_stop() -> void:
 	var self_guid: String = self._get_guid_ref()
 	if self_guid == null:
-		Logger.error(self._CANT_PERFORM, [self._OWN_GUID self._HANDLE_SPRING_STOP], self)
+		Logger.error(self._CANT_PERFORM, [self._OWN_GUID, self._HANDLE_SPRING_STOP], self)
 		return
 	var transform_action_dictionary: Dictionary = {
 		GameAction.OWNER_GUID: self_guid,
@@ -509,7 +510,7 @@ func _handle_sprint_stop() -> void:
 func _handle_new_state_signal(update_details: Dictionary) -> void:
 	var self_guid: String = self._get_guid_ref()
 	if self_guid == null:
-		Logger.error(self._CANT_PERFORM, [self._OWN_GUID self._HANDLE_STATE_SIGNAL], self)
+		Logger.error(self._CANT_PERFORM, [self._OWN_GUID, self._HANDLE_STATE_SIGNAL], self)
 		return
 	if self_guid in update_details:
 		var update_action: GameAction = update_details[self_guid]
@@ -526,13 +527,37 @@ func _handle_new_state_signal(update_details: Dictionary) -> void:
 # TODO OOOOOO
 # TODO In here is where all the important offset shit happens
 func _handle_state_update(incoming_action: GameAction) -> void:
-	var current_state: StateConfiguration.STATE = self._get_current_state()
+	var current_state_data: StateData = self._get_state_ref()
+	var current_state: StateConfiguration.STATE = current_state_data.get_current_state()
 	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.STATE])
 	if current_state == StateConfiguration.STATE.UNKNOWN or missing_keys.size() > 0:
 		return
 	var new_state_string: String = incoming_action.payload[GameAction.STATE]
 	var new_state: StateConfiguration.STATE = StateConfiguration.get_state_from_string(new_state_string)
+	if !current_state_data.can_transition(new_state):
+		# can transition already has logged a warning about the failure
+		return
+	var new_state_tracking: bool = StateUtil.is_tracking(new_state)
+	var current_state_tracking: bool = StateUtil.is_tracking(current_state)
+	if new_state_tracking != current_state_tracking:
+		if new_state_tracking:
+			self._handle_transition_to_track()
+	if !current_state_data.try_and_set(new_state):
+		Logger.error(self._UPDATE_FAILED, [new_state_string], self)
+		return
 	self._dirty_state = true
+
+func _handle_transition_to_track() -> void:
+	var camera_state_data: StateData = self._get_state_ref()
+	var focused_guid: String = camera_state_data.get_focus_guid()
+	if focused_guid.strip_edges().is_empty():
+		Logger.error(self._ILLEGAL_STATE, [self._TRACKING_GUID], self)
+		return
+	var focused_state_data: StateData = GlobalStateController.get_header_data(focused_guid, StateHeaders.TYPE.DATA)
+	var focus_position: Vector3 = focused_state_data.get_current_position()
+	var offset_vector: Vector3 = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
+	self.camera_controller.position = focus_position + offset_vector
+	self.camera_controller.look_at(focus_position)
 
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
@@ -541,7 +566,7 @@ func _handle_transform(incoming_action: GameAction) -> void:
 	if missing_transform_keys.size() < GameAction.TRANSFORM_KEYS.size():
 		var camera_state_data: StateData = self._get_state_ref()
 		if camera_state_data == null:
-			Logger.error(self._CANT_PERFORM, [self._OWN_GUID self._HANDLE_TRANSFORM], self)
+			Logger.error(self._CANT_PERFORM, [self._OWN_GUID, self._HANDLE_TRANSFORM], self)
 			return
 		if incoming_action.payload.has(GameAction.ROTATION):
 			var new_rotation: Quaternion = camera_state_data.get_current_rotation()
@@ -556,19 +581,6 @@ func _handle_transform(incoming_action: GameAction) -> void:
 	else:
 		var missing_transform_string: String = "; ".join(missing_transform_keys)
 		Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, missing_transform_string], self)
-
-# TODO Should be removed for ref usage
-# TODO Should be a lower class function after camera refactor
-#		Lowest class
-func _get_camera_state() -> StateConfiguration.STATE:
-	var camera_state_data: CameraStateData = GlobalStateController.get_header_data(self.get_meta(GroupData.GUID), StateHeaders.TYPE.DATA)
-	return camera_state_data.get_current_state()
-
-# TODO Should be a lower class function after camera refactor
-#		Lowest class
-func _is_camera_tracking() -> bool:
-	var current_state: StateConfiguration.STATE = self._get_camera_state()
-	return (current_state >= 500 and current_state <= 503)
 
 func _get_current_state() -> StateConfiguration.STATE:
 	var found_state: StateData = self._get_state_ref()

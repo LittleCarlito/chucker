@@ -134,7 +134,7 @@ func peak_next_state_value() -> float:
 	if _state_values.has(next_state):
 		return _state_values[next_state]
 	else:
-		var next_state_string: String = StateUtil.get_state_string(next_state)
+		var next_state_string: String = StateConfiguration.get_state_string(next_state)
 		Logger.warn(self._NO_VALUE, [self._owner_name, next_state_string], self)
 		return 0
 
@@ -170,7 +170,7 @@ func get_state_value(incoming_value: StateConfiguration.STATE) -> float:
 	if self._state_values.has(incoming_value):
 		return self._state_values[incoming_value]
 	else:
-		var incoming_state_string: String = StateUtil.get_state_string(incoming_value)
+		var incoming_state_string: String = StateConfiguration.get_state_string(incoming_value)
 		Logger.warn(self._NO_VALUE, [self._owner_name, incoming_state_string], self)
 		return 0
 
@@ -232,11 +232,11 @@ func log(incoming_message: String, incoming_level: Logger.LEVEL) -> void:
 			Logger.error(self._UNSUPPORTED_TYPE, [Logger.LOG_LEVEL_TYPE, incoming_level, ], self)
 
 func print_details() -> void:
-	var current_state_name: String = StateUtil.get_state_string(_current_state)
+	var current_state_name: String = StateConfiguration.get_state_string(_current_state)
 	Logger.debug("StateData \"%s\" CurrentState: \"%s\" StateID: \"%d\" Duration: \"%.2f\" Windows: \"%d\" Transitions: \"%d\" Values: \"%d\"", [_owner_name, current_state_name, _current_state, _current_state_duration, _state_windows.size(), _valid_transitions.size(), _state_values.size()], self)
 
 func as_string() -> String:
-	var current_state_name: String = StateUtil.get_state_string(_current_state)
+	var current_state_name: String = StateConfiguration.get_state_string(_current_state)
 	var details: String = "StateData[%s]: current_state=%s(%d), duration=%.2f" % [_owner_name, current_state_name, _current_state, _current_state_duration]
 	details += ", windows=%d, transitions=%d, values=%d" % [_state_windows.size(), self._valid_transitions.size(), _state_values.size()]
 	return details
@@ -283,7 +283,7 @@ func _validate_window_configuration(incoming_windows: Dictionary) -> bool:
 	for state in sorted_states:
 		var current_value: float = incoming_windows[state]
 		if current_value < previous_value:
-			var state_string: String = StateUtil.get_state_string(state)
+			var state_string: String = StateConfiguration.get_state_string(state)
 			Logger.warn(_DECREASING_WINDOW, [_owner_name, state_string, previous_value, current_value], self)
 			return false
 		previous_value = current_value

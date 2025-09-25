@@ -1,37 +1,14 @@
 class_name StateUtil
 
-static func get_state_string(state_value: int) -> String:
-	match state_value:
-		StateConfiguration.STATE.READY:
-			return "READY"
-		StateConfiguration.STATE.WINDUP_UNDERCOOKED:
-			return "WINDUP_UNDERCOOKED"
-		StateConfiguration.STATE.WINDUP_VERY_EARLY:
-			return "WINDUP_VERY_EARLY"
-		StateConfiguration.STATE.WINDUP_EARLY:
-			return "WINDUP_EARLY"
-		StateConfiguration.STATE.WINDUP_PERFECT:
-			return "WINDUP_PERFECT"
-		StateConfiguration.STATE.WINDUP_LATE:
-			return "WINDUP_LATE"
-		StateConfiguration.STATE.WINDUP_VERY_LATE:
-			return "WINDUP_VERY_LATE"
-		StateConfiguration.STATE.WINDUP_OVERCOOKED:
-			return "WINDUP_OVERCOOKED"
-		StateConfiguration.STATE.THROWING_UNDER:
-			return "THROWING_UNDER"
-		StateConfiguration.STATE.THROWING_PERFECT:
-			return "THROWING_PERFECT"
-		StateConfiguration.STATE.THROWING_OVER:
-			return "THROWING_OVER"
-		StateConfiguration.STATE.FOLLOW_THRU_UNDER:
-			return "FOLLOW_THRU_UNDER"
-		StateConfiguration.STATE.FOLLOW_THRU_PERFECT:
-			return "FOLLOW_THRU_PERFECT"
-		StateConfiguration.STATE.FOLLOW_THRU_OVER:
-			return "FOLLOW_THRU_OVER"
-		_:
-			return "UNKNOWN"
+static func is_tracking(incoming_state: StateConfiguration.STATE) -> bool:
+	if incoming_state >= 500 and incoming_state <= 504:
+		return true
+	return false
+
+static func is_freelook(incoming_state: StateConfiguration.STATE) -> bool:
+	if incoming_state >= 500 and incoming_state >= 552:
+		return true
+	return false
 
 static func get_missing_keys(payload: Dictionary, required_keys: Array[String]) -> Array[String]:
 	var missing: Array[String] = []

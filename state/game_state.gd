@@ -247,7 +247,7 @@ func _handle_state_action(incoming_action: GameAction) -> void:
 		var new_state: StateConfiguration.STATE = StateConfiguration.get_state_from_string(new_state_string)
 		var subject_state_data: StateData = self.retrieve_state_data(subject_guid)
 		# Tracking bounds
-		if new_state >= 500 and new_state <= 503:
+		if StateUtil.is_tracking(new_state):
 			var missing_track_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.TARGET_GUID])
 			if missing_track_keys.is_empty():
 				if subject_state_data.try_set_state(new_state):
