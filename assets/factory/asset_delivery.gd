@@ -84,13 +84,26 @@ func spawn_asset(spawn_data: SpawnData) -> Node3D:
 	var created_node: Node3D = AssetFactory.create_asset(spawn_data.asset_data.internal_type)
 	if created_node.has_method(GroupData.SET_ASSET_DATA):
 		created_node.call(GroupData.SET_ASSET_DATA, spawn_data.asset_data)
-	if created_node.has_method(GroupData.SYNC_ASSET):
-		created_node.call(GroupData.SYNC_ASSET)
 	if spawn_data.spawn_parent != null:
 		spawn_data.spawn_parent.add_child(created_node)
 	else:
 		get_tree().get_current_scene().add_child(created_node)
+	# BUG OOOOO
+	# TODO NEED TO ALSO UPDATE THE STATE OBJECT THAT WAS JUST MADE FOR THIS IN .create_asset WITH SPAWN LOCATION
 	created_node.global_position = spawn_data.spawn_location
+	# TODO To fix bug above make sure all assets that will be spawned in with "positions" have this function
+	#			Ensure that syncing of global position of asset is pushed up to state
+	#			This is an interesting state change signal handling case
+	#				Will want others to handle it
+	#				Will not want the character to handle the state update signal
+	#					Because it is the one making the state change
+	#					So should first add some logging to confirm its detecting its own made state change
+	#					Then make the logic so it handles all state changes but filters out ones itself intiiates
+	#						By "initiates" I mean push UP to the state based off its CURRENT data
+	# TODO Once the StatefulAsset base class has been finished we can get rid of this "has_method" call
+	#			Will know that it has the method by doing created_node is StatefulAsset
+	if created_node.has_method(GroupData.SYNC_ASSET):
+		created_node.call(GroupData.SYNC_ASSET)
 	return created_node
 
 static func _set_asset_data(incoming_asset: Node3D, incoming_data: AssetData) -> bool:
@@ -132,7 +145,6 @@ static func _launch_asset(incoming_asset: Node3D, focus_flight: bool = false) ->
 			# TODO Need to get primary camera rig guid
 			#			Create a new function in GlobalStateController for this
 
-			# TODO OOOOO
 			# TODO Above pretty much boils down to "Create underlying StatefulObject class" for all things that can be associated to state data
 			#			Then create a get integration node function in that new class
 			#				Implmenters like path disk then return shit like their path_follow above from that function

@@ -16,6 +16,7 @@ enum DATA_TYPE {
 	CAMERA
 }
 
+const _WARN_STRING: String = "State data for \"%s\" doesn't exist yet; If this is occuring anywhere except startup there is a problem..."
 const _PLAYER: String = "Player"
 const _ITEM: String = "Item"
 const _CAMERA: String = "Camera"
@@ -297,7 +298,11 @@ func _handle_warn_action(incoming_action: GameAction) -> void:
 		var incoming_guid: String = incoming_action.payload[GameAction.OWNER_GUID]
 		var incoming_message: String = incoming_action.payload[GameAction.MESSAGE]
 		var guid_state_data: StateData = self.retrieve_state_data(incoming_guid)
-		guid_state_data.log(incoming_message, Logger.LEVEL.WARN)
+		if guid_state_data != null:
+			guid_state_data.log(incoming_message, Logger.LEVEL.WARN)
+		else:
+			var warn_log: String = self._WARN_STRING % incoming_guid
+			push_warning(warn_log)
 	else:
 		self._log_bad_action(incoming_action, missing_keys)
 

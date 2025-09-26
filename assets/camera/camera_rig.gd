@@ -1,4 +1,4 @@
-extends Node3D
+extends StatefulAsset
 class_name CameraRig
 
 const _SELF: String = "Self"
@@ -37,11 +37,6 @@ const _HANDLE_SPRING_STOP: String = "Handle sprint stop"
 const _HANDLE_STATE_SIGNAL: String = "Handle new state signal"
 const _HANDLE_TRANSFORM: String = "Handle transform"
 
-# TODO OOOOO
-# TODO Freelook working but needs tweaking
-# TODO Then get tracking working
-# TODO Then do rest of todos in file
-
 # TODO Break camera down into multiple extension classes and have these up the path with the functions that make sense
 # TODO Move majority of this to state
 # Below stays
@@ -56,9 +51,6 @@ const _HANDLE_TRANSFORM: String = "Handle transform"
 @export var zoom_enabled: bool
 # TODO Really this (and probably above ones too) should just be based off what state it is in
 @export var movement_enabled: bool
-var _guid_ref: String
-var _state_ref: StateData
-var _dirty_state: bool = false
 # TODO Get rid of this; Should be able to use GlobalStateController to get anything via guid
 var _focus_node: Node3D
 
@@ -267,8 +259,7 @@ func _perform_tracking(_delta: float) -> void:
 	self._follow_target()
 	self._focus_on_target()
 
-# TODO OOOOOO
-# OUTLINE
+# TODO OUTLINE
 # Then improve camera rigs handling of state changes to properly do shit
 # Everything that happens is based off a state change or a transform action (or a warn i guess)
 # 	So something like integrate target just creates a set state action with the guid and state to set
@@ -316,6 +307,10 @@ func _perform_tracking(_delta: float) -> void:
 # 	Once they work off their state data
 # 		Camera logic can be updated to react/move to its state update signals as well and keep up/focus on the correct thing
 
+# TODO Freelook working but needs tweaking
+# TODO Then get tracking working
+# TODO Then do rest of todos in file
+# TODO Break down file into extending/inheriting classes
 # TODO Tracking offset needs to be entirely based off state transitions
 #				Non tracking to tracking; offset added
 #				tracking to tracking; no action
@@ -550,7 +545,7 @@ func _handle_state_update(incoming_action: GameAction) -> void:
 	if !current_state_data.try_and_set(new_state):
 		Logger.error(self._UPDATE_FAILED, [new_state_string], self)
 		return
-	self._dirty_state = true
+	self.set_state_dirty()
 
 func _handle_transition_to_track() -> void:
 	var camera_state_data: StateData = self._get_state_ref()
@@ -582,42 +577,7 @@ func _handle_transform(incoming_action: GameAction) -> void:
 		if incoming_action.payload.has(GameAction.SCALE):
 			var new_scale: Vector3 = camera_state_data.get_current_scale()
 			self.scale = new_scale
-		self._dirty_state = true
+		self.set_state_dirty()
 	else:
 		var missing_transform_string: String = "; ".join(missing_transform_keys)
 		Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, missing_transform_string], self)
-
-func _get_current_state() -> StateConfiguration.STATE:
-	var found_state: StateData = self._get_state_ref()
-	if found_state == null:
-		return StateConfiguration.STATE.UNKNOWN
-	return found_state.get_current_state()
-
-func _get_guid_ref() -> Variant:
-	# Only cares about null; Dirty state doesn't affect immutable thing like a GUID
-	if self._guid_ref == null:
-		if !self._refresh_refs():
-			return null
-	return self._guid_ref
-
-func _get_state_ref() -> StateData:
-	if self._state_ref == null or self._dirty_state:
-		if !self._refresh_refs():
-			# Don't need to log anything _refresh_refs should have logged failure enough
-			return null
-		return self._state_ref
-	return null
-
-func _refresh_refs() -> bool:
-	self._guid_ref = self.get_meta(GroupData.GUID)
-	# If still can't find a guid
-	if self._guid_ref  == null or self._guid_ref.strip_edges().is_empty():
-		Logger.error(self._MISSING_DATA, [GroupData.GUID], self)
-		return false
-	else:
-		self._state_ref = GlobalStateController.get_header_data(self._guid_ref, StateHeaders.TYPE.DATA)
-		if self._state_ref == null:
-			Logger.error(self._MISSING_DATA, [self._NO_STATE_DATA], self)
-			return false
-	self._dirty_state = false
-	return true
