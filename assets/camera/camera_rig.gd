@@ -9,6 +9,7 @@ const _INTEGRATIN_DEBUG: String = "Now integrated with guid \"%s\" with focus se
 const _NO_INTEGRATION: String = "No integration point for rig to focus on"
 
 const _MISSING_DATA: String = "Missing \"%s\" data"
+const _UNSUPPORTED_TYPE: String  = "Incoming update type \"%s\" is not supported"
 const _MIN_HEIGHT_WARN: String = "Is now having its height artificially held to min height of \"%f\""
 const _SUCCESSFUL_TRANSITION: String = "Successfully transitioned from \"%s\" state to \"%s\""
 const _FREELOOK_REASONING: String = "Camera rig is in freelook or tracking state"
@@ -18,7 +19,6 @@ const _NO_STATE_DATA: String = "State Data in Global Controller"
 const _OWN_GUID: String = "Self GUID"
 const _TRACKING_GUID: String = "Tracking GUID"
 const _ILLEGAL_STATE: String = "%s is missing from camera rig asset; Application is in IllegalState"
-const _CANT_PERFORM: String = "\"%s\" could not be found; \"%s\" can not be performed"
 const _UPDATE_FAILED: String = "Failed to update state to new status \"%s\""
 const _OWN_STATE: String = "Self state"
 const _FOLLOW_TARGET: String = "Follow target"
@@ -99,7 +99,7 @@ func _physics_process(_delta: float) -> void:
 func idle_rotate(delta: float, rotation_speed: float = CameraConfig.get_idle_rotate_speed()) -> void:
 	var self_guid: String = self._get_guid_ref()
 	if self_guid == null:
-		Logger.error(self._CANT_PERFORM, [self._OWN_GUID, self._IDLE_ROTATE], self)
+		Logger.error(Logger._CANT_PERFORM, [self._OWN_GUID, self._IDLE_ROTATE], self)
 		return
 	var rotation_amount: float = delta * rotation_speed
 	var idle_string: String = StateConfiguration.get_state_string(StateConfiguration.STATE.IDLE_ROTATE)
@@ -113,7 +113,7 @@ func idle_rotate(delta: float, rotation_speed: float = CameraConfig.get_idle_rot
 func pan_horizontal(rotation_amount: float) -> void:
 	var self_guid: String = self._get_guid_ref()
 	if self_guid == null:
-		Logger.error(self._CANT_PERFORM, [self._OWN_GUID, self._PAN_HORIZONTAL], self)
+		Logger.error(Logger._CANT_PERFORM, [self._OWN_GUID, self._PAN_HORIZONTAL], self)
 		return
 	var rotation_dictionary: Dictionary = {
 		GameAction.Y: rotation_amount
@@ -128,7 +128,7 @@ func pan_horizontal(rotation_amount: float) -> void:
 func pitch_vertical(rotation_amount: float) -> void:
 	var self_guid: String = self._get_guid_ref()
 	if self_guid == null:
-		Logger.error(self._CANT_PERFORM, [self._OWN_GUID, self._PITCH_VERTICAL], self)
+		Logger.error(Logger._CANT_PERFORM, [self._OWN_GUID, self._PITCH_VERTICAL], self)
 		return
 	var camera_state_data: StateData = GlobalStateController.get_header_data(self_guid, StateHeaders.TYPE.DATA)
 	var current_pitch: float = camera_state_data.get_current_rotation().x
@@ -159,7 +159,7 @@ func set_integration_point(
 	# Focus node in state
 	var self_guid: String = self._get_guid_ref()
 	if self_guid == null:
-		Logger.error(self._CANT_PERFORM, [self._OWN_GUID, self._SET_INTEGRATION_POINT], self)
+		Logger.error(Logger._CANT_PERFORM, [self._OWN_GUID, self._SET_INTEGRATION_POINT], self)
 		return
 	if incoming_node.has_meta(GroupData.GUID):
 		# TODO Change this to a state update action instead
@@ -191,7 +191,7 @@ func deintegrate() -> void:
 func transition_state(incoming_state: StateConfiguration.STATE) -> void:
 	var camera_state_data: CameraStateData = self._get_state_ref()
 	if camera_state_data == null:
-		Logger.error(self._CANT_PERFORM, [self._OWN_STATE, self._TRANSITION_STATE], self)
+		Logger.error(Logger._CANT_PERFORM, [self._OWN_STATE, self._TRANSITION_STATE], self)
 		return
 	var old_state: StateConfiguration.STATE = camera_state_data.get_current_state()
 	if camera_state_data.try_set_state(incoming_state):
@@ -275,22 +275,10 @@ func _perform_tracking(_delta: float) -> void:
 
 # TODO WORK ITEMS
 
-# TODO We need to get characters fully using state as well
-#		But before we can do that we need to solve some issues with how camera rig does things to give ourselves exmamples
-#		FIRST FIGURE OUT
-#			How to simplify out _verify_integrity()
-#				JUST CREATED _refresh_refs() per demon machine requests
-					# NOW next step is to figure out how dirty state would work and then refator _verify_integrity() out
-					# Also then fix all the guid/state usages to use the stored refs
-					#		Have a getter for the state
-					#			Have it check for dirty state
-					#				If state is dirty have it pull it
-					# THe point of dirty state is to decouple the changing and pulling of state
-					#	If we dont' need the info just keep the bool true and wait (lazy) until the data is needed
-					#		Then refresh and reset bool
-					#			That way you don't spam pull with spam state changes if data isn't needed
+# TODO Refactor characters to use and navigate the world based off state shit instead of direct manipulation
+# 	Once they work off their state data
+# 		Camera logic can be updated to react/move to its state update signals as well and keep up/focus on the correct thing
 
-# TODO AFTER
 # TODO We need to get actions that take place in the game as a result of the character/objects to change state properly
 #			i.e. 
 				# tracking on throw, 
@@ -300,12 +288,6 @@ func _perform_tracking(_delta: float) -> void:
 				# idle rotate character on idle sit,
 				# snap back to tracking on control usage,
 				# etc
-
-
-#	I get that characters aren't on state system yet but we can still program as though they are
-# Refactor characters to use and navigate the world based off state shit instead of direct manipulation
-# 	Once they work off their state data
-# 		Camera logic can be updated to react/move to its state update signals as well and keep up/focus on the correct thing
 
 # TODO Freelook working but needs tweaking
 # TODO Then get tracking working
@@ -335,7 +317,7 @@ func _follow_target() -> void:
 	var camera_state_data: CameraStateData = self._get_state_ref()
 	if self_guid == null or camera_state_data == null:
 		var missing_string: String = self._OWN_STATE if self_guid == null else self._OWN_STATE
-		Logger.warn(self._CANT_PERFORM, [missing_string, self._FOLLOW_TARGET], self)
+		Logger.warn(Logger._CANT_PERFORM, [missing_string, self._FOLLOW_TARGET], self)
 		return
 	var tracking_guid: String = camera_state_data.get_focus_guid()
 	# TODO Once characters are fully on state we should be able to use its state and ditch Node3D references
@@ -378,7 +360,7 @@ func _apply_min_height_constraint(position: Vector3) -> Vector3:
 func _handle_input() -> void:
 	var camera_state_data: CameraStateData = self._get_state_ref()
 	if camera_state_data == null:
-		Logger.error(self._CANT_PERFORM, [self._OWN_STATE, self._HANDLE_INPUT], self)
+		Logger.error(Logger._CANT_PERFORM, [self._OWN_STATE, self._HANDLE_INPUT], self)
 		return
 	var current_state: StateConfiguration.STATE = camera_state_data.get_current_state()
 	if current_state >= StateConfiguration.STATE.IS_TRACKING and current_state < StateConfiguration.STATE.FREELOOK_STUCK:
@@ -392,7 +374,7 @@ func _handle_input() -> void:
 func _handle_freelook(v_motion: float, h_motion: float) -> void:
 	var camera_state_data: StateData = self._get_state_ref()
 	if camera_state_data == null:
-		Logger.error(self._CANT_PERFORM, [self._OWN_STATE, self._HANDLE_FREELOOK], self)
+		Logger.error(Logger._CANT_PERFORM, [self._OWN_STATE, self._HANDLE_FREELOOK], self)
 		return
 	var current_state: StateConfiguration.STATE = camera_state_data.get_current_state()
 	if current_state >= 550 and current_state <= 552:
@@ -412,7 +394,7 @@ func _handle_up_input(_delta: float) -> void:
 		var camera_state_data: StateData = self._get_state_ref()
 		if self_guid == null or camera_state_data == null:
 			var missing_string: String = self._OWN_GUID if self_guid == null else self._OWN_STATE
-			Logger.error(self._CANT_PERFORM, [missing_string, self._HANDLE_UP_INPUT], self)
+			Logger.error(Logger._CANT_PERFORM, [missing_string, self._HANDLE_UP_INPUT], self)
 			return
 		var sprint_multiplier: float = self._get_sprint_value(camera_state_data)
 		var movement_amount: float = GameConfig.DEFAULTS.controller_speed * sprint_multiplier
@@ -434,7 +416,7 @@ func _handle_down_input(_delta: float) -> void:
 		var camera_state_data: StateData = self._get_state_ref()
 		if self_guid == null or camera_state_data == null:
 			var missing_string: String = self._OWN_GUID if self_guid == null else self._OWN_STATE
-			Logger.error(self._CANT_PERFORM, [missing_string, self._HANDLE_UP_INPUT], self)
+			Logger.error(Logger._CANT_PERFORM, [missing_string, self._HANDLE_UP_INPUT], self)
 			return
 		var sprint_multiplier: float = self._get_sprint_value(camera_state_data)
 		var movement_amount: float = -(GameConfig.DEFAULTS.controller_speed * sprint_multiplier)
@@ -456,7 +438,7 @@ func _handle_input_direction(incoming_direction: Vector2) -> void:
 		var camera_state_data: StateData = self._get_state_ref()
 		if self_guid == null or camera_state_data == null:
 			var missing_string: String = self._OWN_GUID if self_guid == null else self._OWN_STATE
-			Logger.error(self._CANT_PERFORM, [missing_string, self._HANDLE_INPUT_DIRECTION], self)
+			Logger.error(Logger._CANT_PERFORM, [missing_string, self._HANDLE_INPUT_DIRECTION], self)
 			return
 		var sprint_multiplier: float = self._get_sprint_value(camera_state_data)
 		var x_amount = incoming_direction.x * sprint_multiplier
@@ -484,7 +466,7 @@ func _get_sprint_value(incoming_state: StateData) -> float:
 func _handle_sprint_start() -> void:
 	var self_guid: String = self._get_guid_ref()
 	if self_guid == null:
-		Logger.error(self._CANT_PERFORM, [self._OWN_GUID, self._HANDLE_SPRINT_START], self)
+		Logger.error(Logger._CANT_PERFORM, [self._OWN_GUID, self._HANDLE_SPRINT_START], self)
 		return
 	var transform_action_dictionary: Dictionary = {
 		GameAction.OWNER_GUID: self_guid,
@@ -498,7 +480,7 @@ func _handle_sprint_start() -> void:
 func _handle_sprint_stop() -> void:
 	var self_guid: String = self._get_guid_ref()
 	if self_guid == null:
-		Logger.error(self._CANT_PERFORM, [self._OWN_GUID, self._HANDLE_SPRING_STOP], self)
+		Logger.error(Logger._CANT_PERFORM, [self._OWN_GUID, self._HANDLE_SPRING_STOP], self)
 		return
 	var transform_action_dictionary: Dictionary = {
 		GameAction.OWNER_GUID: self_guid,
@@ -507,14 +489,9 @@ func _handle_sprint_stop() -> void:
 	var transform_action: GameAction = GameAction.new(GameAction.TYPE.TRANSFORM, transform_action_dictionary)
 	GlobalStateController.dispatch(transform_action)
 
-# TODO Should be a lower class function after camera refactor
-#		Lowest class
-func _handle_new_state_signal(update_details: Dictionary) -> void:
-	var self_guid: String = self._get_guid_ref()
-	if self_guid == null:
-		Logger.error(self._CANT_PERFORM, [self._OWN_GUID, self._HANDLE_STATE_SIGNAL], self)
-		return
-	if self_guid in update_details:
+func _handle_new_state_signal(update_details: Dictionary) -> bool:
+	if super(update_details):
+		var self_guid: String = self._get_guid_ref()
 		var update_action: GameAction = update_details[self_guid]
 		match update_action.action_type:
 			GameAction.TYPE.SET_STATE:
@@ -523,8 +500,9 @@ func _handle_new_state_signal(update_details: Dictionary) -> void:
 				self._handle_transform(update_action)
 			_:
 				var update_type_string: String = GameAction.get_type_string(update_action.action_type)
-				# TODO Get log to a constant
-				Logger.warn("Incoming update type \"%s\" is not supported", [update_type_string], self)
+				Logger.warn(self._UNSUPPORTED_TYPE, [update_type_string], self)
+				return false
+	return true
 
 func _handle_state_update(incoming_action: GameAction) -> void:
 	var current_state_data: StateData = self._get_state_ref()
@@ -566,7 +544,7 @@ func _handle_transform(incoming_action: GameAction) -> void:
 	if missing_transform_keys.size() < GameAction.TRANSFORM_KEYS.size():
 		var camera_state_data: StateData = self._get_state_ref()
 		if camera_state_data == null:
-			Logger.error(self._CANT_PERFORM, [self._OWN_GUID, self._HANDLE_TRANSFORM], self)
+			Logger.error(Logger._CANT_PERFORM, [self._OWN_GUID, self._HANDLE_TRANSFORM], self)
 			return
 		if incoming_action.payload.has(GameAction.ROTATION):
 			var new_rotation: Quaternion = camera_state_data.get_current_rotation()

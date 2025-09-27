@@ -1,15 +1,41 @@
 extends Node3D
 class_name StatefulAsset
 
-# TODO Move all the refreshing and getting of state/guid data into this class
-#			Then make camera rig extend this as first test
-#		After camera rig is over on this should be able to move base character over onto it
 var _guid_ref: String
 var _state_ref: StateData
 var _dirty_state: bool = false
+var _skip_tags: Array[String] = [GameAction.SYNC]
 
 func sync_asset() -> void:
-	pass
+	var self_guid: String = self._get_guid_ref()
+	var current_position: Vector3 = self.global_position
+	var position_dictionary: Dictionary = {
+		GameAction.X: current_position.x,
+		GameAction.Y: current_position.y,
+		GameAction.Z: current_position.z
+	}
+	var current_rotation: Vector3 = self.global_rotation
+	var rotation_dictionary: Dictionary = {
+		GameAction.X: current_rotation.x,
+		GameAction.Y: current_rotation.y,
+		GameAction.Z: current_rotation.z
+	}
+	var current_scale: Vector3 = self.scale
+	var scale_dictionary: Dictionary = {
+		GameAction.X: current_scale.x,
+		GameAction.Y: current_scale.y,
+		GameAction.Z: current_scale.z
+	}
+	var tag_list: Array[String] = [GameAction.SYNC]
+	var sync_action_dictionary: Dictionary = {
+		GameAction.OWNER_GUID: self_guid,
+		GameAction.POSITION: position_dictionary,
+		GameAction.ROTATION: rotation_dictionary,
+		GameAction.SCALE: scale_dictionary,
+		GameAction.TAGS: tag_list
+	}
+	var sync_action: GameAction = GameAction.new(GameAction.TYPE.TRANSFORM, sync_action_dictionary)
+	GlobalStateController.dispatch(sync_action)
 
 func set_state_dirty() -> void:
 	self._dirty_state = true
@@ -19,6 +45,20 @@ func set_state_clean() -> void:
 
 func is_state_dirty() -> bool:
 	return self._dirty_state
+
+func _handle_new_state_signal(update_details: Dictionary) -> bool:
+	var self_guid: String = self._get_guid_ref()
+	# If null or not in update details return false
+	if self_guid == null || !(self_guid in update_details):
+		if self_guid == null:
+			Logger.error(Logger._CANT_PERFORM, [self._OWN_GUID, self._HANDLE_STATE_SIGNAL], self)
+		return false
+	elif self_guid in update_details:
+		var self_details: Dictionary = update_details[self_guid]
+		if self_details.has(GameAction.TAGS):
+			var found_tags: Array[String] = self_details[GameAction.TAGS]
+			return !self._skip_tags.any(func(tag): return tag in found_tags) 
+	return true
 
 func _get_current_state() -> StateConfiguration.STATE:
 	var found_state: StateData = self._get_state_ref()

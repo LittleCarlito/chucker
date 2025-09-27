@@ -41,6 +41,7 @@ const LOG_SEPARATOR: String = "; "
 const OR_SEPARATOR: String = " OR "
 const EITHER_STARTER: String = "Either "
 const NO_METHOD_FOUND: String = "No method \"%s\" found on object \"%s\""
+const _CANT_PERFORM: String = "\"%s\" could not be found; \"%s\" can not be performed"
 
 const BAD_ACTION_FORMAT: String = "Incoming action \"%s\" was missing property %s and could not be processed"
 

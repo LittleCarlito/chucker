@@ -88,22 +88,9 @@ func spawn_asset(spawn_data: SpawnData) -> Node3D:
 		spawn_data.spawn_parent.add_child(created_node)
 	else:
 		get_tree().get_current_scene().add_child(created_node)
-	# BUG OOOOO
-	# TODO NEED TO ALSO UPDATE THE STATE OBJECT THAT WAS JUST MADE FOR THIS IN .create_asset WITH SPAWN LOCATION
 	created_node.global_position = spawn_data.spawn_location
-	# TODO To fix bug above make sure all assets that will be spawned in with "positions" have this function
-	#			Ensure that syncing of global position of asset is pushed up to state
-	#			This is an interesting state change signal handling case
-	#				Will want others to handle it
-	#				Will not want the character to handle the state update signal
-	#					Because it is the one making the state change
-	#					So should first add some logging to confirm its detecting its own made state change
-	#					Then make the logic so it handles all state changes but filters out ones itself intiiates
-	#						By "initiates" I mean push UP to the state based off its CURRENT data
-	# TODO Once the StatefulAsset base class has been finished we can get rid of this "has_method" call
-	#			Will know that it has the method by doing created_node is StatefulAsset
-	if created_node.has_method(GroupData.SYNC_ASSET):
-		created_node.call(GroupData.SYNC_ASSET)
+	if created_node is StatefulAsset:
+		created_node.sync_asset()
 	return created_node
 
 static func _set_asset_data(incoming_asset: Node3D, incoming_data: AssetData) -> bool:
