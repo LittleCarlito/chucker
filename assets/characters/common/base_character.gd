@@ -15,6 +15,26 @@ var disable_rotation_var: bool = false
 var _initial_camera_orientation: Transform3D
 var _pending_movement: bool = false
 
+# TODO OOOOO 
+# TODO Task list
+# TODO To do below you need to
+#		Change StatefulAsset to AssetState
+#		Make it a Resource and not Node3D
+#		Have CameraRig extend Node3D and not it
+#		Have CameraRig contain an AssetState and use that like it was using StatefulAsset
+#		Update asset registration functions
+#			Resource is now internal part of asset and not something created in registration
+#			Needs to be pulled out of created asset
+#				Should probably have a functiuon in GroupName or something for "get_asset_state"
+#			With that the batch signal out can be removed
+#				Now shared ref to AssetState object connects dispatched actions directly to the state
+#				Gets rid of all the _dirty_state stuff too
+# TODO Make Basecharacter Node3D class containing a CharaacterBody3D
+#		Wire up the calls so that they manipulate the character properly
+# TODO Refactor character to function based off state and not inputs
+# TODO Get back to Asset_Delivery TODOs
+# TODO Then to CameraRigs TODOs
+
 func _ready() -> void:
 	self.height = base_mesh.get_aabb().size.y
 	_initial_camera_orientation = camera_container.global_transform
@@ -173,22 +193,3 @@ func _can_horizontally_rotate(rotation_amount:float) -> bool:
 	var max_horizontal_value: float = CameraConfig.get_max_horizontal_rotation()
 	var min_horizontal_value: float = CameraConfig.get_min_horizontal_rotation()
 	return (potential_horizontal_roation > min_horizontal_value) and (potential_horizontal_roation < max_horizontal_value)
-
-func _give_camera(new_item: Node3D) -> void:
-	if new_item is CameraContainer or new_item.has_method(GroupData.GET_CAMERA_CONTAINER):
-		var pulled_camera_container: CameraContainer
-		if new_item is not CameraContainer:
-			# TODO Implement _get_camera_container on assets that you would want to ahve the camera while equipped (might be none, maybe do one for fun)
-			pulled_camera_container = new_item.call(GroupData.GET_CAMERA_CONTAINER)
-			if pulled_camera_container == null:
-				Logger.debug(_EMPTY_CAMERA_CONTAINER, [str(new_item)], self) 
-		else:
-			pulled_camera_container = new_item as CameraContainer
-		if pulled_camera_container != null:
-			camera_container.give_camera(pulled_camera_container)
-		else:
-			var formatted_string: String = _NO_CAMERA_CONTAINER_LOG + Logger.LOG_SEPARATOR + Logger.KEEPING_CAMERA
-			Logger.debug(formatted_string, [str(new_item)], self)
-	else:
-		var formatted_string: String = _NO_CAMERA_CONTAINER_LOG + Logger.LOG_SEPARATOR + Logger.KEEPING_CAMERA
-		Logger.debug(formatted_string, [str(new_item)], self)
