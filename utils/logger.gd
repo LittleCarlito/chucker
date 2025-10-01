@@ -43,6 +43,7 @@ const EITHER_STARTER: String = "Either "
 const NO_METHOD_FOUND: String = "No method \"%s\" found on object \"%s\""
 # TODO Make public
 const _CANT_PERFORM: String = "\"%s\" could not be found; \"%s\" can not be performed"
+const CALL_FAILED: String = "Call to function \"%s\" with parameters \"%s\" failed"
 
 const BAD_ACTION_FORMAT: String = "Incoming action \"%s\" was missing property %s and could not be processed"
 

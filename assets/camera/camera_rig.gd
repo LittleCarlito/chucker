@@ -16,6 +16,7 @@ const _FREELOOK_REASONING: String = "Camera rig is in freelook or tracking state
 const _INVALID_STATE: String = "Invalid state configuration; %s"
 const _FOCUSED_NO_GUID: String = "State is TRACKING but there is no guid to focus on"
 const _NO_STATE_DATA: String = "State Data in Global Controller"
+const _SET_INTEGRATION: String = "Set Integration Point"
 const _OWN_GUID: String = "Self GUID"
 const _TRACKING_GUID: String = "Tracking GUID"
 const _ILLEGAL_STATE: String = "%s is missing from camera rig asset; Application is in IllegalState"
@@ -141,27 +142,35 @@ func pitch_vertical(rotation_amount: float) -> void:
 func focus_guid(incoming_guid: String) -> void:
 	self._focus_state = GlobalStateController.get_header_data(incoming_guid, StateHeaders.TYPE.DATA)
 
-# TODO Mid fix to convert to using guid instead of node
-func set_integration_point(
+func track_guid(
 		incoming_guid: String, 
-		incoming_state: StateConfiguration.STATE = StateConfiguration.STATE.TRACKING_FULL
+		incoming_state: StateConfiguration.STATE = StateConfiguration.STATE.UNKNOWN
 		) -> void:
-	if self.asset_state.can_transition(incoming_state):
+	var action_dictionary: Dictionary = {
+		GameAction.TARGET_GUID: incoming_guid
+	}
+	if incoming_state != StateConfiguration.STATE.UNKNOWN && self.asset_state.can_transition(incoming_state):
 		var state_string = StateConfiguration.get_state_string(incoming_state)
-		var action_dictionary: Dictionary = {
-			GameAction.TARGET_GUID: incoming_guid,
-			GameAction.STATE: state_string
-		}
-		self.asset_state.perform_action(GameAction.TYPE.FOCUS, action_dictionary)
+		action_dictionary[GameAction.STATE] = state_string
+	var result_success: bool = self.asset_state.perform_action(GameAction.TYPE.TRACK, action_dictionary)
+	if not result_success:
+		var parameter_string: String = "Incoming GUID: %s; Incoming state: %s" % [incoming_guid, state_string]
+		Logger.error(Logger.CALL_FAILED, [self._SET_INTEGRATION, parameter_string], self)
 
-func get_integration_point() -> Node3D:
-	return self._focus_node
+## Retrieves the first tracked GUID
+func get_integration_point() -> String:
+	return self.asset_state.get_first_tracked()
 
 # TODO NEEDS TO BE REFACTORED
 #			Moving to new state based everything combining the focus and focus guid actions to state action
 ## Clears the integrated point and loses focus
-func deintegrate() -> void:
-	pass
+func deintegrate(incoming_guid: String) -> void:
+	self.asset_state.stop_tracking(incoming_guid)
+
+func deintegrate_all() -> void:
+	var tracked_guids: Array = self.asset_state.get_tracked_guids()
+	for guid in tracked_guids:
+		self.deintegrate(guid)
 
 # TODO Test trying to set wrong state; ensure it doesn't work and logs
 func transition_state(incoming_state: StateConfiguration.STATE) -> void:
@@ -350,11 +359,6 @@ func _handle_freelook(v_motion: float, h_motion: float) -> void:
 	if current_state >= 550 and current_state <= 552:
 		self.pan_horizontal(h_motion * freelook_sensitivity)
 		self.pitch_vertical(v_motion * freelook_sensitivity)
-
-# TODO Should be a lower class function after camera refactor
-#		Lowest class
-func _handle_camera_request(new_foucs: Node3D) -> void:
-	self.set_integration_point(new_foucs)
 
 # TODO Should be a lower class function after camera refactor
 #		Higher class

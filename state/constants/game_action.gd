@@ -6,7 +6,7 @@ const UNSUPPORTED: String = "Incoming action type \"%s\" is not supported"
 enum TYPE {
 	# TODO Not sure if the older ones are needed in new setup
 	# Newer post Resource
-	FOCUS,
+	TRACK,
 	# Older pre Resource
 	SET_STATE,
 	TRANSFORM,
@@ -17,7 +17,7 @@ const GAME_ACTION_TYPE: String = "GAME ACTION TYPE"
 const _SET_STATE: String = "Set State"
 const _TRANSFORM: String = "Transform"
 const _WARN: String = "Warn"
-const _FOCUS: String = "Focus"
+const _TRACK: String = "Track"
 
 static func get_type_string(incoming_type: TYPE) -> String:
 	match incoming_type:
@@ -27,8 +27,8 @@ static func get_type_string(incoming_type: TYPE) -> String:
 			return _TRANSFORM
 		TYPE.WARN:
 			return _WARN
-		TYPE.FOCUS:
-			reutrn _FOCUS
+		TYPE.TRACK:
+			reutrn _TRACK
 		_:
 			return GroupData.UNKNOWN
 

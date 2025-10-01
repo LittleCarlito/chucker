@@ -45,12 +45,20 @@ func sync_asset() -> void:
 	# var sync_action: GameAction = GameAction.new(GameAction.TYPE.TRANSFORM, sync_action_dictionary)
 	# GlobalStateController.dispatch(sync_action)
 
+## Returns first tracked GUID; Null if none are tracked
+func get_first_tracked() -> Variant:
+	if self._tracked_assets.is_empty():
+		return null
+	return self._tracked_assets.keys()[0]
+
+func get_tracked_guids() -> Array[String]:
+	reutrn self._tracked_assets.keys()
+
 func get_owner_guid() -> String:
 	if self._state_data == null:
 		Logger.error(Logger._CANT_PERFORM, [self._STATE_DATA, self._GET_OWNER_GUID], self)
 		return GroupData.EMPTY
 	return self._state_data.get_owner_guid()
-
 
 func get_current_state() -> StateConfiguration.STATE:
 	var found_state: StateData = self._get_state_data()
@@ -58,16 +66,12 @@ func get_current_state() -> StateConfiguration.STATE:
 		return StateConfiguration.STATE.UNKNOWN
 	return found_state.get_current_state()
 
-# TODO Refactor callers to use new name
-# func _get_guid_ref() -> String:
 func get_guid_string() -> String:
 	# Only cares about null; Dirty state doesn't affect immutable thing like a GUID
 	if self._guid_string == null:
 		self._guid_string = self.get_meta(GroupData.GUID)
 	return self._guid_string
 
-# TODO Refactor callers to use new name
-# func _get_state_ref() -> StateData:
 func get_state_data() -> StateData:
 	if self._state_data == null:
 		self._state_data = StateData.new()
@@ -89,34 +93,9 @@ func output_warning(incoming_warning: String) -> void:
 func apply_rotation(euler_rotations: Vector3) -> void:
 	pass
 
-func perform_action(action_type: GameAction.TYPE: options: Dictionary = {}) -> bool:
-	match action_type:
-		GameAction.FOCUS:
-			if options.has(GameAction.TARGET_GUID):
-				return self._handle_focus_action(options)
-			else:
-				var action_string: String = GameAction.get_type_string(action_type)
-				Logger.error(self._BAD_FORMAT, [action_string, 1], self)
-		_:
-			var action_string: String = GameAction.get_type_string(action_type)
-			Logger.error(GameAction.UNSUPPORTED, [action_string], self)
-	return false
-
-# TODO OOOOO YOU WERE HERE AND WORKIGN ON CAMERA RIG
-#			Getting state to RESOURCE and CameraRig to using that Resource
-#				And there are no other notes on it really but this is also going to require a big refactor of GlobalStateController
-func _handle_focus_action(action_payload: Dictionary) -> bool:
+## Attempts to add the guid to the states tracking dictionary; Returns true if succesful false if fails
+func track_target_guid(target_guid: String) -> bool:
 	# TODO GlobalStateController needs to be refactored to stare and use AssetState
-	var target_guid: String = action_payload[GameAction.TARGET_GUID]
-	var is_target_tracked: bool = self._focus_target_guid(target_guid)
-	if is_target_tracked:
-		# TODO Now handle updating the state to whatever was given in the payload
-		#			Might not be provided; if not that is find just dont call the function
-		#			Otherwise call the function to set the asset state to given state
-		pass
-	return true
-
-func _focus_target_guid(target_guid: String) -> bool:
 	var target_state: AssetState = GlobalStateController.get_header_data(target_guid, StateHeaders.TYPE.DATA)
 	if target_state == null:
 		var target_string: String = "State for target GUID \"%s\"" % target_guid
@@ -146,3 +125,39 @@ func _focus_target_guid(target_guid: String) -> bool:
 			updated_assets.append(target_state)
 		self._tracked_assets[target_guid] = updated_assets
 		return true
+
+## TODO Attempts to remove the incoming guid from the tracked dictionary; Returns true if successful false if fails
+## Will fail if state is actively tracking the GUID
+func stop_tracking(incoming_guid: String) -> bool:
+	return false
+
+func can_transition(incoming_state: StateConfiguration.STATE) -> bool:
+	return self._state_data.can_transition(incoming_state)
+
+func perform_action(action_type: GameAction.TYPE: options: Dictionary = {}) -> bool:
+	match action_type:
+		GameAction.TRACK:
+			if options.has(GameAction.TARGET_GUID):
+				return self._handle_focus_action(options)
+			else:
+				var action_string: String = GameAction.get_type_string(action_type)
+				Logger.error(self._BAD_FORMAT, [action_string, 1], self)
+		_:
+			var action_string: String = GameAction.get_type_string(action_type)
+			Logger.error(GameAction.UNSUPPORTED, [action_string], self)
+	return false
+
+func _handle_focus_action(action_payload: Dictionary) -> bool:
+	var target_guid: String = action_payload[GameAction.TARGET_GUID]
+	var is_target_tracked: bool = self.track_target_guid(target_guid)
+	if not is_target_tracked:
+		# Should be logged in track_target_guid already
+		return false
+	if action_payload.has(GameAction.STATE):
+		var new_state_string: String = action_payload[GameAction.STATE]
+		var new_state: StateConfiguration.STATE = StateConfiguration.get_state_from_string(new_state_string)
+		# can_transition within try_set_state should log transition failures
+		return self._state_data.try_set_state(new_state):
+	return true
+
+
