@@ -1,7 +1,13 @@
 extends Resource
 class_name GameAction
 
+const UNSUPPORTED: String = "Incoming action type \"%s\" is not supported"
+
 enum TYPE {
+	# TODO Not sure if the older ones are needed in new setup
+	# Newer post Resource
+	FOCUS,
+	# Older pre Resource
 	SET_STATE,
 	TRANSFORM,
 	WARN,
@@ -11,6 +17,7 @@ const GAME_ACTION_TYPE: String = "GAME ACTION TYPE"
 const _SET_STATE: String = "Set State"
 const _TRANSFORM: String = "Transform"
 const _WARN: String = "Warn"
+const _FOCUS: String = "Focus"
 
 static func get_type_string(incoming_type: TYPE) -> String:
 	match incoming_type:
@@ -20,6 +27,8 @@ static func get_type_string(incoming_type: TYPE) -> String:
 			return _TRANSFORM
 		TYPE.WARN:
 			return _WARN
+		TYPE.FOCUS:
+			reutrn _FOCUS
 		_:
 			return GroupData.UNKNOWN
 
