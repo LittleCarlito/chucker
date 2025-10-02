@@ -1,8 +1,12 @@
 extends Resource
 class_name AssetState
 
+signal state_updated(asset_state: AssetState)
+
+const _CURRENTLY_TRACKED: String = "Cannot stop tracking GUID \"%s\" as it is the currently tracked asset; Change asset state before untracking"
 const _BAD_FORMAT: String = "Incoming request to \"%s\" cannot be performed; %d optional parameters must be provided"
 const _DUPLICATE_TRACKED_STATES: String = "Duplicate tracked asset states belonging to owner \"%s\" have been found; ILLEGAL STATE"
+const _MISSING_TRACK_DATA: String = "No state data could be found in tracked assets for GUID \"%s\""
 const _HANDLE_FOCUS: String = "Handle Focus Action"
 const _GET_OWNER_GUID: String = "Get Owner GUID"
 const _STATE_DATA: String = "State Data"
@@ -10,49 +14,42 @@ const _STATE_DATA: String = "State Data"
 var _guid_string: String
 var _state_data: StateData
 var _state_warnings: Dictionary
-var _tracked_assets: Array[AssetState]
+var _tracked_assets: Dictionary
 
-# TODO Refactor to not be a dispatch but just set _state_data directly
 func sync_asset() -> void:
-	pass
-	# var self_guid: String = self._get_guid_ref()
-	# var current_position: Vector3 = self.global_position
-	# var position_dictionary: Dictionary = {
-	# 	GameAction.X: current_position.x,
-	# 	GameAction.Y: current_position.y,
-	# 	GameAction.Z: current_position.z
-	# }
-	# var current_rotation: Vector3 = self.global_rotation
-	# var rotation_dictionary: Dictionary = {
-	# 	GameAction.X: current_rotation.x,
-	# 	GameAction.Y: current_rotation.y,
-	# 	GameAction.Z: current_rotation.z
-	# }
-	# var current_scale: Vector3 = self.scale
-	# var scale_dictionary: Dictionary = {
-	# 	GameAction.X: current_scale.x,
-	# 	GameAction.Y: current_scale.y,
-	# 	GameAction.Z: current_scale.z
-	# }
-	# var tag_list: Array[String] = [GameAction.SYNC]
-	# var sync_action_dictionary: Dictionary = {
-	# 	GameAction.OWNER_GUID: self_guid,
-	# 	GameAction.POSITION: position_dictionary,
-	# 	GameAction.ROTATION: rotation_dictionary,
-	# 	GameAction.SCALE: scale_dictionary,
-	# 	GameAction.TAGS: tag_list
-	# }
-	# var sync_action: GameAction = GameAction.new(GameAction.TYPE.TRANSFORM, sync_action_dictionary)
-	# GlobalStateController.dispatch(sync_action)
+	if self._state_data == null:
+		Logger.error(Logger._CANT_PERFORM, [self._STATE_DATA, "Sync Asset"], self)
+		return
+	if self.owner == null:
+		Logger.error("Cannot sync asset: owner is null", [], self)
+		return
+	var current_position: Vector3 = self.owner.global_position
+	var current_rotation: Quaternion = Quaternion(self.owner.global_transform.basis)
+	var current_scale: Vector3 = self.owner.scale
+	self._state_data.update_position(current_position - self._state_data.get_current_position())
+	self._state_data.update_rotation(current_rotation * self._state_data.get_current_rotation().inverse())
+	self._state_data.update_scale(current_scale / self._state_data.get_current_scale())
+
+func is_movement_enabled() -> bool:
+	return self._state_data.is_movement_enabled()
+
+func is_sprinting() -> bool:
+	return self._state_data.is_sprinting()
+
+func start_sprinting() -> void:
+	self._state_data.update_is_sprinting(true)
+
+func stop_sprinting() -> void:
+	self._state_data.update_is_sprinting(false)
 
 ## Returns first tracked GUID; Null if none are tracked
 func get_first_tracked() -> Variant:
 	if self._tracked_assets.is_empty():
 		return null
-	return self._tracked_assets.keys()[0]
+	return self._tracked_assets.values()[0]
 
-func get_tracked_guids() -> Array[String]:
-	reutrn self._tracked_assets.keys()
+func get_tracked_guids() -> Array:
+	return self._tracked_assets.keys()
 
 func get_owner_guid() -> String:
 	if self._state_data == null:
@@ -61,10 +58,9 @@ func get_owner_guid() -> String:
 	return self._state_data.get_owner_guid()
 
 func get_current_state() -> StateConfiguration.STATE:
-	var found_state: StateData = self._get_state_data()
-	if found_state == null:
+	if self._state_data == null:
 		return StateConfiguration.STATE.UNKNOWN
-	return found_state.get_current_state()
+	return self._state_data.get_current_state()
 
 func get_guid_string() -> String:
 	# Only cares about null; Dirty state doesn't affect immutable thing like a GUID
@@ -74,7 +70,10 @@ func get_guid_string() -> String:
 
 func get_state_data() -> StateData:
 	if self._state_data == null:
-		self._state_data = StateData.new()
+		var owner_name: String = ""
+		if self.owner != null:
+			owner_name = self.owner.name
+		self._state_data = StateData.new(_guid_string, owner_name)
 	return self._state_data
 
 func set_to_state(incoming_state: StateConfiguration.STATE) -> bool:
@@ -89,9 +88,18 @@ func output_warning(incoming_warning: String) -> void:
 	self._state_warnings[incoming_warning] = 1
 	Logger.warn(incoming_warning, [], self)
 
-# TODO Do what GlobalStateController does and convert the incoming data to a Quaternion and apply it to the existing rotation amounts
+func apply_movement(movement_vector: Vector3) -> void:
+	if self._state_data == null:
+		Logger.error(Logger._CANT_PERFORM, [self._STATE_DATA, "Apply Movement"], self)
+		return
+	self._state_data.update_position(movement_vector)
+
 func apply_rotation(euler_rotations: Vector3) -> void:
-	pass
+	var x_rotation_radians: float = deg_to_rad(euler_rotations.x)
+	var y_rotation_radians: float = deg_to_rad(euler_rotations.y)
+	var z_rotation_radians: float = deg_to_rad(euler_rotations.z)
+	var rotation_quaternion: Quaternion = Quaternion.from_euler(Vector3(x_rotation_radians, y_rotation_radians, z_rotation_radians))
+	self._state_data.update_rotation(rotation_quaternion)
 
 ## Attempts to add the guid to the states tracking dictionary; Returns true if succesful false if fails
 func track_target_guid(target_guid: String) -> bool:
@@ -125,18 +133,31 @@ func track_target_guid(target_guid: String) -> bool:
 			updated_assets.append(target_state)
 		self._tracked_assets[target_guid] = updated_assets
 		return true
+	self._tracked_assets[target_guid] = [target_state]
+	return true
 
-## TODO Attempts to remove the incoming guid from the tracked dictionary; Returns true if successful false if fails
+## Attempts to remove the incoming guid from the tracked dictionary; Returns true if successful false if fails
 ## Will fail if state is actively tracking the GUID
 func stop_tracking(incoming_guid: String) -> bool:
-	return false
+	if self._tracked_assets.is_empty() || not self._tracked_assets.has(incoming_guid):
+		Logger.error(self._MISSING_TRACK_DATA, [incoming_guid], self)
+		return false
+	var current_state: StateConfiguration.STATE = self._state_data.get_current_state()
+	var is_tracking: bool = StateUtil.is_tracking(current_state)
+	if is_tracking:
+		var tracked_guid: String = self._state_data.get_focused_guid()
+		if incoming_guid == tracked_guid:
+			Logger.error(self._CURRENTLY_TRACKED, [incoming_guid], self)
+			return false
+	self._tracked_assets.erase(incoming_guid)
+	return true
 
 func can_transition(incoming_state: StateConfiguration.STATE) -> bool:
 	return self._state_data.can_transition(incoming_state)
 
-func perform_action(action_type: GameAction.TYPE: options: Dictionary = {}) -> bool:
+func perform_action(action_type: GameAction.TYPE, options: Dictionary = {}) -> bool:
 	match action_type:
-		GameAction.TRACK:
+		GameAction.TYPE.TRACK:
 			if options.has(GameAction.TARGET_GUID):
 				return self._handle_focus_action(options)
 			else:
@@ -157,7 +178,8 @@ func _handle_focus_action(action_payload: Dictionary) -> bool:
 		var new_state_string: String = action_payload[GameAction.STATE]
 		var new_state: StateConfiguration.STATE = StateConfiguration.get_state_from_string(new_state_string)
 		# can_transition within try_set_state should log transition failures
-		return self._state_data.try_set_state(new_state):
+		return self._state_data.try_set_state(new_state)
 	return true
 
-
+func _state_data_update(_incoming_data: StateData) -> void:
+	self.state_updated.emit(self)

@@ -28,7 +28,7 @@ static func get_type_string(incoming_type: TYPE) -> String:
 		TYPE.WARN:
 			return _WARN
 		TYPE.TRACK:
-			reutrn _TRACK
+			return _TRACK
 		_:
 			return GroupData.UNKNOWN
 

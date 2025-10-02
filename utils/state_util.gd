@@ -23,9 +23,9 @@ static func extract_rotation(rotation_data: Dictionary, incoming_action: GameAct
 		var missing_rotation_string: String = "; ".join(missing_rotation_keys)
 		Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, missing_rotation_string], null)
 		return Quaternion.IDENTITY
-	var x_rotation_value: float = 0 if missing_rotation_keys.has(GameAction.X) else deg_to_rad(rotation_data[GameAction.X])
-	var y_rotation_value: float = 0 if missing_rotation_keys.has(GameAction.Y) else deg_to_rad(rotation_data[GameAction.Y])
-	var z_rotation_value: float = 0 if missing_rotation_keys.has(GameAction.Z) else deg_to_rad(rotation_data[GameAction.Z])
+	var x_rotation_value: float = 0.0 if missing_rotation_keys.has(GameAction.X) else deg_to_rad(rotation_data[GameAction.X])
+	var y_rotation_value: float = 0.0 if missing_rotation_keys.has(GameAction.Y) else deg_to_rad(rotation_data[GameAction.Y])
+	var z_rotation_value: float = 0.0 if missing_rotation_keys.has(GameAction.Z) else deg_to_rad(rotation_data[GameAction.Z])
 	return Quaternion.from_euler(Vector3(x_rotation_value, y_rotation_value, z_rotation_value))
 
 static func extract_vector3(vector_data: Dictionary, incoming_action: GameAction) -> Vector3:

@@ -2,6 +2,8 @@
 extends Node
 class_name StateData
 
+signal state_data_change(state_data: StateData)
+
 var _NO_VALID_TRANSITION: String = "Current item \"%s\" with state \"%s\" does not have valid transition states"
 var _INVALID_TRANSITION: String = "Item \"%s\" does not have a valid transition from state \"%s\" to state \"%s\""
 var _MAX_VALID_STATE: String = "Item \"%s\" has reached its maximum configured state \"%s\""
@@ -17,7 +19,6 @@ const _STATE_IDENTIFIER: String = "_state"
 
 var _owner_guid: String
 var _owner_name: String
-var _owner_type: String
 var _current_state: StateConfiguration.STATE
 var _current_state_duration: float
 # Scene based details
@@ -25,6 +26,7 @@ var _owner_rotation: Quaternion
 var _owner_position: Vector3
 var _owner_scale: Vector3
 var _focused_guid: String
+var _movement_enabled: bool
 var _is_sprinting: bool
 # State data dictionaries
 var _valid_transitions: Dictionary
@@ -32,7 +34,8 @@ var _state_values: Dictionary # String key, Float value; Whatever data you need 
 var _state_windows: Dictionary
 
 func _init(
-			incoming_guid: String, incoming_name: String, 
+			incoming_guid: String, 
+			incoming_name: String, 
 			incoming_transitions: Dictionary = {}, 
 			incoming_values: Dictionary = {},
 			incoming_windows: Dictionary = {}
@@ -58,6 +61,7 @@ func reset_state() -> StateConfiguration.STATE:
 		self._current_state = lowest_state
 	else:
 		_current_state = StateConfiguration.STATE.READY
+	self.state_data_change.emit(self)
 	return _current_state
 
 func get_state_data() -> Dictionary:
@@ -105,6 +109,7 @@ func can_transition(to_state: StateConfiguration.STATE) -> bool:
 func try_set_state(to_state: StateConfiguration.STATE) -> bool:
 	if self.can_transition(to_state):
 		self._current_state = to_state
+		self.state_data_change.emit(self)
 		return true
 	else:
 		return false
@@ -145,6 +150,7 @@ func transition_next_state() -> StateConfiguration.STATE:
 	var next_state := _find_next_valid_state()
 	if next_state != _current_state:
 		_current_state = next_state
+		self.state_data_change.emit(self)
 	else:
 		Logger.debug(self._MAX_VALID_STATE, [_owner_name, _current_state], self)
 	return _current_state
@@ -162,6 +168,7 @@ func transition_previous_state() -> StateConfiguration.STATE:
 	var prev_state := _find_previous_valid_state()
 	if prev_state != _current_state:
 		_current_state = prev_state
+		self.state_data_change.emit(self)
 	else:
 		Logger.debug(self._MIN_VALID_STATE, [_owner_name, _current_state], self)
 	return _current_state
@@ -176,6 +183,7 @@ func get_state_value(incoming_value: StateConfiguration.STATE) -> float:
 
 func set_focused_guid(incoming_guid: String) -> void:
 	self._focused_guid = incoming_guid
+	self.state_data_change.emit(self)
 
 func get_focused_guid() -> String:
 	return self._focused_guid
@@ -185,18 +193,29 @@ func is_focused() -> bool:
 
 func update_rotation(incoming_quaternion: Quaternion) -> void:
 	self._owner_rotation *= incoming_quaternion
+	self.state_data_change.emit(self)
 
 func update_position(incoming_vector: Vector3) -> void:
 	self._owner_position += incoming_vector
+	self.state_data_change.emit(self)
 
 func update_scale(incoming_vector: Vector3) -> void:
 	self._owner_scale *= incoming_vector
+	self.state_data_change.emit(self)
 
 func update_is_sprinting(incoming_value: bool) -> void:
 	self._is_sprinting = incoming_value
+	self.state_data_change.emit(self)
 
 func is_sprinting() -> bool:
 	return self._is_sprinting
+
+func update_movement_enabled(incoming_value: bool) -> void:
+	self._movement_enabled = incoming_value
+	self.state_data_change.emit(self)
+
+func is_movement_enabled() -> bool:
+	return self._movement_enabled
 
 func get_owner_guid() -> String:
 	return self._owner_guid
