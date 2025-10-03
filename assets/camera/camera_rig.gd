@@ -9,6 +9,7 @@ const _INTEGRATIN_DEBUG: String = "Now integrated with guid \"%s\" with focus se
 const _NO_INTEGRATION: String = "No integration point for rig to focus on"
 
 const _MISSING_DATA: String = "Missing \"%s\" data"
+# TODO Replace this usage with Logger usage
 const _UNSUPPORTED_TYPE: String  = "Incoming update type \"%s\" is not supported"
 const _MIN_HEIGHT_WARN: String = "Is now having its height artificially held to min height of \"%f\""
 const _SUCCESSFUL_TRANSITION: String = "Successfully transitioned from \"%s\" state to \"%s\""
@@ -37,6 +38,8 @@ const _HANDLE_SPRINT_START: String = "Handle sprint start"
 const _HANDLE_SPRING_STOP: String = "Handle sprint stop"
 const _HANDLE_STATE_SIGNAL: String = "Handle new state signal"
 const _HANDLE_TRANSFORM: String = "Handle transform"
+
+const _HANDLE_STATE_UPDATE: String = "Handle State Update"
 
 # TODO Break camera down into multiple extension classes and have these up the path with the functions that make sense
 # TODO Move majority of this to state
@@ -120,7 +123,7 @@ func track_guid(
 	}
 	var state_string = STATE.get_state_string(incoming_state)
 	if incoming_state != STATE.ASSET.UNKNOWN && self.asset_state.can_transition(incoming_state):
-		action_dictionary[GameAction.STATE] = state_string
+		action_dictionary[STATE.HEADER] = state_string
 	var result_success: bool = self.asset_state.perform_action(GameAction.TYPE.TRACK, action_dictionary)
 	if not result_success:
 		var parameter_string: String = "Incoming GUID: %s; Incoming state: %s" % [incoming_guid, state_string]
@@ -329,62 +332,58 @@ func _handle_sprint_stop() -> void:
 
 
 
-
-
-
-
-func _handle_new_state_signal(update_details: Dictionary) -> bool:
-	var self_guid: String = asset_state.get_guid_string()
-	var update_action: GameAction = update_details[self_guid]
-	match update_action.action_type:
-		GameAction.TYPE.SET_STATE:
-			self._handle_state_update(update_action)
-		GameAction.TYPE.TRANSFORM:
-			self._handle_transform(update_action)
-		_:
-			var update_type_string: String = GameAction.get_type_string(update_action.action_type)
-			Logger.warn(self._UNSUPPORTED_TYPE, [update_type_string], self)
-			return false
-	return true
-
 # TODO You were here
-# TODO Need to refactor below to instead deal with AssetState updates
-#		Probably need to connect to a signal that it will emit when state changes
-#		Then just change the code below to handle AssetState instead of GlobalStateController
-# TODO Deal with transforms, state updates, etc, whatever is different
-#		
-func _handle_state_update(incoming_action: GameAction) -> void:
-	var current_state_data: StateData = asset_state.get_state_data()
-	var current_state: STATE.ASSET = current_state_data.get_current_state()
-	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.STATE])
-	if current_state == STATE.ASSET.UNKNOWN or missing_keys.size() > 0:
-		return
-	var current_state_string: String = STATE.get_state_string(current_state)
-	var new_state_string: String = incoming_action.payload[GameAction.STATE]
-	var new_state: STATE.ASSET = STATE.get_state_from_string(new_state_string)
-	if !current_state_data.can_transition(new_state):
-		# can transition already has logged a warning about the failure
-		return
-	var new_state_tracking: bool = StateUtil.is_tracking(new_state)
-	var current_state_tracking: bool = StateUtil.is_tracking(current_state)
-	if new_state_tracking != current_state_tracking:
-		if new_state_tracking:
-			self._handle_transition_to_track()
-	if !current_state_data.try_and_set(new_state):
-		Logger.error(self._UPDATE_FAILED, [current_state_string, new_state_string], self)
-		return
+#		Need to implement the logic in the resolvers		
+func _handle_state_update(update_type: STATE.UPDATE_TYPE) -> void:
+	match update_type:
+		STATE.UPDATE_TYPE.FOCUS:
+			RigResolver.resolve_focus(self)
+		STATE.UPDATE_TYPE.ROTATION:
+			TransformResolver.resolve_rotation(self, self.asset_state.get_current_rotation())
+		STATE.UPDATE_TYPE.POSITION:
+			TransformResolver.resolve_position(self, self.asset_state.get_current_position())
+		STATE.UPDATE_TYPE.SCALE:
+			TransformResolver.resolve_scale(self, self.asset_state.get_current_scale())
+		STATE.UPDATE_TYPE.STATE:
+			RigResolver.resolve_state(self)
+		STATE.UPDATE_TYPE.TOGGLE:
+			pass
+		_:
+			var update_string: String = STATE.get_update_type_string(update_type)
+			Logger.error(Logger.UNSUPPORTED_TYPE_LOG, [self._HANDLE_STATE_UPDATE, update_string], self)
 
-func _handle_transition_to_track() -> void:
-	var camera_state_data: StateData = asset_state.get_state_data()
-	var focused_guid: String = camera_state_data.get_focus_guid()
-	if focused_guid.strip_edges().is_empty():
-		Logger.error(self._ILLEGAL_STATE, [self._TRACKING_GUID], self)
-		return
-	var focused_state_data: StateData = GlobalStateController.get_header_data(focused_guid, StateHeaders.TYPE.DATA)
-	var focus_position: Vector3 = focused_state_data.get_current_position()
-	var offset_vector: Vector3 = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
-	self.camera_controller.position = focus_position + offset_vector
-	self.camera_controller.look_at(focus_position)
+
+# 	var current_state_data: StateData = asset_state.get_state_data()
+# 	var current_state: STATE.ASSET = current_state_data.get_current_state()
+# 	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.STATE])
+# 	if current_state == STATE.ASSET.UNKNOWN or missing_keys.size() > 0:
+# 		return
+# 	var current_state_string: String = STATE.get_state_string(current_state)
+# 	var new_state_string: String = incoming_action.payload[GameAction.STATE]
+# 	var new_state: STATE.ASSET = STATE.get_state_from_string(new_state_string)
+# 	if !current_state_data.can_transition(new_state):
+# 		# can transition already has logged a warning about the failure
+# 		return
+# 	var new_state_tracking: bool = StateUtil.is_tracking(new_state)
+# 	var current_state_tracking: bool = StateUtil.is_tracking(current_state)
+# 	if new_state_tracking != current_state_tracking:
+# 		if new_state_tracking:
+# 			self._handle_transition_to_track()
+# 	if !current_state_data.try_and_set(new_state):
+# 		Logger.error(self._UPDATE_FAILED, [current_state_string, new_state_string], self)
+# 		return
+
+# func _handle_transition_to_track() -> void:
+# 	var camera_state_data: StateData = asset_state.get_state_data()
+# 	var focused_guid: String = camera_state_data.get_focus_guid()
+# 	if focused_guid.strip_edges().is_empty():
+# 		Logger.error(self._ILLEGAL_STATE, [self._TRACKING_GUID], self)
+# 		return
+# 	var focused_state_data: StateData = GlobalStateController.get_header_data(focused_guid, StateHeaders.TYPE.DATA)
+# 	var focus_position: Vector3 = focused_state_data.get_current_position()
+# 	var offset_vector: Vector3 = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
+# 	self.camera_controller.position = focus_position + offset_vector
+# 	self.camera_controller.look_at(focus_position)
 
 # TODO Should be a lower class function after camera refactor
 #		Lowest class

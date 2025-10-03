@@ -30,6 +30,15 @@ func sync_asset() -> void:
 	self._state_data.update_rotation(current_rotation * self._state_data.get_current_rotation().inverse())
 	self._state_data.update_scale(current_scale / self._state_data.get_current_scale())
 
+func get_current_rotation() -> Quaternion:
+	return self._state_data.get_current_rotation()
+
+func get_current_position() -> Vector3:
+	return self._state_data.get_current_position()
+
+func get_current_scale() -> Vector3:
+	return self._state_data.get_current_scale()
+
 func is_movement_enabled() -> bool:
 	return self._state_data.is_movement_enabled()
 
@@ -174,8 +183,8 @@ func _handle_focus_action(action_payload: Dictionary) -> bool:
 	if not is_target_tracked:
 		# Should be logged in track_target_guid already
 		return false
-	if action_payload.has(GameAction.STATE):
-		var new_state_string: String = action_payload[GameAction.STATE]
+	if action_payload.has(STATE.HEADER):
+		var new_state_string: String = action_payload[STATE.HEADER]
 		var new_state: STATE.ASSET = STATE.get_state_from_string(new_state_string)
 		# can_transition within try_set_state should log transition failures
 		return self._state_data.try_set_state(new_state)

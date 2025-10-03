@@ -2,7 +2,7 @@
 extends Node
 class_name StateData
 
-signal state_data_change(state_data: StateData, update_types: Array[STATE_UPDATE.TYPE])
+signal state_data_change(update_type: STATE.UPDATE_TYPE)
 
 var _NO_VALID_TRANSITION: String = "Current item \"%s\" with state \"%s\" does not have valid transition states"
 var _INVALID_TRANSITION: String = "Item \"%s\" does not have a valid transition from state \"%s\" to state \"%s\""
@@ -61,7 +61,7 @@ func reset_state() -> STATE.ASSET:
 		self._current_state = lowest_state
 	else:
 		_current_state = STATE.ASSET.READY
-	self.state_data_change.emit(self)
+	self.state_data_change.emit(STATE.UPDATE_TYPE.STATE)
 	return _current_state
 
 func get_state_data() -> Dictionary:
@@ -109,7 +109,7 @@ func can_transition(to_state: STATE.ASSET) -> bool:
 func try_set_state(to_state: STATE.ASSET) -> bool:
 	if self.can_transition(to_state):
 		self._current_state = to_state
-		self.state_data_change.emit(self)
+		self.state_data_change.emit(STATE.UPDATE_TYPE.STATE)
 		return true
 	else:
 		return false
@@ -150,7 +150,7 @@ func transition_next_state() -> STATE.ASSET:
 	var next_state := _find_next_valid_state()
 	if next_state != _current_state:
 		_current_state = next_state
-		self.state_data_change.emit(self)
+		self.state_data_change.emit(STATE.UPDATE_TYPE.STATE)
 	else:
 		Logger.debug(self._MAX_VALID_STATE, [_owner_name, _current_state], self)
 	return _current_state
@@ -168,7 +168,7 @@ func transition_previous_state() -> STATE.ASSET:
 	var prev_state := _find_previous_valid_state()
 	if prev_state != _current_state:
 		_current_state = prev_state
-		self.state_data_change.emit(self)
+		self.state_data_change.emit(STATE.UPDATE_TYPE.STATE)
 	else:
 		Logger.debug(self._MIN_VALID_STATE, [_owner_name, _current_state], self)
 	return _current_state
@@ -183,7 +183,7 @@ func get_state_value(incoming_value: STATE.ASSET) -> float:
 
 func set_focused_guid(incoming_guid: String) -> void:
 	self._focused_guid = incoming_guid
-	self.state_data_change.emit(self)
+	self.state_data_change.emit(STATE.UPDATE_TYPE.FOCUS)
 
 func get_focused_guid() -> String:
 	return self._focused_guid
@@ -193,26 +193,26 @@ func is_focused() -> bool:
 
 func update_rotation(incoming_quaternion: Quaternion) -> void:
 	self._owner_rotation *= incoming_quaternion
-	self.state_data_change.emit(self)
+	self.state_data_change.emit(STATE.UPDATE_TYPE.ROTATION)
 
 func update_position(incoming_vector: Vector3) -> void:
 	self._owner_position += incoming_vector
-	self.state_data_change.emit(self)
+	self.state_data_change.emit(STATE.UPDATE_TYPE.POSITION)
 
 func update_scale(incoming_vector: Vector3) -> void:
 	self._owner_scale *= incoming_vector
-	self.state_data_change.emit(self)
+	self.state_data_change.emit(STATE.UPDATE_TYPE.SCALE)
 
 func update_is_sprinting(incoming_value: bool) -> void:
 	self._is_sprinting = incoming_value
-	self.state_data_change.emit(self)
+	self.state_data_change.emit(STATE.UPDATE_TYPE.TOGGLE)
 
 func is_sprinting() -> bool:
 	return self._is_sprinting
 
 func update_movement_enabled(incoming_value: bool) -> void:
 	self._movement_enabled = incoming_value
-	self.state_data_change.emit(self)
+	self.state_data_change.emit(STATE.UPDATE_TYPE.TOGGLE)
 
 func is_movement_enabled() -> bool:
 	return self._movement_enabled

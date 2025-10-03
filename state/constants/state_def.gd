@@ -1,5 +1,7 @@
 class_name STATE
 
+const HEADER: String = "State"
+
 ################################################################################
 #                                GAME ENUM                                     #
 ################################################################################
@@ -117,7 +119,7 @@ static func get_state_from_string(state_string: String) -> STATE.ASSET:
 ################################################################################
 
 const _STATE: String = "State"
-const _STATE_TOGGLE: String = "StateToggle"
+const _TOGGLE: String = "Toggle"
 const _POSITION: String = "Position"
 const _SCALE: String = "Scale"
 const _ROTATION: String = "Rotation"
@@ -125,7 +127,7 @@ const _FOCUS: String = "Focus"
 
 enum UPDATE_TYPE {
 	STATE,
-	STATE_TOGGLE,
+	TOGGLE,
 	POSITION,
 	SCALE,
 	ROTATION,
@@ -137,8 +139,8 @@ static func get_update_type_string(incoming_type: UPDATE_TYPE) -> String:
 	match incoming_type:
 		UPDATE_TYPE.STATE:
 			return _STATE
-		UPDATE_TYPE.STATE_TOGGLE:
-			return _STATE_TOGGLE
+		UPDATE_TYPE.TOGGLE:
+			return _TOGGLE
 		UPDATE_TYPE.POSITION:
 			return _POSITION
 		UPDATE_TYPE.SCALE:
@@ -154,8 +156,8 @@ static func get_update_type_from_string(incoming_string: String) -> UPDATE_TYPE:
 	match incoming_string:
 		_STATE:
 			return UPDATE_TYPE.STATE
-		_STATE_TOGGLE:
-			return UPDATE_TYPE.STATE_TOGGLE
+		_TOGGLE:
+			return UPDATE_TYPE.TOGGLE
 		_POSITION:
 			return UPDATE_TYPE.POSITION
 		_SCALE:
@@ -167,7 +169,6 @@ static func get_update_type_from_string(incoming_string: String) -> UPDATE_TYPE:
 		_:
 			push_error("Unknown UPDATE_TYPE string: " + incoming_string)
 			return UPDATE_TYPE.UNKNOWN
-
 
 ################################################################################
 #                               DATA_TYPE ENUM                                 #
