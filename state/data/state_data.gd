@@ -2,7 +2,7 @@
 extends Node
 class_name StateData
 
-signal state_data_change(state_data: StateData)
+signal state_data_change(state_data: StateData, update_types: Array[STATE_UPDATE.TYPE])
 
 var _NO_VALID_TRANSITION: String = "Current item \"%s\" with state \"%s\" does not have valid transition states"
 var _INVALID_TRANSITION: String = "Item \"%s\" does not have a valid transition from state \"%s\" to state \"%s\""
@@ -19,7 +19,7 @@ const _STATE_IDENTIFIER: String = "_state"
 
 var _owner_guid: String
 var _owner_name: String
-var _current_state: StateConfiguration.STATE
+var _current_state: STATE.ASSET
 var _current_state_duration: float
 # Scene based details
 var _owner_rotation: Quaternion
@@ -50,8 +50,8 @@ func _init(
 
 # TODO Refactor this
 #		Should work its way through valid transitions to the lowest non -999 state
-func reset_state() -> StateConfiguration.STATE:
-	var lowest_state: StateConfiguration.STATE = StateConfiguration.STATE.READY
+func reset_state() -> STATE.ASSET:
+	var lowest_state: STATE.ASSET = STATE.ASSET.READY
 	var found_state: bool = false
 	for state in _valid_transitions.keys():
 		if not found_state or state < lowest_state:
@@ -60,7 +60,7 @@ func reset_state() -> StateConfiguration.STATE:
 	if found_state:
 		self._current_state = lowest_state
 	else:
-		_current_state = StateConfiguration.STATE.READY
+		_current_state = STATE.ASSET.READY
 	self.state_data_change.emit(self)
 	return _current_state
 
@@ -74,14 +74,14 @@ func get_state_data() -> Dictionary:
 		StateHeaders.STATE_VALUES: _state_values.duplicate(true),
 	}
 
-func get_current_state() -> StateConfiguration.STATE:
+func get_current_state() -> STATE.ASSET:
 	return self._current_state
 
-func get_nearest_state(incoming_value: float) -> StateConfiguration.STATE:
+func get_nearest_state(incoming_value: float) -> STATE.ASSET:
 	if _state_values.is_empty():
 		Logger.warn(_CLOSEST_STATE_NOT_FOUND, [_owner_name, incoming_value], self)
-		return StateConfiguration.STATE.READY
-	var closest_state: StateConfiguration.STATE = StateConfiguration.STATE.READY
+		return STATE.ASSET.READY
+	var closest_state: STATE.ASSET = STATE.ASSET.READY
 	var closest_distance: float = INF
 	var found_state: bool = false
 	for state in _state_values.keys():
@@ -93,20 +93,20 @@ func get_nearest_state(incoming_value: float) -> StateConfiguration.STATE:
 			found_state = true
 	return closest_state
 
-func can_transition(to_state: StateConfiguration.STATE) -> bool:
+func can_transition(to_state: STATE.ASSET) -> bool:
 	if self._valid_transitions.has(self._current_state):
 		var current_valid_transitions: Array = _get_sorted_transitions(_current_state)
 		if current_valid_transitions.has(to_state):
 			return true
 		else:
-			var to_state_string: String = StateConfiguration.get_state_string(to_state)
-			var current_state_string: String = StateConfiguration.get_state_string(self._current_state)
+			var to_state_string: String = STATE.get_state_string(to_state)
+			var current_state_string: String = STATE.get_state_string(self._current_state)
 			Logger.warn(_INVALID_TRANSITION, [self._owner_name, to_state_string, current_state_string], self)
 	else:
 		Logger.error(self._NO_VALID_TRANSITION, [self._owner_name, self._current_state], self)
 	return false
 
-func try_set_state(to_state: StateConfiguration.STATE) -> bool:
+func try_set_state(to_state: STATE.ASSET) -> bool:
 	if self.can_transition(to_state):
 		self._current_state = to_state
 		self.state_data_change.emit(self)
@@ -114,8 +114,8 @@ func try_set_state(to_state: StateConfiguration.STATE) -> bool:
 	else:
 		return false
 
-func get_all_states() -> Array[StateConfiguration.STATE]:
-	var all_states: Array[StateConfiguration.STATE] = []
+func get_all_states() -> Array[STATE.ASSET]:
+	var all_states: Array[STATE.ASSET] = []
 	for state in self._valid_transitions.keys():
 		if not all_states.has(state):
 			all_states.append(state)
@@ -125,7 +125,7 @@ func get_all_states() -> Array[StateConfiguration.STATE]:
 	all_states.sort()
 	return all_states
 
-func peak_next_state() -> StateConfiguration.STATE:
+func peak_next_state() -> STATE.ASSET:
 	var next_state := _find_next_valid_state()
 	if next_state == _current_state:
 		Logger.debug(self._MAX_VALID_STATE, [_owner_name, _current_state], self)
@@ -139,14 +139,14 @@ func peak_next_state_value() -> float:
 	if _state_values.has(next_state):
 		return _state_values[next_state]
 	else:
-		var next_state_string: String = StateConfiguration.get_state_string(next_state)
+		var next_state_string: String = STATE.get_state_string(next_state)
 		Logger.warn(self._NO_VALUE, [self._owner_name, next_state_string], self)
 		return 0
 
-func next_states() -> Array[StateConfiguration.STATE]:
+func next_states() -> Array[STATE.ASSET]:
 	return _collect_states(true)
 
-func transition_next_state() -> StateConfiguration.STATE:
+func transition_next_state() -> STATE.ASSET:
 	var next_state := _find_next_valid_state()
 	if next_state != _current_state:
 		_current_state = next_state
@@ -155,16 +155,16 @@ func transition_next_state() -> StateConfiguration.STATE:
 		Logger.debug(self._MAX_VALID_STATE, [_owner_name, _current_state], self)
 	return _current_state
 
-func peak_previous_state() -> StateConfiguration.STATE:
+func peak_previous_state() -> STATE.ASSET:
 	var prev_state := _find_previous_valid_state()
 	if prev_state == _current_state:
 		Logger.debug(self._MIN_VALID_STATE, [_owner_name, _current_state], self)
 	return prev_state
 
-func previous_states() -> Array[StateConfiguration.STATE]:
+func previous_states() -> Array[STATE.ASSET]:
 	return _collect_states(false)
 
-func transition_previous_state() -> StateConfiguration.STATE:
+func transition_previous_state() -> STATE.ASSET:
 	var prev_state := _find_previous_valid_state()
 	if prev_state != _current_state:
 		_current_state = prev_state
@@ -173,11 +173,11 @@ func transition_previous_state() -> StateConfiguration.STATE:
 		Logger.debug(self._MIN_VALID_STATE, [_owner_name, _current_state], self)
 	return _current_state
 
-func get_state_value(incoming_value: StateConfiguration.STATE) -> float:
+func get_state_value(incoming_value: STATE.ASSET) -> float:
 	if self._state_values.has(incoming_value):
 		return self._state_values[incoming_value]
 	else:
-		var incoming_state_string: String = StateConfiguration.get_state_string(incoming_value)
+		var incoming_state_string: String = STATE.get_state_string(incoming_value)
 		Logger.warn(self._NO_VALUE, [self._owner_name, incoming_state_string], self)
 		return 0
 
@@ -229,7 +229,7 @@ func get_current_position() -> Vector3:
 func get_current_scale() -> Vector3:
 	return self._owner_scale
 
-func is_valid_state(incoming_state: StateConfiguration.STATE) -> bool:
+func is_valid_state(incoming_state: STATE.ASSET) -> bool:
 	if self._valid_transitions.has(incoming_state):
 		return true
 	for state_transitions in self._valid_transitions.values():
@@ -251,16 +251,16 @@ func log(incoming_message: String, incoming_level: Logger.LEVEL) -> void:
 			Logger.error(self._UNSUPPORTED_TYPE, [Logger.LOG_LEVEL_TYPE, incoming_level, ], self)
 
 func print_details() -> void:
-	var current_state_name: String = StateConfiguration.get_state_string(_current_state)
+	var current_state_name: String = STATE.get_state_string(_current_state)
 	Logger.debug("StateData \"%s\" CurrentState: \"%s\" StateID: \"%d\" Duration: \"%.2f\" Windows: \"%d\" Transitions: \"%d\" Values: \"%d\"", [_owner_name, current_state_name, _current_state, _current_state_duration, _state_windows.size(), _valid_transitions.size(), _state_values.size()], self)
 
 func as_string() -> String:
-	var current_state_name: String = StateConfiguration.get_state_string(_current_state)
+	var current_state_name: String = STATE.get_state_string(_current_state)
 	var details: String = "StateData[%s]: current_state=%s(%d), duration=%.2f" % [_owner_name, current_state_name, _current_state, _current_state_duration]
 	details += ", windows=%d, transitions=%d, values=%d" % [_state_windows.size(), self._valid_transitions.size(), _state_values.size()]
 	return details
 
-func _get_sorted_transitions(state: StateConfiguration.STATE) -> Array:
+func _get_sorted_transitions(state: STATE.ASSET) -> Array:
 	if self._valid_transitions.has(state):
 		var transitions: Array = self._valid_transitions[state]
 		transitions.sort()
@@ -269,9 +269,9 @@ func _get_sorted_transitions(state: StateConfiguration.STATE) -> Array:
 		Logger.warn(_NO_VALID_TRANSITION, [_owner_name, state], self)
 		return []
 
-func _collect_states(forward: bool) -> Array[StateConfiguration.STATE]:
+func _collect_states(forward: bool) -> Array[STATE.ASSET]:
 	var transitions := _get_sorted_transitions(_current_state)
-	var result: Array[StateConfiguration.STATE] = []
+	var result: Array[STATE.ASSET] = []
 	for s in transitions:
 		if forward and s > _current_state:
 			result.append(s)
@@ -279,14 +279,14 @@ func _collect_states(forward: bool) -> Array[StateConfiguration.STATE]:
 			result.append(s)
 	return result
 
-func _find_next_valid_state() -> StateConfiguration.STATE:
+func _find_next_valid_state() -> STATE.ASSET:
 	var transitions := _get_sorted_transitions(_current_state)
 	for s in transitions:
 		if s > _current_state:
 			return s
 	return _current_state
 
-func _find_previous_valid_state() -> StateConfiguration.STATE:
+func _find_previous_valid_state() -> STATE.ASSET:
 	var transitions := _get_sorted_transitions(_current_state)
 	for s in transitions:
 		if s < _current_state:
@@ -302,7 +302,7 @@ func _validate_window_configuration(incoming_windows: Dictionary) -> bool:
 	for state in sorted_states:
 		var current_value: float = incoming_windows[state]
 		if current_value < previous_value:
-			var state_string: String = StateConfiguration.get_state_string(state)
+			var state_string: String = STATE.get_state_string(state)
 			Logger.warn(_DECREASING_WINDOW, [_owner_name, state_string, previous_value, current_value], self)
 			return false
 		previous_value = current_value

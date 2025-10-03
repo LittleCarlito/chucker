@@ -34,7 +34,6 @@ static func get_type_string(incoming_type: TYPE) -> String:
 
 # General headers
 const OWNER_GUID: String = "owner_guid" # GUID action will be taken on
-const STATE: String = "state_string"
 const TARGET_GUID: String = "target_guid" # Target for things like tracking; Not target of action
 const MESSAGE: String = "message"
 # Transform

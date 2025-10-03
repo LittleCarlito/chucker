@@ -57,9 +57,9 @@ func get_owner_guid() -> String:
 		return GroupData.EMPTY
 	return self._state_data.get_owner_guid()
 
-func get_current_state() -> StateConfiguration.STATE:
+func get_current_state() -> STATE.ASSET:
 	if self._state_data == null:
-		return StateConfiguration.STATE.UNKNOWN
+		return STATE.ASSET.UNKNOWN
 	return self._state_data.get_current_state()
 
 func get_guid_string() -> String:
@@ -76,7 +76,7 @@ func get_state_data() -> StateData:
 		self._state_data = StateData.new(_guid_string, owner_name)
 	return self._state_data
 
-func set_to_state(incoming_state: StateConfiguration.STATE) -> bool:
+func set_to_state(incoming_state: STATE.ASSET) -> bool:
 	if self._state_data == null:
 		return false
 	return self._state_data.try_set_state(incoming_state)
@@ -142,7 +142,7 @@ func stop_tracking(incoming_guid: String) -> bool:
 	if self._tracked_assets.is_empty() || not self._tracked_assets.has(incoming_guid):
 		Logger.error(self._MISSING_TRACK_DATA, [incoming_guid], self)
 		return false
-	var current_state: StateConfiguration.STATE = self._state_data.get_current_state()
+	var current_state: STATE.ASSET = self._state_data.get_current_state()
 	var is_tracking: bool = StateUtil.is_tracking(current_state)
 	if is_tracking:
 		var tracked_guid: String = self._state_data.get_focused_guid()
@@ -152,7 +152,7 @@ func stop_tracking(incoming_guid: String) -> bool:
 	self._tracked_assets.erase(incoming_guid)
 	return true
 
-func can_transition(incoming_state: StateConfiguration.STATE) -> bool:
+func can_transition(incoming_state: STATE.ASSET) -> bool:
 	return self._state_data.can_transition(incoming_state)
 
 func perform_action(action_type: GameAction.TYPE, options: Dictionary = {}) -> bool:
@@ -176,7 +176,7 @@ func _handle_focus_action(action_payload: Dictionary) -> bool:
 		return false
 	if action_payload.has(GameAction.STATE):
 		var new_state_string: String = action_payload[GameAction.STATE]
-		var new_state: StateConfiguration.STATE = StateConfiguration.get_state_from_string(new_state_string)
+		var new_state: STATE.ASSET = STATE.get_state_from_string(new_state_string)
 		# can_transition within try_set_state should log transition failures
 		return self._state_data.try_set_state(new_state)
 	return true

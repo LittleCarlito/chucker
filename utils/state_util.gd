@@ -1,11 +1,11 @@
 class_name StateUtil
 
-static func is_tracking(incoming_state: StateConfiguration.STATE) -> bool:
+static func is_tracking(incoming_state: STATE.ASSET) -> bool:
 	if incoming_state >= 500 and incoming_state <= 503:
 		return true
 	return false
 
-static func is_freelook(incoming_state: StateConfiguration.STATE) -> bool:
+static func is_freelook(incoming_state: STATE.ASSET) -> bool:
 	if incoming_state >= 500 and incoming_state >= 552:
 		return true
 	return false

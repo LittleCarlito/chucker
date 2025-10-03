@@ -57,6 +57,7 @@ const _HANDLE_TRANSFORM: String = "Handle transform"
 var _focus_state: AssetState
 
 func _ready() -> void:
+	asset_state.connect(SIGNAL_NAME.STATE_UPDATED, _handle_state_update)
 	# Camera signal connections
 	# TODO Got rid of this for the moment; Might need to recreate once camera/state refactor is complete
 	# GlobalCameraController.connect(SIGNAL_NAME.REQUEST_CAMERA, _handle_camera_request)
@@ -93,10 +94,10 @@ func _physics_process(_delta: float) -> void:
 
 ## Sets state to idle rotate
 func idle_rotate() -> void:
-	var idle_state: StateConfiguration.STATE = StateConfiguration.STATE.IDLE_ROTATE
+	var idle_state: STATE.ASSET = STATE.ASSET.IDLE_ROTATE
 	if not self.asset_state.set_to_state(idle_state):
-		var current_string: String = StateConfiguration.get_state_string(self.asset_state.get_current_state())
-		var idle_string: String = StateConfiguration.get_state_string(idle_state)
+		var current_string: String = STATE.get_state_string(self.asset_state.get_current_state())
+		var idle_string: String = STATE.get_state_string(idle_state)
 		Logger.error(self._UPDATE_FAILED, [current_string, idle_string], self)
 
 func pan_horizontal(rotation_amount: float) -> void:
@@ -112,13 +113,13 @@ func focus_guid(incoming_guid: String) -> void:
 
 func track_guid(
 		incoming_guid: String, 
-		incoming_state: StateConfiguration.STATE = StateConfiguration.STATE.UNKNOWN
+		incoming_state: STATE.ASSET = STATE.ASSET.UNKNOWN
 		) -> void:
 	var action_dictionary: Dictionary = {
 		GameAction.TARGET_GUID: incoming_guid
 	}
-	var state_string = StateConfiguration.get_state_string(incoming_state)
-	if incoming_state != StateConfiguration.STATE.UNKNOWN && self.asset_state.can_transition(incoming_state):
+	var state_string = STATE.get_state_string(incoming_state)
+	if incoming_state != STATE.ASSET.UNKNOWN && self.asset_state.can_transition(incoming_state):
 		action_dictionary[GameAction.STATE] = state_string
 	var result_success: bool = self.asset_state.perform_action(GameAction.TYPE.TRACK, action_dictionary)
 	if not result_success:
@@ -139,15 +140,15 @@ func deintegrate_all() -> void:
 		self.deintegrate(guid)
 
 # TODO Test trying to set wrong state; ensure it doesn't work and logs
-func transition_state(incoming_state: StateConfiguration.STATE) -> void:
+func transition_state(incoming_state: STATE.ASSET) -> void:
 	var camera_state_data: CameraStateData = asset_state.get_state_data()
 	if camera_state_data == null:
 		Logger.error(Logger._CANT_PERFORM, [self._OWN_STATE, self._TRANSITION_STATE], self)
 		return
-	var old_state: StateConfiguration.STATE = camera_state_data.get_current_state()
+	var old_state: STATE.ASSET = camera_state_data.get_current_state()
 	if camera_state_data.try_set_state(incoming_state):
-		var from_state_string: String = StateConfiguration.get_state_string(old_state)
-		var to_state_string: String = StateConfiguration.get_state_string(incoming_state)
+		var from_state_string: String = STATE.get_state_string(old_state)
+		var to_state_string: String = STATE.get_state_string(incoming_state)
 		Logger.debug(self._SUCCESSFUL_TRANSITION, [from_state_string, to_state_string], self)
 
 func is_current() -> bool:
@@ -262,8 +263,8 @@ func _handle_input() -> void:
 	if camera_state_data == null:
 		Logger.error(Logger._CANT_PERFORM, [self._OWN_STATE, self._HANDLE_INPUT], self)
 		return
-	var current_state: StateConfiguration.STATE = camera_state_data.get_current_state()
-	if current_state >= StateConfiguration.STATE.IS_TRACKING and current_state < StateConfiguration.STATE.FREELOOK_STUCK:
+	var current_state: STATE.ASSET = camera_state_data.get_current_state()
+	if current_state >= STATE.ASSET.IS_TRACKING and current_state < STATE.ASSET.FREELOOK_STUCK:
 		if GlobalCursorController.get_current_state() == GlobalCursorController.CursorState.CAPTURED:
 			GlobalCursorController.request_state(self, GlobalCursorController.CursorState.VISIBLE, self._FREELOOK_REASONING)
 		elif GlobalCursorController.get_current_state() == GlobalCursorController.CursorState.VISIBLE:
@@ -276,7 +277,7 @@ func _handle_freelook(v_motion: float, h_motion: float) -> void:
 	if camera_state_data == null:
 		Logger.error(Logger._CANT_PERFORM, [self._OWN_STATE, self._HANDLE_FREELOOK], self)
 		return
-	var current_state: StateConfiguration.STATE = camera_state_data.get_current_state()
+	var current_state: STATE.ASSET = camera_state_data.get_current_state()
 	if current_state >= 550 and current_state <= 552:
 		self.pan_horizontal(h_motion * freelook_sensitivity)
 		self.pitch_vertical(v_motion * freelook_sensitivity)
@@ -331,10 +332,7 @@ func _handle_sprint_stop() -> void:
 
 
 
-# TODO You were here
-# TODO Need to refactor below to instead deal with AssetState updates
-#		Probably need to connect to a signal that it will emit when state changes
-#		Then just change the code below to handle AssetState instead of GlobalStateController
+
 func _handle_new_state_signal(update_details: Dictionary) -> bool:
 	var self_guid: String = asset_state.get_guid_string()
 	var update_action: GameAction = update_details[self_guid]
@@ -349,15 +347,21 @@ func _handle_new_state_signal(update_details: Dictionary) -> bool:
 			return false
 	return true
 
+# TODO You were here
+# TODO Need to refactor below to instead deal with AssetState updates
+#		Probably need to connect to a signal that it will emit when state changes
+#		Then just change the code below to handle AssetState instead of GlobalStateController
+# TODO Deal with transforms, state updates, etc, whatever is different
+#		
 func _handle_state_update(incoming_action: GameAction) -> void:
 	var current_state_data: StateData = asset_state.get_state_data()
-	var current_state: StateConfiguration.STATE = current_state_data.get_current_state()
+	var current_state: STATE.ASSET = current_state_data.get_current_state()
 	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.STATE])
-	if current_state == StateConfiguration.STATE.UNKNOWN or missing_keys.size() > 0:
+	if current_state == STATE.ASSET.UNKNOWN or missing_keys.size() > 0:
 		return
-	var current_state_string: String = StateConfiguration.get_state_string(current_state)
+	var current_state_string: String = STATE.get_state_string(current_state)
 	var new_state_string: String = incoming_action.payload[GameAction.STATE]
-	var new_state: StateConfiguration.STATE = StateConfiguration.get_state_from_string(new_state_string)
+	var new_state: STATE.ASSET = STATE.get_state_from_string(new_state_string)
 	if !current_state_data.can_transition(new_state):
 		# can transition already has logged a warning about the failure
 		return

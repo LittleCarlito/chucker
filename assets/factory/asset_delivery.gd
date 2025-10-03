@@ -139,8 +139,8 @@ static func _launch_asset(incoming_asset: Node3D, focus_flight: bool = false) ->
 			#				Then when a camera tries to integrate based off GUID it gets the correct part of the asset
 			
 			if incoming_asset.has_meta(GroupData.GUID):
-				var primary_camera_guid: String = GlobalStateController.get_primary_guid(GameState.DATA_TYPE.CAMERA)
-				var state_string: String = StateConfiguration.get_state_string(StateConfiguration.STATE.TRACKING_FULL)
+				var primary_camera_guid: String = GlobalStateController.get_primary_guid(STATE.DATA_TYPE.CAMERA)
+				var state_string: String = STATE.get_state_string(STATE.ASSET.TRACKING_FULL)
 				var target_guid: String = incoming_asset.get_meta(GroupData.GUID)
 				# TODO Refactor this to be a state setting action instead
 				# TODO Then chase the state action handling logic through dispatch to ensure the state shit handles all data

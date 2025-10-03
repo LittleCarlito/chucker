@@ -99,7 +99,7 @@ func focus_character() -> void:
 func _freelook_camera() -> void:
 	var primary_camera_guid: String = GlobalStateController.get_primary_guid(GameState.DATA_TYPE.CAMERA)
 	var primary_camera_state: StateData = GlobalStateController.get_header_data(primary_camera_guid, StateHeaders.TYPE.DATA)
-	var new_state_string: String = StateConfiguration.get_state_string(StateConfiguration.STATE.FREELOOK_MOVE)
+	var new_state_string: String = STATE.get_state_string(STATE.ASSET.FREELOOK_MOVE)
 	var update_state_dictionary: Dictionary = {
 		GameAction.OWNER_GUID: primary_camera_guid,
 		GameAction.STATE: new_state_string

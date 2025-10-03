@@ -1,8 +1,8 @@
 class_name SIGNAL_NAME
 
 # Application State
-const STATE_CHANGE: String = "state_change" # new_state: StateData
-const STATE_UPDATED: String = "state_updated" # update_details: Dictionary
+const STATE_DATA_CHANGE: String = "state_data_change" # state_data: StateData
+const STATE_UPDATED: String = "state_updated" # asset_state: AssetState
 
 const ZOOM_IN: String = "zoom_in"
 const ZOOM_OUT: String = "zoom_out"
