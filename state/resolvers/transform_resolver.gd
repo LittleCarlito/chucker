@@ -1,13 +1,13 @@
 class_name TransformResolver
 
-# TODO Rotate the incoming node to the incoming rotation smoothly; Using tweens or lerp or some shit
 static func resolve_rotation(incoming_node: Node3D, incoming_rotation: Quaternion) -> bool:
-	return false
+	incoming_node.transform.basis = Basis(incoming_rotation.normalized())
+	return true
 
-# TODO Move the incoming node to the incoming position smoothly; Using tweens or lerp or some shit
 static func resolve_position(incoming_node: Node3D, incoming_position: Vector3) -> bool:
-	return false
+	incoming_node.position = incoming_position
+	return true
 
-# TODO Scale the incoming node to the incoming size smoothly; Using tweens or lerp or some shit
 static func resolve_scale(incoming_node: Node3D, incoming_scale: Vector3) -> bool:
-	return false
+	incoming_node.scale = incoming_scale
+	return true

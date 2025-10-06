@@ -1,7 +1,7 @@
 extends Resource
 class_name AssetState
 
-signal state_updated(asset_state: AssetState)
+signal state_data_change(state_update: StateUpdate)
 
 const _CURRENTLY_TRACKED: String = "Cannot stop tracking GUID \"%s\" as it is the currently tracked asset; Change asset state before untracking"
 const _BAD_FORMAT: String = "Incoming request to \"%s\" cannot be performed; %d optional parameters must be provided"
@@ -52,10 +52,15 @@ func stop_sprinting() -> void:
 	self._state_data.update_is_sprinting(false)
 
 ## Returns first tracked GUID; Null if none are tracked
-func get_first_tracked() -> Variant:
-	if self._tracked_assets.is_empty():
-		return null
+func get_first_tracked() -> AssetState:
+	if self._tracked_assets == null:
+		self._tracked_assets = {}
 	return self._tracked_assets.values()[0]
+
+func get_tracked_data_for(incoming_guid: String) -> AssetState:
+	if self._tracked_assets == null:
+		self._tracked_assets = {}
+	return self._tracked_assets.get(incoming_guid)
 
 func get_tracked_guids() -> Array:
 	return self._tracked_assets.keys()
@@ -167,7 +172,7 @@ func can_transition(incoming_state: STATE.ASSET) -> bool:
 func perform_action(action_type: GameAction.TYPE, options: Dictionary = {}) -> bool:
 	match action_type:
 		GameAction.TYPE.TRACK:
-			if options.has(GameAction.TARGET_GUID):
+			if options.has(StateHeaders.TARGET_GUID):
 				return self._handle_focus_action(options)
 			else:
 				var action_string: String = GameAction.get_type_string(action_type)
@@ -178,7 +183,7 @@ func perform_action(action_type: GameAction.TYPE, options: Dictionary = {}) -> b
 	return false
 
 func _handle_focus_action(action_payload: Dictionary) -> bool:
-	var target_guid: String = action_payload[GameAction.TARGET_GUID]
+	var target_guid: String = action_payload[StateHeaders.TARGET_GUID]
 	var is_target_tracked: bool = self.track_target_guid(target_guid)
 	if not is_target_tracked:
 		# Should be logged in track_target_guid already
@@ -190,5 +195,6 @@ func _handle_focus_action(action_payload: Dictionary) -> bool:
 		return self._state_data.try_set_state(new_state)
 	return true
 
-func _state_data_update(_incoming_data: StateData) -> void:
-	self.state_updated.emit(self)
+func _state_data_update(state_update: StateUpdate) -> void:
+	if AssetStateInterceptor.convert_detail_values(self, state_update):
+		self.state_data_change.emit(state_update)

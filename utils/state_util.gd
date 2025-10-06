@@ -1,5 +1,10 @@
 class_name StateUtil
 
+static func compare_tracking_state(transition_from: STATE.ASSET, transition_to: STATE.ASSET) -> int:
+	var from_is_tracking: bool = is_tracking(transition_from)
+	var to_is_tracking: bool = is_tracking(transition_to)
+	return int(to_is_tracking) - int(from_is_tracking)
+
 static func is_tracking(incoming_state: STATE.ASSET) -> bool:
 	if incoming_state >= 500 and incoming_state <= 503:
 		return true

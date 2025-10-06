@@ -3,7 +3,6 @@ extends Node3D
 @onready var control_node: ControlNode = $ControlNode
 @export var item_data: AssetData
 @export var kickoff_timer: Timer
-var _spawned: bool = false
 var asset_spawn_data: Array[SpawnData]
 var spawned_assets: Dictionary # Key is asset type; Value list of nodes of that type
 
@@ -93,19 +92,21 @@ func focus_character() -> void:
 	if spawned_assets.is_empty():
 		push_warning("No spawn assets in scene; Cannot focus character...")
 		return
-	SceneUtil.focus_character(spawned_assets)
+	SceneUtil.focus_character()
 	GlobalCameraController.set_rig_height(2)
 
+# TODO Update to new system
 func _freelook_camera() -> void:
-	var primary_camera_guid: String = GlobalStateController.get_primary_guid(GameState.DATA_TYPE.CAMERA)
-	var primary_camera_state: StateData = GlobalStateController.get_header_data(primary_camera_guid, StateHeaders.TYPE.DATA)
-	var new_state_string: String = STATE.get_state_string(STATE.ASSET.FREELOOK_MOVE)
-	var update_state_dictionary: Dictionary = {
-		GameAction.OWNER_GUID: primary_camera_guid,
-		GameAction.STATE: new_state_string
-	}
-	var update_state_action: GameAction = GameAction.new(GameAction.TYPE.SET_STATE, update_state_dictionary)
-	GlobalStateController.dispatch(update_state_action)
+	pass
+	# var primary_camera_guid: String = GlobalStateController.get_primary_guid(GameState.DATA_TYPE.CAMERA)
+	# var primary_camera_state: StateData = GlobalStateController.get_header_data(primary_camera_guid, StateHeaders.TYPE.DATA)
+	# var new_state_string: String = STATE.get_state_string(STATE.ASSET.FREELOOK_MOVE)
+	# var update_state_dictionary: Dictionary = {
+	# 	GameAction.OWNER_GUID: primary_camera_guid,
+	# 	GameAction.STATE: new_state_string
+	# }
+	# var update_state_action: GameAction = GameAction.new(GameAction.TYPE.SET_STATE, update_state_dictionary)
+	# GlobalStateController.dispatch(update_state_action)
 
 func update_course_data() -> void:
 	get_tree().call_group(GroupData.GENERAL, GroupData.UPDATE_STATE)

@@ -60,7 +60,7 @@ const _HANDLE_STATE_UPDATE: String = "Handle State Update"
 var _focus_state: AssetState
 
 func _ready() -> void:
-	asset_state.connect(SIGNAL_NAME.STATE_UPDATED, _handle_state_update)
+	asset_state.connect(SIGNAL_NAME.STATE_DATA_CHANGE, _handle_state_update)
 	# Camera signal connections
 	# TODO Got rid of this for the moment; Might need to recreate once camera/state refactor is complete
 	# GlobalCameraController.connect(SIGNAL_NAME.REQUEST_CAMERA, _handle_camera_request)
@@ -94,6 +94,12 @@ func _physics_process(_delta: float) -> void:
 		if is_height_held:
 			var height_warning: String = self._MIN_HEIGHT_WARN % self.min_height
 			self.asset_state.output_warning(height_warning)
+
+# TODO IMPLEMENT sets the 
+func track_focus() -> void:
+	# TODO Find the asset state in the tracked assets of AssetState
+	# TODO If not found in tracked assets log a warning
+	pass
 
 ## Sets state to idle rotate
 func idle_rotate() -> void:
@@ -154,6 +160,9 @@ func transition_state(incoming_state: STATE.ASSET) -> void:
 		var to_state_string: String = STATE.get_state_string(incoming_state)
 		Logger.debug(self._SUCCESSFUL_TRANSITION, [from_state_string, to_state_string], self)
 
+func get_current_state() -> STATE.ASSET:
+	return asset_state.get_current_state()
+
 func is_current() -> bool:
 	return self.internal_camera.is_current()
 
@@ -201,6 +210,9 @@ func get_min_height() -> float:
 
 func set_min_height(incoming_min: float) -> void:
 	self.min_height = incoming_min
+
+func ceneter_on_focused() -> void:
+	pass
 
 # TODO OUTLINE
 # Then improve camera rigs handling of state changes to properly do shit
@@ -330,14 +342,46 @@ func _handle_sprint_start() -> void:
 func _handle_sprint_stop() -> void:
 	self.asset_state.stop_sprinting()
 
+# TODO Need frame to frame checking for state and keeping everythign up to date using functions like below
+func lerp_to(incoming_position: Vector3, delta: float = NUMBERS.FLOAT16_MAX) -> void:
+	# Smoothly move towards the target using linear interpolation
+	var effective_delta: float = 1.0 if delta == NUMBERS.FLOAT16_MAX else delta
+	var lerp_speed: float = GameConfig.DEFAULTS.lerp_speed * effective_delta
+	lerp_speed = clamp(lerp_speed, 0.0, 1.0)
+	global_transform.origin = global_transform.origin.lerp(incoming_position, lerp_speed)
 
+func snap_to(incoming_position: Vector3) -> void:
+	self.position = incoming_position
+
+
+
+
+
+# TODO CONTINUE FROM HERE
+#			Do the two below
+#			Then go and implement the rest of the resolver functions below that aren't done
+#			Then get frame to frame state handling written
+#				DO THIS IN TransformResolver
+#				needs to lerp to position of tracked asset if in certain states
+#				perform other frame to frame activities you can think of that need handling due to state
+func apply_tracking_distance() -> void:
+	# TODO Make the camera controller position locally equal to a set z and y position away from origin
+	#		Do not add it to the position do an override
+	#			Adding will keep this from being idempondent
+	pass
+
+func remove_tracking_distance() -> void:
+	# TODO Make a function to reset the camera controller to origin
+	#			Don't subtrack the distance just reset the position
+	pass
 
 # TODO You were here
 #		Need to implement the logic in the resolvers		
-func _handle_state_update(update_type: STATE.UPDATE_TYPE) -> void:
+func _handle_state_update(incoming_update: StateUpdate) -> void:
+	var update_type: STATE.UPDATE_TYPE = incoming_update.get_update_type()
 	match update_type:
 		STATE.UPDATE_TYPE.FOCUS:
-			RigResolver.resolve_focus(self)
+			RigResolver.resolve_focus(self, incoming_update)
 		STATE.UPDATE_TYPE.ROTATION:
 			TransformResolver.resolve_rotation(self, self.asset_state.get_current_rotation())
 		STATE.UPDATE_TYPE.POSITION:
@@ -345,13 +389,16 @@ func _handle_state_update(update_type: STATE.UPDATE_TYPE) -> void:
 		STATE.UPDATE_TYPE.SCALE:
 			TransformResolver.resolve_scale(self, self.asset_state.get_current_scale())
 		STATE.UPDATE_TYPE.STATE:
-			RigResolver.resolve_state(self)
+			RigResolver.resolve_state(self, incoming_update)
 		STATE.UPDATE_TYPE.TOGGLE:
+			# TODO Once crouching is added TransformResolver should handle it here
 			pass
 		_:
 			var update_string: String = STATE.get_update_type_string(update_type)
 			Logger.error(Logger.UNSUPPORTED_TYPE_LOG, [self._HANDLE_STATE_UPDATE, update_string], self)
 
+func _crouch_handling(incoming_update: StateUpdate) -> void:
+	# TODO Determine if the toggle update is a crouch update
 
 # 	var current_state_data: StateData = asset_state.get_state_data()
 # 	var current_state: STATE.ASSET = current_state_data.get_current_state()
@@ -385,24 +432,4 @@ func _handle_state_update(update_type: STATE.UPDATE_TYPE) -> void:
 # 	self.camera_controller.position = focus_position + offset_vector
 # 	self.camera_controller.look_at(focus_position)
 
-# TODO Should be a lower class function after camera refactor
-#		Lowest class
-func _handle_transform(incoming_action: GameAction) -> void:
-	var missing_transform_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, GameAction.TRANSFORM_KEYS)
-	if missing_transform_keys.size() < GameAction.TRANSFORM_KEYS.size():
-		var camera_state_data: StateData = asset_state.get_state_data()
-		if camera_state_data == null:
-			Logger.error(Logger._CANT_PERFORM, [self._OWN_GUID, self._HANDLE_TRANSFORM], self)
-			return
-		if incoming_action.payload.has(GameAction.ROTATION):
-			var new_rotation: Quaternion = camera_state_data.get_current_rotation()
-			self.transform.basis = Basis(new_rotation.normalized())
-		if incoming_action.payload.has(GameAction.POSITION):
-			var new_position: Vector3 = camera_state_data.get_current_position()
-			self.position = new_position
-		if incoming_action.payload.has(GameAction.SCALE):
-			var new_scale: Vector3 = camera_state_data.get_current_scale()
-			self.scale = new_scale
-	else:
-		var missing_transform_string: String = "; ".join(missing_transform_keys)
-		Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, missing_transform_string], self)
+

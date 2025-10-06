@@ -118,6 +118,8 @@ static func get_state_from_string(state_string: String) -> STATE.ASSET:
 #                              UPDATE_TYPE ENUM                                #
 ################################################################################
 
+# TODO Refactor all strings like this to be stored in StateHeaders type class
+#			have this class call that to retrieve its string or gets the unknown string
 const _STATE: String = "State"
 const _TOGGLE: String = "Toggle"
 const _POSITION: String = "Position"

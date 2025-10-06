@@ -2,7 +2,7 @@
 extends Node
 class_name StateData
 
-signal state_data_change(update_type: STATE.UPDATE_TYPE)
+signal state_data_change(state_update: StateUpdate)
 
 var _NO_VALID_TRANSITION: String = "Current item \"%s\" with state \"%s\" does not have valid transition states"
 var _INVALID_TRANSITION: String = "Item \"%s\" does not have a valid transition from state \"%s\" to state \"%s\""
@@ -16,6 +16,9 @@ const _UNSUPPORTED_TYPE: String = "Incoming %s type \"%s\" is not supported; %s"
 const _NAME: String = "[StateData]"
 const _GET_STATE_DATA: String = "get_state_data"
 const _STATE_IDENTIFIER: String = "_state"
+const _IS_CROUCHING: String = "is_crouching"
+const _IS_SPRINTING: String = "is_sprinting"
+const _MOVEMENT_ENABLED: String = "movement_enabled"
 
 var _owner_guid: String
 var _owner_name: String
@@ -28,6 +31,7 @@ var _owner_scale: Vector3
 var _focused_guid: String
 var _movement_enabled: bool
 var _is_sprinting: bool
+var _is_crouching: bool
 # State data dictionaries
 var _valid_transitions: Dictionary
 var _state_values: Dictionary # String key, Float value; Whatever data you need to store (as long as its a (String, float))
@@ -51,6 +55,7 @@ func _init(
 # TODO Refactor this
 #		Should work its way through valid transitions to the lowest non -999 state
 func reset_state() -> STATE.ASSET:
+	var previous_state: STATE.ASSET = self.get_current_state()
 	var lowest_state: STATE.ASSET = STATE.ASSET.READY
 	var found_state: bool = false
 	for state in _valid_transitions.keys():
@@ -60,8 +65,13 @@ func reset_state() -> STATE.ASSET:
 	if found_state:
 		self._current_state = lowest_state
 	else:
-		_current_state = STATE.ASSET.READY
-	self.state_data_change.emit(STATE.UPDATE_TYPE.STATE)
+		self._current_state = STATE.ASSET.READY
+	var set_state: STATE.ASSET = self._current_state
+	var update_details: Dictionary = {
+		StateHeaders.PREVIOUS_STATE: previous_state,
+		StateHeaders.CURRENT_STATE: set_state
+	}
+	self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.STATE, update_details))
 	return _current_state
 
 func get_state_data() -> Dictionary:
@@ -108,8 +118,14 @@ func can_transition(to_state: STATE.ASSET) -> bool:
 
 func try_set_state(to_state: STATE.ASSET) -> bool:
 	if self.can_transition(to_state):
+		var previous_state: STATE.ASSET = self._current_state
 		self._current_state = to_state
-		self.state_data_change.emit(STATE.UPDATE_TYPE.STATE)
+		var new_state: STATE.ASSET = self._current_state
+		var update_details: Dictionary = {
+			StateHeaders.PREVIOUS_STATE: previous_state,
+			StateHeaders.CURRENT_STATE: new_state
+		}
+		self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.STATE, update_details))
 		return true
 	else:
 		return false
@@ -149,8 +165,14 @@ func next_states() -> Array[STATE.ASSET]:
 func transition_next_state() -> STATE.ASSET:
 	var next_state := _find_next_valid_state()
 	if next_state != _current_state:
+		var previous_state: STATE.ASSET = self._current_state
 		_current_state = next_state
-		self.state_data_change.emit(STATE.UPDATE_TYPE.STATE)
+		var new_state: STATE.ASSET = self._current_state
+		var update_details: Dictionary = {
+			StateHeaders.PREVIOUS_STATE: previous_state,
+			StateHeaders. CURRENT_STATE: new_state
+		}
+		self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.STATE, update_details))
 	else:
 		Logger.debug(self._MAX_VALID_STATE, [_owner_name, _current_state], self)
 	return _current_state
@@ -167,8 +189,14 @@ func previous_states() -> Array[STATE.ASSET]:
 func transition_previous_state() -> STATE.ASSET:
 	var prev_state := _find_previous_valid_state()
 	if prev_state != _current_state:
+		var previous_state: STATE.ASSET = self._current_state
 		_current_state = prev_state
-		self.state_data_change.emit(STATE.UPDATE_TYPE.STATE)
+		var new_state: STATE.ASSET = self._current_state
+		var update_details: Dictionary = {
+			StateHeaders.PREVIOUS_STATE: previous_state,
+			StateHeaders.CURRENT_STATE: new_state
+		}
+		self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.STATE, update_details))
 	else:
 		Logger.debug(self._MIN_VALID_STATE, [_owner_name, _current_state], self)
 	return _current_state
@@ -183,7 +211,10 @@ func get_state_value(incoming_value: STATE.ASSET) -> float:
 
 func set_focused_guid(incoming_guid: String) -> void:
 	self._focused_guid = incoming_guid
-	self.state_data_change.emit(STATE.UPDATE_TYPE.FOCUS)
+	var update_details: Dictionary = {
+		StateHeaders.TARGET_GUID: self._focused_guid
+	}
+	self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.FOCUS, update_details))
 
 func get_focused_guid() -> String:
 	return self._focused_guid
@@ -193,26 +224,51 @@ func is_focused() -> bool:
 
 func update_rotation(incoming_quaternion: Quaternion) -> void:
 	self._owner_rotation *= incoming_quaternion
-	self.state_data_change.emit(STATE.UPDATE_TYPE.ROTATION)
+	var update_details: Dictionary = {
+		StateHeaders.ROTATION: incoming_quaternion
+	}
+	self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.ROTATION, update_details))
 
 func update_position(incoming_vector: Vector3) -> void:
 	self._owner_position += incoming_vector
-	self.state_data_change.emit(STATE.UPDATE_TYPE.POSITION)
+	var update_details: Dictionary = {
+		StateHeaders.POSITION: incoming_vector
+	}
+	self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.POSITION, update_details))
 
 func update_scale(incoming_vector: Vector3) -> void:
 	self._owner_scale *= incoming_vector
-	self.state_data_change.emit(STATE.UPDATE_TYPE.SCALE)
+	var update_details: Dictionary = {
+		StateHeaders.SCALE: incoming_vector
+	}
+	self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.SCALE, update_details))
+
+func update_is_crouching(incoming_value: bool) -> void:
+	self._is_crouching = incoming_value
+	var update_details: Dictionary = {
+		StateHeaders.TOGGLE: self._IS_CROUCHING
+	}
+	self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.TOGGLE, update_details))
+
+func is_crouching() -> bool:
+	return self._is_crouching
 
 func update_is_sprinting(incoming_value: bool) -> void:
 	self._is_sprinting = incoming_value
-	self.state_data_change.emit(STATE.UPDATE_TYPE.TOGGLE)
+	var update_details: Dictionary = {
+		StateHeaders.TOGGLE: self._IS_SPRINTING
+	}
+	self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.TOGGLE, update_details))
 
 func is_sprinting() -> bool:
 	return self._is_sprinting
 
 func update_movement_enabled(incoming_value: bool) -> void:
 	self._movement_enabled = incoming_value
-	self.state_data_change.emit(STATE.UPDATE_TYPE.TOGGLE)
+	var update_details: Dictionary = {
+		StateHeaders.TOGGLE: self._MOVEMENT_ENABLED
+	}
+	self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.TOGGLE, update_details))
 
 func is_movement_enabled() -> bool:
 	return self._movement_enabled
