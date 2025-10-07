@@ -367,24 +367,16 @@ func snap_to(incoming_position: Vector3) -> void:
 # TODO Then refactor camera class to be cleaner
 # TODO Then get to moving character over to being AssetState based
 func apply_tracking_distance() -> void:
-	# TODO Make the camera controller position locally equal to a set z and y position away from origin
-	#		Do not add it to the position do an override
-	#			Adding will keep this from being idempondent
-	pass
+	self.camera_controller.position = GameConfig.CAMERA.TRACKING_POSITION
 
 func remove_tracking_distance() -> void:
-	# TODO Make a function to reset the camera controller to origin
-	#			Don't subtrack the distance just reset the position
-	pass
+	self.camera_controller.position = Vector3(0, 0, 0)
 
 func apply_crouching_distance() -> void:
-	# TODO Like tracking distance above have this just as part of the offset
-	pass
+	self.camera_controller.position = GameConfig.CAMERA.CROUCHING_POSITION
 
 func remove_crouching_distance() -> void:
-	# TODO Like tracking distance above have this just remove the offset
-	#			Ensure both this and above are idempotent and not adding/subtracting actions
-	pass
+	self.camera_controller.position = Vector3(0, 0, 0)
 	
 func _handle_state_update(incoming_update: StateUpdate) -> void:
 	var update_type: STATE.UPDATE_TYPE = incoming_update.get_update_type()
