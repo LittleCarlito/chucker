@@ -16,8 +16,6 @@ const _UNSUPPORTED_TYPE: String = "Incoming %s type \"%s\" is not supported; %s"
 const _NAME: String = "[StateData]"
 const _GET_STATE_DATA: String = "get_state_data"
 const _STATE_IDENTIFIER: String = "_state"
-const _IS_CROUCHING: String = "is_crouching"
-const _IS_SPRINTING: String = "is_sprinting"
 const _MOVEMENT_ENABLED: String = "movement_enabled"
 
 var _owner_guid: String
@@ -246,7 +244,7 @@ func update_scale(incoming_vector: Vector3) -> void:
 func update_is_crouching(incoming_value: bool) -> void:
 	self._is_crouching = incoming_value
 	var update_details: Dictionary = {
-		StateHeaders.TOGGLE: self._IS_CROUCHING
+		StateHeaders.IS_CROUCHING: incoming_value
 	}
 	self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.TOGGLE, update_details))
 
@@ -256,7 +254,7 @@ func is_crouching() -> bool:
 func update_is_sprinting(incoming_value: bool) -> void:
 	self._is_sprinting = incoming_value
 	var update_details: Dictionary = {
-		StateHeaders.TOGGLE: self._IS_SPRINTING
+		StateHeaders.IS_SPRINTING: incoming_value
 	}
 	self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.TOGGLE, update_details))
 

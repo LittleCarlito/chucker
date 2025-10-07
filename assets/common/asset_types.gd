@@ -65,8 +65,8 @@ const STRING_TO_TYPE: Dictionary = {
 	GroupData.UNKNOWN: TYPE.UNKNOWN,
 }
 
-static func to_string(type_value: TYPE) -> String:
+static func get_string_from_type(type_value: TYPE) -> String:
 	return TYPE_TO_STRING.get(type_value, GroupData.UNKNOWN)
 
-static func from_string(type_name: String) -> TYPE:
+static func get_type_from_string(type_name: String) -> TYPE:
 	return STRING_TO_TYPE.get(type_name, TYPE.UNKNOWN)

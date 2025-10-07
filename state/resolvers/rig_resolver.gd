@@ -2,6 +2,7 @@ class_name RigResolver
 
 const _RESOLVE_STATE: String = "resolve_state"
 const _RESOLVE_FOCUS: String = "resolve_focus"
+const _RESOLVE_TOGGLES: String = "resolve_toggles"
 
 static func resolve_focus(incoming_rig: CameraRig, incoming_update: StateUpdate) -> void:
 	var update_details = incoming_update.get_details()
@@ -24,3 +25,15 @@ static func resolve_state(incoming_rig: CameraRig, incoming_update: StateUpdate)
 			incoming_rig.remove_tracking_distance()
 	else:
 		Logger.error(Logger._CANT_PERFORM, [missing_keys, _RESOLVE_STATE], null)
+
+static func resolve_toggles(incoming_rig: CameraRig, incoming_details: Dictionary) -> void:
+	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_details, StateHeaders.TOGGLE_KEYS)
+	if missing_keys.is_empty():
+		if !missing_keys.has(StateHeaders.IS_CROUCHING):
+			var is_crouching: bool = incoming_details[StateHeaders.IS_CROUCHING]
+			if is_crouching:
+				incoming_rig.apply_crouching_distance()
+			else:
+				incoming_rig.remove_crouching_distance()
+	else:
+		Logger.error(Logger._CANT_PERFORM, [missing_keys, _RESOLVE_TOGGLES], null)

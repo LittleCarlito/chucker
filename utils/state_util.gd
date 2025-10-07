@@ -23,7 +23,7 @@ static func get_missing_keys(payload: Dictionary, required_keys: Array[String]) 
 	return missing
 
 static func extract_rotation(rotation_data: Dictionary, incoming_action: GameAction) -> Quaternion:
-	var missing_rotation_keys: Array[String] = StateUtil.get_missing_keys(rotation_data, GameAction.DIMENSION_KEYS)
+	var missing_rotation_keys: Array[String] = StateUtil.get_missing_keys(rotation_data, StateHeaders.DIMENSION_KEYS)
 	if missing_rotation_keys.size() >= 3:
 		var missing_rotation_string: String = "; ".join(missing_rotation_keys)
 		Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, missing_rotation_string], null)
@@ -34,7 +34,7 @@ static func extract_rotation(rotation_data: Dictionary, incoming_action: GameAct
 	return Quaternion.from_euler(Vector3(x_rotation_value, y_rotation_value, z_rotation_value))
 
 static func extract_vector3(vector_data: Dictionary, incoming_action: GameAction) -> Vector3:
-	var missing_keys: Array[String] = StateUtil.get_missing_keys(vector_data, GameAction.DIMENSION_KEYS)
+	var missing_keys: Array[String] = StateUtil.get_missing_keys(vector_data, StateHeaders.DIMENSION_KEYS)
 	if missing_keys.size() >= 3:
 		var missing_string: String = "; ".join(missing_keys)
 		Logger.error(Logger.BAD_ACTION_FORMAT, [incoming_action, missing_string], null)

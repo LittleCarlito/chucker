@@ -17,7 +17,7 @@ var _game_state: GameState
 
 func _ready() -> void:
 	self._game_state = GameState.new()
-	self._game_state.connect(SIGNAL_NAME.STATE_UPDATED, _handle_game_state_change)
+	# self._game_state.connect(SIGNAL_NAME.STATE_UPDATED, _handle_game_state_change)
 
 func register_node(incoming_node: Node3D) -> StateData:
 	var return_data: StateData = null
@@ -36,8 +36,8 @@ func dispatch(incoming_action: GameAction) -> void:
 func node_has_state(incoming_guid: String) -> bool:
 	return self._game_state.has_guid(incoming_guid)
 
-func get_current_status() -> GameState.STATUS:
-	return self._game_state.get_current_status()
+# func get_current_status() -> GameState.STATUS:
+# 	return self._game_state.get_current_status()
 
 func get_header_data(incoming_guid: String, header_type: StateHeaders.TYPE) -> Variant:
 	if incoming_guid.is_empty():
@@ -51,24 +51,24 @@ func get_header_data(incoming_guid: String, header_type: StateHeaders.TYPE) -> V
 		StateHeaders.TYPE.NODE:
 			return self._game_state.retrieve_node(incoming_guid)
 		_:
-			var type_string: String = StateHeaders.get_type_string(header_type)
-			Logger.error(self._UNSUPPORTED_HEADER, [type_string, header_type], self)
+			var string_type: String = StateHeaders.get_type_string(header_type)
+			Logger.error(self._UNSUPPORTED_HEADER, [string_type, header_type], self)
 			return null
 
-func get_primary_guid(incoming_type: GameState.DATA_TYPE) -> String:
-	return self._game_state.get_primary_guid(incoming_type)
+# func get_primary_guid(incoming_type: GameState.DATA_TYPE) -> String:
+# 	return self._game_state.get_primary_guid(incoming_type)
 
-func is_main_menu() -> bool:
-	return self._game_state.get_current_status() == GameState.STATUS.MAIN_MENU
+# func is_main_menu() -> bool:
+# 	return self._game_state.get_current_status() == GameState.STATUS.MAIN_MENU
 
-func is_pause_menu() -> bool:
-	return self._game_state.get_current_status() == GameState.STATUS.PAUSE_MENU
+# func is_pause_menu() -> bool:
+# 	return self._game_state.get_current_status() == GameState.STATUS.PAUSE_MENU
 
-func is_running_scene() -> bool:
-	return self._game_state.get_current_status() == GameState.STATUS.RUNNING_SCENE
+# func is_running_scene() -> bool:
+# 	return self._game_state.get_current_status() == GameState.STATUS.RUNNING_SCENE
 
-func is_unknown() -> bool:
-	return self._game_state.get_current_status() == GameState.STATUS.UNKNOWN
+# func is_unknown() -> bool:
+# 	return self._game_state.get_current_status() == GameState.STATUS.UNKNOWN
 
 func print_details() -> void:
 	self._game_state.print_details()

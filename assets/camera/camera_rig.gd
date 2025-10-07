@@ -136,7 +136,7 @@ func track_guid(
 		Logger.error(Logger.CALL_FAILED, [self._SET_INTEGRATION, parameter_string], self)
 
 ## Retrieves the first tracked GUID
-func get_integration_point() -> String:
+func get_integration_point() -> AssetState:
 	return self.asset_state.get_first_tracked()
 
 ## Clears the integrated point and loses focus
@@ -358,12 +358,14 @@ func snap_to(incoming_position: Vector3) -> void:
 
 
 # TODO CONTINUE FROM HERE
-#			Do the two below
+#			Do the four below
 #			Then go and implement the rest of the resolver functions below that aren't done
 #			Then get frame to frame state handling written
 #				DO THIS IN TransformResolver
 #				needs to lerp to position of tracked asset if in certain states
 #				perform other frame to frame activities you can think of that need handling due to state
+# TODO Then refactor camera class to be cleaner
+# TODO Then get to moving character over to being AssetState based
 func apply_tracking_distance() -> void:
 	# TODO Make the camera controller position locally equal to a set z and y position away from origin
 	#		Do not add it to the position do an override
@@ -375,8 +377,15 @@ func remove_tracking_distance() -> void:
 	#			Don't subtrack the distance just reset the position
 	pass
 
-# TODO You were here
-#		Need to implement the logic in the resolvers		
+func apply_crouching_distance() -> void:
+	# TODO Like tracking distance above have this just as part of the offset
+	pass
+
+func remove_crouching_distance() -> void:
+	# TODO Like tracking distance above have this just remove the offset
+	#			Ensure both this and above are idempotent and not adding/subtracting actions
+	pass
+	
 func _handle_state_update(incoming_update: StateUpdate) -> void:
 	var update_type: STATE.UPDATE_TYPE = incoming_update.get_update_type()
 	match update_type:
@@ -391,45 +400,7 @@ func _handle_state_update(incoming_update: StateUpdate) -> void:
 		STATE.UPDATE_TYPE.STATE:
 			RigResolver.resolve_state(self, incoming_update)
 		STATE.UPDATE_TYPE.TOGGLE:
-			# TODO Once crouching is added TransformResolver should handle it here
-			pass
+			RigResolver.resolve_toggles(self, incoming_update.get_update_details())
 		_:
 			var update_string: String = STATE.get_update_type_string(update_type)
 			Logger.error(Logger.UNSUPPORTED_TYPE_LOG, [self._HANDLE_STATE_UPDATE, update_string], self)
-
-func _crouch_handling(incoming_update: StateUpdate) -> void:
-	# TODO Determine if the toggle update is a crouch update
-
-# 	var current_state_data: StateData = asset_state.get_state_data()
-# 	var current_state: STATE.ASSET = current_state_data.get_current_state()
-# 	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_action.payload, [GameAction.STATE])
-# 	if current_state == STATE.ASSET.UNKNOWN or missing_keys.size() > 0:
-# 		return
-# 	var current_state_string: String = STATE.get_state_string(current_state)
-# 	var new_state_string: String = incoming_action.payload[GameAction.STATE]
-# 	var new_state: STATE.ASSET = STATE.get_state_from_string(new_state_string)
-# 	if !current_state_data.can_transition(new_state):
-# 		# can transition already has logged a warning about the failure
-# 		return
-# 	var new_state_tracking: bool = StateUtil.is_tracking(new_state)
-# 	var current_state_tracking: bool = StateUtil.is_tracking(current_state)
-# 	if new_state_tracking != current_state_tracking:
-# 		if new_state_tracking:
-# 			self._handle_transition_to_track()
-# 	if !current_state_data.try_and_set(new_state):
-# 		Logger.error(self._UPDATE_FAILED, [current_state_string, new_state_string], self)
-# 		return
-
-# func _handle_transition_to_track() -> void:
-# 	var camera_state_data: StateData = asset_state.get_state_data()
-# 	var focused_guid: String = camera_state_data.get_focus_guid()
-# 	if focused_guid.strip_edges().is_empty():
-# 		Logger.error(self._ILLEGAL_STATE, [self._TRACKING_GUID], self)
-# 		return
-# 	var focused_state_data: StateData = GlobalStateController.get_header_data(focused_guid, StateHeaders.TYPE.DATA)
-# 	var focus_position: Vector3 = focused_state_data.get_current_position()
-# 	var offset_vector: Vector3 = Vector3(0, GameConfig.DEFAULTS.controller_height, GameConfig.DEFAULTS.controller_distance)
-# 	self.camera_controller.position = focus_position + offset_vector
-# 	self.camera_controller.look_at(focus_position)
-
-

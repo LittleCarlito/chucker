@@ -1,5 +1,8 @@
 class_name StateHeaders
 
+const DIMENSION_KEYS: Array[String] = [GameAction.X, GameAction.Y, GameAction.Z]
+const TOGGLE_KEYS: Array[String] = [StateHeaders.IS_CROUCHING]
+
 const OWNER_NAME: String = "owner_name"
 const OWNER_GUID: String = "owner_guid"
 const TARGET_GUID: String = "target_guid"
@@ -7,6 +10,8 @@ const ROTATION: String = "rotation"
 const POSITION: String = "position"
 const SCALE: String = "scale"
 const TOGGLE: String = "toggle"
+const IS_CROUCHING: String = "is_crouching"
+const IS_SPRINTING: String = "is_sprinting"
 # TODO Look to delete below
 const TARGET_POSITION: String = "target_position"
 const CURRENT_STATE: String = "current_state"
