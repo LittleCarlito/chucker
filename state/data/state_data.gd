@@ -23,6 +23,7 @@ var _owner_name: String
 var _current_state: STATE.ASSET
 var _current_state_duration: float
 # Scene based details
+var _min_height: float = -NUMBERS.FLOAT16_MAX
 var _owner_rotation: Quaternion
 var _owner_position: Vector3
 var _owner_scale: Vector3
@@ -219,6 +220,12 @@ func get_focused_guid() -> String:
 
 func is_focused() -> bool:
 	return self._focused_guid != null and !self._focused_guid.strip_edges().is_empty()
+
+func get_min_height() -> float:
+	return self._min_height
+
+func set_min_height(incoming_height: float) -> void:
+	self._min_height = incoming_height
 
 func update_rotation(incoming_quaternion: Quaternion) -> void:
 	self._owner_rotation *= incoming_quaternion

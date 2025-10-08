@@ -30,6 +30,12 @@ func sync_asset() -> void:
 	self._state_data.update_rotation(current_rotation * self._state_data.get_current_rotation().inverse())
 	self._state_data.update_scale(current_scale / self._state_data.get_current_scale())
 
+func get_min_height() -> float:
+	return self._state_data.get_min_height()
+
+func set_min_height(incoming_height: float) -> void:
+	self._state_data.set_min_height(incoming_height)
+
 func get_current_rotation() -> Quaternion:
 	return self._state_data.get_current_rotation()
 
@@ -50,6 +56,9 @@ func start_sprinting() -> void:
 
 func stop_sprinting() -> void:
 	self._state_data.update_is_sprinting(false)
+
+func get_focused_guid() -> String:
+	return self._state_data.get_focused_guid()
 
 ## Returns first tracked GUID; Null if none are tracked
 func get_first_tracked() -> AssetState:
@@ -95,12 +104,13 @@ func set_to_state(incoming_state: STATE.ASSET) -> bool:
 		return false
 	return self._state_data.try_set_state(incoming_state)
 
-func output_warning(incoming_warning: String) -> void:
+func output_warning(incoming_warning: String) -> bool:
 	if self._state_warnings.has(incoming_warning):
 		self._state_warnings[incoming_warning] += 1
-		return
+		return false
 	self._state_warnings[incoming_warning] = 1
 	Logger.warn(incoming_warning, [], self)
+	return true
 
 func apply_movement(movement_vector: Vector3) -> void:
 	if self._state_data == null:

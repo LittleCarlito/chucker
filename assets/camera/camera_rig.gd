@@ -11,7 +11,6 @@ const _NO_INTEGRATION: String = "No integration point for rig to focus on"
 const _MISSING_DATA: String = "Missing \"%s\" data"
 # TODO Replace this usage with Logger usage
 const _UNSUPPORTED_TYPE: String  = "Incoming update type \"%s\" is not supported"
-const _MIN_HEIGHT_WARN: String = "Is now having its height artificially held to min height of \"%f\""
 const _SUCCESSFUL_TRANSITION: String = "Successfully transitioned from \"%s\" state to \"%s\""
 const _FREELOOK_REASONING: String = "Camera rig is in freelook or tracking state"
 const _INVALID_STATE: String = "Invalid state configuration; %s"
@@ -49,7 +48,8 @@ const _HANDLE_STATE_UPDATE: String = "Handle State Update"
 @export var freelook_sensitivity: float = 2.0
 @export var freelook_pitch_limit: float = 85.0 # degrees
 @export var distance_threshold: float = 0.001  # Adjust this threshold as needed
-@export var min_height: float = -NUMBERS.FLOAT16_MAX
+# TODO Ensure users of this use AssetStates (really StateData) ref instead
+# @export var min_height: float = -NUMBERS.FLOAT16_MAX
 @export var primary_freelook_enabled: bool
 @export var secondary_freelook_enabled: bool
 @export var zoom_enabled: bool
@@ -87,19 +87,33 @@ func _ready() -> void:
 
 # TODO Figure out how to have this pushed down from state instead
 #			Will probably require EVERYTHING functioning off state first to work though
-func _physics_process(_delta: float) -> void:
-	if self.min_height != -NUMBERS.FLOAT16_MAX:
-		var is_height_held: bool = self.min_height > self.camera_controller.global_position.y
-		self.camera_controller.global_position.y = max(self.min_height, self.camera_controller.global_position.y)
-		if is_height_held:
-			var height_warning: String = self._MIN_HEIGHT_WARN % self.min_height
-			self.asset_state.output_warning(height_warning)
+func _physics_process(delta: float) -> void:
+	RigResolver.resolve_for_frame(self, delta)
+	# TODO Move this with other things into the RigResolver
+	# if self.min_height != -NUMBERS.FLOAT16_MAX:
+	# 	var is_height_held: bool = self.min_height > self.camera_controller.global_position.y
+	# 	self.camera_controller.global_position.y = max(self.min_height, self.camera_controller.global_position.y)
+	# 	if is_height_held:
+	# 		var height_warning: String = self._MIN_HEIGHT_WARN % self.min_height
+	# 		self.asset_state.output_warning(height_warning)
 
-# TODO IMPLEMENT sets the 
-func track_focus() -> void:
+
+
+
+
+
+# TODO You were here Implement this and then find the other spot where it says you were here
+#			Next shit shoudl be like refactoring the camera class down and then moving characters to AssetState
+func track_position(incoming_position: Vector3) -> void:
 	# TODO Find the asset state in the tracked assets of AssetState
 	# TODO If not found in tracked assets log a warning
 	pass
+
+
+
+
+
+
 
 ## Sets state to idle rotate
 func idle_rotate() -> void:
@@ -160,6 +174,9 @@ func transition_state(incoming_state: STATE.ASSET) -> void:
 		var to_state_string: String = STATE.get_state_string(incoming_state)
 		Logger.debug(self._SUCCESSFUL_TRANSITION, [from_state_string, to_state_string], self)
 
+func get_focused_guid() -> String:
+	return asset_state.get_focused_guid()
+
 func get_current_state() -> STATE.ASSET:
 	return asset_state.get_current_state()
 
@@ -206,13 +223,19 @@ func disable_zoom() -> void:
 	self.is_zoom = false
 
 func get_min_height() -> float:
-	return self.min_height
+	return self.asset_state.get_min_height()
 
 func set_min_height(incoming_min: float) -> void:
-	self.min_height = incoming_min
+	self.asset_state.set_min_height(incoming_min)
 
-func ceneter_on_focused() -> void:
-	pass
+func get_camera_controller_height() -> float:
+	return self.camera_controller.global_position.y
+
+func set_camera_controller_height(incoming_height: float) -> void:
+	self.camera_controller.global_position.y = incoming_height
+
+func output_warning(incoming_warning: String) -> bool:
+	return self.asset_state.output_warning(incoming_warning)
 
 # TODO OUTLINE
 # Then improve camera rigs handling of state changes to properly do shit
@@ -342,24 +365,12 @@ func _handle_sprint_start() -> void:
 func _handle_sprint_stop() -> void:
 	self.asset_state.stop_sprinting()
 
-# TODO Need frame to frame checking for state and keeping everythign up to date using functions like below
-func lerp_to(incoming_position: Vector3, delta: float = NUMBERS.FLOAT16_MAX) -> void:
-	# Smoothly move towards the target using linear interpolation
-	var effective_delta: float = 1.0 if delta == NUMBERS.FLOAT16_MAX else delta
-	var lerp_speed: float = GameConfig.DEFAULTS.lerp_speed * effective_delta
-	lerp_speed = clamp(lerp_speed, 0.0, 1.0)
-	global_transform.origin = global_transform.origin.lerp(incoming_position, lerp_speed)
-
-func snap_to(incoming_position: Vector3) -> void:
-	self.position = incoming_position
 
 
 
 
 
 # TODO CONTINUE FROM HERE
-#			Do the four below
-#			Then go and implement the rest of the resolver functions below that aren't done
 #			Then get frame to frame state handling written
 #				DO THIS IN TransformResolver
 #				needs to lerp to position of tracked asset if in certain states
@@ -370,13 +381,13 @@ func apply_tracking_distance() -> void:
 	self.camera_controller.position = GameConfig.CAMERA.TRACKING_POSITION
 
 func remove_tracking_distance() -> void:
-	self.camera_controller.position = Vector3(0, 0, 0)
+	self.camera_controller.position = GameConfig.EMPTY_VECTOR
 
 func apply_crouching_distance() -> void:
 	self.camera_controller.position = GameConfig.CAMERA.CROUCHING_POSITION
 
 func remove_crouching_distance() -> void:
-	self.camera_controller.position = Vector3(0, 0, 0)
+	self.camera_controller.position = GameConfig.EMPTY_VECTOR
 	
 func _handle_state_update(incoming_update: StateUpdate) -> void:
 	var update_type: STATE.UPDATE_TYPE = incoming_update.get_update_type()

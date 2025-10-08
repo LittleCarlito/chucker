@@ -5,6 +5,8 @@ const NAME: String = "game"
 const TRACKING_POSITION: String = "tracking_position"
 const CROUCHING_POSITION: String = "crouching_position"
 
+const EMPTY_VECTOR: Vector3 = Vector3(0, 0, 0)
+
 const CAMERA: Dictionary = {
 	TRACKING_POSITION: Vector3(0, 7, 10),
 	CROUCHING_POSITION: Vector3(0, 5, 10)
