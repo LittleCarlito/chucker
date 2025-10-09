@@ -88,7 +88,7 @@ func get_current_state() -> STATE.ASSET:
 
 func get_nearest_state(incoming_value: float) -> STATE.ASSET:
 	if _state_values.is_empty():
-		Logger.warn(_CLOSEST_STATE_NOT_FOUND, [_owner_name, incoming_value], self)
+		Log.warn(_CLOSEST_STATE_NOT_FOUND, [_owner_name, incoming_value], self)
 		return STATE.ASSET.READY
 	var closest_state: STATE.ASSET = STATE.ASSET.READY
 	var closest_distance: float = INF
@@ -110,9 +110,9 @@ func can_transition(to_state: STATE.ASSET) -> bool:
 		else:
 			var to_state_string: String = STATE.get_state_string(to_state)
 			var current_state_string: String = STATE.get_state_string(self._current_state)
-			Logger.warn(_INVALID_TRANSITION, [self._owner_name, to_state_string, current_state_string], self)
+			Log.warn(_INVALID_TRANSITION, [self._owner_name, to_state_string, current_state_string], self)
 	else:
-		Logger.error(self._NO_VALID_TRANSITION, [self._owner_name, self._current_state], self)
+		Log.error(self._NO_VALID_TRANSITION, [self._owner_name, self._current_state], self)
 	return false
 
 func try_set_state(to_state: STATE.ASSET) -> bool:
@@ -143,19 +143,19 @@ func get_all_states() -> Array[STATE.ASSET]:
 func peak_next_state() -> STATE.ASSET:
 	var next_state := _find_next_valid_state()
 	if next_state == _current_state:
-		Logger.debug(self._MAX_VALID_STATE, [_owner_name, _current_state], self)
+		Log.debug(self._MAX_VALID_STATE, [_owner_name, _current_state], self)
 	return next_state
 
 func peak_next_state_value() -> float:
 	var next_state := _find_next_valid_state()
 	if next_state == _current_state:
-		Logger.debug(self._MAX_VALID_STATE, [_owner_name, _current_state], self)
+		Log.debug(self._MAX_VALID_STATE, [_owner_name, _current_state], self)
 		return get_state_value(_current_state)
 	if _state_values.has(next_state):
 		return _state_values[next_state]
 	else:
 		var next_state_string: String = STATE.get_state_string(next_state)
-		Logger.warn(self._NO_VALUE, [self._owner_name, next_state_string], self)
+		Log.warn(self._NO_VALUE, [self._owner_name, next_state_string], self)
 		return 0
 
 func next_states() -> Array[STATE.ASSET]:
@@ -173,13 +173,13 @@ func transition_next_state() -> STATE.ASSET:
 		}
 		self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.STATE, update_details))
 	else:
-		Logger.debug(self._MAX_VALID_STATE, [_owner_name, _current_state], self)
+		Log.debug(self._MAX_VALID_STATE, [_owner_name, _current_state], self)
 	return _current_state
 
 func peak_previous_state() -> STATE.ASSET:
 	var prev_state := _find_previous_valid_state()
 	if prev_state == _current_state:
-		Logger.debug(self._MIN_VALID_STATE, [_owner_name, _current_state], self)
+		Log.debug(self._MIN_VALID_STATE, [_owner_name, _current_state], self)
 	return prev_state
 
 func previous_states() -> Array[STATE.ASSET]:
@@ -197,7 +197,7 @@ func transition_previous_state() -> STATE.ASSET:
 		}
 		self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.STATE, update_details))
 	else:
-		Logger.debug(self._MIN_VALID_STATE, [_owner_name, _current_state], self)
+		Log.debug(self._MIN_VALID_STATE, [_owner_name, _current_state], self)
 	return _current_state
 
 func get_state_value(incoming_value: STATE.ASSET) -> float:
@@ -205,7 +205,7 @@ func get_state_value(incoming_value: STATE.ASSET) -> float:
 		return self._state_values[incoming_value]
 	else:
 		var incoming_state_string: String = STATE.get_state_string(incoming_value)
-		Logger.warn(self._NO_VALUE, [self._owner_name, incoming_state_string], self)
+		Log.warn(self._NO_VALUE, [self._owner_name, incoming_state_string], self)
 		return 0
 
 func set_focused_guid(incoming_guid: String) -> void:
@@ -298,22 +298,22 @@ func is_valid_state(incoming_state: STATE.ASSET) -> bool:
 			return true
 	return false
 
-func log(incoming_message: String, incoming_level: Logger.LEVEL) -> void:
+func log(incoming_message: String, incoming_level: Log.LEVEL) -> void:
 	match incoming_level:
-		Logger.LEVEL.INFO:
-			Logger.info(incoming_message, [], self)
-		Logger.LEVEL.DEBUG:
-			Logger.debug(incoming_message, [], self)
-		Logger.LEVEL.WARN:
-			Logger.warn(incoming_message, [], self)
-		Logger.LEVEL.ERROR:
-			Logger.error(incoming_message, [], self)
+		Log.LEVEL.INFO:
+			Log.info(incoming_message, [], self)
+		Log.LEVEL.DEBUG:
+			Log.debug(incoming_message, [], self)
+		Log.LEVEL.WARN:
+			Log.warn(incoming_message, [], self)
+		Log.LEVEL.ERROR:
+			Log.error(incoming_message, [], self)
 		_:
-			Logger.error(self._UNSUPPORTED_TYPE, [Logger.LOG_LEVEL_TYPE, incoming_level, ], self)
+			Log.error(self._UNSUPPORTED_TYPE, [Log.LOG_LEVEL_TYPE, incoming_level, ], self)
 
 func print_details() -> void:
 	var current_state_name: String = STATE.get_state_string(_current_state)
-	Logger.debug("StateData \"%s\" CurrentState: \"%s\" StateID: \"%d\" Duration: \"%.2f\" Windows: \"%d\" Transitions: \"%d\" Values: \"%d\"", [_owner_name, current_state_name, _current_state, _current_state_duration, _state_windows.size(), _valid_transitions.size(), _state_values.size()], self)
+	Log.debug("StateData \"%s\" CurrentState: \"%s\" StateID: \"%d\" Duration: \"%.2f\" Windows: \"%d\" Transitions: \"%d\" Values: \"%d\"", [_owner_name, current_state_name, _current_state, _current_state_duration, _state_windows.size(), _valid_transitions.size(), _state_values.size()], self)
 
 func as_string() -> String:
 	var current_state_name: String = STATE.get_state_string(_current_state)
@@ -327,7 +327,7 @@ func _get_sorted_transitions(state: STATE.ASSET) -> Array:
 		transitions.sort()
 		return transitions
 	else:
-		Logger.warn(_NO_VALID_TRANSITION, [_owner_name, state], self)
+		Log.warn(_NO_VALID_TRANSITION, [_owner_name, state], self)
 		return []
 
 func _collect_states(forward: bool) -> Array[STATE.ASSET]:
@@ -364,7 +364,7 @@ func _validate_window_configuration(incoming_windows: Dictionary) -> bool:
 		var current_value: float = incoming_windows[state]
 		if current_value < previous_value:
 			var state_string: String = STATE.get_state_string(state)
-			Logger.warn(_DECREASING_WINDOW, [_owner_name, state_string, previous_value, current_value], self)
+			Log.warn(_DECREASING_WINDOW, [_owner_name, state_string, previous_value, current_value], self)
 			return false
 		previous_value = current_value
 	return true

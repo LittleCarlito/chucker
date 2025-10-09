@@ -15,7 +15,7 @@ var _is_idle_roatating: bool
 var _is_height_held: bool
 var _min_height_warn: bool = false
 
-func log(incoming_message: String, incoming_level: Logger.LEVEL) -> void:
+func log(incoming_message: String, incoming_level: Log.LEVEL) -> void:
 	var is_min_log: bool = self._min_log_detect(incoming_message)
 	if is_min_log and not _min_height_warn:
 		super.log(incoming_message, incoming_level)
@@ -24,7 +24,7 @@ func log(incoming_message: String, incoming_level: Logger.LEVEL) -> void:
 		super.log(incoming_message, incoming_level)
 
 func print_details() -> void:
-	Logger.debug("CameraStateData \"%s\" Sprinting: \"%s\"", [_owner_name, _is_sprinting], self)
+	Log.debug("CameraStateData \"%s\" Sprinting: \"%s\"", [_owner_name, _is_sprinting], self)
 
 func _min_log_detect(incoming_message: String) -> bool:
 	var regex = RegEx.new()

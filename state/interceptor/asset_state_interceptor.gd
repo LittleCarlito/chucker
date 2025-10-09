@@ -21,9 +21,9 @@ static func convert_detail_values(incoming_asset_state: AssetState, incoming_upd
 					incoming_update.set_update_details(new_details)
 					return true
 				else:
-					Logger.error(Logger._CANT_PERFORM, [_TRACKED_ASSET_DATA, _CONVERT_DETAIL_VALUES], null)
+					Log.error(Log._CANT_PERFORM, [_TRACKED_ASSET_DATA, _CONVERT_DETAIL_VALUES], null)
 				# TODO Need to create a details payload for StateUpdate
 				# TODO Need to make a new setter for StateUpdate for detail payload
 			else:
-				Logger.error(Logger._CANT_PERFORM, [missing_keys, _CONVERT_DETAIL_VALUES], null)
+				Log.error(Log._CANT_PERFORM, [missing_keys, _CONVERT_DETAIL_VALUES], null)
 	return false

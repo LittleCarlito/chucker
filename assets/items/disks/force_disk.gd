@@ -64,8 +64,8 @@ func get_item_type() -> AssetData.TYPE:
 	if asset_data != null:
 		return asset_data.internal_type
 	else:
-		var formatted_string: String = _NO_ITEM_DATA_LOG + Logger.LOG_SEPARATOR + Logger.RETURNING_UNKNOWN_LOG
-		Logger.warn(formatted_string, [], self)
+		var formatted_string: String = _NO_ITEM_DATA_LOG + Log.LOG_SEPARATOR + Log.RETURNING_UNKNOWN_LOG
+		Log.warn(formatted_string, [], self)
 		return AssetData.TYPE.UNKNOWN
 
 # TODO This should be changed to transfer camera or something along those lines
@@ -93,14 +93,14 @@ func get_disk_camera() -> Camera3D:
 	if camera_container != null:
 		return_camera = camera_container.get_camera()
 	else:
-		var formatted_string: String = Logger.NULL_CAMERA_LOG + Logger.LOG_SEPARATOR + Logger.RETURNING_NULL_LOG
-		Logger.error(formatted_string, [_GET_DISK_CAMERA], self)
+		var formatted_string: String = Log.NULL_CAMERA_LOG + Log.LOG_SEPARATOR + Log.RETURNING_NULL_LOG
+		Log.error(formatted_string, [_GET_DISK_CAMERA], self)
 	return return_camera
 
 func set_disk_camera(new_camera: Camera3D) -> void:
 	if camera_container == null:
-		var formatted_string: String = Logger.NULL_CAMERA_LOG + Logger.LOG_SEPARATOR + _CREATING_CAMERA_LOG
-		Logger.warn(formatted_string, [_SET_DISK_CAMERA], self)
+		var formatted_string: String = Log.NULL_CAMERA_LOG + Log.LOG_SEPARATOR + _CREATING_CAMERA_LOG
+		Log.warn(formatted_string, [_SET_DISK_CAMERA], self)
 		_create_camera_container()
 	camera_container.set_camera(new_camera)
 
@@ -130,7 +130,7 @@ func _create_camera_container() -> void:
 		self.add_child(new_camera_container)
 		_set_camera_container(new_camera_container)
 	else:
-		Logger.warn(Logger.ALREADY_EXISTS_LOG, [Logger.CAMERA_CONTAINER], self)
+		Log.warn(Log.ALREADY_EXISTS_LOG, [Log.CAMERA_CONTAINER], self)
 
 func _set_asset_data(incoming_data: AssetData) -> void:
 	asset_data = incoming_data
@@ -152,7 +152,7 @@ func _launch() -> void:
 			if not GlobalCursorController.is_captured_current():
 				GlobalCursorController.request_captured(self, "Force disk launched")
 	else:
-		Logger.warn(Logger.MISSING_FLIGHT_DATA_LOG, [], self)
+		Log.warn(Log.MISSING_FLIGHT_DATA_LOG, [], self)
 
 func _get_camera_container() -> CameraContainer:
 	_create_camera_container()
@@ -173,7 +173,7 @@ func _return_camera_to_owner() -> void:
 	if has_camera and has_custom_group:
 		get_tree().call_group(asset_data.group_name, GroupData.TRANSFER_AND_ENABLE, camera_container.get_camera())
 	else:
-		Logger.debug(Logger.CANT_RETURN_LOG, [str(self)], self)
+		Log.debug(Log.CANT_RETURN_LOG, [str(self)], self)
 
 func _submit_camera_request() -> void:
 	if asset_data != null and !asset_data.group_name.is_empty():
@@ -182,17 +182,17 @@ func _submit_camera_request() -> void:
 		camera_container.add_to_group(asset_data.group_name)
 		camera_container.reset_camera()
 	else:
-		var formatted_string: String = Logger.NO_GROUP_LOG + Logger.LOG_SEPARATOR + Logger.NOT_SUBMITTING
-		Logger.debug(formatted_string, [], self)
+		var formatted_string: String = Log.NO_GROUP_LOG + Log.LOG_SEPARATOR + Log.NOT_SUBMITTING
+		Log.debug(formatted_string, [], self)
 
 # TODO Make this static and shared somehwere
-func _handle_child_logs(incoming_level: Logger.LEVEL, incoming_log: String, optional_params: Array) -> void:
+func _handle_child_logs(incoming_level: Log.LEVEL, incoming_log: String, optional_params: Array) -> void:
 	match incoming_level:
-		Logger.LEVEL.DEBUG:
-			Logger.debug(incoming_log, optional_params, self)
-		Logger.LEVEL.INFO:
-			Logger.info(incoming_log, optional_params, self)
-		Logger.LEVEL.WARN:
-			Logger.warn(incoming_log, optional_params, self)
-		Logger.LEVEL.ERROR:
-			Logger.error(incoming_log, optional_params, self)
+		Log.LEVEL.DEBUG:
+			Log.debug(incoming_log, optional_params, self)
+		Log.LEVEL.INFO:
+			Log.info(incoming_log, optional_params, self)
+		Log.LEVEL.WARN:
+			Log.warn(incoming_log, optional_params, self)
+		Log.LEVEL.ERROR:
+			Log.error(incoming_log, optional_params, self)

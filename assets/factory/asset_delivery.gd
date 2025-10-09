@@ -18,7 +18,7 @@ func create_and_launch(flight_data: FlightData, asset_data: AssetData) -> Node3D
 		asset_data.creation_type = asset_data.internal_type
 	if asset_data.group_name == null || asset_data.group_name.is_empty():
 		asset_data.group_name = GameConfig.DEFAULTS.group
-		Logger.debug(_NO_GROUP_PROVIDED, [asset_data.group_name], self)
+		Log.debug(_NO_GROUP_PROVIDED, [asset_data.group_name], self)
 	var new_asset: Node3D = AssetFactory.create_asset(asset_data.internal_type)
 	if new_asset != null:
 		_set_asset_data(new_asset, asset_data)
@@ -29,18 +29,18 @@ func create_and_launch(flight_data: FlightData, asset_data: AssetData) -> Node3D
 		if !flight_data.flight_path.is_empty():
 			if(_set_launch_parameters(new_asset, flight_data)):
 				if not _launch_asset(new_asset, flight_data.flight_details.focus_flight):
-					Logger.debug(_LAUNCH_RESULT_STRING, [str(new_asset), _FAILURE], self)
+					Log.debug(_LAUNCH_RESULT_STRING, [str(new_asset), _FAILURE], self)
 				# Regardless of flight result have the items in th given data group update their status data
 				if asset_data.group_name != null:
 					get_tree().call_group(asset_data.group_name, GroupData.UPDATE_STATE)
 			else:
-				Logger.debug(_LAUNCH_NOT_SET, [str(new_asset)], self)
+				Log.debug(_LAUNCH_NOT_SET, [str(new_asset)], self)
 		else:
-			var formatted_string: String = _EMPTY_FLIGHT_PATH + Logger.LOG_SEPARATOR + _REQUIRES_ONE_VECTOR
-			Logger.debug(formatted_string, [str(flight_data)], self)
+			var formatted_string: String = _EMPTY_FLIGHT_PATH + Log.LOG_SEPARATOR + _REQUIRES_ONE_VECTOR
+			Log.debug(formatted_string, [str(flight_data)], self)
 			pass
 	else:
-		Logger.debug(_INVALID_INCOMING_ITEM, [str(asset_data)], self)
+		Log.debug(_INVALID_INCOMING_ITEM, [str(asset_data)], self)
 	return new_asset
 
 ## Equips incoming owner with internal type found inside given item
@@ -55,7 +55,7 @@ func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) ->
 		item_owner.equip_item(new_asset)
 		incoming_item.pick_up()
 	else:
-		Logger.info(_INVALID_INCOMING_ITEM, [str(incoming_item)], self)
+		Log.info(_INVALID_INCOMING_ITEM, [str(incoming_item)], self)
 	return new_asset
 
 func drop_asset(drop_item: Node3D, drop_location: Vector3 = GameConfig.DEFAULTS.uknown_location) -> void:
@@ -67,7 +67,7 @@ func drop_asset(drop_item: Node3D, drop_location: Vector3 = GameConfig.DEFAULTS.
 	if(drop_item is ThrowableItem):
 		drop_item.drop_item()
 	else:
-		Logger.warn("Class \"%s\" has been dropped without a function call; Item may be hovering", [drop_item.get_class()], self)
+		Log.warn("Class \"%s\" has been dropped without a function call; Item may be hovering", [drop_item.get_class()], self)
 
 func spawn_assets(incoming_spawns: Array[SpawnData]) -> Dictionary:
 	var spawned_assets: Dictionary = {}
@@ -99,7 +99,7 @@ static func _set_asset_data(incoming_asset: Node3D, incoming_data: AssetData) ->
 		incoming_asset.call(GroupData.SET_ASSET_DATA, incoming_data)
 		data_set = true
 	else:
-		Logger.debug(Logger.NO_METHOD_FOUND, [GroupData.SET_ASSET_DATA, str(incoming_asset)], null)
+		Log.debug(Log.NO_METHOD_FOUND, [GroupData.SET_ASSET_DATA, str(incoming_asset)], null)
 	return data_set
 
 static func _set_launch_parameters(incoming_asset: Node3D, incoming_data: FlightData) -> bool:
@@ -108,7 +108,7 @@ static func _set_launch_parameters(incoming_asset: Node3D, incoming_data: Flight
 		incoming_asset.call(GroupData.SET_FLIGHT_DATA, incoming_data)
 		data_set = true
 	else:
-		Logger.debug(Logger.NO_METHOD_FOUND, [GroupData.SET_FLIGHT_DATA, str(incoming_asset)], null)
+		Log.debug(Log.NO_METHOD_FOUND, [GroupData.SET_FLIGHT_DATA, str(incoming_asset)], null)
 	return data_set
 
 static func _launch_asset(incoming_asset: Node3D, focus_flight: bool = false) -> bool:
@@ -152,9 +152,9 @@ static func _launch_asset(incoming_asset: Node3D, focus_flight: bool = false) ->
 				var state_action: GameAction = GameAction.new(GameAction.TYPE.SET_STATE, set_state_dictionary)
 				GlobalStateController.dispatch(state_action)
 			else:
-				Logger.error(_BAD_ASSET, [], null)
+				Log.error(_BAD_ASSET, [], null)
 
 
 	else:
-		Logger.debug(Logger.NO_METHOD_FOUND, [Logger.LAUNCH, str(incoming_asset)], null)
+		Log.debug(Log.NO_METHOD_FOUND, [Log.LAUNCH, str(incoming_asset)], null)
 	return asset_launched	

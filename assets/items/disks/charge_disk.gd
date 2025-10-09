@@ -147,7 +147,7 @@ func _set_flight_basis(incoming_basis: Basis) -> void:
 	if self.flight_data != null:
 		self.flight_data.set_flight_basis(incoming_basis)
 	else:
-		Logger.debug(_FLIGHT_DATA_NOT_SET, [], self)
+		Log.debug(_FLIGHT_DATA_NOT_SET, [], self)
 
 func _set_asset_data(incoming_data: AssetData) -> void:
 	self.asset_data = incoming_data

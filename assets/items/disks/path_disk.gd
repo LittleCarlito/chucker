@@ -81,12 +81,12 @@ func _apply_roll_intensity() -> void:
 	if flight_data.get_flight_power() > GameConfig.DEFAULTS.min_pull_for_offset:
 		var current_roll_intensity: float = self.flight_data.roll_intensity_at(self.path_follow.progress_ratio)
 		if GameConfig.DEFAULTS.flight_detail:
-			Logger.debug("Roll intensity at percentage %03f is %03f", [self.path_follow.progress_ratio, current_roll_intensity], self)
+			Log.debug("Roll intensity at percentage %03f is %03f", [self.path_follow.progress_ratio, current_roll_intensity], self)
 		var roll_modifier: float = current_roll_intensity * 20
 		self.disk_mesh.rotation.z = roll_modifier
 	else:
 		if GameConfig.DEFAULTS.flight_detail:
-			Logger.debug("Throw has too little power to apply roll", [], self)
+			Log.debug("Throw has too little power to apply roll", [], self)
 
 func _body_enter(body_rid: RID, _body: Node3D, _body_shape_index: int, _local_shape_index: int) -> void:
 	if body_rid != self.asset_data.owner_rid:
@@ -150,7 +150,7 @@ func _launch() -> void:
 		path_3d.curve = flight_curve
 		self._launched = true
 	else:
-		Logger.warn(Logger.MISSING_FLIGHT_DATA_LOG, [], self)
+		Log.warn(Log.MISSING_FLIGHT_DATA_LOG, [], self)
 
 func _get_camera_container() -> CameraContainer:
 	return self.camera_container
@@ -170,8 +170,8 @@ func _submit_camera_request() -> void:
 		self.camera_container.add_to_group(self.asset_data.group_name)
 		self.camera_container.reset_camera()
 	else:
-		var formatted_string: String = Logger.NO_GROUP_LOG + Logger.LOG_SEPARATOR + Logger.NOT_SUBMITTING
-		Logger.debug(formatted_string, [], self)
+		var formatted_string: String = Log.NO_GROUP_LOG + Log.LOG_SEPARATOR + Log.NOT_SUBMITTING
+		Log.debug(formatted_string, [], self)
 
 func _return_camera_to_owner() -> void:
 	var has_custom_group: bool = self.asset_data != null and !self.asset_data.group_name.is_empty()
@@ -179,7 +179,7 @@ func _return_camera_to_owner() -> void:
 	if has_camera and has_custom_group:
 		get_tree().call_group(asset_data.group_name, GroupData.TRANSFER_AND_ENABLE, camera_container.get_camera())
 	else:
-		Logger.debug(Logger.CANT_RETURN_LOG, [str(self)], self)
+		Log.debug(Log.CANT_RETURN_LOG, [str(self)], self)
 
 func _set_asset_data(incoming_data: AssetData) -> void:
 	self.asset_data = incoming_data
@@ -192,16 +192,16 @@ func _create_camera_container() -> void:
 		self.disk_mesh.add_child(new_camera_container)
 		_set_camera_container(new_camera_container)
 	else:
-		Logger.warn(Logger.ALREADY_EXISTS_LOG, [Logger.CAMERA_CONTAINER], self)
+		Log.warn(Log.ALREADY_EXISTS_LOG, [Log.CAMERA_CONTAINER], self)
 
 # TODO Make this static and shared somehwere
-func _handle_child_logs(incoming_level: Logger.LEVEL, incoming_log: String, optional_params: Array) -> void:
+func _handle_child_logs(incoming_level: Log.LEVEL, incoming_log: String, optional_params: Array) -> void:
 	match incoming_level:
-		Logger.LEVEL.DEBUG:
-			Logger.debug(incoming_log, optional_params, self)
-		Logger.LEVEL.INFO:
-			Logger.info(incoming_log, optional_params, self)
-		Logger.LEVEL.WARN:
-			Logger.warn(incoming_log, optional_params, self)
-		Logger.LEVEL.ERROR:
-			Logger.error(incoming_log, optional_params, self)
+		Log.LEVEL.DEBUG:
+			Log.debug(incoming_log, optional_params, self)
+		Log.LEVEL.INFO:
+			Log.info(incoming_log, optional_params, self)
+		Log.LEVEL.WARN:
+			Log.warn(incoming_log, optional_params, self)
+		Log.LEVEL.ERROR:
+			Log.error(incoming_log, optional_params, self)

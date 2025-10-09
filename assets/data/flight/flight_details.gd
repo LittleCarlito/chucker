@@ -23,4 +23,4 @@ func _init(
 	self.flight_spin = incoming_spin
 
 func print_details() -> void:
-	Logger.debug("\nFlight details:\nFlight power: %03f\nFlight aim: %03f\nFlight spin: %03f", [self.flight_power, self.flight_aim, self.flight_spin], self)
+	Log.debug("\nFlight details:\nFlight power: %03f\nFlight aim: %03f\nFlight spin: %03f", [self.flight_power, self.flight_aim, self.flight_spin], self)

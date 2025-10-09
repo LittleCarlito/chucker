@@ -14,7 +14,7 @@ config/name="Chuck"
 run/main_scene="res://scenes/SalinasFlats.tscn"
 config/use_custom_user_dir=true
 config/project_settings_override="user://settings/override.cfg"
-config/features=PackedStringArray("4.3", "Forward Plus")
+config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://resources/icon.svg"
 
 [audio]
@@ -25,7 +25,7 @@ buses/default_bus_layout=""
 
 DrawUtil="*res://utils/draw_util.gd"
 NodeUtil="*res://utils/node_util.gd"
-Logger="*res://utils/logger.gd"
+Log="*res://utils/Log.gd"
 InputSprite="*res://configuration/input/input_sprite.gd"
 GlobalHoleData="*res://assets/buildings/course/data/global_hole_data.gd"
 UserSettingData="*res://configuration/handler/user_setting_data.gd"

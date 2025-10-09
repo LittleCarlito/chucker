@@ -16,7 +16,7 @@ func get_state_dictionary() -> Dictionary:
 func register_new_node(incoming_node: Node3D) -> StateData:
 	var incoming_name: String = incoming_node.name
 	if not incoming_node.has_meta(GroupData.GUID):
-		Logger.error(self._MISSING_GUID, [incoming_name], self)
+		Log.error(self._MISSING_GUID, [incoming_name], self)
 		return null
 	var incoming_guid: String = incoming_node.get_meta(GroupData.GUID)
 	if incoming_node is CameraRig:
@@ -73,7 +73,7 @@ func get_header_data(incoming_guid: String, incoming_type: StateHeaders.TYPE):
 		StateHeaders.TYPE.DATA, StateHeaders.TYPE.NODE:
 			return self._get_guid_value(incoming_guid, header_string)
 		_:
-			Logger.error(self._UNSUPPORTED_TYPE, [header_string, incoming_guid, incoming_type], self)
+			Log.error(self._UNSUPPORTED_TYPE, [header_string, incoming_guid, incoming_type], self)
 			return null
 
 func storage_size() -> int:
@@ -87,7 +87,7 @@ func duplicate(deep_clone: bool = false) -> StateDataStorage:
 	return copy
 
 func print_details() -> void:
-	Logger.debug("StateDataStorage states: \"%d\"", [self._state_dictionary.size()], self)
+	Log.debug("StateDataStorage states: \"%d\"", [self._state_dictionary.size()], self)
 	for guid in self._state_dictionary.keys():
 		var state_data: StateData = self._state_dictionary[guid]
 		if state_data.has_method("print_details"):
@@ -95,11 +95,11 @@ func print_details() -> void:
 
 func _get_guid_value(incoming_guid: String, key: String):
 	if not self._state_dictionary.has(incoming_guid):
-		Logger.error(self._GUID_NOT_FOUND, [incoming_guid], self)
+		Log.error(self._GUID_NOT_FOUND, [incoming_guid], self)
 		return null
 	var guid_dictionary: Dictionary = self._state_dictionary.get(incoming_guid)
 	if not guid_dictionary.has(key):
-		Logger.error(self._DICTIONARY_DATA_NOT_FOUND, [incoming_guid, key], self)
+		Log.error(self._DICTIONARY_DATA_NOT_FOUND, [incoming_guid, key], self)
 		return null
 	return guid_dictionary.get(key)
 

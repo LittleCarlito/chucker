@@ -43,11 +43,11 @@ func get_point(incoming_index: int) -> FlightPoint:
 
 func print_details() -> void:
 	var flight_type_string: String = self._get_type_string(path_type)
-	Logger.debug("\n[FlightPath data]\nNumber of points: %d\nFlight type %s\nMax offset : %03f", [path.size(), flight_type_string, max_offset], self)
+	Log.debug("\n[FlightPath data]\nNumber of points: %d\nFlight type %s\nMax offset : %03f", [path.size(), flight_type_string, max_offset], self)
 	if GameConfig.DEFAULTS.extra_detail:
 		for i in range(path.size()):
 			var fp: FlightPoint = path[i]
-			Logger.debug("Point %d: Roll Intensity: %.3f", [i, fp.roll_intensity], self)
+			Log.debug("Point %d: Roll Intensity: %.3f", [i, fp.roll_intensity], self)
 
 func _get_type_string(incoming_type: PATH_TYPE) -> String:
 	match incoming_type:

@@ -41,7 +41,7 @@ func node_has_state(incoming_guid: String) -> bool:
 
 func get_header_data(incoming_guid: String, header_type: StateHeaders.TYPE) -> Variant:
 	if incoming_guid.is_empty():
-		Logger.error(self._INVALID_HEAD_REQEUST, [self._EMPTY_GUID], self)
+		Log.error(self._INVALID_HEAD_REQEUST, [self._EMPTY_GUID], self)
 		return null
 	match header_type:
 		StateHeaders.TYPE.DATA_STORAGE:
@@ -52,7 +52,7 @@ func get_header_data(incoming_guid: String, header_type: StateHeaders.TYPE) -> V
 			return self._game_state.retrieve_node(incoming_guid)
 		_:
 			var string_type: String = StateHeaders.get_type_string(header_type)
-			Logger.error(self._UNSUPPORTED_HEADER, [string_type, header_type], self)
+			Log.error(self._UNSUPPORTED_HEADER, [string_type, header_type], self)
 			return null
 
 # func get_primary_guid(incoming_type: GameState.DATA_TYPE) -> String:

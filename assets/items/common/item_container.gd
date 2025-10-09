@@ -38,7 +38,7 @@ func unequip_item() -> void:
 	if equipped_item != null:
 		equipped_item.queue_free()
 	else:
-		Logger.warn(_UNEQUIP_MESSAGE_LOG, [], self)
+		Log.warn(_UNEQUIP_MESSAGE_LOG, [], self)
 	# Reset item controller rotation
 	self.rotation_degrees.x = 0
 
@@ -47,18 +47,18 @@ func hold_action(delta: float, incoming_focus: bool = false) -> void:
 		if equipped_item.has_method(GroupData.HOLD_ACTION):
 			equipped_item.call(GroupData.HOLD_ACTION, delta, self.basis, incoming_focus)
 		else:
-			Logger.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), GroupData.HOLD_ACTION], self)
+			Log.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), GroupData.HOLD_ACTION], self)
 	else:
-		Logger.debug(_ITEM_CONTAINER_UNEQUIPPED, [GroupData.HOLD_ACTION], self)
+		Log.debug(_ITEM_CONTAINER_UNEQUIPPED, [GroupData.HOLD_ACTION], self)
 
 func release_action() -> void:
 	if is_equipped():
 		if equipped_item.has_method(GroupData.RELEASE_ACTION):
 			equipped_item.call(GroupData.RELEASE_ACTION, self.global_basis)
 		else:
-			Logger.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), GroupData.RELEASE_ACTION], self)
+			Log.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), GroupData.RELEASE_ACTION], self)
 	else:
-		Logger.debug(_ITEM_CONTAINER_UNEQUIPPED, [GroupData.RELEASE_ACTION], self)
+		Log.debug(_ITEM_CONTAINER_UNEQUIPPED, [GroupData.RELEASE_ACTION], self)
 
 func is_equipped() -> bool:
 	return equipped_item != null

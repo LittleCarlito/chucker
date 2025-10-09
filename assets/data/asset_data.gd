@@ -114,8 +114,8 @@ static func get_associated_creation_type(incoming_type: AssetData.TYPE, previous
 		else:
 			associated_type = possible_creation_types[0]
 	else:
-		var formatted_string: String = _NO_VALUE + Logger.LOG_SEPARATOR + Logger.RETURNING_UNKNOWN_LOG
-		Logger.debug(formatted_string, [str(incoming_type)], null)
+		var formatted_string: String = _NO_VALUE + Log.LOG_SEPARATOR + Log.RETURNING_UNKNOWN_LOG
+		Log.debug(formatted_string, [str(incoming_type)], null)
 	return associated_type
 
 func set_internal_type(incoming_type: TYPE) -> void:

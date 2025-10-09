@@ -49,12 +49,12 @@ func _handle_aim_release() -> void:
 	aim.emit(AIM_TYPE.ZOOM_OUT, 0)
 
 func hold_action(_delta: float, _incoming_basis: Basis, _incoming_focus: bool) -> void:
-	Logger.warn("No hold_action function implemented for this object", [], self)
+	Log.warn("No hold_action function implemented for this object", [], self)
 
 func release_action(_incoming_basis: Basis) -> void:
-	Logger.error("All ThrowableItem objects must implement a release action function", [], self)
+	Log.error("All ThrowableItem objects must implement a release action function", [], self)
 	self.queue_free()
 
 func drop_item() -> void:
-	Logger.error("All ThrowableItem objects must implement a drop item function", [], self)
+	Log.error("All ThrowableItem objects must implement a drop item function", [], self)
 	self.queue_free()

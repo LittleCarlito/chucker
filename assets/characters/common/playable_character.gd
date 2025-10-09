@@ -16,7 +16,7 @@ func _ready() -> void:
 	GlobalInputController.connect(SIGNAL_NAME.SPRINT_RELEASE, _handle_sprint_release)
 
 func equip_item(new_item: Node3D) -> Variant:
-	self._give_camera(new_item)
+	#self._give_camera(new_item)
 	# TODO Should have this based off state instead
 	#			If it is a playable character that is focused by a rig and equips something then do the mouse shit
 	#		But really should be state based so everything happens and at the end of the frame the state is checked and shit happens
@@ -25,7 +25,7 @@ func equip_item(new_item: Node3D) -> Variant:
 
 func reload_project_settings() -> void:
 	if not camera_container.reset_zoom():
-		Logger.debug(Logger.NULL_CAMERA_LOG, [Logger.RESET_ZOOM], self)
+		Log.debug(Log.NULL_CAMERA_LOG, [Log.RESET_ZOOM], self)
 
 func _transfer_and_enable(incoming_camera: Camera3D) -> void:
 	if is_movement_disabled():

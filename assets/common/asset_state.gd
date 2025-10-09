@@ -18,10 +18,10 @@ var _tracked_assets: Dictionary
 
 func sync_asset() -> void:
 	if self._state_data == null:
-		Logger.error(Logger._CANT_PERFORM, [self._STATE_DATA, "Sync Asset"], self)
+		Log.error(Log._CANT_PERFORM, [self._STATE_DATA, "Sync Asset"], self)
 		return
 	if self.owner == null:
-		Logger.error("Cannot sync asset: owner is null", [], self)
+		Log.error("Cannot sync asset: owner is null", [], self)
 		return
 	var current_position: Vector3 = self.owner.global_position
 	var current_rotation: Quaternion = Quaternion(self.owner.global_transform.basis)
@@ -76,7 +76,7 @@ func get_tracked_guids() -> Array:
 
 func get_owner_guid() -> String:
 	if self._state_data == null:
-		Logger.error(Logger._CANT_PERFORM, [self._STATE_DATA, self._GET_OWNER_GUID], self)
+		Log.error(Log._CANT_PERFORM, [self._STATE_DATA, self._GET_OWNER_GUID], self)
 		return GroupData.EMPTY
 	return self._state_data.get_owner_guid()
 
@@ -109,12 +109,12 @@ func output_warning(incoming_warning: String) -> bool:
 		self._state_warnings[incoming_warning] += 1
 		return false
 	self._state_warnings[incoming_warning] = 1
-	Logger.warn(incoming_warning, [], self)
+	Log.warn(incoming_warning, [], self)
 	return true
 
 func apply_movement(movement_vector: Vector3) -> void:
 	if self._state_data == null:
-		Logger.error(Logger._CANT_PERFORM, [self._STATE_DATA, "Apply Movement"], self)
+		Log.error(Log._CANT_PERFORM, [self._STATE_DATA, "Apply Movement"], self)
 		return
 	self._state_data.update_position(movement_vector)
 
@@ -131,7 +131,7 @@ func track_target_guid(target_guid: String) -> bool:
 	var target_state: AssetState = GlobalStateController.get_header_data(target_guid, StateHeaders.TYPE.DATA)
 	if target_state == null:
 		var target_string: String = "State for target GUID \"%s\"" % target_guid
-		Logger.error(Logger._CANT_PERFORM, [target_string, self._HANDLE_FOCUS], self)
+		Log.error(Log._CANT_PERFORM, [target_string, self._HANDLE_FOCUS], self)
 		return false
 	if self._tracked_assets.has(target_guid):
 		var target_owner_guid: String = target_state.get_owner_guid()
@@ -143,7 +143,7 @@ func track_target_guid(target_guid: String) -> bool:
 			func(tracked_asset): return tracked_asset.get_owner_guid() == target_owner_guid
 		)
 		if matches.size() > 1:
-			Logger.error(self._DUPLICATE_TRACKED_STATES, [target_owner_guid], self)
+			Log.error(self._DUPLICATE_TRACKED_STATES, [target_owner_guid], self)
 			return false
 		var updated_assets: Array = []
 		var found_match: bool = false
@@ -164,14 +164,14 @@ func track_target_guid(target_guid: String) -> bool:
 ## Will fail if state is actively tracking the GUID
 func stop_tracking(incoming_guid: String) -> bool:
 	if self._tracked_assets.is_empty() || not self._tracked_assets.has(incoming_guid):
-		Logger.error(self._MISSING_TRACK_DATA, [incoming_guid], self)
+		Log.error(self._MISSING_TRACK_DATA, [incoming_guid], self)
 		return false
 	var current_state: STATE.ASSET = self._state_data.get_current_state()
 	var is_tracking: bool = StateUtil.is_tracking(current_state)
 	if is_tracking:
 		var tracked_guid: String = self._state_data.get_focused_guid()
 		if incoming_guid == tracked_guid:
-			Logger.error(self._CURRENTLY_TRACKED, [incoming_guid], self)
+			Log.error(self._CURRENTLY_TRACKED, [incoming_guid], self)
 			return false
 	self._tracked_assets.erase(incoming_guid)
 	return true
@@ -186,10 +186,10 @@ func perform_action(action_type: GameAction.TYPE, options: Dictionary = {}) -> b
 				return self._handle_focus_action(options)
 			else:
 				var action_string: String = GameAction.get_type_string(action_type)
-				Logger.error(self._BAD_FORMAT, [action_string, 1], self)
+				Log.error(self._BAD_FORMAT, [action_string, 1], self)
 		_:
 			var action_string: String = GameAction.get_type_string(action_type)
-			Logger.error(GameAction.UNSUPPORTED, [action_string], self)
+			Log.error(GameAction.UNSUPPORTED, [action_string], self)
 	return false
 
 func _handle_focus_action(action_payload: Dictionary) -> bool:

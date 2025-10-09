@@ -61,14 +61,14 @@ static func save_to_user_settings(incoming_settings: Dictionary) -> void:
 			var input_command: String = input_library.get(incoming_key)
 			user_settings_file.set_value(InputConfig.NAME, input_command, incoming_value)
 		else:
-			Logger.debug(_NOT_SUPPORTED_KEY, [incoming_key, _USER_SETTING], null)
+			Log.debug(_NOT_SUPPORTED_KEY, [incoming_key, _USER_SETTING], null)
 	# See if user_settings file has any generated data
 	var has_camera: bool = user_settings_file.has_section(CameraConfig.NAME)
 	var has_input: bool = user_settings_file.has_section(InputConfig.NAME)
 	if has_camera or has_input:
 		user_settings_file.save(USER_SETTINGS_FILE)
 	else:
-		Logger.debug(_NO_OVERRIDE_RESULTS, [str(incoming_settings)], null)
+		Log.debug(_NO_OVERRIDE_RESULTS, [str(incoming_settings)], null)
 
 ## Appends incoming settings to existing override.cfg
 static func save_to_override(incoming_settings: Dictionary) -> void:
@@ -104,7 +104,7 @@ static func save_to_override(incoming_settings: Dictionary) -> void:
 			override_file.set_value(DisplayConfig.NAME, display_command, incoming_value)
 		else:
 			# Log that given key isn't currently supported and won't be saved to override
-			Logger.debug(_NOT_SUPPORTED_KEY, [incoming_key, _OVERRIDE], null)
+			Log.debug(_NOT_SUPPORTED_KEY, [incoming_key, _OVERRIDE], null)
 	# Check if override file generated any output
 	var has_application: bool = override_file.has_section(ApplicationConfig.NAME)
 	var has_debug: bool = override_file.has_section(DebugConfig.NAME)
@@ -113,7 +113,7 @@ static func save_to_override(incoming_settings: Dictionary) -> void:
 		# Save new configuration as override
 		override_file.save(OVERRIDE_FILE)
 	else:
-		Logger.debug(_NO_OVERRIDE_RESULTS, [str(incoming_settings)], null)
+		Log.debug(_NO_OVERRIDE_RESULTS, [str(incoming_settings)], null)
 
 ## Loads and returns the override.cfg file
 ## Returns null if no file exists
@@ -129,10 +129,10 @@ static func _load_file(file_path: String) -> ConfigFile:
 	if FileAccess.file_exists(file_path):
 		var error: Error = return_file.load(file_path)
 		if error != OK:
-			Logger.error(_LOAD_FAIL, [file_path], null)
+			Log.error(_LOAD_FAIL, [file_path], null)
 	else:
-		var formatted_string: String = _FILE_NOT_FOUND + Logger.LOG_SEPARATOR + Logger.RETURNING_NULL_LOG
-		Logger.debug(formatted_string, [file_path], null)
+		var formatted_string: String = _FILE_NOT_FOUND + Log.LOG_SEPARATOR + Log.RETURNING_NULL_LOG
+		Log.debug(formatted_string, [file_path], null)
 	return return_file
 
 ## Deletes the given category from the desired file if it exists
@@ -147,10 +147,10 @@ static func delete_file_category(file_type: FILE_TYPE, file_category: String) ->
 		if updating_file.has_section(file_category):
 			updating_file.erase_section(file_category)
 			updating_file.save(PATH_LIBRARY.get(file_type))
-			Logger.debug(_CATEGORY_ERASED, [file_category, str(file_type)], null)
+			Log.debug(_CATEGORY_ERASED, [file_category, str(file_type)], null)
 		else:
-			var formatted_string: String = _MISSING_CATEGORY + Logger.LOG_SEPARATOR + _NOT_DELETING
-			Logger.debug(formatted_string, [str(file_type), file_category, str(file_type), file_category], null)
+			var formatted_string: String = _MISSING_CATEGORY + Log.LOG_SEPARATOR + _NOT_DELETING
+			Log.debug(formatted_string, [str(file_type), file_category, str(file_type), file_category], null)
 	else:
-		var formatted_string: String = _FILE_NOT_FOUND + Logger.LOG_SEPARATOR + _NOT_DELETING
-		Logger.debug(formatted_string, [str(file_type), str(file_type), file_category], null)
+		var formatted_string: String = _FILE_NOT_FOUND + Log.LOG_SEPARATOR + _NOT_DELETING
+		Log.debug(formatted_string, [str(file_type), str(file_type), file_category], null)

@@ -19,5 +19,5 @@ func set_camera_focus(camera_guid: String, focus_guid: String) -> bool:
 		if missing_variable != "":
 			missing_variable += "; "
 		missing_variable += self._FOCUS if !node_exists else ""
-		Logger.error(self._MISSING_NODE, [self._FOCUS_GUID, missing_variable], self)
+		Log.error(self._MISSING_NODE, [self._FOCUS_GUID, missing_variable], self)
 		return false

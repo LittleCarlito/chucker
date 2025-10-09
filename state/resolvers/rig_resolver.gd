@@ -14,7 +14,7 @@ static func resolve_focus(incoming_rig: CameraRig, incoming_update: StateUpdate)
 		var new_position: Vector3 = update_details[StateHeaders.TARGET_POSITION]
 		incoming_rig.snap_to(new_position)
 	else:
-		Logger.error(Logger._CANT_PERFORM, [missing_keys, _RESOLVE_FOCUS], null)
+		Log.error(Log._CANT_PERFORM, [missing_keys, _RESOLVE_FOCUS], null)
 
 ## Right now it is just logic handling transitioning into and out of tracking state
 static func resolve_state(incoming_rig: CameraRig, incoming_update: StateUpdate) -> void:
@@ -27,7 +27,7 @@ static func resolve_state(incoming_rig: CameraRig, incoming_update: StateUpdate)
 		if tracking_detection == -1:
 			incoming_rig.remove_tracking_distance()
 	else:
-		Logger.error(Logger._CANT_PERFORM, [missing_keys, _RESOLVE_STATE], null)
+		Log.error(Log._CANT_PERFORM, [missing_keys, _RESOLVE_STATE], null)
 
 static func resolve_toggles(incoming_rig: CameraRig, incoming_details: Dictionary) -> void:
 	var missing_keys: Array[String] = StateUtil.get_missing_keys(incoming_details, StateHeaders.TOGGLE_KEYS)
@@ -39,7 +39,7 @@ static func resolve_toggles(incoming_rig: CameraRig, incoming_details: Dictionar
 			else:
 				incoming_rig.remove_crouching_distance()
 	else:
-		Logger.error(Logger._CANT_PERFORM, [missing_keys, _RESOLVE_TOGGLES], null)
+		Log.error(Log._CANT_PERFORM, [missing_keys, _RESOLVE_TOGGLES], null)
 
 static func resolve_for_frame(incoming_rig: CameraRig, delta: float) -> void:
 	# Handle min height logic
