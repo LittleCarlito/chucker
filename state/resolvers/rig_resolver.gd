@@ -58,7 +58,7 @@ static func resolve_for_frame(incoming_rig: CameraRig, delta: float) -> void:
 			var focused_data: AssetState = incoming_rig.get_tracked_data_for(focused_guid)
 			if focused_data != null:
 				var focused_position: Vector3 = focused_data.get_current_position()
-				incoming_rig.track_position(focused_position)
+				incoming_rig.track_position(focused_position, delta)
 			else:
 				var data_warn: String = _MISSING_FOCUSED_DATA % [incoming_rig.name, focused_guid]
 				incoming_rig.output_warning(data_warn)

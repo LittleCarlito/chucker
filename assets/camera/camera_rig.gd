@@ -78,42 +78,21 @@ func _ready() -> void:
 	# TODO Have this done in scene setup calls for state setting
 	#			This shoudl be done as a result of the final state of the camera rig befroe starting the scene is unfocused or tracking (just like with the gating on _handle_input)
 	GlobalCursorController.request_state(self, GlobalCursorController.CursorState.CAPTURED, "Should be done in camera or scene state stuff")
-	# State connections
-
-	# TODO OOOOO - Continuation of GlobalStateController refactor
-	# TODO Refactor to handle update signals from AssetState
-	#			Probably have to make said signals as well
-	# GlobalStateController.connect(SIGNAL_NAME.STATE_UPDATED, _handle_new_state_signal)
 
 # TODO Figure out how to have this pushed down from state instead
 #			Will probably require EVERYTHING functioning off state first to work though
 func _physics_process(delta: float) -> void:
 	RigResolver.resolve_for_frame(self, delta)
-	# TODO Move this with other things into the RigResolver
-	# if self.min_height != -NUMBERS.FLOAT16_MAX:
-	# 	var is_height_held: bool = self.min_height > self.camera_controller.global_position.y
-	# 	self.camera_controller.global_position.y = max(self.min_height, self.camera_controller.global_position.y)
-	# 	if is_height_held:
-	# 		var height_warning: String = self._MIN_HEIGHT_WARN % self.min_height
-	# 		self.asset_state.output_warning(height_warning)
 
-
-
-
-
-
-# TODO You were here Implement this and then find the other spot where it says you were here
-#			Next shit shoudl be like refactoring the camera class down and then moving characters to AssetState
-func track_position(incoming_position: Vector3) -> void:
-	# TODO Find the asset state in the tracked assets of AssetState
-	# TODO If not found in tracked assets log a warning
-	pass
-
-
-
-
-
-
+## Lerps to given position; Frame indpendent, usable in process and process_physics
+func track_position(incoming_position: Vector3, delta: float) -> void:
+	var lerp_speed: float = GameConfig.CAMERA.LERP_SPEED * delta
+	var weighted_speed: float = 1 - exp(-lerp_speed)
+	self.position = self.position.lerp(incoming_position, weighted_speed)
+	# TODO Once confirmed it works delete below
+	#			Above is supposed to be safer/improved version that can be used in process and process_physics (truely frame indpenedent)
+	# var lerp_speed: float = GameConfig.CAMERA.LERP_SPEED * delta
+	# self.position = self.position.lerp(incoming_position, lerp_speed)
 
 ## Sets state to idle rotate
 func idle_rotate() -> void:
@@ -237,54 +216,20 @@ func set_camera_controller_height(incoming_height: float) -> void:
 func output_warning(incoming_warning: String) -> bool:
 	return self.asset_state.output_warning(incoming_warning)
 
-# TODO OUTLINE
-# Then improve camera rigs handling of state changes to properly do shit
-# Everything that happens is based off a state change or a transform action (or a warn i guess)
-# 	So something like integrate target just creates a set state action with the guid and state to set
-# 		Handling of state change deals with the rest after it gets to that point
-# 			Initial state change sets position with offset if tracking
-# 				Only if going from non tracking to tracking state
-# 					Tracking to anything else (tracking or non) does nothing
-# 			After that state tracking is done via state signal watching for integrated guid
-# 				Moves to the same position as the tracked guid but with the offset applied
-# 	Then with the integration logic it should be wathcing for state data changes for the guid it is integrated with
-# 		So on transform/state changes it too can react properly
-#		TLDR: SET_RIG_FOCUS -> SET_STATE; State transition reactions -> addition guid tracking + reactions
+# TODO CONTINUE FROM HERE
+# TODO Then refactor camera class to be cleaner
+# TODO Then get to moving character over to being AssetState based
 
-# TODO WORK ITEMS
-
-# TODO Refactor characters to use and navigate the world based off state shit instead of direct manipulation
-# 	Once they work off their state data
-# 		Camera logic can be updated to react/move to its state update signals as well and keep up/focus on the correct thing
 
 # TODO We need to get actions that take place in the game as a result of the character/objects to change state properly
-#			i.e. 
-				# tracking on throw, 
-				# tracking spawned disk from path disk, 
-				# idle rotating on disk rest, 
-				# return to character after throw idle,
-				# idle rotate character on idle sit,
-				# snap back to tracking on control usage,
-				# etc
-
-# TODO Freelook working but needs tweaking
-# TODO Then get tracking working
-# TODO Then do rest of todos in file
-# TODO Break down file into extending/inheriting classes
-# TODO Tracking offset needs to be entirely based off state transitions
-#				Non tracking to tracking; offset added
-#				tracking to tracking; no action
-#				tracking to non tracking; offset removed
-# TODO change deintegrate to instead be a state update
-# TODO In handle state update function
-#				leave stuff looking for own guid
-#				add a check to see if there is a focused guid
-#					if there is a focused guid also track those updates
-# TODO Make a function to handle state updates to focused object
-#			When the focused object position change is detected
-#				Get the global position of the object
-#				set the cameras position to that position with the offset
-# TODO Get rid of the focus boolean
+# i.e. 
+	# Freelooking without tracking
+	# tracking on throw
+	# tracking spawned disk from path disk
+	# idle rotating on disk rest
+	# return to character after throw idle
+	# idle rotate character on idle sit
+	# snap back to tracking on control usage
 
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
@@ -365,18 +310,6 @@ func _handle_sprint_start() -> void:
 func _handle_sprint_stop() -> void:
 	self.asset_state.stop_sprinting()
 
-
-
-
-
-
-# TODO CONTINUE FROM HERE
-#			Then get frame to frame state handling written
-#				DO THIS IN TransformResolver
-#				needs to lerp to position of tracked asset if in certain states
-#				perform other frame to frame activities you can think of that need handling due to state
-# TODO Then refactor camera class to be cleaner
-# TODO Then get to moving character over to being AssetState based
 func apply_tracking_distance() -> void:
 	self.camera_controller.position = GameConfig.CAMERA.TRACKING_POSITION
 

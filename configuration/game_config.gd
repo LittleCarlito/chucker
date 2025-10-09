@@ -5,15 +5,17 @@ const NAME: String = "game"
 const TRACKING_POSITION: String = "tracking_position"
 const CROUCHING_POSITION: String = "crouching_position"
 
+const LERP_SPEED: String = "lerp_speed"
+
 const EMPTY_VECTOR: Vector3 = Vector3(0, 0, 0)
 
 const CAMERA: Dictionary = {
 	TRACKING_POSITION: Vector3(0, 7, 10),
-	CROUCHING_POSITION: Vector3(0, 5, 10)
+	CROUCHING_POSITION: Vector3(0, 5, 10),
+	LERP_SPEED: 5
 }
 
 const DEFAULTS: Dictionary = {
-	"lerp_speed": 5,
 	# Camera values
 	"controller_distance": 6.8,
 	"controller_height": 3.4,
