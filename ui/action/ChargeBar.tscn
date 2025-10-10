@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://dgugjjr1k0dl"]
 
-[ext_resource type="Script" path="res://assets/ui/action/charge_bar.gd" id="1_efdqu"]
-[ext_resource type="Theme" uid="uid://d4ljojrs5trrq" path="res://assets/ui/action/label_theme.tres" id="2_dblv8"]
+[ext_resource type="Script" path="res://ui/action/charge_bar.gd" id="1_efdqu"]
+[ext_resource type="Theme" uid="uid://d4ljojrs5trrq" path="res://ui/action/label_theme.tres" id="2_dblv8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jh7hj"]
 bg_color = Color(0, 0, 0, 1)

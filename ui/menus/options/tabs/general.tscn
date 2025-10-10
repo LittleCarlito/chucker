@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://buvmjg7acd3wt"]
 
-[ext_resource type="Theme" uid="uid://df6ukhlv3h184" path="res://assets/ui/menus/options/OptionsMenu_theme.tres" id="1_7bmpg"]
-[ext_resource type="Script" path="res://assets/ui/menus/options/tabs/general.gd" id="1_lndr6"]
+[ext_resource type="Theme" uid="uid://df6ukhlv3h184" path="res://ui/menus/options/OptionsMenu_theme.tres" id="1_7bmpg"]
+[ext_resource type="Script" path="res://ui/menus/options/tabs/general.gd" id="1_lndr6"]
 
 [node name="General" type="Control" node_paths=PackedStringArray("fov_slider", "fov_value", "horizontal_aim_sensitivity_slider", "horizontal_aim_sensitivity_value", "vertical_aim_sensitivity_slider", "vertical_aim_sensitivity_value", "horizontal_look_sensitivity_slider", "horizontal_look_sensitivity_value", "vertical_look_sensitivity_slider", "vertical_look_sensitivity_value", "v_inversion_toggle", "h_inversion_toggle", "fov_label", "horizontal_look_sensitivity_label", "vertical_look_sensitivity_label", "horizontal_aim_sensitivity_label", "vertical_aim_sensitivity_label", "top_slider_rows")]
 layout_mode = 3

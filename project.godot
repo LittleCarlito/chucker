@@ -25,15 +25,15 @@ buses/default_bus_layout=""
 
 DrawUtil="*res://utils/draw_util.gd"
 NodeUtil="*res://utils/node_util.gd"
-Log="*res://utils/Log.gd"
 InputSprite="*res://configuration/input/input_sprite.gd"
 GlobalHoleData="*res://assets/buildings/course/data/global_hole_data.gd"
 UserSettingData="*res://configuration/handler/user_setting_data.gd"
 AssetDelivery="*res://assets/factory/asset_delivery.gd"
 GlobalInputController="*res://input/global_input_controller.gd"
-GlobalCameraController="*res://assets/camera/global_camera_controller.gd"
+GlobalCameraController="*res://camera/global_camera_controller.gd"
 GlobalCursorController="*res://input/global_cursor_controller.gd"
 GlobalStateController="*res://state/global_state_controller.gd"
+Log="*res://utils/log.gd"
 
 [display]
 

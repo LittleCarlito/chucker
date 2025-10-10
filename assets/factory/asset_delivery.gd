@@ -22,8 +22,9 @@ func create_and_launch(flight_data: FlightData, asset_data: AssetData) -> Node3D
 	var new_asset: Node3D = AssetFactory.create_asset(asset_data.internal_type)
 	if new_asset != null:
 		_set_asset_data(new_asset, asset_data)
-		if new_asset.has_method(GroupData.SYNC_ASSET):
-			new_asset.call(GroupData.SYNC_ASSET)
+		if new_asset.has_method(GroupData.GET_ASSET_STATE):
+			var new_state: AssetState = new_asset.call(GroupData.GET_ASSET_STATE)
+			AssetStateResolver.serialize(new_asset, new_state)
 		get_tree().get_current_scene().add_child(new_asset)
 		# Might need a check to ensure flight_path is populated first
 		if !flight_data.flight_path.is_empty():
@@ -50,8 +51,9 @@ func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) ->
 	var new_asset: Node3D = AssetFactory.create_asset(incoming_item.asset_data.creation_type)
 	if new_asset != null:
 		_set_asset_data(new_asset, new_item_data)
-		if new_asset.has_method(GroupData.SYNC_ASSET):
-			new_asset.call(GroupData.SYNC_ASSET)
+		if new_asset.has_method(GroupData.GET_ASSET_STATE):
+			var new_state: AssetState = new_asset.call(GroupData.GET_ASSET_STATE)
+			AssetStateResolver.serialize(new_asset, new_state)
 		item_owner.equip_item(new_asset)
 		incoming_item.pick_up()
 	else:
@@ -89,8 +91,9 @@ func spawn_asset(spawn_data: SpawnData) -> Node3D:
 	else:
 		get_tree().get_current_scene().add_child(created_node)
 	created_node.global_position = spawn_data.spawn_location
-	if created_node is StatefulAsset:
-		created_node.sync_asset()
+	if created_node.has_method(GroupData.GET_ASSET_STATE):
+		var asset_state: AssetState = created_node.call(GroupData.GET_ASSET_STATE)
+		AssetStateResolver.serialize(created_node, asset_state)
 	return created_node
 
 static func _set_asset_data(incoming_asset: Node3D, incoming_data: AssetData) -> bool:
@@ -117,40 +120,10 @@ static func _launch_asset(incoming_asset: Node3D, focus_flight: bool = false) ->
 		incoming_asset.call(GroupData.LAUNCH)
 		asset_launched = true
 		if focus_flight:
-
-			# var focus_node: Node3D
-			# TODO Make a global state controller request to have the rig integrate with the determined part based off asset type below
-			#		Should be able to use existing logic for integrate shit in camera state
-			#		Should be able to pass in the guid and the Node3D that we want to track as reference with that guid
-			# if incoming_asset is PathDisk:
-			# 	focus_node = incoming_asset.call(GroupData.GET_PATH_FOLLOW)
-				# GlobalCameraController.focus_new_node(path_follow)
-			# else:
-			# 	focus_node = incoming_asset
-				# GlobalCameraController.focus_new_node(incoming_asset)
-			# TODO Create action to dispatch integrate camera with launched asset
-			# TODO Need to get primary camera rig guid
-			#			Create a new function in GlobalStateController for this
-
-			# TODO Above pretty much boils down to "Create underlying StatefulObject class" for all things that can be associated to state data
-			#			Then create a get integration node function in that new class
-			#				Implmenters like path disk then return shit like their path_follow above from that function
-			#					Thigns like force disk just return themselves
-			#				Then when a camera tries to integrate based off GUID it gets the correct part of the asset
-			
 			if incoming_asset.has_meta(GroupData.GUID):
-				var primary_camera_guid: String = GlobalStateController.get_primary_guid(STATE.DATA_TYPE.CAMERA)
-				var state_string: String = STATE.get_state_string(STATE.ASSET.TRACKING_FULL)
-				var target_guid: String = incoming_asset.get_meta(GroupData.GUID)
-				# TODO Refactor this to be a state setting action instead
-				# TODO Then chase the state action handling logic through dispatch to ensure the state shit handles all data
-				var set_state_dictionary: Dictionary = {
-					GameAction.OWNER_GUID: primary_camera_guid,
-					GameAction.STATE: state_string,
-					GameAction.TARGET_GUID: target_guid
-				}
-				var state_action: GameAction = GameAction.new(GameAction.TYPE.SET_STATE, set_state_dictionary)
-				GlobalStateController.dispatch(state_action)
+				# TODO Need up update the camera rig's focused guid to be that of the disk
+				# TODO Make sure the focus guid logic will add the guid's asset state to the tracked dictionary if it isn't already in there
+				pass
 			else:
 				Log.error(_BAD_ASSET, [], null)
 

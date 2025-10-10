@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://deqcpdfgwi2sl"]
 
-[ext_resource type="Theme" uid="uid://dpes7vxx3rpqi" path="res://assets/ui/buttons/MenuButton_theme.tres" id="1_3rhfu"]
+[ext_resource type="Theme" uid="uid://dpes7vxx3rpqi" path="res://ui/buttons/MenuButton_theme.tres" id="1_3rhfu"]
 [ext_resource type="Texture2D" uid="uid://d38j3sn48k67u" path="res://resources/Sprites/Menu/ResumeButton.png" id="1_say6p"]
 
 [node name="Button" type="Button"]

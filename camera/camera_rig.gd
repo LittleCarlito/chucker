@@ -59,8 +59,16 @@ const _HANDLE_STATE_UPDATE: String = "Handle State Update"
 # TODO Get rid of this; Should be able to use GlobalStateController to get anything via guid
 var _focus_state: AssetState
 
+# TODO OOOOO CONTINUE FROM HERE
+# TODO 			Need to fix how Factory/Delivery creates things
+#					need to create and use constructors here for creating and passing guids right away
+#					Don't need to wait for delivery into the scene for branding; that should be part of constructors
+# TODO Need a constructor that takes in the guid from the start
+#		This way we don'g have asset state null issues in ready
+#			Log as much stating that is the probable issue in ready
+
+
 func _ready() -> void:
-	asset_state.connect(SIGNAL_NAME.STATE_DATA_CHANGE, _handle_state_update)
 	# Camera signal connections
 	# TODO Got rid of this for the moment; Might need to recreate once camera/state refactor is complete
 	# GlobalCameraController.connect(SIGNAL_NAME.REQUEST_CAMERA, _handle_camera_request)
@@ -143,7 +151,7 @@ func deintegrate_all() -> void:
 
 # TODO Test trying to set wrong state; ensure it doesn't work and logs
 func transition_state(incoming_state: STATE.ASSET) -> void:
-	var camera_state_data: CameraStateData = asset_state.get_state_data()
+	var camera_state_data: StateData = asset_state.get_state_data()
 	if camera_state_data == null:
 		Log.error(Log._CANT_PERFORM, [self._OWN_STATE, self._TRANSITION_STATE], self)
 		return
@@ -152,6 +160,11 @@ func transition_state(incoming_state: STATE.ASSET) -> void:
 		var from_state_string: String = STATE.get_state_string(old_state)
 		var to_state_string: String = STATE.get_state_string(incoming_state)
 		Log.debug(self._SUCCESSFUL_TRANSITION, [from_state_string, to_state_string], self)
+
+func get_asset_state() -> AssetState:
+	if self.asset_state == null:
+		self._create_state(self.get_meta(GroupData.GUID))
+	return self.asset_state
 
 func get_focused_guid() -> String:
 	return asset_state.get_focused_guid()
@@ -167,12 +180,6 @@ func make_current() -> void:
 
 func clear_current() -> void:
 	self.internal_camera.clear_current()
-
-func set_tracking_mode(mode: GlobalCameraController.TrackingMode) -> void:
-	self.tracking_mode = mode
-
-func get_tracking_mode() -> GlobalCameraController.TrackingMode:
-	return self.tracking_mode
 
 func is_primary_freelook_enabled() -> bool:
 	return self.primary_freelook_enabled
@@ -230,6 +237,15 @@ func output_warning(incoming_warning: String) -> bool:
 	# idle rotate character on idle sit
 	# snap back to tracking on control usage
 
+func _create_state(
+					incoming_guid: String,
+					incoming_transitions: Dictionary = {}, 
+					incoming_values: Dictionary = {}, 
+					incoming_windows: Dictionary = {}
+				) -> void:
+	self.asset_state = AssetState.new(incoming_guid, incoming_transitions, incoming_values, incoming_windows)
+	asset_state.connect(SIGNAL_NAME.STATE_DATA_CHANGE, _handle_state_update)
+
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
 func _apply_min_height_constraint(incoming_position: Vector3) -> Vector3:
@@ -241,7 +257,7 @@ func _apply_min_height_constraint(incoming_position: Vector3) -> Vector3:
 # TODO Should be a lower class function after camera refactor
 #		Higher class
 func _handle_input() -> void:
-	var camera_state_data: CameraStateData = asset_state.get_state_data()
+	var camera_state_data: StateData = asset_state.get_state_data()
 	if camera_state_data == null:
 		Log.error(Log._CANT_PERFORM, [self._OWN_STATE, self._HANDLE_INPUT], self)
 		return

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://uyfdjyipfutg"]
 
-[ext_resource type="Script" path="res://assets/camera/camera_container.gd" id="1_yhe62"]
+[ext_resource type="Script" path="res://camera/camera_container.gd" id="1_yhe62"]
 
 [node name="CameraContainer" type="Node3D" node_paths=PackedStringArray("camera_control", "camera_timer") groups=["CameraContainer"]]
 script = ExtResource("1_yhe62")

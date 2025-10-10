@@ -11,7 +11,7 @@ func set_camera_focus(camera_guid: String, focus_guid: String) -> bool:
 	var has_camera: bool = self.has_guid(camera_guid)
 	var node_exists: bool = GlobalStateController.node_has_state(focus_guid)
 	if has_camera and node_exists:
-		var camera_state_data: CameraStateData = self.get_header_data(camera_guid, StateHeaders.TYPE.DATA)
+		var camera_state_data: StateData = self.get_header_data(camera_guid, StateHeaders.TYPE.DATA)
 		camera_state_data.set_focus(focus_guid)
 		return true
 	else:

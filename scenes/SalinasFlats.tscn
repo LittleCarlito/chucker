@@ -1,16 +1,12 @@
 [gd_scene load_steps=8 format=3 uid="uid://0p7etoed8w0v"]
 
-[ext_resource type="Script" path="res://scenes/salinas_flats.gd" id="1_nouo6"]
-[ext_resource type="Script" path="res://assets/data/asset_data.gd" id="2_audb8"]
+[ext_resource type="Script" uid="uid://bca5ha8g48loo" path="res://scenes/salinas_flats.gd" id="1_nouo6"]
+[ext_resource type="Script" uid="uid://cbw2goqhoft0y" path="res://assets/data/asset_data.gd" id="2_audb8"]
 [ext_resource type="Environment" uid="uid://bm00mgoeg2ojv" path="res://resources/environment_default.tres" id="5_ll0n0"]
-[ext_resource type="PackedScene" uid="uid://dga2v203y41nq" path="res://assets/ui/menus/control_node.tscn" id="7_inl8g"]
+[ext_resource type="PackedScene" uid="uid://dga2v203y41nq" path="res://ui/menus/control_node.tscn" id="7_inl8g"]
 
 [sub_resource type="Resource" id="Resource_24efs"]
 script = ExtResource("2_audb8")
-internal_type = 0
-creation_type = 0
-group_name = ""
-owner_rid = RID()
 
 [sub_resource type="BoxMesh" id="BoxMesh_vba8s"]
 size = Vector3(50, 3, 200)

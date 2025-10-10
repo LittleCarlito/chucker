@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://btbtiiilcdji5"]
 
-[ext_resource type="Script" path="res://assets/ui/views/scorecard_view.gd" id="1_cnyd7"]
-[ext_resource type="PackedScene" uid="uid://cyjoxd73gt85u" path="res://assets/ui/menus/Scorecard.tscn" id="1_xsqs2"]
+[ext_resource type="Script" path="res://ui/views/scorecard_view.gd" id="1_cnyd7"]
+[ext_resource type="PackedScene" uid="uid://cyjoxd73gt85u" path="res://ui/menus/Scorecard.tscn" id="1_xsqs2"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_3b3cj"]
 viewport_path = NodePath("ScorecardViewport")

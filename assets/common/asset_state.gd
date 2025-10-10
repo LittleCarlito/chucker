@@ -3,6 +3,7 @@ class_name AssetState
 
 signal state_data_change(state_update: StateUpdate)
 
+const CLASS_NAME: String = "AssetState"
 const _CURRENTLY_TRACKED: String = "Cannot stop tracking GUID \"%s\" as it is the currently tracked asset; Change asset state before untracking"
 const _BAD_FORMAT: String = "Incoming request to \"%s\" cannot be performed; %d optional parameters must be provided"
 const _DUPLICATE_TRACKED_STATES: String = "Duplicate tracked asset states belonging to owner \"%s\" have been found; ILLEGAL STATE"
@@ -16,19 +17,19 @@ var _state_data: StateData
 var _state_warnings: Dictionary
 var _tracked_assets: Dictionary
 
-func sync_asset() -> void:
-	if self._state_data == null:
-		Log.error(Log._CANT_PERFORM, [self._STATE_DATA, "Sync Asset"], self)
-		return
-	if self.owner == null:
-		Log.error("Cannot sync asset: owner is null", [], self)
-		return
-	var current_position: Vector3 = self.owner.global_position
-	var current_rotation: Quaternion = Quaternion(self.owner.global_transform.basis)
-	var current_scale: Vector3 = self.owner.scale
-	self._state_data.update_position(current_position - self._state_data.get_current_position())
-	self._state_data.update_rotation(current_rotation * self._state_data.get_current_rotation().inverse())
-	self._state_data.update_scale(current_scale / self._state_data.get_current_scale())
+func _init(
+			owner_guid: String,
+			incoming_transitions: Dictionary = {}, 
+			incoming_values: Dictionary = {}, 
+			incoming_windows: Dictionary = {}
+		) -> void:
+	self._guid_string = owner_guid
+	self._state_data = StateData.new(self._guid_string, incoming_transitions, incoming_values, incoming_windows)
+
+func sync_asset(owner_position: Vector3, owner_rotation: Quaternion, owner_scale: Vector3) -> void:
+	self._state_data.update_position(owner_position)
+	self._state_data.update_rotation(owner_rotation)
+	self._state_data.update_scale(owner_scale)
 
 func get_min_height() -> float:
 	return self._state_data.get_min_height()
@@ -93,10 +94,7 @@ func get_guid_string() -> String:
 
 func get_state_data() -> StateData:
 	if self._state_data == null:
-		var owner_name: String = ""
-		if self.owner != null:
-			owner_name = self.owner.name
-		self._state_data = StateData.new(_guid_string, owner_name)
+		self._state_data = StateData.new(_guid_string)
 	return self._state_data
 
 func set_to_state(incoming_state: STATE.ASSET) -> bool:

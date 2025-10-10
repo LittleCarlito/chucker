@@ -1,10 +1,10 @@
 [gd_scene load_steps=8 format=3 uid="uid://br204kkclspff"]
 
-[ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://assets/ui/menus/MainMenu_theme.tres" id="1_2j2cw"]
-[ext_resource type="Script" path="res://assets/ui/menus/control_select_menu.gd" id="1_pwala"]
+[ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://ui/menus/MainMenu_theme.tres" id="1_2j2cw"]
+[ext_resource type="Script" path="res://ui/menus/control_select_menu.gd" id="1_pwala"]
 [ext_resource type="Texture2D" uid="uid://dp7ixwl5200ai" path="res://resources/Sprites/Menu/WaitingTitle.png" id="2_xubpx"]
-[ext_resource type="PackedScene" uid="uid://djhanwg2fiofw" path="res://assets/ui/buttons/SaveButton.tscn" id="3_klx70"]
-[ext_resource type="PackedScene" uid="uid://bet7qye2parpa" path="res://assets/ui/buttons/BackButton.tscn" id="4_0msth"]
+[ext_resource type="PackedScene" uid="uid://djhanwg2fiofw" path="res://ui/buttons/SaveButton.tscn" id="3_klx70"]
+[ext_resource type="PackedScene" uid="uid://bet7qye2parpa" path="res://ui/buttons/BackButton.tscn" id="4_0msth"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r061l"]
 bg_color = Color(0.6, 0.505882, 0.317647, 1)

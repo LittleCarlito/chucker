@@ -52,7 +52,7 @@ func retrieve_state_data(incoming_guid: String) -> StateData:
 		return null
 	if data_location.size() > 1:
 		Log.warn(self._DUPLICATE_GUID, [data_location], self)
-	return self._retrieve_from_location(data_location[0], StateHeaders.TYPE.DATA, incoming_guid)
+	return self._get_from_storage_location(data_location[0], StateHeaders.TYPE.DATA, incoming_guid)
 
 # TODO Add null handling to callers
 func retrieve_node(incoming_guid: String) -> Node3D:
@@ -62,7 +62,7 @@ func retrieve_node(incoming_guid: String) -> Node3D:
 		return null
 	if data_location.size() > 1:
 		Log.warn(self._DUPLICATE_GUID, [data_location], self)
-	return self._retrieve_from_location(data_location[0], StateHeaders.TYPE.NODE, incoming_guid)
+	return self._get_from_storage_location(data_location[0], StateHeaders.TYPE.NODE, incoming_guid)
 
 func has_guid(incoming_guid: String) -> bool:
 	return !self._find_in_data(incoming_guid).is_empty()
@@ -146,7 +146,7 @@ func _find_in_data(incoming_guid) -> Array[STATE.DATA_TYPE]:
 		return_array.append(STATE.DATA_TYPE.CAMERA)
 	return return_array
 
-func _retrieve_from_location(incoming_type: STATE.DATA_TYPE, incoming_header: StateHeaders.TYPE, incoming_guid: String):
+func _get_from_storage_location(incoming_type: STATE.DATA_TYPE, incoming_header: StateHeaders.TYPE, incoming_guid: String):
 	var header_string: String = StateHeaders.get_type_string(incoming_header)
 	# TODO Shoud do a check on the incoming header type to ensure it is something we store in a state dictionary
 	match incoming_type:
@@ -169,13 +169,14 @@ func _retrieve_from_location(incoming_type: STATE.DATA_TYPE, incoming_header: St
 			return self._camera_state.get_header_data(incoming_guid, incoming_header)
 		_:
 			var incoming_type_string: String = STATE.get_data_type_string(incoming_type)
+			# TODO Get to a string constant
 			Log.error("Incoming type \"%s\" is not supported", [incoming_type_string], self)
 			return null
 
 func _create_state_data(incoming_node: Node3D, incoming_type: String) -> StateData:
 	var new_state: StateData = null
 	if incoming_node.has_meta(GroupData.GUID):
-		new_state = StateData.new(incoming_node.get_meta(GroupData.GUID), incoming_node.name)
+		new_state = StateData.new(incoming_node.get_meta(GroupData.GUID))
 	else:
 		Log.error(self._MISSING_GUID, [incoming_type, incoming_node.name], self)
 	return new_state
