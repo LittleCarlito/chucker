@@ -24,7 +24,7 @@ func create_and_launch(flight_data: FlightData, asset_data: AssetData) -> Node3D
 		_set_asset_data(new_asset, asset_data)
 		if new_asset.has_method(GroupData.GET_ASSET_STATE):
 			var new_state: AssetState = new_asset.call(GroupData.GET_ASSET_STATE)
-			AssetStateResolver.serialize(new_asset, new_state)
+			AssetStateResolver.serialize_node(new_asset, new_state)
 		get_tree().get_current_scene().add_child(new_asset)
 		# Might need a check to ensure flight_path is populated first
 		if !flight_data.flight_path.is_empty():
@@ -53,7 +53,7 @@ func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) ->
 		_set_asset_data(new_asset, new_item_data)
 		if new_asset.has_method(GroupData.GET_ASSET_STATE):
 			var new_state: AssetState = new_asset.call(GroupData.GET_ASSET_STATE)
-			AssetStateResolver.serialize(new_asset, new_state)
+			AssetStateResolver.serialize_node(new_asset, new_state)
 		item_owner.equip_item(new_asset)
 		incoming_item.pick_up()
 	else:
@@ -93,7 +93,7 @@ func spawn_asset(spawn_data: SpawnData) -> Node3D:
 	created_node.global_position = spawn_data.spawn_location
 	if created_node.has_method(GroupData.GET_ASSET_STATE):
 		var asset_state: AssetState = created_node.call(GroupData.GET_ASSET_STATE)
-		AssetStateResolver.serialize(created_node, asset_state)
+		AssetStateResolver.serialize_node(created_node, asset_state)
 	return created_node
 
 static func _set_asset_data(incoming_asset: Node3D, incoming_data: AssetData) -> bool:

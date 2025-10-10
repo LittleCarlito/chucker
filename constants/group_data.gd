@@ -23,7 +23,6 @@ const TRANSFER_AND_ENABLE: String = "_transfer_and_enable" # (incoming_camera: C
 const GET_CAMERA_CONTAINER: String = "_get_camera_container"
 # TODO All holders of AssetData need getters and setters created
 const SET_ASSET_DATA: String = "_set_asset_data" # (incoming_data: AssetData)
-const GET_ASSET_DATA: String = "_get_asset_data"
 # TODO All holders of FlightData need getters and setters created
 const SET_FLIGHT_DATA: String = "_set_flight_data" # (incoming_data: FlightData)
 const GET_FLIGHT_DATA: String = "_get_flight_data"

@@ -276,6 +276,15 @@ func update_movement_enabled(incoming_value: bool) -> void:
 func is_movement_enabled() -> bool:
 	return _movement_enabled
 
+func get_transitions() -> Dictionary:
+	return self._valid_transitions
+
+func get_values() -> Dictionary:
+	return self._state_values
+
+func get_windows() -> Dictionary:
+	return self._state_windows
+
 func get_owner_guid() -> String:
 	return _owner_guid
 

@@ -7,6 +7,8 @@ const _FOCUS_GUID: String = "Focus GUID"
 const _CAMERA: String = "Camera"
 const _FOCUS: String = "Focus"
 
+# TODO Refactor the user of this to pull the node from StateStorage functions instead
+#		Then delete this class
 func set_camera_focus(camera_guid: String, focus_guid: String) -> bool:
 	var has_camera: bool = has_guid(camera_guid)
 	var node_exists: bool = GlobalStateController.node_has_state(focus_guid)

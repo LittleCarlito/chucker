@@ -59,15 +59,6 @@ const _HANDLE_STATE_UPDATE: String = "Handle State Update"
 # TODO Get rid of this; Should be able to use GlobalStateController to get anything via guid
 var _focus_state: AssetState
 
-# TODO OOOOO CONTINUE FROM HERE
-# TODO 			Need to fix how Factory/Delivery creates things
-#					need to create and use constructors here for creating and passing guids right away
-#					Don't need to wait for delivery into the scene for branding; that should be part of constructors
-# TODO Need a constructor that takes in the guid from the start
-#		This way we don'g have asset state null issues in ready
-#			Log as much stating that is the probable issue in ready
-
-
 func _ready() -> void:
 	# Camera signal connections
 	# TODO Got rid of this for the moment; Might need to recreate once camera/state refactor is complete
@@ -238,8 +229,6 @@ func _create_state(
 	asset_state.connect(SIGNAL_NAME.STATE_DATA_CHANGE, _handle_state_update)
 
 # TODO Specify if mouse or keyboard (pretty sure its mouse)
-# TODO Should be a lower class function after camera refactor
-#		Higher class
 func _handle_input() -> void:
 	var camera_state_data: StateData = asset_state.get_state_data()
 	if camera_state_data == null:
@@ -252,8 +241,6 @@ func _handle_input() -> void:
 		elif GlobalCursorController.get_current_state() == GlobalCursorController.CursorState.VISIBLE:
 			GlobalCursorController.request_state(self, GlobalCursorController.CursorState.CAPTURED, _FREELOOK_REASONING)
 
-# TODO Should be a lower class function after camera refactor
-#		Higher class
 func _handle_freelook(v_motion: float, h_motion: float) -> void:
 	var camera_state_data: StateData = asset_state.get_state_data()
 	if camera_state_data == null:
@@ -264,8 +251,6 @@ func _handle_freelook(v_motion: float, h_motion: float) -> void:
 		pan_horizontal(h_motion * freelook_sensitivity)
 		pitch_vertical(v_motion * freelook_sensitivity)
 
-# TODO Should be a lower class function after camera refactor
-#		Higher class
 func _handle_up_input(_delta: float) -> void:
 	if asset_state.is_movement_enabled():
 		var sprint_multiplier: float = _get_sprint_value(asset_state.is_sprinting())
@@ -273,8 +258,6 @@ func _handle_up_input(_delta: float) -> void:
 		var movement_vector: Vector3 = Vector3(0, movement_amount, 0)
 		asset_state.apply_movement(movement_vector)
 
-# TODO Should be a lower class function after camera refactor
-#		Higher class
 func _handle_down_input(_delta: float) -> void:
 	if asset_state.is_movement_enabled():
 		var sprint_multiplier: float = _get_sprint_value(asset_state.is_sprinting())
@@ -282,8 +265,6 @@ func _handle_down_input(_delta: float) -> void:
 		var movement_vector: Vector3 = Vector3(0, movement_amount, 0)
 		asset_state.apply_movement(movement_vector)
 
-# TODO Should be a lower class function after camera refactor
-#		Higher class
 func _handle_input_direction(incoming_direction: Vector2) -> void:
 	if asset_state.is_movement_enabled():
 		var sprint_multiplier: float = _get_sprint_value(asset_state.is_sprinting())
@@ -299,13 +280,9 @@ func _get_sprint_value(is_sprinting: bool) -> float:
 		sprint_value = GameConfig.DEFAULTS.sprint_multiplier
 	return sprint_value
 
-# TODO Should be a lower class function after camera refactor
-#		Lowest class
 func _handle_sprint_start() -> void:
 	asset_state.start_sprinting()
 
-# TODO Should be a lower class function after camera refactor
-#		Lowest class
 func _handle_sprint_stop() -> void:
 	asset_state.stop_sprinting()
 

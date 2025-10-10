@@ -1,10 +1,5 @@
 extends Node
 
-## Autoloaded singleton
-## Pretty much just forwarding calls to GameState
-##		Acts as gatekeeper for what non-state users can do
-##		Logs their interactions and status of their attempts with reasoning
-
 const _UNSUPPORTED_HEADER: String = "Incoming header type \"%s\" was not supported; Incoming header enum value \"%d\""
 const _UNSUPPORTED_TYPE: String = "Incoming type \"%s\" is not supported; %s"
 const _NO_PRIMARY: String = "Items do not have a \"primary\" to retireve"
@@ -17,7 +12,6 @@ var _game_state: GameState
 
 func _ready() -> void:
 	_game_state = GameState.new()
-	# _game_state.connect(SIGNAL_NAME.STATE_UPDATED, _handle_game_state_change)
 
 func register_node(incoming_node: Node3D) -> StateData:
 	var return_data: StateData = null
@@ -31,9 +25,6 @@ func register_node(incoming_node: Node3D) -> StateData:
 
 func node_has_state(incoming_guid: String) -> bool:
 	return _game_state.has_guid(incoming_guid)
-
-# func get_current_status() -> GameState.STATUS:
-# 	return _game_state.get_current_status()
 
 func get_header_data(incoming_guid: String, header_type: StateHeaders.TYPE) -> Variant:
 	if incoming_guid.is_empty():
@@ -53,18 +44,6 @@ func get_header_data(incoming_guid: String, header_type: StateHeaders.TYPE) -> V
 
 func get_primary_guid(incoming_type: STATE.DATA_TYPE) -> String:
 	return _game_state.get_primary_guid(incoming_type)
-
-# func is_main_menu() -> bool:
-# 	return _game_state.get_current_status() == GameState.STATUS.MAIN_MENU
-
-# func is_pause_menu() -> bool:
-# 	return _game_state.get_current_status() == GameState.STATUS.PAUSE_MENU
-
-# func is_running_scene() -> bool:
-# 	return _game_state.get_current_status() == GameState.STATUS.RUNNING_SCENE
-
-# func is_unknown() -> bool:
-# 	return _game_state.get_current_status() == GameState.STATUS.UNKNOWN
 
 func print_details() -> void:
 	_game_state.print_details()

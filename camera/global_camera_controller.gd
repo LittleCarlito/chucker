@@ -13,13 +13,13 @@ enum TrackingMode {
 }
 
 func focus_new_node(new_focus: Node3D) -> void:
-	self.request_camera.emit(new_focus)
+	request_camera.emit(new_focus)
 
 func set_is_rig_focusing(incoming_focus: bool) -> void:
-	self.is_focusing.emit(incoming_focus)
+	is_focusing.emit(incoming_focus)
 
 func set_rig_height(new_height: float) -> void:
-	self.hold_height.emit(new_height)
+	hold_height.emit(new_height)
 
 func set_rig_idle(incoming_value: bool) -> void:
-	self.is_idling.emit(incoming_value)
+	is_idling.emit(incoming_value)

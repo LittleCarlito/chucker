@@ -4,6 +4,8 @@ const _MISSING_GUID: String = "Incoming node \"%s\" is missing a GUID and cannot
 const _GUID_NOT_FOUND: String = "Requested GUID \"%s\" does not exist in dictionary"
 const _DICTIONARY_DATA_NOT_FOUND: String = "Requested GUID \"%s\" dictionary does not contain %s"
 const _UNSUPPORTED_TYPE: String = "Incoming state header type \"%s\" for guid \"%s\" is not supported; Type numeric value \"%d\""
+# TODO Get rid of logs above for Log usages
+const _REGISTER_NEW_NODE: String = "register_new_node"
 
 var _state_dictionary: Dictionary
 
@@ -14,52 +16,52 @@ func get_state_dictionary() -> Dictionary:
 	return _state_dictionary
 
 func register_new_node(incoming_node: Node3D) -> StateData:
-	var incoming_name: String = incoming_node.name
-	if not incoming_node.has_meta(GroupData.GUID):
-		Log.error(_MISSING_GUID, [incoming_name], self)
-		return null
-	var incoming_guid: String = incoming_node.get_meta(GroupData.GUID)
-	if incoming_node is CameraRig:
-		# TODO Create a test to ensure transitions are respected
-		var camera_state_data: StateData = StateData.new(
-													incoming_guid, 
-													CameraStateConfiguration.VALID_TRANSITIONS,
-													CameraStateConfiguration.SPIN_VALUES
-													)
-		_state_dictionary[incoming_node.get_meta(GroupData.GUID)] = {
-			StateHeaders.STATE_DATA: camera_state_data,
-			StateHeaders.STATE_NODE: incoming_node
-		}
-		return camera_state_data.duplicate(true)
-	elif incoming_node is ThrowableItem:
-		var throwable_state_data: StateData =  StateData.new(
-												incoming_guid,
-												ThrowableStateConfiguration.VALID_TRANSITIONS,
-												ThrowableStateConfiguration.SPIN_VALUES,
-												ThrowableStateConfiguration.WINDOW_VALUES
-												)
+	if incoming_node.has_method(GroupData.GET_ASSET_STATE) && incoming_node.has_meta(GroupData.GUID):
+		var incoming_guid: String = incoming_node.get_meta(GroupData.GUID)
+		var state_data: StateData
+		var asset_state: AssetState
+		if incoming_node is CameraRig:
+			state_data = StateData.new(
+										incoming_guid, 
+										CameraStateConfiguration.VALID_TRANSITIONS,
+										CameraStateConfiguration.SPIN_VALUES
+										)
+			AssetStateResolver.serialize_state(state_data, incoming_node)
+			asset_state = incoming_node.get_asset_state()
+		elif incoming_node is ThrowableItem:
+			state_data =  StateData.new(
+										incoming_guid,
+										ThrowableStateConfiguration.VALID_TRANSITIONS,
+										ThrowableStateConfiguration.SPIN_VALUES,
+										ThrowableStateConfiguration.WINDOW_VALUES
+										)
+			AssetStateResolver.serialize_state(state_data, incoming_node)
+			asset_state = incoming_node.get_asset_state()
+		elif incoming_node is BaseCharacter:
+			state_data = StateData.new(
+										incoming_guid,
+										PlayerStateConfiguration.VALID_TRANSITIONS
+										)
+			AssetStateResolver.serialize_state(state_data, incoming_node)
+			asset_state = incoming_node.get_asset_state()
+		else:
+			if incoming_node.has(GroupData.GET_ASSET_STATE):
+				state_data= StateData.new(incoming_guid)
+				AssetStateResolver.serialize_state(state_data, incoming_node)
+				asset_state = incoming_node.call(GroupData.GET_ASSET_STATE)
 		_state_dictionary[incoming_guid] = {
-			StateHeaders.STATE_DATA: throwable_state_data,
+			StateHeaders.STATE_DATA: asset_state,
 			StateHeaders.STATE_NODE: incoming_node
 		}
-		return throwable_state_data.duplicate(true)
-	elif incoming_node is BaseCharacter:
-		var character_state_data: StateData = StateData.new(
-												incoming_guid,
-												PlayerStateConfiguration.VALID_TRANSITIONS
-												)
-		_state_dictionary[incoming_guid] = {
-			StateHeaders.STATE_DATA: character_state_data,
-			StateHeaders.STATE_NODE: incoming_node
-		}
-		return character_state_data.duplicate(true)
+		return state_data.duplicate()
 	else:
-		var state_data: StateData = StateData.new(incoming_guid)
-		_state_dictionary[incoming_guid] = {
-			StateHeaders.STATE_DATA: state_data,
-			StateHeaders.STATE_NODE: incoming_node
-		}
-		return state_data.duplicate(true)
+		var asset_state_log: String = "" if incoming_node.has_method(GroupData.GET_ASSET_STATE) else GroupData.GET_ASSET_STATE
+		var guid_log: String = "" if incoming_node.has_meta(GroupData.GUID) else GroupData.GUID
+		var divider: String = "" if asset_state_log.is_empty() else " "
+		var missing_vars: String = asset_state_log + divider + guid_log
+		var missing_log: String = "Incoming node with guid \"%s\" is missing %s" % [incoming_node.name, missing_vars]
+		Log.error(Log._CANT_PERFORM, [missing_log, _REGISTER_NEW_NODE], null)
+		return null
 
 func has_guid(incoming_guid: String) -> bool:
 	return _state_dictionary.has(incoming_guid)

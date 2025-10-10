@@ -17,9 +17,11 @@ enum AIM_TYPE {
 @export var charge_view: ChargeView
 @export var aim_line: AimLine
 @export var disk_mesh: DiskMesh
+@export var asset_state: AssetState
 
 const LAUNCHED: String = "launched"
 const AIM: String = "aim"
+# TODO Determine what AssetData is and if it can be deleted for AssetState
 var asset_data: AssetData
 var flight_data: FlightData
 var _primary_hold_time: float
@@ -47,6 +49,9 @@ func _handle_aim_action() -> void:
 
 func _handle_aim_release() -> void:
 	aim.emit(AIM_TYPE.ZOOM_OUT, 0)
+
+func get_asset_state() -> AssetState:
+	return asset_state
 
 func hold_action(_delta: float, _incoming_basis: Basis, _incoming_focus: bool) -> void:
 	Log.warn("No hold_action function implemented for this object", [], self)

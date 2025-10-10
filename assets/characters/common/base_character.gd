@@ -6,7 +6,9 @@ const _EMPTY_CAMERA_CONTAINER: String = "CameraContainer from \"%s\" returned nu
 
 @export var base_mesh: MeshInstance3D
 @export var base_collision: CollisionShape3D
+# TODO Should be able to delete this now that camera tracks and isn't internal
 @export var camera_container: CameraContainer
+@export var asset_state: AssetState
 
 var height: float
 var is_sprinting: bool = false
@@ -170,6 +172,9 @@ func enable_rotation() -> void:
 ## Toggles rotation enablement
 func toggle_rotation() -> void:
 	disable_rotation_var = not disable_rotation_var
+
+func get_asset_state() -> AssetState:
+	return asset_state
 
 func _handle_zoom_in() -> void:
 	if camera_container.is_current():
