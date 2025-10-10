@@ -174,7 +174,14 @@ func toggle_rotation() -> void:
 	disable_rotation_var = not disable_rotation_var
 
 func get_asset_state() -> AssetState:
+	if asset_state == null:
+		var own_guid: String = self.get_meta(GroupData.GUID)
+		own_guid = "" if own_guid == null else own_guid
+		asset_state = AssetState.new(own_guid)
 	return asset_state
+
+func set_asset_state(new_state: AssetState) -> void:
+	asset_state = new_state
 
 func _handle_zoom_in() -> void:
 	if camera_container.is_current():

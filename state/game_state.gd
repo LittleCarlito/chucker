@@ -92,7 +92,7 @@ func get_primary_guid(incoming_type: STATE.DATA_TYPE) -> String:
 				return GroupData.EMPTY
 			else:
 				var camera_keys: Array = _camera_state.keys()
-				var primary_camera_data: StateData = _camera_state.get_header_data(camera_keys[0], StateHeaders.TYPE.DATA)
+				var primary_camera_data: AssetState = _camera_state.get_header_data(camera_keys[0], StateHeaders.TYPE.DATA)
 				return primary_camera_data.get_owner_guid()
 		STATE.DATA_TYPE.ITEM:
 			return GroupData.EMPTY

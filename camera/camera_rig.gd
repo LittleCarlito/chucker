@@ -157,6 +157,9 @@ func get_asset_state() -> AssetState:
 		_create_state(get_meta(GroupData.GUID))
 	return asset_state
 
+func set_asset_state(new_state: AssetState) -> void:
+	asset_state = new_state
+
 func get_focused_guid() -> String:
 	return asset_state.get_focused_guid()
 
@@ -206,8 +209,6 @@ func output_warning(incoming_warning: String) -> bool:
 	return asset_state.output_warning(incoming_warning)
 
 # TODO CONTINUE FROM HERE
-# TODO Fix AssetDelivery to be AssetState based
-# TODO refactor camera class to be cleaner
 # TODO character over to being AssetState based
 # TODO We need to get actions that take place in the game as a result of the character/objects to change state properly
 # i.e. 

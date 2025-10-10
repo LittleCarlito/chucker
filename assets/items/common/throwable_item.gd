@@ -51,7 +51,14 @@ func _handle_aim_release() -> void:
 	aim.emit(AIM_TYPE.ZOOM_OUT, 0)
 
 func get_asset_state() -> AssetState:
+	if asset_state == null:
+		var own_guid: String = self.get_meta(GroupData.GUID)
+		own_guid = "" if own_guid == null else own_guid
+		asset_state = AssetState.new(own_guid)
 	return asset_state
+
+func set_asset_state(new_state: AssetState) -> void:
+	asset_state = new_state
 
 func hold_action(_delta: float, _incoming_basis: Basis, _incoming_focus: bool) -> void:
 	Log.warn("No hold_action function implemented for this object", [], self)

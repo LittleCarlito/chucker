@@ -9,6 +9,7 @@ const TRUE: String = "true"
 const FALSE: String = "false"
 const LOG_OUTPUT: String = "log_output"
 const GET_ASSET_STATE: String = "get_asset_state"
+const SET_ASSET_STATE: String = "set_asset_state"
 # TODO Need to implement this method in all assets that contain CameraContainer
 const SET_CAMERA: String = "set_camera" # (incoming_camera: Camera3D, focus_point: Vector3 = Vecotr3.INF)
 const HAS_CAMERA: String = "has_camera"
