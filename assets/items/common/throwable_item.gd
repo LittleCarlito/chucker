@@ -27,10 +27,10 @@ var _secondary_hold_time :float
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	self.flight_data = FlightData.new()
-	self.charge_view.set_progress(-1)
-	self._primary_hold_time = 0
-	self._secondary_hold_time = 0
+	flight_data = FlightData.new()
+	charge_view.set_progress(-1)
+	_primary_hold_time = 0
+	_secondary_hold_time = 0
 	GlobalInputController.connect(SIGNAL_NAME.SECONDARY_ACTION, _handle_aim_action)
 	GlobalInputController.connect(SIGNAL_NAME.SECONDARY_RELEASE, _handle_aim_release)
 	GlobalInputController.connect(SIGNAL_NAME.SECONDARY_MOTION, _handle_aim_movement)
@@ -53,8 +53,8 @@ func hold_action(_delta: float, _incoming_basis: Basis, _incoming_focus: bool) -
 
 func release_action(_incoming_basis: Basis) -> void:
 	Log.error("All ThrowableItem objects must implement a release action function", [], self)
-	self.queue_free()
+	queue_free()
 
 func drop_item() -> void:
 	Log.error("All ThrowableItem objects must implement a drop item function", [], self)
-	self.queue_free()
+	queue_free()

@@ -132,7 +132,7 @@ func _apply_settings() -> void:
 
 func _kickoff_data_load() -> void:
 	spawned_assets = AssetDelivery.spawn_assets(asset_spawn_data)
-	self.focus_character()
-	# self._freelook_camera()
+	focus_character()
+	# _freelook_camera()
 	update_course_data()
 	_apply_settings()

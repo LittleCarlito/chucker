@@ -24,7 +24,7 @@ func _ready() -> void:
 	# TODO Need to get noded path from teebox to hole and have camera focus on first node
 	# TODO need to create group from teebox this will be group owner
 	#		Try to share asset status stuff with already existing classes
-	self.add_to_group(self.name)
+	add_to_group(name)
 	# TODO Need to make Global Hole Data object
 	# TODO Need to add method to all Hole Data related nodes to update the Global Hole Data object with their data
 	# TODO Need to make method in all Hole Data related nodes to pull Global Hole data
@@ -78,7 +78,7 @@ func _decrease_node_number(hole_number: int, incoming_node_number: int) -> void:
 		Log.error(formatted_string, [Log.HOLE_NODE_DATA, Log.DECREASE_NODE_NUMBER], self)
 
 func _get_focus_point() -> Vector3:
-	var focus_point: Vector3 = self.position + CameraConfig.get_stationary_focus_offset()
+	var focus_point: Vector3 = position + CameraConfig.get_stationary_focus_offset()
 	if !hole_nodes.is_empty():
 		# TODO Need to get HoleNodes integrated and have this look to its next hole node
 		pass

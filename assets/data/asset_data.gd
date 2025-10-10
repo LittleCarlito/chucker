@@ -74,13 +74,13 @@ func _init(
 			incoming_group: String = GameConfig.DEFAULTS.group,
 			incoming_owner_rid: RID = RID()
 			) -> void:
-	self.internal_type = incoming_internal
-	# self.item_state = incoming_state
-	# self.camera_state = incoming_camera_state
-	self.group_name = incoming_group
-	self.creation_type = incoming_create
-	self.owner_rid = incoming_owner_rid
-	self._setup_local_to_scene()
+	internal_type = incoming_internal
+	# item_state = incoming_state
+	# camera_state = incoming_camera_state
+	group_name = incoming_group
+	creation_type = incoming_create
+	owner_rid = incoming_owner_rid
+	_setup_local_to_scene()
 	
 ## Takes in type and returns corresponding color
 ## Returns UNKNOWN COLOR_DEFAULT from GlobalSettings if type is not known
@@ -119,4 +119,4 @@ static func get_associated_creation_type(incoming_type: AssetData.TYPE, previous
 	return associated_type
 
 func set_internal_type(incoming_type: TYPE) -> void:
-	self.internal_type = incoming_type
+	internal_type = incoming_type

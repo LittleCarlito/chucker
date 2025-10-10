@@ -8,15 +8,15 @@ const _UNSUPPORTED_TYPE: String = "Incoming state header type \"%s\" for guid \"
 var _state_dictionary: Dictionary
 
 func _init(incoming_dictionary: Dictionary = {}) -> void:
-	self._state_dictionary = incoming_dictionary
+	_state_dictionary = incoming_dictionary
 
 func get_state_dictionary() -> Dictionary:
-	return self._state_dictionary
+	return _state_dictionary
 
 func register_new_node(incoming_node: Node3D) -> StateData:
 	var incoming_name: String = incoming_node.name
 	if not incoming_node.has_meta(GroupData.GUID):
-		Log.error(self._MISSING_GUID, [incoming_name], self)
+		Log.error(_MISSING_GUID, [incoming_name], self)
 		return null
 	var incoming_guid: String = incoming_node.get_meta(GroupData.GUID)
 	if incoming_node is CameraRig:
@@ -26,7 +26,7 @@ func register_new_node(incoming_node: Node3D) -> StateData:
 													CameraStateConfiguration.VALID_TRANSITIONS,
 													CameraStateConfiguration.SPIN_VALUES
 													)
-		self._state_dictionary[incoming_node.get_meta(GroupData.GUID)] = {
+		_state_dictionary[incoming_node.get_meta(GroupData.GUID)] = {
 			StateHeaders.STATE_DATA: camera_state_data,
 			StateHeaders.STATE_NODE: incoming_node
 		}
@@ -38,7 +38,7 @@ func register_new_node(incoming_node: Node3D) -> StateData:
 												ThrowableStateConfiguration.SPIN_VALUES,
 												ThrowableStateConfiguration.WINDOW_VALUES
 												)
-		self._state_dictionary[incoming_guid] = {
+		_state_dictionary[incoming_guid] = {
 			StateHeaders.STATE_DATA: throwable_state_data,
 			StateHeaders.STATE_NODE: incoming_node
 		}
@@ -48,29 +48,29 @@ func register_new_node(incoming_node: Node3D) -> StateData:
 												incoming_guid,
 												PlayerStateConfiguration.VALID_TRANSITIONS
 												)
-		self._state_dictionary[incoming_guid] = {
+		_state_dictionary[incoming_guid] = {
 			StateHeaders.STATE_DATA: character_state_data,
 			StateHeaders.STATE_NODE: incoming_node
 		}
 		return character_state_data.duplicate(true)
 	else:
 		var state_data: StateData = StateData.new(incoming_guid)
-		self._state_dictionary[incoming_guid] = {
+		_state_dictionary[incoming_guid] = {
 			StateHeaders.STATE_DATA: state_data,
 			StateHeaders.STATE_NODE: incoming_node
 		}
 		return state_data.duplicate(true)
 
 func has_guid(incoming_guid: String) -> bool:
-	return self._state_dictionary.has(incoming_guid)
+	return _state_dictionary.has(incoming_guid)
 
 func get_header_data(incoming_guid: String, incoming_type: StateHeaders.TYPE):
 	var header_string: String = StateHeaders.get_type_string(incoming_type)
 	match incoming_type:
 		StateHeaders.TYPE.DATA, StateHeaders.TYPE.NODE:
-			return self._get_guid_value(incoming_guid, header_string)
+			return _get_guid_value(incoming_guid, header_string)
 		_:
-			Log.error(self._UNSUPPORTED_TYPE, [header_string, incoming_guid, incoming_type], self)
+			Log.error(_UNSUPPORTED_TYPE, [header_string, incoming_guid, incoming_type], self)
 			return null
 
 func storage_size() -> int:
@@ -78,30 +78,30 @@ func storage_size() -> int:
 
 func duplicate(deep_clone: bool = false) -> StateDataStorage:
 	var copy: StateDataStorage = StateDataStorage.new()
-	for guid in self._state_dictionary.keys():
-		var state_data: StateData = self._state_dictionary[guid]
+	for guid in _state_dictionary.keys():
+		var state_data: StateData = _state_dictionary[guid]
 		copy._state_dictionary[guid] = state_data.duplicate(deep_clone)
 	return copy
 
 func print_details() -> void:
-	Log.debug("StateDataStorage states: \"%d\"", [self._state_dictionary.size()], self)
-	for guid in self._state_dictionary.keys():
-		var state_data: StateData = self._state_dictionary[guid]
+	Log.debug("StateDataStorage states: \"%d\"", [_state_dictionary.size()], self)
+	for guid in _state_dictionary.keys():
+		var state_data: StateData = _state_dictionary[guid]
 		if state_data.has_method("print_details"):
 			state_data.print_details()
 
 func _get_guid_value(incoming_guid: String, key: String):
-	if not self._state_dictionary.has(incoming_guid):
-		Log.error(self._GUID_NOT_FOUND, [incoming_guid], self)
+	if not _state_dictionary.has(incoming_guid):
+		Log.error(_GUID_NOT_FOUND, [incoming_guid], self)
 		return null
-	var guid_dictionary: Dictionary = self._state_dictionary.get(incoming_guid)
+	var guid_dictionary: Dictionary = _state_dictionary.get(incoming_guid)
 	if not guid_dictionary.has(key):
-		Log.error(self._DICTIONARY_DATA_NOT_FOUND, [incoming_guid, key], self)
+		Log.error(_DICTIONARY_DATA_NOT_FOUND, [incoming_guid, key], self)
 		return null
 	return guid_dictionary.get(key)
 
 func is_empty() -> bool:
-	return self._state_dictionary.is_empty()
+	return _state_dictionary.is_empty()
 
 func keys() -> Array:
-	return self._state_dictionary.keys()
+	return _state_dictionary.keys()

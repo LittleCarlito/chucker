@@ -12,28 +12,28 @@ func _ready() -> void:
 	GlobalInputController.connect(SIGNAL_NAME.DUO_ACTION, press_primary_secondary_action)
 
 func press_primary_action() -> void:
-	if self.is_unequipped():
+	if is_unequipped():
 		GlobalCursorController.request_captured(self, "Unequipped primary action")
 
 func press_primary_secondary_action() -> void:
-	self._reset_camera_control()
+	_reset_camera_control()
 
 func _handle_primary_movement(v_motion: float, h_motion: float) -> void:
-	if self.is_unequipped():
-		self.horizontal_pan(h_motion, self.global_position)
+	if is_unequipped():
+		horizontal_pan(h_motion, global_position)
 
 func release_primary_action() -> void:
-	if self.is_unequipped():
-		self.snap_back(self.global_rotation.z)
+	if is_unequipped():
+		snap_back(global_rotation.z)
 
 func press_secondary_action() -> void:
-	if self.is_unequipped():
-		self._handle_zoom_in()
+	if is_unequipped():
+		_handle_zoom_in()
 
 func _handle_secondary_movement(v_motion: float, h_motion: float) -> void:
-	if self.is_unequipped():
-		self.rotate_camera(v_motion, h_motion)
+	if is_unequipped():
+		rotate_camera(v_motion, h_motion)
 
 func release_secondary_action() -> void:
-	if self.is_unequipped():
-		self._handle_zoom_out()
+	if is_unequipped():
+		_handle_zoom_out()

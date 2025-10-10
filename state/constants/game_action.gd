@@ -52,5 +52,5 @@ const SYNC: String = "sync"
 @export var payload: Dictionary = {}
 
 func _init(incoming_type: TYPE, incoming_payload: Dictionary) -> void:
-	self.action_type = incoming_type
-	self.payload = incoming_payload
+	action_type = incoming_type
+	payload = incoming_payload

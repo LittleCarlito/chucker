@@ -15,12 +15,12 @@ func _init(
 	incoming_speed: float = 0,
 	incoming_spin: float = 0
 	) -> void:
-	self.flight_power = incoming_power
-	self.flight_aim = incoming_aim
-	self.flight_basis = incoming_basis
-	self.focus_flight = is_focused
-	self.flight_speed = incoming_speed
-	self.flight_spin = incoming_spin
+	flight_power = incoming_power
+	flight_aim = incoming_aim
+	flight_basis = incoming_basis
+	focus_flight = is_focused
+	flight_speed = incoming_speed
+	flight_spin = incoming_spin
 
 func print_details() -> void:
-	Log.debug("\nFlight details:\nFlight power: %03f\nFlight aim: %03f\nFlight spin: %03f", [self.flight_power, self.flight_aim, self.flight_spin], self)
+	Log.debug("\nFlight details:\nFlight power: %03f\nFlight aim: %03f\nFlight spin: %03f", [flight_power, flight_aim, flight_spin], self)

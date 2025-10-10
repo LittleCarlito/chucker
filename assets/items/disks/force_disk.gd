@@ -40,18 +40,18 @@ var _applied_flight_data: bool = false
 var _is_tracked: bool = false
 
 func _ready() -> void:
-	if self.asset_data == null:
-		self.asset_data = AssetData.new(AssetData.TYPE.FORCE)
-		if !self.asset_data.group_name.is_empty():
-			add_to_group(self.asset_data.group_name)
-	self.disk_mesh.set_type(self.asset_data.creation_type)
-	self.angular_damp = 0.0
+	if asset_data == null:
+		asset_data = AssetData.new(AssetData.TYPE.FORCE)
+		if !asset_data.group_name.is_empty():
+			add_to_group(asset_data.group_name)
+	disk_mesh.set_type(asset_data.creation_type)
+	angular_damp = 0.0
 	GlobalInputController.connect(SIGNAL_NAME.FREELOOK_MOTION, _handle_freelook_motion)
 
 func _process(_delta: float) -> void:
-	if self.flight_data != null && not self._applied_flight_data:
-		self.angular_velocity.y = self.flight_data.get_flight_spin()
-		self._applied_flight_data = true
+	if flight_data != null && not _applied_flight_data:
+		angular_velocity.y = flight_data.get_flight_spin()
+		_applied_flight_data = true
 
 func set_internal_type(new_internal_type: AssetData.TYPE) -> void:
 	asset_data.set_internal_type(new_internal_type)
@@ -80,7 +80,7 @@ func sync_asset() -> void:
 	disk_mesh.set_type(asset_data.creation_type)
 
 func set_disk_mesh(new_mesh: DiskMesh) -> void:
-	self.add_child(new_mesh)
+	add_child(new_mesh)
 	var old_mesh: DiskMesh = disk_mesh
 	if is_instance_valid(old_mesh):
 		old_mesh.queue_free()
@@ -105,20 +105,20 @@ func set_disk_camera(new_camera: Camera3D) -> void:
 	camera_container.set_camera(new_camera)
 
 func pick_up() -> void:
-	self.queue_free()
+	queue_free()
 
 func _handle_freelook_motion(v_motion: float, h_motion: float) -> void:
 	# TODO Will need this using state isntead of the camera container stuff once it is figured out
 	if GlobalCursorController.is_captured_current() and camera_container != null and camera_container.is_current():
-		camera_container.horizontal_pan(h_motion, self.global_position)
+		camera_container.horizontal_pan(h_motion, global_position)
 
 func _handle_collision(body_rid: RID, _body: Node, _body_shape_index: int, _local_shape_index: int) -> void:
 	_collided = true
-	disk_collision.store_collision(self.get_rid(), body_rid, self.global_position, flight_data, asset_data)
+	disk_collision.store_collision(get_rid(), body_rid, global_position, flight_data, asset_data)
 	if camera_container != null && (camera_container.has_camera() && camera_container.is_current()):
-		camera_container.start_focus(self.global_basis, self.global_position)
-		self.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
-		self.angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
+		camera_container.start_focus(global_basis, global_position)
+		linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
+		angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
 	# TODO Refactor this to use accurate state ensuring it is tracked before emitting
 	# GlobalCameraController.set_rig_dile(true)
 
@@ -127,7 +127,7 @@ func _handle_collision(body_rid: RID, _body: Node, _body_shape_index: int, _loca
 func _create_camera_container() -> void:
 	if camera_container == null:
 		var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
-		self.add_child(new_camera_container)
+		add_child(new_camera_container)
 		_set_camera_container(new_camera_container)
 	else:
 		Log.warn(Log.ALREADY_EXISTS_LOG, [Log.CAMERA_CONTAINER], self)
@@ -140,11 +140,11 @@ func _set_flight_data(incoming_data: FlightData) -> void:
 
 func _launch() -> void:
 	if flight_data != null:
-		self.flight_data.print_details()
-		self.global_position = flight_data.get_actual_path()[0].point_position
-		self.basis = flight_data.get_flight_basis()
-		self.linear_velocity = -self.transform.basis.z * flight_data.get_flight_speed()
-		self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
+		flight_data.print_details()
+		global_position = flight_data.get_actual_path()[0].point_position
+		basis = flight_data.get_flight_basis()
+		linear_velocity = -transform.basis.z * flight_data.get_flight_speed()
+		angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
 		if flight_data.is_focus_flight():
 			_submit_camera_request()
 			camera_container.set_current()

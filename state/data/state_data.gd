@@ -41,18 +41,18 @@ func _init(
 			incoming_values: Dictionary = {},
 			incoming_windows: Dictionary = {}
 			) -> void:
-	self._owner_guid = incoming_guid
-	self.name = _owner_guid + self._STATE_IDENTIFIER
-	self._valid_transitions = incoming_transitions
-	self._state_values = incoming_values
-	if self._validate_window_configuration(incoming_windows):
-		self._state_windows = incoming_windows
+	_owner_guid = incoming_guid
+	name = _owner_guid + _STATE_IDENTIFIER
+	_valid_transitions = incoming_transitions
+	_state_values = incoming_values
+	if _validate_window_configuration(incoming_windows):
+		_state_windows = incoming_windows
 
 # TODO Refactor this
 #		Should ahve a "deafult" state configured for the state data
 #			That is what we should snap to
 func reset_state() -> STATE.ASSET:
-	var previous_state: STATE.ASSET = self.get_current_state()
+	var previous_state: STATE.ASSET = get_current_state()
 	var lowest_state: STATE.ASSET = STATE.ASSET.READY
 	var found_state: bool = false
 	for state in _valid_transitions.keys():
@@ -60,15 +60,15 @@ func reset_state() -> STATE.ASSET:
 			lowest_state = state
 			found_state = true
 	if found_state:
-		self._current_state = lowest_state
+		_current_state = lowest_state
 	else:
-		self._current_state = STATE.ASSET.READY
-	var set_state: STATE.ASSET = self._current_state
+		_current_state = STATE.ASSET.READY
+	var set_state: STATE.ASSET = _current_state
 	var update_details: Dictionary = {
 		StateHeaders.PREVIOUS_STATE: previous_state,
 		StateHeaders.CURRENT_STATE: set_state
 	}
-	self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.STATE, update_details))
+	state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.STATE, update_details))
 	return _current_state
 
 func get_state_data() -> Dictionary:
@@ -82,7 +82,7 @@ func get_state_data() -> Dictionary:
 	}
 
 func get_current_state() -> STATE.ASSET:
-	return self._current_state
+	return _current_state
 
 func get_nearest_state(incoming_value: float) -> STATE.ASSET:
 	if _state_values.is_empty():
@@ -129,7 +129,7 @@ func try_set_state(to_state: STATE.ASSET) -> bool:
 
 func get_all_states() -> Array[STATE.ASSET]:
 	var all_states: Array[STATE.ASSET] = []
-	for state in self._valid_transitions.keys():
+	for state in _valid_transitions.keys():
 		if not all_states.has(state):
 			all_states.append(state)
 		for transition_state in _valid_transitions[state]:
@@ -164,20 +164,20 @@ func transition_next_state() -> STATE.ASSET:
 	if next_state != _current_state:
 		var previous_state: STATE.ASSET = _current_state
 		_current_state = next_state
-		var new_state: STATE.ASSET = self._current_state
+		var new_state: STATE.ASSET = _current_state
 		var update_details: Dictionary = {
 			StateHeaders.PREVIOUS_STATE: previous_state,
 			StateHeaders. CURRENT_STATE: new_state
 		}
-		self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.STATE, update_details))
+		state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.STATE, update_details))
 	else:
-		Log.debug(self._MAX_VALID_STATE, [_owner_guid, _current_state], self)
+		Log.debug(_MAX_VALID_STATE, [_owner_guid, _current_state], self)
 	return _current_state
 
 func peak_previous_state() -> STATE.ASSET:
 	var prev_state := _find_previous_valid_state()
 	if prev_state == _current_state:
-		Log.debug(self._MIN_VALID_STATE, [_owner_guid, _current_state], self)
+		Log.debug(_MIN_VALID_STATE, [_owner_guid, _current_state], self)
 	return prev_state
 
 func previous_states() -> Array[STATE.ASSET]:
@@ -186,28 +186,28 @@ func previous_states() -> Array[STATE.ASSET]:
 func transition_previous_state() -> STATE.ASSET:
 	var prev_state := _find_previous_valid_state()
 	if prev_state != _current_state:
-		var previous_state: STATE.ASSET = self._current_state
+		var previous_state: STATE.ASSET = _current_state
 		_current_state = prev_state
-		var new_state: STATE.ASSET = self._current_state
+		var new_state: STATE.ASSET = _current_state
 		var update_details: Dictionary = {
 			StateHeaders.PREVIOUS_STATE: previous_state,
 			StateHeaders.CURRENT_STATE: new_state
 		}
-		self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.STATE, update_details))
+		state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.STATE, update_details))
 	else:
-		Log.debug(self._MIN_VALID_STATE, [_owner_guid, _current_state], self)
+		Log.debug(_MIN_VALID_STATE, [_owner_guid, _current_state], self)
 	return _current_state
 
 func get_state_value(incoming_value: STATE.ASSET) -> float:
-	if self._state_values.has(incoming_value):
-		return self._state_values[incoming_value]
+	if _state_values.has(incoming_value):
+		return _state_values[incoming_value]
 	else:
 		var incoming_state_string: String = STATE.get_state_string(incoming_value)
-		Log.warn(self._NO_VALUE, [_owner_guid, incoming_state_string], self)
+		Log.warn(_NO_VALUE, [_owner_guid, incoming_state_string], self)
 		return 0
 
 func set_focused_guid(incoming_guid: String) -> void:
-	self._focused_guid = incoming_guid
+	_focused_guid = incoming_guid
 	var update_details: Dictionary = {
 		StateHeaders.TARGET_GUID: _focused_guid
 	}
@@ -226,21 +226,21 @@ func set_min_height(incoming_height: float) -> void:
 	_min_height = incoming_height
 
 func update_rotation(incoming_quaternion: Quaternion) -> void:
-	self._owner_rotation *= incoming_quaternion
+	_owner_rotation *= incoming_quaternion
 	var update_details: Dictionary = {
 		StateHeaders.ROTATION: incoming_quaternion
 	}
 	state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.ROTATION, update_details))
 
 func update_position(incoming_vector: Vector3) -> void:
-	self._owner_position += incoming_vector
+	_owner_position += incoming_vector
 	var update_details: Dictionary = {
 		StateHeaders.POSITION: incoming_vector
 	}
 	state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.POSITION, update_details))
 
 func update_scale(incoming_vector: Vector3) -> void:
-	self._owner_scale *= incoming_vector
+	_owner_scale *= incoming_vector
 	var update_details: Dictionary = {
 		StateHeaders.SCALE: incoming_vector
 	}
@@ -251,25 +251,25 @@ func update_is_crouching(incoming_value: bool) -> void:
 	var update_details: Dictionary = {
 		StateHeaders.IS_CROUCHING: incoming_value
 	}
-	self.state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.TOGGLE, update_details))
+	state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.TOGGLE, update_details))
 
 func is_crouching() -> bool:
-	return self._is_crouching
+	return _is_crouching
 
 func update_is_sprinting(incoming_value: bool) -> void:
-	self._is_sprinting = incoming_value
+	_is_sprinting = incoming_value
 	var update_details: Dictionary = {
 		StateHeaders.IS_SPRINTING: incoming_value
 	}
 	state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.TOGGLE, update_details))
 
 func is_sprinting() -> bool:
-	return self._is_sprinting
+	return _is_sprinting
 
 func update_movement_enabled(incoming_value: bool) -> void:
-	self._movement_enabled = incoming_value
+	_movement_enabled = incoming_value
 	var update_details: Dictionary = {
-		StateHeaders.TOGGLE: self._MOVEMENT_ENABLED
+		StateHeaders.TOGGLE: _MOVEMENT_ENABLED
 	}
 	state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.TOGGLE, update_details))
 

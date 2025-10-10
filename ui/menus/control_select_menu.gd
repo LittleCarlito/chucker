@@ -53,9 +53,9 @@ func _enable_left_detect() -> void:
 	detect_left_click = true
 
 func close_menu() -> void:
-	self.visible = false
+	visible = false
 	reset_ui()
-	self.process_mode = Node.PROCESS_MODE_DISABLED
+	process_mode = Node.PROCESS_MODE_DISABLED
 	menu_closed.emit()
 
 func _cursor_off_menu() -> void:
@@ -70,10 +70,10 @@ func _save_input() -> void:
 	close_menu()
 
 func open_menu(incoming_control: String) -> void:
-	self.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+	process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 	control_to_update = incoming_control
 	set_input_label.text = INPUT_LABEL % incoming_control
-	self.visible = true
+	visible = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

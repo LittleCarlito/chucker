@@ -40,7 +40,7 @@ const CAMERA = {
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	camera_timer.one_shot = true
-	_initial_orientation = self.rotation
+	_initial_orientation = rotation
 	_default_control_offset = camera_control.position
 
 func _physics_process(delta: float) -> void:
@@ -52,9 +52,9 @@ func _physics_process(delta: float) -> void:
 		if is_idle_rotating:
 			call_deferred("idle_rotate", delta)
 		else:
-			call_deferred("focus_camera_control", self.global_position, height_held)
+			call_deferred("focus_camera_control", global_position, height_held)
 	if is_steady:
-		self.global_rotation.z = 0
+		global_rotation.z = 0
 
 static func new_container_with_camera() -> CameraContainer:
 	var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
@@ -69,7 +69,7 @@ func populate_camera_control(incoming_focus: Vector3 = Vector3.INF, incoming_cur
 	else:
 		_handle_logging(_CAMERA_ALREADY_EXISTS)
 	if incoming_current:
-		self.set_current()
+		set_current()
 
 func focus_camera_control(focus_location: Vector3, hold_focus: bool = false) -> void:
 	is_focused = hold_focus
@@ -83,7 +83,7 @@ func focus_camera_control(focus_location: Vector3, hold_focus: bool = false) -> 
 		_handle_logging(_NO_FOCUS_LOG, [_FOCUS_CAMERA_CONTROL])
 
 func horizontal_pan(roation_amount: float, focus_location: Vector3 = Vector3.INF) -> void:
-	self.global_rotation_degrees.y += roation_amount
+	global_rotation_degrees.y += roation_amount
 	if focus_location != Vector3.INF:
 		_focus_location = focus_location
 	elif _focus_location == Vector3.INF:
@@ -103,14 +103,14 @@ func get_vertical_rotation() -> float:
 
 func snap_back(incoming_z_rotation: float = NUMBERS.FLOAT16_MAX) -> void:
 	reset_camera_control(incoming_z_rotation)
-	self.rotation = _initial_orientation
+	rotation = _initial_orientation
 	reset_zoom()
 
 func has_camera() -> bool:
 	return internal_camera != null
 
 func start_focus(incoming_global_basis: Basis, incoming_location: Vector3 = Vector3.INF) -> void:
-	self.global_basis = incoming_global_basis
+	global_basis = incoming_global_basis
 	if incoming_location != Vector3.INF:
 		_focus_location = incoming_location
 	is_focused = true
@@ -265,7 +265,7 @@ func _request_camera(new_parent: Node3D) -> bool:
 	return parent_swapped
 
 func get_look_direction() -> Vector3:
-	return self.get_global_transform().basis.z 
+	return get_global_transform().basis.z 
 
 func set_current() -> void:
 	if internal_camera != null:

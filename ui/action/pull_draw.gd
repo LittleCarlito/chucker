@@ -13,7 +13,7 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if last_length != 0:
-		self.queue_redraw()
+		queue_redraw()
 
 func begin_pull() -> PullData:
 	if origin_hold == Vector2.INF:
@@ -38,7 +38,7 @@ func calc_last_values() -> PullData:
 		last_offset = min(GameConfig.DEFAULTS.max_offset, x_aim_contribution)
 	else:
 		last_offset = max(-GameConfig.DEFAULTS.max_offset, x_aim_contribution)
-	return self.get_pull_details()
+	return get_pull_details()
 
 func get_pull_details() -> PullData:
 	return PullData.new(last_length, last_offset)

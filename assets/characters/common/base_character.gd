@@ -36,10 +36,10 @@ var _pending_movement: bool = false
 # TODO Then to CameraRigs TODOs
 
 func _ready() -> void:
-	self.height = base_mesh.get_aabb().size.y
+	height = base_mesh.get_aabb().size.y
 	_initial_camera_orientation = camera_container.global_transform
 	if ApplicationConfig.ENABLE_LEGACY_CAMERA:
-		self.camera_container.populate_camera_control(self._get_focus_point())
+		camera_container.populate_camera_control(_get_focus_point())
 
 func _physics_process(delta: float) -> void:
 	apply_gravity(delta)
@@ -51,8 +51,8 @@ func _physics_process(delta: float) -> void:
 
 ## Character jumps; Multiplier can be applied
 func jump(jump_multiplier: float = 1) -> void:
-	if self.is_on_floor() and self.is_movement_enabled():
-		self.velocity.y = GameConfig.DEFAULTS.jump_force * jump_multiplier
+	if is_on_floor() and is_movement_enabled():
+		velocity.y = GameConfig.DEFAULTS.jump_force * jump_multiplier
 
 # TODO Change the velocity x and z setting to use move toward with acceleration and deccelration considerations
 ## Character moves; Multiplier can be applied
@@ -63,25 +63,25 @@ func move(move_direction: Vector3) -> void:
 	else:
 		var speed: float = GameConfig.DEFAULTS.run_speed
 		if move_direction != Vector3(0, 0, 0):
-			if self.is_sprinting:
+			if is_sprinting:
 				speed *= GameConfig.DEFAULTS.sprint_multiplier
 			velocity.x = move_direction.x * speed
 			velocity.z = move_direction.z * speed
 		# Otherwise set velocity to start slowing down
-		elif self.is_on_floor():
+		elif is_on_floor():
 			velocity.x = move_toward(velocity.x, 0, speed)
 			velocity.z = move_toward(velocity.z, 0, speed)
-	self._pending_movement = true
+	_pending_movement = true
 
 func start_sprint() -> void:
-	self.is_sprinting = true
+	is_sprinting = true
 
 func stop_sprint() -> void:
-	self.is_sprinting = false
+	is_sprinting = false
 
 ## Character rotates on y axis; Multiplier can be applied
 func rotate_y_axis(rotation_amount: float) -> void:
-	self.rotate_y(rotation_amount)
+	rotate_y(rotation_amount)
 
 ## Applies gravity
 func apply_gravity(delta: float) -> void:
@@ -90,7 +90,7 @@ func apply_gravity(delta: float) -> void:
 
 ## Returns the height of Chuck
 func get_height() -> float:
-	return self.height
+	return height
 
 ## Returns true if movement is disabled
 func is_movement_disabled() -> bool:
@@ -121,35 +121,35 @@ func rotate_camera(vertical_rotation: float, horizontal_rotation: float) -> void
 		camera_container.horizontal_rotate(horizontal_rotation)
 
 func zoom_in(zoom_amount: float = NUMBERS.FLOAT16_MAX) -> void:
-	self.camera_container.zoom_in(zoom_amount)
+	camera_container.zoom_in(zoom_amount)
 
 func zoom_out(zoom_amount: float = NUMBERS.FLOAT16_MAX) -> void:
-	self.camera_container.zoom_out(zoom_amount)
+	camera_container.zoom_out(zoom_amount)
 
 func reset_zoom() -> void:
-	self.camera_container.reset_zoom();
+	camera_container.reset_zoom();
 
 func horizontal_pan(rotation_amount: float, focus_location: Vector3 = Vector3.INF) -> void:
-	self.camera_container.horizontal_pan(rotation_amount, focus_location)
+	camera_container.horizontal_pan(rotation_amount, focus_location)
 
 func snap_back(incoming_rotation: float = NUMBERS.FLOAT16_MAX) -> void:
-	self.camera_container.snap_back(incoming_rotation)
+	camera_container.snap_back(incoming_rotation)
 
 func set_camera(incoming_camera: Camera3D) -> void:
-	self.camera_container.set_camera(incoming_camera)
+	camera_container.set_camera(incoming_camera)
 
 func disable_camera() -> void:
-	self.camera_container.disable_camera()
+	camera_container.disable_camera()
 
 func enable_camera() -> void:
-	self.camera_container.enable_camera()
+	camera_container.enable_camera()
 
 func _reset_camera_control() -> void:
-	self.camera_container.reset_camera_control()
+	camera_container.reset_camera_control()
 
 func _handle_horizontal_rotation(incoming_rotation: float = NUMBERS.FLOAT16_MAX) -> void:
 	var rotation_amount = incoming_rotation if incoming_rotation != NUMBERS.FLOAT16_MAX else deg_to_rad(CameraConfig.get_rotate_speed())
-	self.rotate_y_axis(rotation_amount)
+	rotate_y_axis(rotation_amount)
 
 ## Returns true if rotation is enabled
 func is_rotation_enabled() -> bool:
@@ -176,10 +176,10 @@ func _handle_zoom_in() -> void:
 		camera_container.zoom_in()
 
 func _handle_zoom_out() -> void:
-	camera_container.snap_back(self.global_rotation.z)
+	camera_container.snap_back(global_rotation.z)
 
 func _get_focus_point() -> Vector3:
-	var focus_point: Vector3 = self.position + CameraConfig.get_player_focus_offset()
+	var focus_point: Vector3 = position + CameraConfig.get_player_focus_offset()
 	return focus_point
 
 func _can_vertically_rotate(rotation_amount:float) -> bool:

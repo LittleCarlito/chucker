@@ -96,30 +96,30 @@ func _physics_process(delta: float) -> void:
 func track_position(incoming_position: Vector3, delta: float) -> void:
 	var lerp_speed: float = GameConfig.CAMERA.LERP_SPEED * delta
 	var weighted_speed: float = 1 - exp(-lerp_speed)
-	self.position = self.position.lerp(incoming_position, weighted_speed)
+	position = position.lerp(incoming_position, weighted_speed)
 	# TODO Once confirmed it works delete below
 	#			Above is supposed to be safer/improved version that can be used in process and process_physics (truely frame indpenedent)
 	# var lerp_speed: float = GameConfig.CAMERA.LERP_SPEED * delta
-	# self.position = self.position.lerp(incoming_position, lerp_speed)
+	# position = position.lerp(incoming_position, lerp_speed)
 
 ## Sets state to idle rotate
 func idle_rotate() -> void:
 	var idle_state: STATE.ASSET = STATE.ASSET.IDLE_ROTATE
-	if not self.asset_state.set_to_state(idle_state):
-		var current_string: String = STATE.get_state_string(self.asset_state.get_current_state())
+	if not asset_state.set_to_state(idle_state):
+		var current_string: String = STATE.get_state_string(asset_state.get_current_state())
 		var idle_string: String = STATE.get_state_string(idle_state)
-		Log.error(self._UPDATE_FAILED, [current_string, idle_string], self)
+		Log.error(_UPDATE_FAILED, [current_string, idle_string], self)
 
 func pan_horizontal(rotation_amount: float) -> void:
 	var pan_vector: Vector3 = Vector3(0, rotation_amount, 0)
-	self.asset_state.apply_rotation(pan_vector)
+	asset_state.apply_rotation(pan_vector)
 
 func pitch_vertical(rotation_amount: float) -> void:
 	var pitch_vector: Vector3 = Vector3(0, rotation_amount, 0)
-	self.asset_state.apply_rotation(pitch_vector)
+	asset_state.apply_rotation(pitch_vector)
 
 func focus_guid(incoming_guid: String) -> void:
-	self._focus_state = GlobalStateController.get_header_data(incoming_guid, StateHeaders.TYPE.DATA)
+	_focus_state = GlobalStateController.get_header_data(incoming_guid, StateHeaders.TYPE.DATA)
 
 func track_guid(
 		incoming_guid: String, 
@@ -129,42 +129,42 @@ func track_guid(
 		GameAction.TARGET_GUID: incoming_guid
 	}
 	var state_string = STATE.get_state_string(incoming_state)
-	if incoming_state != STATE.ASSET.UNKNOWN && self.asset_state.can_transition(incoming_state):
+	if incoming_state != STATE.ASSET.UNKNOWN && asset_state.can_transition(incoming_state):
 		action_dictionary[STATE.HEADER] = state_string
-	var result_success: bool = self.asset_state.perform_action(GameAction.TYPE.TRACK, action_dictionary)
+	var result_success: bool = asset_state.perform_action(GameAction.TYPE.TRACK, action_dictionary)
 	if not result_success:
 		var parameter_string: String = "Incoming GUID: %s; Incoming state: %s" % [incoming_guid, state_string]
-		Log.error(Log.CALL_FAILED, [self._SET_INTEGRATION, parameter_string], self)
+		Log.error(Log.CALL_FAILED, [_SET_INTEGRATION, parameter_string], self)
 
 ## Retrieves the first tracked GUID
 func get_integration_point() -> AssetState:
-	return self.asset_state.get_first_tracked()
+	return asset_state.get_first_tracked()
 
 ## Clears the integrated point and loses focus
 func deintegrate(incoming_guid: String) -> void:
-	self.asset_state.stop_tracking(incoming_guid)
+	asset_state.stop_tracking(incoming_guid)
 
 func deintegrate_all() -> void:
-	var tracked_guids: Array = self.asset_state.get_tracked_guids()
+	var tracked_guids: Array = asset_state.get_tracked_guids()
 	for guid in tracked_guids:
-		self.deintegrate(guid)
+		deintegrate(guid)
 
 # TODO Test trying to set wrong state; ensure it doesn't work and logs
 func transition_state(incoming_state: STATE.ASSET) -> void:
 	var camera_state_data: StateData = asset_state.get_state_data()
 	if camera_state_data == null:
-		Log.error(Log._CANT_PERFORM, [self._OWN_STATE, self._TRANSITION_STATE], self)
+		Log.error(Log._CANT_PERFORM, [_OWN_STATE, _TRANSITION_STATE], self)
 		return
 	var old_state: STATE.ASSET = camera_state_data.get_current_state()
 	if camera_state_data.try_set_state(incoming_state):
 		var from_state_string: String = STATE.get_state_string(old_state)
 		var to_state_string: String = STATE.get_state_string(incoming_state)
-		Log.debug(self._SUCCESSFUL_TRANSITION, [from_state_string, to_state_string], self)
+		Log.debug(_SUCCESSFUL_TRANSITION, [from_state_string, to_state_string], self)
 
 func get_asset_state() -> AssetState:
-	if self.asset_state == null:
-		self._create_state(self.get_meta(GroupData.GUID))
-	return self.asset_state
+	if asset_state == null:
+		_create_state(get_meta(GroupData.GUID))
+	return asset_state
 
 func get_focused_guid() -> String:
 	return asset_state.get_focused_guid()
@@ -173,55 +173,46 @@ func get_current_state() -> STATE.ASSET:
 	return asset_state.get_current_state()
 
 func is_current() -> bool:
-	return self.internal_camera.is_current()
+	return internal_camera.is_current()
 
 func make_current() -> void:
-	self.internal_camera.make_current()
+	internal_camera.make_current()
 
 func clear_current() -> void:
-	self.internal_camera.clear_current()
+	internal_camera.clear_current()
 
 func is_primary_freelook_enabled() -> bool:
-	return self.primary_freelook_enabled
+	return primary_freelook_enabled
 
 func enable_primary_freelook() -> void:
-	self.primary_freelook_enabled = true
+	primary_freelook_enabled = true
 
 func disable_primary_freelook() -> void:
-	self.primary_freelook_enabled = false
+	primary_freelook_enabled = false
 
 func is_secondary_freelook_enabled() -> bool:
-	return self.secondary_freelook_enabled
+	return secondary_freelook_enabled
 
 func enable_secondary_freelook() -> void:
-	self.secondary_freelook_enabled = true
+	secondary_freelook_enabled = true
 
 func disable_secondary_freelook() -> void:
-	self.secondary_freelook_enabled = false
-
-func is_zoom_eanbled() -> bool:
-	return self.is_zoom
-
-func enable_zoom() -> void:
-	self.is_zoom_enabled = true
-
-func disable_zoom() -> void:
-	self.is_zoom = false
+	secondary_freelook_enabled = false
 
 func get_min_height() -> float:
-	return self.asset_state.get_min_height()
+	return asset_state.get_min_height()
 
 func set_min_height(incoming_min: float) -> void:
-	self.asset_state.set_min_height(incoming_min)
+	asset_state.set_min_height(incoming_min)
 
 func get_camera_controller_height() -> float:
-	return self.camera_controller.global_position.y
+	return camera_controller.global_position.y
 
 func set_camera_controller_height(incoming_height: float) -> void:
-	self.camera_controller.global_position.y = incoming_height
+	camera_controller.global_position.y = incoming_height
 
 func output_warning(incoming_warning: String) -> bool:
-	return self.asset_state.output_warning(incoming_warning)
+	return asset_state.output_warning(incoming_warning)
 
 # TODO CONTINUE FROM HERE
 # TODO Fix AssetDelivery to be AssetState based
@@ -243,15 +234,8 @@ func _create_state(
 					incoming_values: Dictionary = {}, 
 					incoming_windows: Dictionary = {}
 				) -> void:
-	self.asset_state = AssetState.new(incoming_guid, incoming_transitions, incoming_values, incoming_windows)
+	asset_state = AssetState.new(incoming_guid, incoming_transitions, incoming_values, incoming_windows)
 	asset_state.connect(SIGNAL_NAME.STATE_DATA_CHANGE, _handle_state_update)
-
-# TODO Should be a lower class function after camera refactor
-#		Lowest class
-func _apply_min_height_constraint(incoming_position: Vector3) -> Vector3:
-	if self.min_height != -NUMBERS.FLOAT16_MAX:
-		incoming_position.y = max(self.min_height, incoming_position.y)
-	return incoming_position
 
 # TODO Specify if mouse or keyboard (pretty sure its mouse)
 # TODO Should be a lower class function after camera refactor
@@ -259,54 +243,54 @@ func _apply_min_height_constraint(incoming_position: Vector3) -> Vector3:
 func _handle_input() -> void:
 	var camera_state_data: StateData = asset_state.get_state_data()
 	if camera_state_data == null:
-		Log.error(Log._CANT_PERFORM, [self._OWN_STATE, self._HANDLE_INPUT], self)
+		Log.error(Log._CANT_PERFORM, [_OWN_STATE, _HANDLE_INPUT], self)
 		return
 	var current_state: STATE.ASSET = camera_state_data.get_current_state()
 	if current_state >= STATE.ASSET.IS_TRACKING and current_state < STATE.ASSET.FREELOOK_STUCK:
 		if GlobalCursorController.get_current_state() == GlobalCursorController.CursorState.CAPTURED:
-			GlobalCursorController.request_state(self, GlobalCursorController.CursorState.VISIBLE, self._FREELOOK_REASONING)
+			GlobalCursorController.request_state(self, GlobalCursorController.CursorState.VISIBLE, _FREELOOK_REASONING)
 		elif GlobalCursorController.get_current_state() == GlobalCursorController.CursorState.VISIBLE:
-			GlobalCursorController.request_state(self, GlobalCursorController.CursorState.CAPTURED, self._FREELOOK_REASONING)
+			GlobalCursorController.request_state(self, GlobalCursorController.CursorState.CAPTURED, _FREELOOK_REASONING)
 
 # TODO Should be a lower class function after camera refactor
 #		Higher class
 func _handle_freelook(v_motion: float, h_motion: float) -> void:
 	var camera_state_data: StateData = asset_state.get_state_data()
 	if camera_state_data == null:
-		Log.error(Log._CANT_PERFORM, [self._OWN_STATE, self._HANDLE_FREELOOK], self)
+		Log.error(Log._CANT_PERFORM, [_OWN_STATE, _HANDLE_FREELOOK], self)
 		return
 	var current_state: STATE.ASSET = camera_state_data.get_current_state()
 	if current_state >= 550 and current_state <= 552:
-		self.pan_horizontal(h_motion * freelook_sensitivity)
-		self.pitch_vertical(v_motion * freelook_sensitivity)
+		pan_horizontal(h_motion * freelook_sensitivity)
+		pitch_vertical(v_motion * freelook_sensitivity)
 
 # TODO Should be a lower class function after camera refactor
 #		Higher class
 func _handle_up_input(_delta: float) -> void:
-	if self.asset_state.is_movement_enabled():
-		var sprint_multiplier: float = self._get_sprint_value(self.asset_state.is_sprinting())
+	if asset_state.is_movement_enabled():
+		var sprint_multiplier: float = _get_sprint_value(asset_state.is_sprinting())
 		var movement_amount: float = GameConfig.DEFAULTS.controller_speed * sprint_multiplier
 		var movement_vector: Vector3 = Vector3(0, movement_amount, 0)
-		self.asset_state.apply_movement(movement_vector)
+		asset_state.apply_movement(movement_vector)
 
 # TODO Should be a lower class function after camera refactor
 #		Higher class
 func _handle_down_input(_delta: float) -> void:
-	if self.asset_state.is_movement_enabled():
-		var sprint_multiplier: float = self._get_sprint_value(self.asset_state.is_sprinting())
+	if asset_state.is_movement_enabled():
+		var sprint_multiplier: float = _get_sprint_value(asset_state.is_sprinting())
 		var movement_amount: float = -(GameConfig.DEFAULTS.controller_speed * sprint_multiplier)
 		var movement_vector: Vector3 = Vector3(0, movement_amount, 0)
-		self.asset_state.apply_movement(movement_vector)
+		asset_state.apply_movement(movement_vector)
 
 # TODO Should be a lower class function after camera refactor
 #		Higher class
 func _handle_input_direction(incoming_direction: Vector2) -> void:
-	if self.asset_state.is_movement_enabled():
-		var sprint_multiplier: float = self._get_sprint_value(self.asset_state.is_sprinting())
+	if asset_state.is_movement_enabled():
+		var sprint_multiplier: float = _get_sprint_value(asset_state.is_sprinting())
 		var x_amount = incoming_direction.x * sprint_multiplier
 		var y_amount = incoming_direction.y * sprint_multiplier
 		var movement_vector: Vector3 = Vector3(x_amount, 0, y_amount)
-		self.asset_state.apply_movement(movement_vector)
+		asset_state.apply_movement(movement_vector)
 
 # BUG right now only up and down inputs are workign
 func _get_sprint_value(is_sprinting: bool) -> float:
@@ -318,24 +302,24 @@ func _get_sprint_value(is_sprinting: bool) -> float:
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
 func _handle_sprint_start() -> void:
-	self.asset_state.start_sprinting()
+	asset_state.start_sprinting()
 
 # TODO Should be a lower class function after camera refactor
 #		Lowest class
 func _handle_sprint_stop() -> void:
-	self.asset_state.stop_sprinting()
+	asset_state.stop_sprinting()
 
 func apply_tracking_distance() -> void:
-	self.camera_controller.position = GameConfig.CAMERA.TRACKING_POSITION
+	camera_controller.position = GameConfig.CAMERA.TRACKING_POSITION
 
 func remove_tracking_distance() -> void:
-	self.camera_controller.position = GameConfig.EMPTY_VECTOR
+	camera_controller.position = GameConfig.EMPTY_VECTOR
 
 func apply_crouching_distance() -> void:
-	self.camera_controller.position = GameConfig.CAMERA.CROUCHING_POSITION
+	camera_controller.position = GameConfig.CAMERA.CROUCHING_POSITION
 
 func remove_crouching_distance() -> void:
-	self.camera_controller.position = GameConfig.EMPTY_VECTOR
+	camera_controller.position = GameConfig.EMPTY_VECTOR
 	
 func _handle_state_update(incoming_update: StateUpdate) -> void:
 	var update_type: STATE.UPDATE_TYPE = incoming_update.get_update_type()
@@ -343,15 +327,15 @@ func _handle_state_update(incoming_update: StateUpdate) -> void:
 		STATE.UPDATE_TYPE.FOCUS:
 			RigResolver.resolve_focus(self, incoming_update)
 		STATE.UPDATE_TYPE.ROTATION:
-			TransformResolver.resolve_rotation(self, self.asset_state.get_current_rotation())
+			TransformResolver.resolve_rotation(self, asset_state.get_current_rotation())
 		STATE.UPDATE_TYPE.POSITION:
-			TransformResolver.resolve_position(self, self.asset_state.get_current_position())
+			TransformResolver.resolve_position(self, asset_state.get_current_position())
 		STATE.UPDATE_TYPE.SCALE:
-			TransformResolver.resolve_scale(self, self.asset_state.get_current_scale())
+			TransformResolver.resolve_scale(self, asset_state.get_current_scale())
 		STATE.UPDATE_TYPE.STATE:
 			RigResolver.resolve_state(self, incoming_update)
 		STATE.UPDATE_TYPE.TOGGLE:
 			RigResolver.resolve_toggles(self, incoming_update.get_update_details())
 		_:
 			var update_string: String = STATE.get_update_type_string(update_type)
-			Log.error(Log.UNSUPPORTED_TYPE_LOG, [self._HANDLE_STATE_UPDATE, update_string], self)
+			Log.error(Log.UNSUPPORTED_TYPE_LOG, [_HANDLE_STATE_UPDATE, update_string], self)

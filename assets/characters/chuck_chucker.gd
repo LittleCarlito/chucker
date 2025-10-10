@@ -5,18 +5,18 @@ class_name ChuckChucker
 
 func _ready() -> void:
 	super._ready()
-	if self.asset_data == null:
-		self.asset_data = AssetData.new(AssetData.TYPE.PLAYER)
-	self.add_to_group(self.name)
-	self.asset_data.group_name = self.name
-	self.camera_container.add_to_group(self.name)
-	self.item_container.connect(SIGNAL_NAME.ZOOM_IN, _handle_zoom_in)
-	self.item_container.connect(SIGNAL_NAME.ZOOM_OUT, _handle_zoom_out)
-	self.item_container.connect(SIGNAL_NAME.TURN_HORIZONTAL, _handle_item_rotation_signal)
+	if asset_data == null:
+		asset_data = AssetData.new(AssetData.TYPE.PLAYER)
+	add_to_group(name)
+	asset_data.group_name = name
+	camera_container.add_to_group(name)
+	item_container.connect(SIGNAL_NAME.ZOOM_IN, _handle_zoom_in)
+	item_container.connect(SIGNAL_NAME.ZOOM_OUT, _handle_zoom_out)
+	item_container.connect(SIGNAL_NAME.TURN_HORIZONTAL, _handle_item_rotation_signal)
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
-	self._handle_interact_input()
+	_handle_interact_input()
 
 func equip_item(new_item: Node3D) -> Variant:
 	if new_item.has_signal(ThrowableItem.LAUNCHED):
@@ -32,15 +32,15 @@ func _process(_delta: float) -> void:
 
 ## Release action gets called on the items; This logic is what chuck does on release
 func release_action() -> void:
-	self.unequip_item()
+	unequip_item()
 	# Update the status of the character if the item took the camera with it
 	# If the camera was released for the launch disable movement
-	self.just_output = true
-	self.disable_movement()
-	self.disable_rotation()
+	just_output = true
+	disable_movement()
+	disable_rotation()
 
 func get_group_name() -> String:
-	return self.asset_data.group_name
+	return asset_data.group_name
 
 # Extended here to update state
 func disable_camera() -> void:
@@ -53,8 +53,8 @@ func enable_camera() -> void:
 # Specific to chuck as each character type might want their own interaction type
 func _handle_interact_input() -> void:
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.INTERACT):
-		self.equip_frontmost_object();
+		equip_frontmost_object();
 
 func _handle_item_rotation_signal(incoming_rotation: float) -> void:
-	if self.is_unequipped():
-		self._handle_horizontal_rotation(incoming_rotation)
+	if is_unequipped():
+		_handle_horizontal_rotation(incoming_rotation)

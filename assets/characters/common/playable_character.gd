@@ -16,7 +16,7 @@ func _ready() -> void:
 	GlobalInputController.connect(SIGNAL_NAME.SPRINT_RELEASE, _handle_sprint_release)
 
 func equip_item(new_item: Node3D) -> Variant:
-	#self._give_camera(new_item)
+	#_give_camera(new_item)
 	# TODO Should have this based off state instead
 	#			If it is a playable character that is focused by a rig and equips something then do the mouse shit
 	#		But really should be state based so everything happens and at the end of the frame the state is checked and shit happens
@@ -32,37 +32,37 @@ func _transfer_and_enable(incoming_camera: Camera3D) -> void:
 		enable_movement()
 	if is_rotation_disabled():
 		enable_rotation()
-	self.just_output = false
-	self.set_camera(incoming_camera)
+	just_output = false
+	set_camera(incoming_camera)
 
 func _handle_input_direction(incoming_direction: Vector2) -> void:
 	var final_direction: Vector3 = Vector3(0, 0, 0)
 	if(is_on_floor()):
-		final_direction = (self.transform.basis * Vector3(incoming_direction.x, 0, incoming_direction.y)).normalized()
-	self.move(final_direction)
+		final_direction = (transform.basis * Vector3(incoming_direction.x, 0, incoming_direction.y)).normalized()
+	move(final_direction)
 
 func _handle_sprint_action() -> void:
-	self.start_sprint()
+	start_sprint()
 
 func _handle_sprint_release() ->void:
-	self.stop_sprint()
+	stop_sprint()
 
 func _handle_primary_hold(delta: float) -> void:
-	self.item_hold_action(delta, focusing_output)
+	item_hold_action(delta, focusing_output)
 
 func _handle_primary_release() -> void:
-	self.item_hold_release()
+	item_hold_release()
 
 func _handle_rotation_signal(incoming_axis: Vector3, incoming_amount: float) -> void:
-	self.rotate_equipped_item(incoming_axis, incoming_amount)
+	rotate_equipped_item(incoming_axis, incoming_amount)
 
 func _handle_left_hold(_delta: float) -> void:
-	if self.is_rotation_enabled():
-		self.rotate_y_axis(deg_to_rad(CameraConfig.get_rotate_speed()))
+	if is_rotation_enabled():
+		rotate_y_axis(deg_to_rad(CameraConfig.get_rotate_speed()))
 
 func _handle_right_hold(_delta: float) -> void:
-	if self.is_rotation_enabled():
-		self.rotate_y_axis(deg_to_rad(-CameraConfig.get_rotate_speed()))
+	if is_rotation_enabled():
+		rotate_y_axis(deg_to_rad(-CameraConfig.get_rotate_speed()))
 
 func _handle_jump_input() -> void:
-	self.jump()
+	jump()

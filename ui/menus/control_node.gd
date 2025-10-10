@@ -33,32 +33,32 @@ func _ready() -> void:
 
 func _handle_pause_action() -> void:
 	pause_menu.visible = true
-	self.get_tree().paused = true
-	self.set_process_input(false)
+	get_tree().paused = true
+	set_process_input(false)
 
 func _handle_tab_action() -> void:
 	disable_movement.emit()
 	disable_rotation.emit()
 	# Determine what camera is active so we know how big to make the scorecard
-	var current_camera: Camera3D = self.get_tree().root.get_camera_3d()
+	var current_camera: Camera3D = get_tree().root.get_camera_3d()
 	if(current_camera.name == _TEE_CAMERA):
 		scorecard.set_pixel_size(MENU.SCORECARD.TEEBOX_PIXEL_SIZE)
 	else:
 		scorecard.set_pixel_size(MENU.SCORECARD.PLAYER_PIXEL_SIZE)
 	scorecard.scorecard_sprite.visible = true
-	self.get_viewport().get_camera_3d().look_at(scorecard.scorecard_sprite.global_position)
+	get_viewport().get_camera_3d().look_at(scorecard.scorecard_sprite.global_position)
 
 func _handle_tab_release() -> void:
 	enable_movement.emit()
 	enable_rotation.emit()
 	scorecard.scorecard_sprite.visible = false
-	self.get_viewport().get_camera_3d().rotation = Vector3.ZERO
+	get_viewport().get_camera_3d().rotation = Vector3.ZERO
 
 # Handling close menu signals
 func _close_menu() -> void:
 	pause_menu.visible = false
-	self.get_tree().paused = false
-	self.set_process_input(true)
+	get_tree().paused = false
+	set_process_input(true)
 
 func _apply_settings() -> void:
 	apply_settings.emit()
