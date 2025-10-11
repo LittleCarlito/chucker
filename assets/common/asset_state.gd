@@ -37,14 +37,53 @@ func get_min_height() -> float:
 func set_min_height(incoming_height: float) -> void:
 	_state_data.set_min_height(incoming_height)
 
-func get_current_rotation() -> Quaternion:
-	return _state_data.get_current_rotation()
+func get_current_velocity() -> Vector3:
+	return _state_data.get_current_velocity()
+
+func get_current_x_velocity() -> float:
+	return _state_data.get_current_x_velocity()
+
+func get_current_y_velocity() -> float:
+	return _state_data.get_current_y_velocity()
+
+func get_current_z_velocity() -> float:
+	return _state_data.get_current_z_velocity()
+
+func set_current_velocity(incoming_velocity: Vector3) -> void:
+	_state_data.set_current_velocity(incoming_velocity)
+
+func set_current_x_velocity(incoming_velocity: float) -> void:
+	_state_data.set_current_x_velocity(incoming_velocity)
+
+func set_current_y_velocity(incoming_velocity: float) -> void:
+	_state_data.set_current_y_velocity(incoming_velocity)
+
+func set_current_z_velocity(incoming_velocity: float) -> void:
+	_state_data.set_current_z_velocity(incoming_velocity)
+
+func apply_velocity(incoming_velocity: Vector3) -> void:
+	_state_data.apply_current_velocity(incoming_velocity)
+
+func apply_x_velocity(incoming_velocity: float) -> void:
+	_state_data.apply_current_x_velocity(incoming_velocity)
+
+func apply_y_velocity(incoming_velocity: float) -> void:
+	_state_data.apply_current_y_velocity(incoming_velocity)
+
+func apply_z_velocity(incoming_velocity: float) -> void:
+	_state_data.apply_current_z_velocity(incoming_velocity)
 
 func get_current_position() -> Vector3:
 	return _state_data.get_current_position()
 
+func get_current_rotation() -> Quaternion:
+	return _state_data.get_current_rotation()
+
 func get_current_scale() -> Vector3:
 	return _state_data.get_current_scale()
+
+func update_movement_enabled(incoming_value: bool) -> void:
+	return _state_data.update_movement_enabled(incoming_value)
 
 func is_movement_enabled() -> bool:
 	return _state_data.is_movement_enabled()

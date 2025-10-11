@@ -17,17 +17,20 @@ const _NAME: String = "[StateData]"
 const _GET_STATE_DATA: String = "get_state_data"
 const _STATE_IDENTIFIER: String = "_state"
 const _MOVEMENT_ENABLED: String = "movement_enabled"
+const _ROTATION_ENABLED: String = "rotation_enabled"
 
 var _owner_guid: String
 var _current_state: STATE.ASSET
 var _current_state_duration: float
 # Scene based details
 var _min_height: float = -NUMBERS.FLOAT16_MAX
-var _owner_rotation: Quaternion
+var _owner_velocity: Vector3
 var _owner_position: Vector3
+var _owner_rotation: Quaternion
 var _owner_scale: Vector3
 var _focused_guid: String
 var _movement_enabled: bool
+var _rotation_enabled: bool
 var _is_sprinting: bool
 var _is_crouching: bool
 # State data dictionaries
@@ -276,6 +279,16 @@ func update_movement_enabled(incoming_value: bool) -> void:
 func is_movement_enabled() -> bool:
 	return _movement_enabled
 
+func update_rotation_enabled(incoming_value: bool) -> void:
+	_rotation_enabled = incoming_value
+	var update_details: Dictionary = {
+		StateHeaders.TOGGLE: _ROTATION_ENABLED
+	}
+	state_data_change.emit(StateUpdate.new(STATE.UPDATE_TYPE.TOGGLE, update_details))
+
+func is_rotation_enabled() -> bool:
+	return _rotation_enabled
+
 func get_transitions() -> Dictionary:
 	return self._valid_transitions
 
@@ -288,11 +301,47 @@ func get_windows() -> Dictionary:
 func get_owner_guid() -> String:
 	return _owner_guid
 
-func get_current_rotation() -> Quaternion:
-	return _owner_rotation
+func get_current_velocity() -> Vector3:
+	return _owner_velocity
+
+func get_current_x_velocity() -> float:
+	return _owner_velocity.x
+
+func get_current_y_velocity() -> float:
+	return _owner_velocity.y
+
+func get_current_z_velocity() -> float:
+	return _owner_velocity.z
+
+func set_current_velocity(incoming_velocity: Vector3) -> void:
+	_owner_velocity = incoming_velocity
+
+func set_current_x_velocity(incoming_velocity: float) -> void:
+	_owner_velocity.x = incoming_velocity
+
+func set_current_y_velocity(incoming_velocity: float) -> void:
+	_owner_velocity.y = incoming_velocity
+
+func set_current_z_velocity(incoming_velocity: float) -> void:
+	_owner_velocity.z = incoming_velocity
+
+func apply_current_velocity(incoming_velocity: Vector3) -> void:
+	_owner_velocity += incoming_velocity
+
+func apply_current_x_velocity(incoming_velocity: float) -> void:
+	_owner_velocity.x += incoming_velocity
+
+func apply_current_y_velocity(incoming_velocity: float) -> void:
+	_owner_velocity.y += incoming_velocity
+
+func apply_current_z_velocity(incoming_velocity: float) -> void:
+	_owner_velocity.z += incoming_velocity
 
 func get_current_position() -> Vector3:
 	return _owner_position
+
+func get_current_rotation() -> Quaternion:
+	return _owner_rotation
 
 func get_current_scale() -> Vector3:
 	return _owner_scale

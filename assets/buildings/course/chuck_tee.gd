@@ -3,7 +3,6 @@ class_name ChuckTee
 
 # TODO Need to figure out scorecard view so it is less hacky
 # TODO Need to get tee_camera on CameraContainer so its controllable as well
-@onready var camera_container: CameraContainer = $CameraContainer
 @export var hole_data: HoleData
 @export var hole_node_data: HoleNodeData
 # TODO This should be the parent class of all created hole nodes for the associtead hole
@@ -18,9 +17,6 @@ const _CURRENT_CAMERA_LOG: String = "Current camera is %s"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	if ApplicationConfig.ENABLE_LEGACY_CAMERA:
-		camera_container.populate_camera_control(_get_focus_point())
-		camera_container.set_fov(CameraConfig.get_stationary_fov_value())
 	# TODO Need to get noded path from teebox to hole and have camera focus on first node
 	# TODO need to create group from teebox this will be group owner
 	#		Try to share asset status stuff with already existing classes
@@ -51,15 +47,10 @@ func _handle_body(body: Node3D, enable_body_cam: bool) -> void:
 	if body is ChuckChucker:
 		if enable_body_cam:
 			body.camera_container.enable_camera()
-			camera_container.disable_camera()
 		else:
 			body.camera_container.disable_camera()
-			camera_container.enable_camera()
 		if(get_viewport().get_camera_3d() != null):
 			Log.debug(_CURRENT_CAMERA_LOG, [get_viewport().get_camera_3d().name], self)
-
-func get_camera() -> Camera3D:
-	return camera_container.get_camera()
 
 func _increase_node_number(hole_number: int, incoming_node_number: int) -> void:
 	if hole_node_data != null:

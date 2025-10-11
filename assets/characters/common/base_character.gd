@@ -6,77 +6,64 @@ const _EMPTY_CAMERA_CONTAINER: String = "CameraContainer from \"%s\" returned nu
 
 @export var base_mesh: MeshInstance3D
 @export var base_collision: CollisionShape3D
-# TODO Should be able to delete this now that camera tracks and isn't internal
-@export var camera_container: CameraContainer
 @export var asset_state: AssetState
 
+# TODO Most of this goes into AssetState
 var height: float
-var is_sprinting: bool = false
-var disable_movement_var: bool = false
-var disable_rotation_var: bool = false
-var _initial_camera_orientation: Transform3D
-var _pending_movement: bool = false
 
 # TODO OOOOO 
 # TODO Task list
 # TODO Make Basecharacter Node3D class contain and function off of asset_state
 #		Means having input handling update state stuff
 #		Then having frame by frame move_to adjustments in process_physics based off state
+# TODO Move AssetData into AssetState
 # TODO Get back to Asset_Delivery TODOs
 # TODO Then to CameraRigs TODOs
 
 func _ready() -> void:
 	height = base_mesh.get_aabb().size.y
-	_initial_camera_orientation = camera_container.global_transform
-	if ApplicationConfig.ENABLE_LEGACY_CAMERA:
-		camera_container.populate_camera_control(_get_focus_point())
 
 func _physics_process(delta: float) -> void:
 	apply_gravity(delta)
-	if _pending_movement:
-		move_and_slide()
-		_pending_movement = false
+	move_and_slide()
 
 ## Movement functions
 
 ## Character jumps; Multiplier can be applied
 func jump(jump_multiplier: float = 1) -> void:
 	if is_on_floor() and is_movement_enabled():
-		velocity.y = GameConfig.DEFAULTS.jump_force * jump_multiplier
+		asset_state.set_current_y_velocity(GameConfig.DEFAULTS.jump_force * jump_multiplier)
 
-# TODO Change the velocity x and z setting to use move toward with acceleration and deccelration considerations
-## Character moves; Multiplier can be applied
 func move(move_direction: Vector3) -> void:
 	if is_movement_disabled():
-		velocity.x = 0
-		velocity.z = 0
+		asset_state.set_current_x_velocity(0)
+		asset_state.set_current_z_velocity(0)
 	else:
 		var speed: float = GameConfig.DEFAULTS.run_speed
 		if move_direction != Vector3(0, 0, 0):
-			if is_sprinting:
+			if asset_state.is_sprinting():
 				speed *= GameConfig.DEFAULTS.sprint_multiplier
-			velocity.x = move_direction.x * speed
-			velocity.z = move_direction.z * speed
+			asset_state.set_current_x_velocity(move_direction.x * speed)
+			asset_state.set_current_z_velocity(move_direction.z * speed)
 		# Otherwise set velocity to start slowing down
 		elif is_on_floor():
-			velocity.x = move_toward(velocity.x, 0, speed)
-			velocity.z = move_toward(velocity.z, 0, speed)
-	_pending_movement = true
+			asset_state.set_current_x_velocity(move_toward(velocity.x, 0, speed))
+			asset_state.set_current_z_velocity(move_toward(velocity.z, 0, speed))
 
 func start_sprint() -> void:
-	is_sprinting = true
+	asset_state.start_sprinting()
 
 func stop_sprint() -> void:
-	is_sprinting = false
+	asset_state.stop_sprinting()
 
 ## Character rotates on y axis; Multiplier can be applied
 func rotate_y_axis(rotation_amount: float) -> void:
-	rotate_y(rotation_amount)
+	asset_state.apply_rotation(Vector3(0, rotation_amount, 0))
 
 ## Applies gravity
 func apply_gravity(delta: float) -> void:
 	if not is_on_floor():
-		velocity += get_gravity() * delta
+		asset_state.apply_velocity(get_gravity() * delta)
 
 ## Returns the height of Chuck
 func get_height() -> float:
@@ -84,82 +71,45 @@ func get_height() -> float:
 
 ## Returns true if movement is disabled
 func is_movement_disabled() -> bool:
-	return disable_movement_var
+	return !asset_state.is_movement_enabled()
 
 ## Returns true if movement is enabled
 func is_movement_enabled() -> bool:
-	return !disable_movement_var
+	return asset_state.is_movement_enabled()
 
 ## Disables movement
 func disable_movement() -> void:
-	disable_movement_var = true
+	asset_state.update_movement_enabled(false)
 
 ## Enables movement
 func enable_movement() -> void:
-	disable_movement_var = false
+	asset_state.update_movement_enabled(true)
 
 ## Toggles movement enablement
 func toggle_movement() -> void:
-	disable_movement_var = not disable_movement_var
-
-## Camera functions
-
-func rotate_camera(vertical_rotation: float, horizontal_rotation: float) -> void:
-	if _can_vertically_rotate(vertical_rotation):
-		camera_container.veritcal_rotate(vertical_rotation)
-	if _can_horizontally_rotate(horizontal_rotation):
-		camera_container.horizontal_rotate(horizontal_rotation)
-
-func zoom_in(zoom_amount: float = NUMBERS.FLOAT16_MAX) -> void:
-	camera_container.zoom_in(zoom_amount)
-
-func zoom_out(zoom_amount: float = NUMBERS.FLOAT16_MAX) -> void:
-	camera_container.zoom_out(zoom_amount)
-
-func reset_zoom() -> void:
-	camera_container.reset_zoom();
-
-func horizontal_pan(rotation_amount: float, focus_location: Vector3 = Vector3.INF) -> void:
-	camera_container.horizontal_pan(rotation_amount, focus_location)
-
-func snap_back(incoming_rotation: float = NUMBERS.FLOAT16_MAX) -> void:
-	camera_container.snap_back(incoming_rotation)
-
-func set_camera(incoming_camera: Camera3D) -> void:
-	camera_container.set_camera(incoming_camera)
-
-func disable_camera() -> void:
-	camera_container.disable_camera()
-
-func enable_camera() -> void:
-	camera_container.enable_camera()
-
-func _reset_camera_control() -> void:
-	camera_container.reset_camera_control()
-
-func _handle_horizontal_rotation(incoming_rotation: float = NUMBERS.FLOAT16_MAX) -> void:
-	var rotation_amount = incoming_rotation if incoming_rotation != NUMBERS.FLOAT16_MAX else deg_to_rad(CameraConfig.get_rotate_speed())
-	rotate_y_axis(rotation_amount)
+	var movement_enabled: bool = asset_state.is_movement_enabled()
+	asset_state.update_movement_enabled(movement_enabled)
 
 ## Returns true if rotation is enabled
 func is_rotation_enabled() -> bool:
-	return !disable_rotation_var
+	return asset_state.is_rotation_enabled()
 
 ## Returns true if rotation is disabled
 func is_rotation_disabled() -> bool:
-	return disable_rotation_var
+	return !asset_state.is_rotation_enabled()
 
 ## Disables rotation
 func disable_rotation() -> void:
-	disable_rotation_var = true
+	asset_state.update_rotation_enabled(true)
 
 ## Enables rotation
 func enable_rotation() -> void:
-	disable_rotation_var = false
+	asset_state.update_rotation_enabled(false)
 
 ## Toggles rotation enablement
 func toggle_rotation() -> void:
-	disable_rotation_var = not disable_rotation_var
+	var currently_enabled: bool = asset_state.is_rotation_enabled()
+	asset_state.update_rotation_enabled(not currently_enabled)
 
 func get_asset_state() -> AssetState:
 	if asset_state == null:
@@ -170,26 +120,3 @@ func get_asset_state() -> AssetState:
 
 func set_asset_state(new_state: AssetState) -> void:
 	asset_state = new_state
-
-func _handle_zoom_in() -> void:
-	if camera_container.is_current():
-		camera_container.zoom_in()
-
-func _handle_zoom_out() -> void:
-	camera_container.snap_back(global_rotation.z)
-
-func _get_focus_point() -> Vector3:
-	var focus_point: Vector3 = position + CameraConfig.get_player_focus_offset()
-	return focus_point
-
-func _can_vertically_rotate(rotation_amount:float) -> bool:
-	var potential_vertical_roation: float = camera_container.get_vertical_rotation() + rotation_amount
-	var max_vertical_value: float = CameraConfig.get_max_vertical_rotation()
-	var min_vertical_value: float = CameraConfig.get_min_vertical_rotation()
-	return (potential_vertical_roation > min_vertical_value) and (potential_vertical_roation < max_vertical_value)
-
-func _can_horizontally_rotate(rotation_amount:float) -> bool:
-	var potential_horizontal_roation: float = camera_container.get_horizontal_rotation() + rotation_amount
-	var max_horizontal_value: float = CameraConfig.get_max_horizontal_rotation()
-	var min_horizontal_value: float = CameraConfig.get_min_horizontal_rotation()
-	return (potential_horizontal_roation > min_horizontal_value) and (potential_horizontal_roation < max_horizontal_value)

@@ -1,6 +1,7 @@
 extends LoadoutCharacter
 class_name ChuckChucker
 
+# TODO Get this into AssetState
 @export var asset_data: AssetData
 
 func _ready() -> void:
