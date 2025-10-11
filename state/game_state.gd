@@ -1,7 +1,4 @@
-# Master container holding player/item dictionaries and current application mode (menu, running, paused)
 class_name GameState
-
-signal state_updated(update_details: Dictionary)
 
 const _MISSING_GUID: String = "Couldn't create %s; Incoming object \"%s\" is missing GUID metadata; Ensure it was created through AssetDelivery"
 const _GUID_MISSING_STATE: String = "GUID \"%s\" did not have any data stored in game state; Ensure it was created through Asset Factory/Delivery"
@@ -183,19 +180,3 @@ func _get_node_from_dictionary(state_dictionary: Dictionary) -> Node3D:
 func _log_bad_action(incoming_action: GameAction, missing_keys: Array[String]) -> void:
 	var missing_string: String = "; ".join(missing_keys)
 	Log.error(Log._BAD_ACTION_FORMAT, [incoming_action, missing_string], self)
-
-# Shared helper
-func _schedule_state_update(successful_action: GameAction) -> void:
-	var action_owner_guid: String = successful_action.payload.get(GameAction.OWNER_GUID)
-	_successful_actions[action_owner_guid] = successful_action
-	if !_flush_scheduled:
-		_flush_scheduled = true
-		call_deferred("_flush_state_updates")
-
-func _flush_state_updates() -> void:
-	if _successful_actions.is_empty():
-		_flush_scheduled = false
-		return
-	state_updated.emit(_successful_actions)
-	_successful_actions.clear()
-	_flush_scheduled = false

@@ -1,4 +1,4 @@
-extends PlayableCharacter
+extends DirectionalCharacter
 class_name FreelookCharacter
 
 func _ready() -> void:
@@ -12,28 +12,28 @@ func _ready() -> void:
 	GlobalInputController.connect(SIGNAL_NAME.DUO_ACTION, press_primary_secondary_action)
 
 func press_primary_action() -> void:
-	if is_unequipped():
-		GlobalCursorController.request_captured(self, "Unequipped primary action")
+	# TODO have this determine off state
+	GlobalCursorController.request_captured(self, "Unequipped primary action")
 
 func press_primary_secondary_action() -> void:
 	_reset_camera_control()
 
-func _handle_primary_movement(v_motion: float, h_motion: float) -> void:
-	if is_unequipped():
-		horizontal_pan(h_motion, global_position)
+func _handle_primary_movement(_v_motion: float, h_motion: float) -> void:
+	# TODO have this determine off state
+	horizontal_pan(h_motion, global_position)
 
 func release_primary_action() -> void:
-	if is_unequipped():
-		snap_back(global_rotation.z)
+	# TODO have this determine off state
+	snap_back(global_rotation.z)
 
 func press_secondary_action() -> void:
-	if is_unequipped():
-		_handle_zoom_in()
+	# TODO have this determine off state
+	_handle_zoom_in()
 
 func _handle_secondary_movement(v_motion: float, h_motion: float) -> void:
-	if is_unequipped():
-		rotate_camera(v_motion, h_motion)
+	# TODO have this determine off state
+	rotate_camera(v_motion, h_motion)
 
 func release_secondary_action() -> void:
-	if is_unequipped():
-		_handle_zoom_out()
+	# TODO have this determine off state
+	_handle_zoom_out()

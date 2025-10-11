@@ -6,8 +6,6 @@ const _NO_PRIMARY: String = "Items do not have a \"primary\" to retireve"
 const _EMPTY_GUID: String = "GUID must be populated"
 const _INVALID_HEAD_REQEUST: String = "Invalid header data request; %s"
 
-signal state_updated(update_details: Dictionary)
-
 var _game_state: GameState
 
 func _ready() -> void:
@@ -47,6 +45,3 @@ func get_primary_guid(incoming_type: STATE.DATA_TYPE) -> String:
 
 func print_details() -> void:
 	_game_state.print_details()
-
-func _handle_game_state_change(incoming_details: Dictionary) -> void:
-	state_updated.emit(incoming_details)

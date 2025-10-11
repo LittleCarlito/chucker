@@ -1,4 +1,4 @@
-extends BaseCharacter
+extends FreelookCharacter
 class_name LoadoutCharacter
 
 @export var focusing_output: bool
@@ -6,7 +6,13 @@ class_name LoadoutCharacter
 @export var item_container: ItemContainer
 @export var freeze_on_equip: bool = true
 
-var just_output: bool
+func _ready() -> void:
+	super._ready()
+	# Input
+	GlobalInputController.connect(SIGNAL_NAME.PRIMARY_HOLD, _handle_primary_hold)
+	GlobalInputController.connect(SIGNAL_NAME.PRIMARY_RELEASE, _handle_primary_release)
+	GlobalInputController.connect(SIGNAL_NAME.ROTATE, _handle_rotation_signal)
+
 
 ## Stores new_item internally and attempts to give it internal camera if possible
 ## Returns item that was equipped if one was previously
@@ -16,6 +22,7 @@ func equip_item(new_item: Node3D) -> Variant:
 	if new_item.has_signal(ThrowableItem.AIM):
 		new_item.connect(ThrowableItem.AIM, item_container._handle_aiming)
 	# Returns the equipped item if there was one
+	GlobalCursorController.request_visible(self, "Equipped an item")
 	return item_container.equip_item(new_item)
 
 func unequip_item(alter_movement: bool = false) -> void:
@@ -50,3 +57,12 @@ func item_hold_action(delta: float, focus_output: bool = false) -> void:
 func item_hold_release() -> void:
 	if is_equipped():
 		item_container.release_action()
+
+func _handle_primary_hold(delta: float) -> void:
+	item_hold_action(delta, focusing_output)
+
+func _handle_primary_release() -> void:
+	item_hold_release()
+
+func _handle_rotation_signal(incoming_axis: Vector3, incoming_amount: float) -> void:
+	rotate_equipped_item(incoming_axis, incoming_amount)

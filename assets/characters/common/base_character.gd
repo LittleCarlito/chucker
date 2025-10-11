@@ -19,21 +19,9 @@ var _pending_movement: bool = false
 
 # TODO OOOOO 
 # TODO Task list
-# TODO To do below you need to
-#		Change StatefulAsset to AssetState
-#		Make it a Resource and not Node3D
-#		Have CameraRig extend Node3D and not it
-#		Have CameraRig contain an AssetState and use that like it was using StatefulAsset
-#		Update asset registration functions
-#			Resource is now internal part of asset and not something created in registration
-#			Needs to be pulled out of created asset
-#				Should probably have a functiuon in GroupName or something for "get_asset_state"
-#			With that the batch signal out can be removed
-#				Now shared ref to AssetState object connects dispatched actions directly to the state
-#				Gets rid of all the _dirty_state stuff too
-# TODO Make Basecharacter Node3D class containing a CharaacterBody3D
-#		Wire up the calls so that they manipulate the character properly
-# TODO Refactor character to function based off state and not inputs
+# TODO Make Basecharacter Node3D class contain and function off of asset_state
+#		Means having input handling update state stuff
+#		Then having frame by frame move_to adjustments in process_physics based off state
 # TODO Get back to Asset_Delivery TODOs
 # TODO Then to CameraRigs TODOs
 

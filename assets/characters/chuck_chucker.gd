@@ -1,4 +1,4 @@
-extends FreelookCharacter
+extends LoadoutCharacter
 class_name ChuckChucker
 
 @export var asset_data: AssetData
@@ -35,7 +35,6 @@ func release_action() -> void:
 	unequip_item()
 	# Update the status of the character if the item took the camera with it
 	# If the camera was released for the launch disable movement
-	just_output = true
 	disable_movement()
 	disable_rotation()
 
