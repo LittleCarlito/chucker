@@ -22,9 +22,9 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	apply_gravity(delta)
-	# TODO Need to do velocity resolution here (applying velocity to CharacterBody3D)
-	#		Asset states stored velocities need to be applied to the character
+	TransformResolver.resolve_velocity(self, asset_state.get_current_velocity())
 	move_and_slide()
+	# TODO If you find that you never slow down it is because you need to push your results back into state
 
 ## Applies gravity
 func apply_gravity(delta: float) -> void:
