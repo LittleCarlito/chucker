@@ -3,14 +3,6 @@ class_name PullDisk
 
 @export var pull_draw: PullDraw
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	super._ready()
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	super._process(delta)
-
 # We know primary is held upon entering this function
 func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> void:
 	flight_data.set_is_focused(incoming_focus)
@@ -18,8 +10,8 @@ func hold_action(_delta: float, incoming_basis: Basis, incoming_focus: bool) -> 
 	var only_primary_held: bool = Input.is_action_pressed(InputConfig.USER_INPUT.PRIMARY) and not Input.is_action_pressed(InputConfig.USER_INPUT.SECONDARY)
 	if only_primary_held:
 		var pull_data: PullData = pull_draw.begin_pull()
-		self.flight_data.set_flight_power(pull_data.primary_pull)
-		self.flight_data.set_flight_aim(pull_data.secondary_pull)
+		flight_data.set_flight_power(pull_data.primary_pull)
+		flight_data.set_flight_aim(pull_data.secondary_pull)
 	## If right click is pressed while holding left reset throw
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.SECONDARY):
 		pull_draw.reset_pull()
@@ -43,49 +35,49 @@ func release_action(incoming_basis: Basis) -> void:
 		flight_data.set_flight_basis(incoming_basis)
 		flight_data.set_flight_spin(flight_data.get_max_offset())
 		# Create path_disk_data and pass it into the launch method
-		var path_disk_data: AssetData = self._get_next_asset_data()
+		var path_disk_data: AssetData = _get_next_asset_data()
 		AssetDelivery.create_and_launch(flight_data, path_disk_data)
 		launched.emit()
 		pick_up()
-		self.rotation.x = 0
+		rotation.x = 0
 		charge_view.set_progress(-1)
 	pull_draw.reset_pull()
 
 func drop_item() -> void:
-	var drop_path: FlightPath = FlightPath.convert([self.global_position])
-	var drop_details: FlightDetails = FlightDetails.new(0, 0, self.global_basis, false, 0, 0)
+	var drop_path: FlightPath = FlightPath.convert([global_position])
+	var drop_details: FlightDetails = FlightDetails.new(0, 0, global_basis, false, 0, 0)
 	var drop_flight: FlightData = FlightData.new(drop_details, drop_path)
-	var drop_asset: AssetData = self._get_next_asset_data(true)
+	var drop_asset: AssetData = _get_next_asset_data(true)
 	AssetDelivery.create_and_launch(drop_flight, drop_asset)
-	self.queue_free()
+	queue_free()
 
 func reset_launch_parameters() -> void:
 	flight_data = FlightData.new()
 
 func pick_up() -> void:
-	self.queue_free()
+	queue_free()
 
 func _set_asset_data(incoming_data: AssetData) -> void:
-	self.asset_data = incoming_data
-	if self.asset_data != null and !self.asset_data.group_name.is_empty() and !self.is_in_group(self.asset_data.group_name):
-		self.add_to_group(asset_data.group_name)
+	asset_data = incoming_data
+	if asset_data != null and !asset_data.group_name.is_empty() and !is_in_group(asset_data.group_name):
+		add_to_group(asset_data.group_name)
 
 func _get_next_asset_data(is_force_disk: bool = false) -> AssetData:
 	if(is_force_disk):
 		return AssetData.new(
 			AssetData.TYPE.FORCE, 
-			self.asset_data.item_state, 
-			self.asset_data.camera_state, 
+			# asset_data.item_state, 
+			# asset_data.camera_state, 
 			AssetData.TYPE.PULL,
-			self.asset_data.group_name, 
-			self.asset_data.owner_rid
+			asset_data.group_name, 
+			asset_data.owner_rid
 			)
 	else:
 		return AssetData.new(
-			self.asset_data.creation_type, 
-			self.asset_data.item_state, 
-			self.asset_data.camera_state, 
+			asset_data.creation_type, 
+			# asset_data.item_state, 
+			# asset_data.camera_state, 
 			AssetData.TYPE.FORCE,
-			self.asset_data.group_name, 
-			self.asset_data.owner_rid
+			asset_data.group_name, 
+			asset_data.owner_rid
 			)

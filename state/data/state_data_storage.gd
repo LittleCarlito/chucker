@@ -1,0 +1,109 @@
+class_name StateDataStorage
+
+const _MISSING_GUID: String = "Incoming node \"%s\" is missing a GUID and cannot be registered"
+const _GUID_NOT_FOUND: String = "Requested GUID \"%s\" does not exist in dictionary"
+const _DICTIONARY_DATA_NOT_FOUND: String = "Requested GUID \"%s\" dictionary does not contain %s"
+const _UNSUPPORTED_TYPE: String = "Incoming state header type \"%s\" for guid \"%s\" is not supported; Type numeric value \"%d\""
+# TODO Get rid of logs above for Log usages
+const _REGISTER_NEW_NODE: String = "register_new_node"
+
+var _state_dictionary: Dictionary
+
+func _init(incoming_dictionary: Dictionary = {}) -> void:
+	_state_dictionary = incoming_dictionary
+
+func get_state_dictionary() -> Dictionary:
+	return _state_dictionary
+
+func register_new_node(incoming_node: Node3D) -> StateData:
+	if incoming_node.has_method(GroupData.GET_ASSET_STATE) && incoming_node.has_meta(GroupData.GUID):
+		var incoming_guid: String = incoming_node.get_meta(GroupData.GUID)
+		var state_data: StateData
+		var asset_state: AssetState
+		if incoming_node is CameraRig:
+			state_data = StateData.new(
+										incoming_guid, 
+										CameraStateConfiguration.VALID_TRANSITIONS,
+										CameraStateConfiguration.SPIN_VALUES
+										)
+			AssetStateResolver.serialize_state(state_data, incoming_node)
+			asset_state = incoming_node.get_asset_state()
+		elif incoming_node is ThrowableItem:
+			state_data =  StateData.new(
+										incoming_guid,
+										ThrowableStateConfiguration.VALID_TRANSITIONS,
+										ThrowableStateConfiguration.SPIN_VALUES,
+										ThrowableStateConfiguration.WINDOW_VALUES
+										)
+			AssetStateResolver.serialize_state(state_data, incoming_node)
+			asset_state = incoming_node.get_asset_state()
+		elif incoming_node is BaseCharacter:
+			state_data = StateData.new(
+										incoming_guid,
+										PlayerStateConfiguration.VALID_TRANSITIONS
+										)
+			AssetStateResolver.serialize_state(state_data, incoming_node)
+			asset_state = incoming_node.get_asset_state()
+		else:
+			if incoming_node.has(GroupData.GET_ASSET_STATE):
+				state_data= StateData.new(incoming_guid)
+				AssetStateResolver.serialize_state(state_data, incoming_node)
+				asset_state = incoming_node.call(GroupData.GET_ASSET_STATE)
+		_state_dictionary[incoming_guid] = {
+			StateHeaders.STATE_DATA: asset_state,
+			StateHeaders.STATE_NODE: incoming_node
+		}
+		return state_data.duplicate()
+	else:
+		var asset_state_log: String = "" if incoming_node.has_method(GroupData.GET_ASSET_STATE) else GroupData.GET_ASSET_STATE
+		var guid_log: String = "" if incoming_node.has_meta(GroupData.GUID) else GroupData.GUID
+		var divider: String = "" if asset_state_log.is_empty() else " "
+		var missing_vars: String = asset_state_log + divider + guid_log
+		var missing_log: String = "Incoming node with guid \"%s\" is missing %s" % [incoming_node.name, missing_vars]
+		Log.error(Log._CANT_PERFORM, [missing_log, _REGISTER_NEW_NODE], null)
+		return null
+
+func has_guid(incoming_guid: String) -> bool:
+	return _state_dictionary.has(incoming_guid)
+
+func get_header_data(incoming_guid: String, incoming_type: StateHeaders.TYPE):
+	var header_string: String = StateHeaders.get_type_string(incoming_type)
+	match incoming_type:
+		StateHeaders.TYPE.DATA, StateHeaders.TYPE.NODE:
+			return _get_guid_value(incoming_guid, header_string)
+		_:
+			Log.error(_UNSUPPORTED_TYPE, [header_string, incoming_guid, incoming_type], self)
+			return null
+
+func storage_size() -> int:
+	return _state_dictionary.size()
+
+func duplicate(deep_clone: bool = false) -> StateDataStorage:
+	var copy: StateDataStorage = StateDataStorage.new()
+	for guid in _state_dictionary.keys():
+		var state_data: StateData = _state_dictionary[guid]
+		copy._state_dictionary[guid] = state_data.duplicate(deep_clone)
+	return copy
+
+func print_details() -> void:
+	Log.debug("StateDataStorage states: \"%d\"", [_state_dictionary.size()], self)
+	for guid in _state_dictionary.keys():
+		var state_data: StateData = _state_dictionary[guid]
+		if state_data.has_method("print_details"):
+			state_data.print_details()
+
+func _get_guid_value(incoming_guid: String, key: String):
+	if not _state_dictionary.has(incoming_guid):
+		Log.error(_GUID_NOT_FOUND, [incoming_guid], self)
+		return null
+	var guid_dictionary: Dictionary = _state_dictionary.get(incoming_guid)
+	if not guid_dictionary.has(key):
+		Log.error(_DICTIONARY_DATA_NOT_FOUND, [incoming_guid, key], self)
+		return null
+	return guid_dictionary.get(key)
+
+func is_empty() -> bool:
+	return _state_dictionary.is_empty()
+
+func keys() -> Array:
+	return _state_dictionary.keys()

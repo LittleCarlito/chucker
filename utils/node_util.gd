@@ -20,7 +20,7 @@ func is_parent_grounded(node: Node3D) -> bool:
 		return node.is_on_floor()
 	if node.get_parent_node_3d() != null:
 		return is_parent_grounded(node.get_parent_node_3d())
-	Logger.error(_NO_PARENT_LOG, [_PARENT_GROUNDED, str(false)], self)
+	Log.error(_NO_PARENT_LOG, [_PARENT_GROUNDED, str(false)], self)
 	return false
 
 ## Returns gravity value for the environment
@@ -31,7 +31,7 @@ func get_gravity(node: Node3D) -> Vector3:
 			return node.get_gravity()
 		else:
 			return get_gravity(node.get_parent())
-	Logger.error(_NO_PARENT_LOG, [_GET_GRAVITY, "Empty Vector3"], self)
+	Log.error(_NO_PARENT_LOG, [_GET_GRAVITY, "Empty Vector3"], self)
 	return Vector3(0, 0, 0)
 
 # TODO See about some handling that errors if this returns 0

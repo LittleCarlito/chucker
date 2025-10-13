@@ -182,7 +182,7 @@ func _apply_state(state: CursorState, decided_by: String, deciders: Array) -> vo
 		_:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	if debug_enabled:
-		Logger.debug(
+		Log.debug(
 			"GlobalCursorController: applied %s (was %s) — decided_by=%s frame=%d",
 			[ _state_name(state), _state_name(old_state), decided_by, _frame_index ],
 			self
@@ -197,7 +197,7 @@ func _log_conflicts(all_reqs: Array, decided_state: CursorState, deciders: Array
 	# For every request that lost, emit a debug line
 	for r in all_reqs:
 		if r.state != decided_state:
-			Logger.debug(
+			Log.debug(
 				"GlobalCursorController: NOT fulfilled — %s asked for %s, but %s was set (overruled by %s)",
 				[
 					_format_req_desc(r),
@@ -208,7 +208,7 @@ func _log_conflicts(all_reqs: Array, decided_state: CursorState, deciders: Array
 				self
 			)
 	# Summary
-	Logger.debug(
+	Log.debug(
 		"GlobalCursorController: frame %d summary — decided=%s; winners=%s; total_requests=%d",
 		[ _frame_index, _state_name(decided_state), ", ".join(winners), all_reqs.size() ],
 		self

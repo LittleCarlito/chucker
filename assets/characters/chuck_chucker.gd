@@ -1,24 +1,19 @@
-extends FreelookCharacter
+extends LoadoutCharacter
 class_name ChuckChucker
 
 @export var asset_data: AssetData
 
-
 func _ready() -> void:
 	super._ready()
-	if self.asset_data == null:
-		self.asset_data = AssetData.new(AssetData.TYPE.PLAYER)
-	self.add_to_group(self.name)
-	self.asset_data.group_name = self.name
-	self.camera_container.add_to_group(self.name)
-	self.item_container.connect(SIGNAL_NAME.ZOOM_IN, _handle_zoom_in)
-	self.item_container.connect(SIGNAL_NAME.ZOOM_OUT, _handle_zoom_out)
-	self.item_container.connect(SIGNAL_NAME.TURN_HORIZONTAL, _handle_item_rotation_signal)
-	self._update_state()
+	if asset_data == null:
+		asset_data = AssetData.new(AssetData.TYPE.PLAYER)
+	add_to_group(name)
+	asset_data.group_name = name
+	item_container.connect(SIGNAL_NAME.TURN_HORIZONTAL, _handle_item_rotation_signal)
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
-	self._handle_interact_input()
+	_handle_interact_input()
 
 func equip_item(new_item: Node3D) -> Variant:
 	if new_item.has_signal(ThrowableItem.LAUNCHED):
@@ -27,7 +22,6 @@ func equip_item(new_item: Node3D) -> Variant:
 	var displaced_item: Variant = super.equip_item(new_item)
 	if displaced_item != null && displaced_item is Node3D:
 		AssetDelivery.drop_asset(displaced_item)
-	_update_state()
 	return
 
 func _process(_delta: float) -> void:
@@ -35,36 +29,21 @@ func _process(_delta: float) -> void:
 
 ## Release action gets called on the items; This logic is what chuck does on release
 func release_action() -> void:
-	self.unequip_item()
+	unequip_item()
 	# Update the status of the character if the item took the camera with it
-	self._update_state()
 	# If the camera was released for the launch disable movement
-	if asset_data.camera_state != AssetData.CAMERA_STATE.ACTIVE:
-		self.just_output = true
-		self.disable_movement()
-		self.disable_rotation()
+	asset_state.increment_output_count()
+	disable_movement()
+	disable_rotation()
 
 func get_group_name() -> String:
-	return self.asset_data.group_name
-
-# Extended here to update state
-func disable_camera() -> void:
-	super.disable_camera()
-	self._update_state()
-
-# Extended here to update state
-func enable_camera() -> void:
-	super.enable_camera()
-	self._update_state()
-
-func _update_state() -> void:
-	asset_data.camera_state = AssetData.get_camera_state(camera_container)
+	return asset_data.group_name
 
 # Specific to chuck as each character type might want their own interaction type
 func _handle_interact_input() -> void:
 	if Input.is_action_just_pressed(InputConfig.USER_INPUT.INTERACT):
-		self.equip_frontmost_object();
+		equip_frontmost_object();
 
 func _handle_item_rotation_signal(incoming_rotation: float) -> void:
-	if self.is_unequipped():
-		self._handle_horizontal_rotation(incoming_rotation)
+	if is_unequipped():
+		_handle_horizontal_rotation(incoming_rotation)

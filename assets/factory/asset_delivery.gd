@@ -8,6 +8,7 @@ const _LAUNCH_NOT_SET: String = "Launch parameters coulnd't be set on \"%s\"; Wi
 const _EMPTY_FLIGHT_PATH: String = "Flight data had an empty flight path; Flight data: \"%s\""
 const _INVALID_INCOMING_ITEM: String = "Incoming item \"%s\" is invalid for asset creation and could not be equipped"
 const _REQUIRES_ONE_VECTOR: String = "Requires at least one Vector3"
+const _BAD_ASSET: String = "Asset given to launch asset does not have GUID assigned; Ensure it was created through AssetFactory"
 const _FAILURE: String = "Failure"
 
 ## Creates new item based off incoming item data
@@ -17,44 +18,46 @@ func create_and_launch(flight_data: FlightData, asset_data: AssetData) -> Node3D
 		asset_data.creation_type = asset_data.internal_type
 	if asset_data.group_name == null || asset_data.group_name.is_empty():
 		asset_data.group_name = GameConfig.DEFAULTS.group
-		Logger.debug(_NO_GROUP_PROVIDED, [asset_data.group_name], self)
+		Log.debug(_NO_GROUP_PROVIDED, [asset_data.group_name], self)
 	var new_asset: Node3D = AssetFactory.create_asset(asset_data.internal_type)
 	if new_asset != null:
 		_set_asset_data(new_asset, asset_data)
-		if new_asset.has_method(GroupData.SYNC_ASSET):
-			new_asset.call(GroupData.SYNC_ASSET)
+		if new_asset.has_method(GroupData.GET_ASSET_STATE):
+			var new_state: AssetState = new_asset.call(GroupData.GET_ASSET_STATE)
+			AssetStateResolver.serialize_node(new_asset, new_state)
 		get_tree().get_current_scene().add_child(new_asset)
 		# Might need a check to ensure flight_path is populated first
 		if !flight_data.flight_path.is_empty():
 			if(_set_launch_parameters(new_asset, flight_data)):
 				if not _launch_asset(new_asset, flight_data.flight_details.focus_flight):
-					Logger.debug(_LAUNCH_RESULT_STRING, [str(new_asset), _FAILURE], self)
+					Log.debug(_LAUNCH_RESULT_STRING, [str(new_asset), _FAILURE], self)
 				# Regardless of flight result have the items in th given data group update their status data
 				if asset_data.group_name != null:
 					get_tree().call_group(asset_data.group_name, GroupData.UPDATE_STATE)
 			else:
-				Logger.debug(_LAUNCH_NOT_SET, [str(new_asset)], self)
+				Log.debug(_LAUNCH_NOT_SET, [str(new_asset)], self)
 		else:
-			var formatted_string: String = _EMPTY_FLIGHT_PATH + Logger.LOG_SEPARATOR + _REQUIRES_ONE_VECTOR
-			Logger.debug(formatted_string, [str(flight_data)], self)
+			var formatted_string: String = _EMPTY_FLIGHT_PATH + Log.LOG_SEPARATOR + _REQUIRES_ONE_VECTOR
+			Log.debug(formatted_string, [str(flight_data)], self)
 			pass
 	else:
-		Logger.debug(_INVALID_INCOMING_ITEM, [str(asset_data)], self)
+		Log.debug(_INVALID_INCOMING_ITEM, [str(asset_data)], self)
 	return new_asset
 
 ## Equips incoming owner with internal type found inside given item
 func create_and_give_item(item_owner: ChuckChucker, incoming_item: ForceDisk) -> Node3D:
 	var new_creation_type: AssetData.TYPE = AssetData.get_associated_creation_type(incoming_item.asset_data.creation_type, incoming_item.asset_data.internal_type)
-	var new_item_data: AssetData = AssetData.new(incoming_item.asset_data.creation_type, AssetData.ITEM_STATE.ACTIVATED, AssetData.CAMERA_STATE.ACTIVE, new_creation_type, item_owner.asset_data.group_name, item_owner.get_rid())
+	var new_item_data: AssetData = AssetData.new(incoming_item.asset_data.creation_type, new_creation_type, item_owner.asset_data.group_name, item_owner.get_rid())
 	var new_asset: Node3D = AssetFactory.create_asset(incoming_item.asset_data.creation_type)
 	if new_asset != null:
 		_set_asset_data(new_asset, new_item_data)
-		if new_asset.has_method(GroupData.SYNC_ASSET):
-			new_asset.call(GroupData.SYNC_ASSET)
+		if new_asset.has_method(GroupData.GET_ASSET_STATE):
+			var new_state: AssetState = new_asset.call(GroupData.GET_ASSET_STATE)
+			AssetStateResolver.serialize_node(new_asset, new_state)
 		item_owner.equip_item(new_asset)
 		incoming_item.pick_up()
 	else:
-		Logger.info(_INVALID_INCOMING_ITEM, [str(incoming_item)], self)
+		Log.info(_INVALID_INCOMING_ITEM, [str(incoming_item)], self)
 	return new_asset
 
 func drop_asset(drop_item: Node3D, drop_location: Vector3 = GameConfig.DEFAULTS.uknown_location) -> void:
@@ -66,7 +69,7 @@ func drop_asset(drop_item: Node3D, drop_location: Vector3 = GameConfig.DEFAULTS.
 	if(drop_item is ThrowableItem):
 		drop_item.drop_item()
 	else:
-		Logger.warn("Class \"%s\" has been dropped without a function call; Item may be hovering", [drop_item.get_class()], self)
+		Log.warn("Class \"%s\" has been dropped without a function call; Item may be hovering", [drop_item.get_class()], self)
 
 func spawn_assets(incoming_spawns: Array[SpawnData]) -> Dictionary:
 	var spawned_assets: Dictionary = {}
@@ -83,13 +86,14 @@ func spawn_asset(spawn_data: SpawnData) -> Node3D:
 	var created_node: Node3D = AssetFactory.create_asset(spawn_data.asset_data.internal_type)
 	if created_node.has_method(GroupData.SET_ASSET_DATA):
 		created_node.call(GroupData.SET_ASSET_DATA, spawn_data.asset_data)
-	if created_node.has_method(GroupData.SYNC_ASSET):
-		created_node.call(GroupData.SYNC_ASSET)
 	if spawn_data.spawn_parent != null:
 		spawn_data.spawn_parent.add_child(created_node)
 	else:
 		get_tree().get_current_scene().add_child(created_node)
 	created_node.global_position = spawn_data.spawn_location
+	if created_node.has_method(GroupData.GET_ASSET_STATE):
+		var asset_state: AssetState = created_node.call(GroupData.GET_ASSET_STATE)
+		AssetStateResolver.serialize_node(created_node, asset_state)
 	return created_node
 
 static func _set_asset_data(incoming_asset: Node3D, incoming_data: AssetData) -> bool:
@@ -98,7 +102,7 @@ static func _set_asset_data(incoming_asset: Node3D, incoming_data: AssetData) ->
 		incoming_asset.call(GroupData.SET_ASSET_DATA, incoming_data)
 		data_set = true
 	else:
-		Logger.debug(Logger.NO_METHOD_FOUND, [GroupData.SET_ASSET_DATA, str(incoming_asset)], null)
+		Log.debug(Log.NO_METHOD_FOUND, [GroupData.SET_ASSET_DATA, str(incoming_asset)], null)
 	return data_set
 
 static func _set_launch_parameters(incoming_asset: Node3D, incoming_data: FlightData) -> bool:
@@ -107,7 +111,7 @@ static func _set_launch_parameters(incoming_asset: Node3D, incoming_data: Flight
 		incoming_asset.call(GroupData.SET_FLIGHT_DATA, incoming_data)
 		data_set = true
 	else:
-		Logger.debug(Logger.NO_METHOD_FOUND, [GroupData.SET_FLIGHT_DATA, str(incoming_asset)], null)
+		Log.debug(Log.NO_METHOD_FOUND, [GroupData.SET_FLIGHT_DATA, str(incoming_asset)], null)
 	return data_set
 
 static func _launch_asset(incoming_asset: Node3D, focus_flight: bool = false) -> bool:
@@ -116,12 +120,14 @@ static func _launch_asset(incoming_asset: Node3D, focus_flight: bool = false) ->
 		incoming_asset.call(GroupData.LAUNCH)
 		asset_launched = true
 		if focus_flight:
-			GlobalCameraController.set_rig_mode(GlobalCameraController.TrackingMode.TRACK)
-			if incoming_asset is PathDisk:
-				var path_follow: PathFollow3D = incoming_asset.call(GroupData.GET_PATH_FOLLOW)
-				GlobalCameraController.focus_new_node(path_follow)
+			if incoming_asset.has_meta(GroupData.GUID):
+				# TODO Need up update the camera rig's focused guid to be that of the disk
+				# TODO Make sure the focus guid logic will add the guid's asset state to the tracked dictionary if it isn't already in there
+				pass
 			else:
-				GlobalCameraController.focus_new_node(incoming_asset)	
+				Log.error(_BAD_ASSET, [], null)
+
+
 	else:
-		Logger.debug(Logger.NO_METHOD_FOUND, [Logger.LAUNCH, str(incoming_asset)], null)
+		Log.debug(Log.NO_METHOD_FOUND, [Log.LAUNCH, str(incoming_asset)], null)
 	return asset_launched	

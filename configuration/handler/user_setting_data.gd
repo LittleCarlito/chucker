@@ -35,8 +35,8 @@ func get_category_value(category_name: String, category_key: String):
 			if category_dictionary.has(category_key):
 				category_value = category_dictionary.get(category_key)
 	if category_value == null:
-		var formatted_string: String = _NO_CATEGORY_MATCH + Logger.LOG_SEPARATOR + Logger.RETURNING_INT16_MAX
-		Logger.debug(formatted_string, [category_name, category_key], self)
+		var formatted_string: String = _NO_CATEGORY_MATCH + Log.LOG_SEPARATOR + Log.RETURNING_INT16_MAX
+		Log.debug(formatted_string, [category_name, category_key], self)
 	return category_value
 
 ## Returns the requested category as a Dictionary
@@ -48,7 +48,7 @@ func get_category(category_name: String, surpress_logs: bool = false) -> Diction
 			var category_value = _user_data.get_value(category_name, category_key)
 			category_dictionary[category_key] = category_value
 	if category_dictionary.is_empty() and !surpress_logs:
-		Logger.debug(_CATEGORY_NOT_FOUND, [category_name], self)
+		Log.debug(_CATEGORY_NOT_FOUND, [category_name], self)
 	return category_dictionary
 
 ## Reloads Project input settings using user_settings
@@ -63,4 +63,4 @@ func reload_project_settings() -> void:
 			InputMap.action_erase_events(update_control)
 			InputMap.action_add_event(update_control, bound_input)
 	else:
-		Logger.debug(_NO_FILE_FOUND, [], self)
+		Log.debug(_NO_FILE_FOUND, [], self)

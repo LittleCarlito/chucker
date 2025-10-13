@@ -40,19 +40,18 @@ var _applied_flight_data: bool = false
 var _is_tracked: bool = false
 
 func _ready() -> void:
-	if self.asset_data == null:
-		self.asset_data = AssetData.new(AssetData.TYPE.FORCE)
-		if !self.asset_data.group_name.is_empty():
-			add_to_group(self.asset_data.group_name)
-	self.disk_mesh.set_type(self.asset_data.creation_type)
-	self.angular_damp = 0.0
-	self._update_state()
+	if asset_data == null:
+		asset_data = AssetData.new(AssetData.TYPE.FORCE)
+		if !asset_data.group_name.is_empty():
+			add_to_group(asset_data.group_name)
+	disk_mesh.set_type(asset_data.creation_type)
+	angular_damp = 0.0
 	GlobalInputController.connect(SIGNAL_NAME.FREELOOK_MOTION, _handle_freelook_motion)
 
 func _process(_delta: float) -> void:
-	if self.flight_data != null && not self._applied_flight_data:
-		self.angular_velocity.y = self.flight_data.get_flight_spin()
-		self._applied_flight_data = true
+	if flight_data != null && not _applied_flight_data:
+		angular_velocity.y = flight_data.get_flight_spin()
+		_applied_flight_data = true
 
 func set_internal_type(new_internal_type: AssetData.TYPE) -> void:
 	asset_data.set_internal_type(new_internal_type)
@@ -65,15 +64,14 @@ func get_item_type() -> AssetData.TYPE:
 	if asset_data != null:
 		return asset_data.internal_type
 	else:
-		var formatted_string: String = _NO_ITEM_DATA_LOG + Logger.LOG_SEPARATOR + Logger.RETURNING_UNKNOWN_LOG
-		Logger.warn(formatted_string, [], self)
+		var formatted_string: String = _NO_ITEM_DATA_LOG + Log.LOG_SEPARATOR + Log.RETURNING_UNKNOWN_LOG
+		Log.warn(formatted_string, [], self)
 		return AssetData.TYPE.UNKNOWN
 
 # TODO This should be changed to transfer camera or something along those lines
 func toggle_camera() -> void:
 	if camera_container != null && camera_container.has_camera():
 		camera_container.toggle_camera()
-	_update_state()
 
 func get_mesh() -> DiskMesh:
 	return disk_mesh
@@ -82,7 +80,7 @@ func sync_asset() -> void:
 	disk_mesh.set_type(asset_data.creation_type)
 
 func set_disk_mesh(new_mesh: DiskMesh) -> void:
-	self.add_child(new_mesh)
+	add_child(new_mesh)
 	var old_mesh: DiskMesh = disk_mesh
 	if is_instance_valid(old_mesh):
 		old_mesh.queue_free()
@@ -95,33 +93,32 @@ func get_disk_camera() -> Camera3D:
 	if camera_container != null:
 		return_camera = camera_container.get_camera()
 	else:
-		var formatted_string: String = Logger.NULL_CAMERA_LOG + Logger.LOG_SEPARATOR + Logger.RETURNING_NULL_LOG
-		Logger.error(formatted_string, [_GET_DISK_CAMERA], self)
+		var formatted_string: String = Log.NULL_CAMERA_LOG + Log.LOG_SEPARATOR + Log.RETURNING_NULL_LOG
+		Log.error(formatted_string, [_GET_DISK_CAMERA], self)
 	return return_camera
 
 func set_disk_camera(new_camera: Camera3D) -> void:
 	if camera_container == null:
-		var formatted_string: String = Logger.NULL_CAMERA_LOG + Logger.LOG_SEPARATOR + _CREATING_CAMERA_LOG
-		Logger.warn(formatted_string, [_SET_DISK_CAMERA], self)
+		var formatted_string: String = Log.NULL_CAMERA_LOG + Log.LOG_SEPARATOR + _CREATING_CAMERA_LOG
+		Log.warn(formatted_string, [_SET_DISK_CAMERA], self)
 		_create_camera_container()
 	camera_container.set_camera(new_camera)
-	_update_state()
 
 func pick_up() -> void:
-	self.queue_free()
+	queue_free()
 
 func _handle_freelook_motion(v_motion: float, h_motion: float) -> void:
 	# TODO Will need this using state isntead of the camera container stuff once it is figured out
 	if GlobalCursorController.is_captured_current() and camera_container != null and camera_container.is_current():
-		camera_container.horizontal_pan(h_motion, self.global_position)
+		camera_container.horizontal_pan(h_motion, global_position)
 
 func _handle_collision(body_rid: RID, _body: Node, _body_shape_index: int, _local_shape_index: int) -> void:
 	_collided = true
-	disk_collision.store_collision(self.get_rid(), body_rid, self.global_position, flight_data, asset_data)
+	disk_collision.store_collision(get_rid(), body_rid, global_position, flight_data, asset_data)
 	if camera_container != null && (camera_container.has_camera() && camera_container.is_current()):
-		camera_container.start_focus(self.global_basis, self.global_position)
-		self.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
-		self.angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
+		camera_container.start_focus(global_basis, global_position)
+		linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
+		angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
 	# TODO Refactor this to use accurate state ensuring it is tracked before emitting
 	# GlobalCameraController.set_rig_dile(true)
 
@@ -130,13 +127,10 @@ func _handle_collision(body_rid: RID, _body: Node, _body_shape_index: int, _loca
 func _create_camera_container() -> void:
 	if camera_container == null:
 		var new_camera_container: CameraContainer = AssetFactory.new_camera_container()
-		self.add_child(new_camera_container)
+		add_child(new_camera_container)
 		_set_camera_container(new_camera_container)
 	else:
-		Logger.warn(Logger.ALREADY_EXISTS_LOG, [Logger.CAMERA_CONTAINER], self)
-
-func _update_state() -> void:
-	asset_data.camera_state = AssetData.get_camera_state(camera_container)
+		Log.warn(Log.ALREADY_EXISTS_LOG, [Log.CAMERA_CONTAINER], self)
 
 func _set_asset_data(incoming_data: AssetData) -> void:
 	asset_data = incoming_data
@@ -146,11 +140,11 @@ func _set_flight_data(incoming_data: FlightData) -> void:
 
 func _launch() -> void:
 	if flight_data != null:
-		self.flight_data.print_details()
-		self.global_position = flight_data.get_actual_path()[0].point_position
-		self.basis = flight_data.get_flight_basis()
-		self.linear_velocity = -self.transform.basis.z * flight_data.get_flight_speed()
-		self.angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
+		flight_data.print_details()
+		global_position = flight_data.get_actual_path()[0].point_position
+		basis = flight_data.get_flight_basis()
+		linear_velocity = -transform.basis.z * flight_data.get_flight_speed()
+		angular_damp_mode = RigidBody3D.DAMP_MODE_COMBINE
 		if flight_data.is_focus_flight():
 			_submit_camera_request()
 			camera_container.set_current()
@@ -158,7 +152,7 @@ func _launch() -> void:
 			if not GlobalCursorController.is_captured_current():
 				GlobalCursorController.request_captured(self, "Force disk launched")
 	else:
-		Logger.warn(Logger.MISSING_FLIGHT_DATA_LOG, [], self)
+		Log.warn(Log.MISSING_FLIGHT_DATA_LOG, [], self)
 
 func _get_camera_container() -> CameraContainer:
 	_create_camera_container()
@@ -179,7 +173,7 @@ func _return_camera_to_owner() -> void:
 	if has_camera and has_custom_group:
 		get_tree().call_group(asset_data.group_name, GroupData.TRANSFER_AND_ENABLE, camera_container.get_camera())
 	else:
-		Logger.debug(Logger.CANT_RETURN_LOG, [str(self)], self)
+		Log.debug(Log.CANT_RETURN_LOG, [str(self)], self)
 
 func _submit_camera_request() -> void:
 	if asset_data != null and !asset_data.group_name.is_empty():
@@ -188,17 +182,17 @@ func _submit_camera_request() -> void:
 		camera_container.add_to_group(asset_data.group_name)
 		camera_container.reset_camera()
 	else:
-		var formatted_string: String = Logger.NO_GROUP_LOG + Logger.LOG_SEPARATOR + Logger.NOT_SUBMITTING
-		Logger.debug(formatted_string, [], self)
+		var formatted_string: String = Log.NO_GROUP_LOG + Log.LOG_SEPARATOR + Log.NOT_SUBMITTING
+		Log.debug(formatted_string, [], self)
 
 # TODO Make this static and shared somehwere
-func _handle_child_logs(incoming_level: Logger.LEVEL, incoming_log: String, optional_params: Array) -> void:
+func _handle_child_logs(incoming_level: Log.LEVEL, incoming_log: String, optional_params: Array) -> void:
 	match incoming_level:
-		Logger.LEVEL.DEBUG:
-			Logger.debug(incoming_log, optional_params, self)
-		Logger.LEVEL.INFO:
-			Logger.info(incoming_log, optional_params, self)
-		Logger.LEVEL.WARN:
-			Logger.warn(incoming_log, optional_params, self)
-		Logger.LEVEL.ERROR:
-			Logger.error(incoming_log, optional_params, self)
+		Log.LEVEL.DEBUG:
+			Log.debug(incoming_log, optional_params, self)
+		Log.LEVEL.INFO:
+			Log.info(incoming_log, optional_params, self)
+		Log.LEVEL.WARN:
+			Log.warn(incoming_log, optional_params, self)
+		Log.LEVEL.ERROR:
+			Log.error(incoming_log, optional_params, self)

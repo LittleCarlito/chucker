@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://cdkknjflehfgx"]
 
 [ext_resource type="Script" path="res://assets/characters/chuck_chucker.gd" id="1_hnkcf"]
-[ext_resource type="PackedScene" uid="uid://uyfdjyipfutg" path="res://assets/camera/camera_container.tscn" id="2_x3sxy"]
+[ext_resource type="PackedScene" uid="uid://uyfdjyipfutg" path="res://camera/camera_container.tscn" id="2_x3sxy"]
 [ext_resource type="PackedScene" uid="uid://71rhtkmuvxvf" path="res://assets/items/common/item_container.tscn" id="3_40f1w"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h7ubf"]

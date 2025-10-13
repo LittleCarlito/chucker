@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://dga2v203y41nq"]
+
+[ext_resource type="Script" path="res://ui/menus/control_node.gd" id="1_5pady"]
+[ext_resource type="PackedScene" uid="uid://btbtiiilcdji5" path="res://ui/views/ScorecardView.tscn" id="2_rw607"]
+[ext_resource type="PackedScene" uid="uid://dmpnac8ay0j1d" path="res://ui/menus/pause_menu.tscn" id="3_w8mbf"]
+
+[node name="ControlNode" type="Node3D" node_paths=PackedStringArray("scorecard", "pause_menu") groups=["ConfigHandler", "General"]]
+script = ExtResource("1_5pady")
+scorecard = NodePath("ScorecardView")
+pause_menu = NodePath("PauseMenu")
+
+[node name="ScorecardView" parent="." instance=ExtResource("2_rw607")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+
+[node name="PauseMenu" parent="." instance=ExtResource("3_w8mbf")]
+visible = false
+
+[connection signal="apply_settings" from="PauseMenu" to="." method="_apply_settings"]
+[connection signal="close_menu" from="PauseMenu" to="." method="_close_menu"]

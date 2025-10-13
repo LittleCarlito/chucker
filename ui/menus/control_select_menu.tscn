@@ -1,0 +1,148 @@
+[gd_scene load_steps=8 format=3 uid="uid://br204kkclspff"]
+
+[ext_resource type="Script" path="res://ui/menus/control_select_menu.gd" id="1_otl4h"]
+[ext_resource type="Theme" uid="uid://bqsefj7euepcc" path="res://ui/menus/MainMenu_theme.tres" id="2_nxh42"]
+[ext_resource type="Texture2D" uid="uid://dp7ixwl5200ai" path="res://resources/Sprites/Menu/WaitingTitle.png" id="3_1siwk"]
+[ext_resource type="PackedScene" uid="uid://bet7qye2parpa" path="res://ui/buttons/BackButton.tscn" id="4_cnhya"]
+[ext_resource type="PackedScene" uid="uid://djhanwg2fiofw" path="res://ui/buttons/SaveButton.tscn" id="5_48afo"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r061l"]
+bg_color = Color(0.6, 0.505882, 0.317647, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_714ji"]
+bg_color = Color(0.695503, 0.695503, 0.695503, 1)
+
+[node name="ControlSelectMenu" type="Control" node_paths=PackedStringArray("waiting_title", "input_icon_display", "set_input_label")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_otl4h")
+waiting_title = NodePath("ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground/InputDisplayCenter/WaitingTitle")
+input_icon_display = NodePath("ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground/InputDisplayCenter/InputIconDisplay")
+set_input_label = NodePath("ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/SetInputBackground/SetInputLabel")
+
+[node name="ControlSelectBackground" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="ControlSelectBackground"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ControlSelectWindow" type="Panel" parent="ControlSelectBackground/CenterContainer"]
+custom_minimum_size = Vector2(700, 475)
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 5.59
+theme = ExtResource("2_nxh42")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="TopMargin" type="MarginContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeftMargin" type="MarginContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SetInputBackground" type="Panel" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_r061l")
+
+[node name="SetInputLabel" type="Label" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/SetInputBackground"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "New binding for \"%s\""
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InputDisplayBackground" type="Panel" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_714ji")
+
+[node name="InputDisplayCenter" type="CenterContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WaitingTitle" type="TextureRect" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground/InputDisplayCenter"]
+layout_mode = 2
+texture = ExtResource("3_1siwk")
+
+[node name="InputIconDisplay" type="TextureRect" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground/InputDisplayCenter"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+expand_mode = 4
+stretch_mode = 5
+
+[node name="ButtonColumns" type="HBoxContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="BackButton" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns" instance=ExtResource("4_cnhya")]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="CenterMargin" type="MarginContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SaveButton" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns" instance=ExtResource("5_48afo")]
+layout_mode = 2
+
+[node name="RightMargin" type="MarginContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="BottomMargin" type="MarginContainer" parent="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer"]
+layout_mode = 2
+
+[connection signal="mouse_entered" from="ControlSelectBackground/CenterContainer" to="." method="_cursor_off_menu"]
+[connection signal="mouse_exited" from="ControlSelectBackground/CenterContainer" to="." method="_cursor_on_menu"]
+[connection signal="mouse_entered" from="ControlSelectBackground/CenterContainer/ControlSelectWindow" to="." method="_enable_left_detect"]
+[connection signal="mouse_exited" from="ControlSelectBackground/CenterContainer/ControlSelectWindow" to="." method="_disable_left_detect"]
+[connection signal="mouse_entered" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/SetInputBackground" to="." method="_enable_left_detect"]
+[connection signal="mouse_exited" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/SetInputBackground" to="." method="_enable_left_detect"]
+[connection signal="mouse_entered" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground" to="." method="_enable_left_detect"]
+[connection signal="mouse_exited" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/InputDisplayBackground" to="." method="_enable_left_detect"]
+[connection signal="button_up" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns/BackButton" to="." method="close_menu"]
+[connection signal="mouse_entered" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns/BackButton" to="." method="_disable_left_detect"]
+[connection signal="mouse_exited" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns/BackButton" to="." method="_enable_left_detect"]
+[connection signal="button_up" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns/SaveButton" to="." method="_save_input"]
+[connection signal="mouse_entered" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns/SaveButton" to="." method="_disable_left_detect"]
+[connection signal="mouse_exited" from="ControlSelectBackground/CenterContainer/ControlSelectWindow/VBoxContainer/HBoxContainer/VBoxContainer/ButtonColumns/SaveButton" to="." method="_enable_left_detect"]

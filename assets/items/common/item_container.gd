@@ -10,7 +10,11 @@ const _EQUIPPED_MISSING_METHOD: String = "Equipped item \"%s\" doesn't have %s m
 const _ITEM_CONTAINER_UNEQUIPPED: String = "ItemContainer is not equipped with an item; %s should not have been called"
 const _TURN_HORIZONTAL: String = "turn_horizontal"
 
-var equipped_item: Node3D
+# TODO This should be changed to AssetState
+#			The equipped item should then be reacting to whatever its state is updated to properly
+#				Either via signals when state is updated
+#				Or through resolving the asset to the state every frame
+var equipped_item_state: Node3D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -30,35 +34,35 @@ func equip_item(new_item: Node3D) -> Node3D:
 		existing_item.reparent(get_tree().root)
 	add_child(new_item)
 	equipped_item = new_item
-	equipped_item.global_position = self.global_position
-	equipped_item.global_transform = self.global_transform
+	equipped_item.global_position = global_position
+	equipped_item.global_transform = global_transform
 	return existing_item
 
 func unequip_item() -> void:
 	if equipped_item != null:
 		equipped_item.queue_free()
 	else:
-		Logger.warn(_UNEQUIP_MESSAGE_LOG, [], self)
+		Log.warn(_UNEQUIP_MESSAGE_LOG, [], self)
 	# Reset item controller rotation
-	self.rotation_degrees.x = 0
+	rotation_degrees.x = 0
 
 func hold_action(delta: float, incoming_focus: bool = false) -> void:
 	if is_equipped():
 		if equipped_item.has_method(GroupData.HOLD_ACTION):
-			equipped_item.call(GroupData.HOLD_ACTION, delta, self.basis, incoming_focus)
+			equipped_item.call(GroupData.HOLD_ACTION, delta, basis, incoming_focus)
 		else:
-			Logger.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), GroupData.HOLD_ACTION], self)
+			Log.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), GroupData.HOLD_ACTION], self)
 	else:
-		Logger.debug(_ITEM_CONTAINER_UNEQUIPPED, [GroupData.HOLD_ACTION], self)
+		Log.debug(_ITEM_CONTAINER_UNEQUIPPED, [GroupData.HOLD_ACTION], self)
 
 func release_action() -> void:
 	if is_equipped():
 		if equipped_item.has_method(GroupData.RELEASE_ACTION):
-			equipped_item.call(GroupData.RELEASE_ACTION, self.global_basis)
+			equipped_item.call(GroupData.RELEASE_ACTION, global_basis)
 		else:
-			Logger.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), GroupData.RELEASE_ACTION], self)
+			Log.debug(_EQUIPPED_MISSING_METHOD, [str(equipped_item), GroupData.RELEASE_ACTION], self)
 	else:
-		Logger.debug(_ITEM_CONTAINER_UNEQUIPPED, [GroupData.RELEASE_ACTION], self)
+		Log.debug(_ITEM_CONTAINER_UNEQUIPPED, [GroupData.RELEASE_ACTION], self)
 
 func is_equipped() -> bool:
 	return equipped_item != null

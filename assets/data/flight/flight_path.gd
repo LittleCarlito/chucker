@@ -11,7 +11,7 @@ enum PATH_TYPE {
 }
 
 func _init(incoming_path: Array[FlightPoint] = []):
-	self.path = incoming_path
+	path = incoming_path
 	FlightPath.analyze_path_offset(self)
 
 ## Returns the roll intensity at the given % into the flight path
@@ -27,27 +27,27 @@ func roll_intensity_at(incoming_percent: float) -> float:
 		return path[desired_index].roll_intensity
 
 func get_max_offset() -> float:
-	return self.max_offset
+	return max_offset
 
 func get_path() -> Array[FlightPoint]:
-	return self.path
+	return path
 
 func is_empty() -> bool:
-	return self.path.is_empty()
+	return path.is_empty()
 
 func size() -> int:
-	return self.path.size()
+	return path.size()
 
 func get_point(incoming_index: int) -> FlightPoint:
-	return self.path[incoming_index]
+	return path[incoming_index]
 
 func print_details() -> void:
-	var flight_type_string: String = self._get_type_string(path_type)
-	Logger.debug("\n[FlightPath data]\nNumber of points: %d\nFlight type %s\nMax offset : %03f", [path.size(), flight_type_string, max_offset], self)
+	var flight_type_string: String = _get_type_string(path_type)
+	Log.debug("\n[FlightPath data]\nNumber of points: %d\nFlight type %s\nMax offset : %03f", [path.size(), flight_type_string, max_offset], self)
 	if GameConfig.DEFAULTS.extra_detail:
 		for i in range(path.size()):
 			var fp: FlightPoint = path[i]
-			Logger.debug("Point %d: Roll Intensity: %.3f", [i, fp.roll_intensity], self)
+			Log.debug("Point %d: Roll Intensity: %.3f", [i, fp.roll_intensity], self)
 
 func _get_type_string(incoming_type: PATH_TYPE) -> String:
 	match incoming_type:

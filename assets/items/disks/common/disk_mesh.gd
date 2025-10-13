@@ -10,5 +10,5 @@ func _process(_delta: float) -> void:
 	pass
 
 func set_type(new_type: AssetData.TYPE) -> void:
-	var disk_material: StandardMaterial3D = self.get_active_material(0)
+	var disk_material: StandardMaterial3D = get_active_material(0)
 	disk_material.albedo_color = AssetData.get_item_color(new_type)

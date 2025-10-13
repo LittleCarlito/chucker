@@ -104,8 +104,8 @@ func get_sprite_from_keycode(incoming_keycode: int) -> Texture2D:
 	if INPUT_ICONS.has(incoming_keycode):
 		return_texture = load(INPUT_ICONS.get(incoming_keycode))
 	if return_texture == null:
-		var formatted_string = _NO_KEYCODE_MATCH + Logger.LOG_SEPARATOR + Logger.RETURNING_NULL_LOG
-		Logger.error(formatted_string, [str(incoming_keycode)], self)
+		var formatted_string = _NO_KEYCODE_MATCH + Log.LOG_SEPARATOR + Log.RETURNING_NULL_LOG
+		Log.error(formatted_string, [str(incoming_keycode)], self)
 	return return_texture
 
 func extract_keycode(event: InputEvent) -> int:
@@ -115,6 +115,6 @@ func extract_keycode(event: InputEvent) -> int:
 	elif event is InputEventKey:
 		return_value = event.physical_keycode
 	else:
-		Logger.error(Logger.UNSUPPORTED_TYPE_LOG + _RETURNING_UNKNOWN_LOG, [_EXTRACT_KEYCODE_STRING, str(event)], self)
+		Log.error(Log.UNSUPPORTED_TYPE_LOG + _RETURNING_UNKNOWN_LOG, [_EXTRACT_KEYCODE_STRING, str(event)], self)
 		return_value = KEY_UNKNOWN
 	return return_value
