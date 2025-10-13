@@ -1,4 +1,4 @@
-extends FreelookCharacter
+extends DirectionalCharacter
 class_name LoadoutCharacter
 
 @export var focusing_output: bool

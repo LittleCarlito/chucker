@@ -10,12 +10,19 @@ const _EMPTY_CAMERA_CONTAINER: String = "CameraContainer from \"%s\" returned nu
 
 # TODO OOOOO 
 # TODO Task list
-# TODO Make Basecharacter Node3D class contain and function off of asset_state
-#		Means having input handling update state stuff
-#		Then having frame by frame move_to adjustments in process_physics based off state
+# TODO Get the other character based classes working off state
+#			FreelookCharacter has been deleted
+#				Should really be behavior determined by the camera based off the state it is in
+# TODO Be able to move the character via state manipulation
 # TODO Move AssetData into AssetState
 # TODO Get back to Asset_Delivery TODOs
 # TODO Then to CameraRigs TODOs
+# TODO Then try to switch it all over to an ECS system
+#		Resolvers looking through globally registered nodes and data
+#			Finds the ones it needs to process based off tags
+#				Determines what type of object and handles according to the type of resolver it is
+#			Should be ASSET.STATE based resolvers and they can look for AssetState's in their desired state
+#				Or could do tags I guess
 
 func _ready() -> void:
 	asset_state.set_veritcal_length(base_mesh.get_aabb().size.y)

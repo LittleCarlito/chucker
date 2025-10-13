@@ -33,17 +33,8 @@ enum TYPE {
 		UNKNOWN = 999
 	}
 
-## Describes the objects ability to see
-enum CAMERA_STATE{EXISTS = 0, TRACKABLE = 1, VIEWABLE = 2, ACTIVE = 3, UNKNOWN = 999}
-## Describes if the object is in a controlled state
-enum ITEM_STATE{DISABLED = 0, DEACTIVATED = 1, ACTIVATED = 2, UNKNOWN = 999}
-
 ## The type of this instance of the asset
 @export var internal_type: AssetData.TYPE
-## The controllable state of this asset
-# @export var item_state: AssetData.ITEM_STATE
-## The state of this asset's internal camera
-# @export var camera_state: AssetData.CAMERA_STATE
 ## The type of asset created by this instance of the asset
 @export var creation_type: AssetData.TYPE
 ## The group_name set via code for this instance of the asset
@@ -68,8 +59,6 @@ const ITEM_COLOR: Dictionary = {
 
 func _init(
 			incoming_internal: TYPE = TYPE.UNKNOWN,
-			# incoming_state: ITEM_STATE = ITEM_STATE.DISABLED,
-			# incoming_camera_state: CAMERA_STATE = CAMERA_STATE.EXISTS,
 			incoming_create: TYPE = AssetData.TYPE.UNKNOWN,
 			incoming_group: String = GameConfig.DEFAULTS.group,
 			incoming_owner_rid: RID = RID()
@@ -86,17 +75,6 @@ func _init(
 ## Returns UNKNOWN COLOR_DEFAULT from GlobalSettings if type is not known
 static func get_item_color(incoming_type: AssetData.TYPE) -> Color:
 	return ITEM_COLOR.get(incoming_type, GameConfig.DEFAULTS.color)
-
-## Takes CameraController and determines the AssetData.CAMERA_STATE equivalent given that CameraContainers properties
-# static func get_camera_state(camera_container: CameraContainer = null) -> AssetData.CAMERA_STATE:
-# 	var updated_state: AssetData.CAMERA_STATE = AssetData.CAMERA_STATE.EXISTS
-# 	if camera_container != null:
-# 		updated_state = AssetData.CAMERA_STATE.TRACKABLE
-# 		if camera_container.has_camera():
-# 			updated_state = AssetData.CAMERA_STATE.VIEWABLE
-# 			if camera_container.is_current():
-# 				updated_state = AssetData.CAMERA_STATE.ACTIVE
-# 	return updated_state
 
 ## Retrieves the creation type associated with the given incoming_type
 ## Takes previous_internal_type into account if multiple creation values are possible
