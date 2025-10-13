@@ -30,6 +30,9 @@ var _owner_position: Vector3
 var _owner_rotation: Quaternion
 var _owner_scale: Vector3
 var _focused_guid: String
+var _freeze_on_equip: bool
+var _focus_output: bool
+var _output_count: int
 var _movement_enabled: bool
 var _rotation_enabled: bool
 var _is_sprinting: bool
@@ -269,6 +272,27 @@ func update_is_sprinting(incoming_value: bool) -> void:
 
 func is_sprinting() -> bool:
 	return _is_sprinting
+
+func update_freeze_on_equip(incoming_value: bool) -> void:
+	_freeze_on_equip = incoming_value
+
+func is_freeze_on_equip() -> bool:
+	return _freeze_on_equip
+
+func update_focus_output(incoming_value: bool) -> void:
+	_focus_output = incoming_value
+
+func is_focus_output() -> bool:
+	return _focus_output
+
+func increment_output_count() -> int:
+	return ++_output_count
+
+func reset_output_count() -> void:
+	_output_count = 0
+
+func get_output_count() -> int:
+	return _output_count
 
 func update_movement_enabled(incoming_value: bool) -> void:
 	_movement_enabled = incoming_value

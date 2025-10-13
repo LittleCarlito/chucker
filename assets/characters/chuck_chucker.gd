@@ -1,7 +1,6 @@
 extends LoadoutCharacter
 class_name ChuckChucker
 
-# TODO Get this into AssetState
 @export var asset_data: AssetData
 
 func _ready() -> void:
@@ -10,9 +9,6 @@ func _ready() -> void:
 		asset_data = AssetData.new(AssetData.TYPE.PLAYER)
 	add_to_group(name)
 	asset_data.group_name = name
-	camera_container.add_to_group(name)
-	item_container.connect(SIGNAL_NAME.ZOOM_IN, _handle_zoom_in)
-	item_container.connect(SIGNAL_NAME.ZOOM_OUT, _handle_zoom_out)
 	item_container.connect(SIGNAL_NAME.TURN_HORIZONTAL, _handle_item_rotation_signal)
 
 func _physics_process(delta: float) -> void:
@@ -36,19 +32,12 @@ func release_action() -> void:
 	unequip_item()
 	# Update the status of the character if the item took the camera with it
 	# If the camera was released for the launch disable movement
+	asset_state.increment_output_count()
 	disable_movement()
 	disable_rotation()
 
 func get_group_name() -> String:
 	return asset_data.group_name
-
-# Extended here to update state
-func disable_camera() -> void:
-	super.disable_camera()
-
-# Extended here to update state
-func enable_camera() -> void:
-	super.enable_camera()
 
 # Specific to chuck as each character type might want their own interaction type
 func _handle_interact_input() -> void:

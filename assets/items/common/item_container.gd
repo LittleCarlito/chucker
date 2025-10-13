@@ -10,7 +10,11 @@ const _EQUIPPED_MISSING_METHOD: String = "Equipped item \"%s\" doesn't have %s m
 const _ITEM_CONTAINER_UNEQUIPPED: String = "ItemContainer is not equipped with an item; %s should not have been called"
 const _TURN_HORIZONTAL: String = "turn_horizontal"
 
-var equipped_item: Node3D
+# TODO This should be changed to AssetState
+#			The equipped item should then be reacting to whatever its state is updated to properly
+#				Either via signals when state is updated
+#				Or through resolving the asset to the state every frame
+var equipped_item_state: Node3D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

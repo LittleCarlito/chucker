@@ -16,6 +16,17 @@ var _guid_string: String
 var _state_data: StateData
 var _state_warnings: Dictionary
 var _tracked_assets: Dictionary
+# TODO Implement all needed logic for "holding" an asset
+#			Getting it
+#			Dropping it
+#			Getting all held
+#			Dropping all held
+#			Get "Primary" held
+#				Should just be first entry
+#			Rotate to next "Primary"
+#				Should send current primary last
+#				2nd index becomes first everyone bumps
+var _held_assets: Dictionary
 
 func _init(
 			owner_guid: String,
@@ -119,6 +130,49 @@ func get_tracked_data_for(incoming_guid: String) -> AssetState:
 
 func get_tracked_guids() -> Array:
 	return _tracked_assets.keys()
+
+func hold_asset(incoming_asset: AssetState) -> void:
+	var incoming_guid: String = incoming_asset.get_owner_guid()
+	if _held_assets.has(incoming_guid):
+		_held_assets[incoming_guid].append(incoming_asset)
+	else:
+		_held_assets[incoming_guid] = [incoming_asset]
+
+func drop_asset(incoming_guid: String) -> bool:
+	if not _held_assets.has(incoming_guid):
+		return false
+	_held_assets.erase(incoming_guid)
+	return true
+
+func drop_all_assets() -> void:
+	_held_assets = {}
+
+func get_primary_asset() -> AssetState:
+	if _held_assets.is_empty():
+		return null
+	return _held_assets.values()[0][0]
+
+## If possible moves next index to primary and current primary to end
+func switch_primary_asset() -> AssetState:
+	if _held_assets.is_empty():
+		return null
+	var keys: Array = _held_assets.keys()
+	var first_key = keys[0]
+	var first_value = _held_assets[first_key]
+	var new_dict: Dictionary = {}
+	for i in range(1, keys.size()):
+		new_dict[keys[i]] = _held_assets[keys[i]]
+	new_dict[first_key] = first_value
+	_held_assets = new_dict
+	return _held_assets.values()[0][0]
+
+func get_held_data_for(incoming_guid: String) -> AssetState:
+	if not _held_assets.has(incoming_guid):
+		return null
+	return _held_assets[incoming_guid][0]
+
+func get_held_data() -> Dictionary:
+	return _held_assets
 
 func get_owner_guid() -> String:
 	if _state_data == null:
