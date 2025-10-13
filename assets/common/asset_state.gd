@@ -37,6 +37,12 @@ func get_min_height() -> float:
 func set_min_height(incoming_height: float) -> void:
 	_state_data.set_min_height(incoming_height)
 
+func get_vertical_length() -> float:
+	return _state_data.get_current_vertical_length()
+
+func set_veritcal_length(incoming_length: float) -> void:
+	_state_data.set_current_vertical_length(incoming_length)
+
 func get_current_velocity() -> Vector3:
 	return _state_data.get_current_velocity()
 

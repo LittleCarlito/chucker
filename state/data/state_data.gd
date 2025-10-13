@@ -24,6 +24,7 @@ var _current_state: STATE.ASSET
 var _current_state_duration: float
 # Scene based details
 var _min_height: float = -NUMBERS.FLOAT16_MAX
+var _owner_vertical_length: float
 var _owner_velocity: Vector3
 var _owner_position: Vector3
 var _owner_rotation: Quaternion
@@ -301,6 +302,9 @@ func get_windows() -> Dictionary:
 func get_owner_guid() -> String:
 	return _owner_guid
 
+func get_current_vertical_length() -> float:
+	return self._owner_vertical_length
+
 func get_current_velocity() -> Vector3:
 	return _owner_velocity
 
@@ -312,6 +316,9 @@ func get_current_y_velocity() -> float:
 
 func get_current_z_velocity() -> float:
 	return _owner_velocity.z
+
+func set_current_vertical_length(incoming_length: float) -> void:
+	self._owner_vertical_length = incoming_length
 
 func set_current_velocity(incoming_velocity: Vector3) -> void:
 	_owner_velocity = incoming_velocity

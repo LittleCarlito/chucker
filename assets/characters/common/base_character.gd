@@ -8,9 +8,6 @@ const _EMPTY_CAMERA_CONTAINER: String = "CameraContainer from \"%s\" returned nu
 @export var base_collision: CollisionShape3D
 @export var asset_state: AssetState
 
-# TODO Most of this goes into AssetState
-var height: float
-
 # TODO OOOOO 
 # TODO Task list
 # TODO Make Basecharacter Node3D class contain and function off of asset_state
@@ -21,13 +18,18 @@ var height: float
 # TODO Then to CameraRigs TODOs
 
 func _ready() -> void:
-	height = base_mesh.get_aabb().size.y
+	asset_state.set_veritcal_length(base_mesh.get_aabb().size.y)
 
 func _physics_process(delta: float) -> void:
 	apply_gravity(delta)
+	# TODO Need to do velocity resolution here (applying velocity to CharacterBody3D)
+	#		Asset states stored velocities need to be applied to the character
 	move_and_slide()
 
-## Movement functions
+## Applies gravity
+func apply_gravity(delta: float) -> void:
+	if not is_on_floor():
+		asset_state.apply_velocity(get_gravity() * delta)
 
 ## Character jumps; Multiplier can be applied
 func jump(jump_multiplier: float = 1) -> void:
@@ -60,14 +62,9 @@ func stop_sprint() -> void:
 func rotate_y_axis(rotation_amount: float) -> void:
 	asset_state.apply_rotation(Vector3(0, rotation_amount, 0))
 
-## Applies gravity
-func apply_gravity(delta: float) -> void:
-	if not is_on_floor():
-		asset_state.apply_velocity(get_gravity() * delta)
-
 ## Returns the height of Chuck
-func get_height() -> float:
-	return height
+func get_vertical_length() -> float:
+	return asset_state.get_vertical_length()
 
 ## Returns true if movement is disabled
 func is_movement_disabled() -> bool:
